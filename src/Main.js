@@ -4,11 +4,11 @@ import { BackHandler } from 'react-native';
 import { Root } from 'native-base';
 import { Scene, Router, Actions } from 'react-native-router-flux';
 
-import Home from './page/Home';
-import Cart from './page/Cart';
-import Login from './page/Login';
-import Signup from './page/Signup';
-import ContactUs from './page/ContactUs';
+import Home from './page/home/Home';
+import Cart from './page/home/Cart';
+import Login from './page/login/Login';
+import Signup from './page/signup/Signup';
+import ContactUs from './page/contact/ContactUs';
 
 export default class Main extends Component {
   componentWillMount = () => {

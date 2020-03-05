@@ -9,8 +9,8 @@ import { Container, View, Left, Right, Button, Icon, Item, Input,Text } from 'na
 import { Actions } from 'react-native-router-flux';
 
 // Our custom files and classes import
-import Colors from '../Colors';
-import Navbar from '../component/Navbar';
+import Colors from '../../constants/Colors';
+import Navbar from '../../component/Navbar';
 
 export default class Signup extends Component {
   constructor(props) {

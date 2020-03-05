@@ -9,8 +9,8 @@ import { View, List, ListItem, Body, Left, Right, Item, Input, Button, Grid, Col
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Actions } from 'react-native-router-flux';
-import Colors from '../Colors';
-import Strings from '../Strings';
+import Colors from '../constants/Colors';
+import Strings from '../constants/Strings';
 
 export default class SideMenu extends Component {
   constructor(props) {

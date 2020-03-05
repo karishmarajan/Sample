@@ -10,8 +10,9 @@ import { Actions } from 'react-native-router-flux';
 
 // Our custom files and classes import
 
-import Navbar from '../component/Navbar';
-import Strings from '../Strings';
+import Navbar from '../../component/Navbar';
+import Strings from '../../constants/Strings';
+import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 
 export default class ContactUs extends Component {
   constructor(props) {
@@ -19,10 +20,6 @@ export default class ContactUs extends Component {
       this.state = {
         cartItems: []
       };
-  }
-
-  componentWillMount() {
-   
   }
 
   render() {
@@ -38,7 +35,7 @@ export default class ContactUs extends Component {
           <Navbar left={left} title={Strings.contactus} />
         
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-              <Icon name="ios-cart" size={38} style={{fontSize: 38, color: '#95a5a6', marginBottom: 7}} />
+            <CustomActivityIndicator animation={true}/>
              
             </View>
       </Container>

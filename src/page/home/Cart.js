@@ -10,8 +10,8 @@ import { Actions } from 'react-native-router-flux';
 
 // Our custom files and classes import
 
-import Navbar from '../component/Navbar';
-import Strings from '../Strings';
+import Navbar from '../../component/Navbar';
+import Strings from '../../constants/Strings';
 
 export default class Cart extends Component {
   constructor(props) {

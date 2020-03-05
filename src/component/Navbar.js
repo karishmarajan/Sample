@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Header, Body, Title, Left, Right, Icon } from 'native-base';
 
 // Our custom files and classes import
-import Colors from '../Colors';
+import Colors from '../constants/Colors';
 
 export default class Navbar extends Component {
   render() {
