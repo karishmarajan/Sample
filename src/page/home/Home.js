@@ -10,7 +10,8 @@ import Colors from '../../constants/Colors';
 import Strings from '../../constants/Strings';
 import NetworkValidator from '../../component/NetworkValidator'
 import CustomAlertComponent from '../../component/CustomAlertComponent';
-
+import CustomButton from '../../component/CustomButton';
+import CustomCheckBox from '../../component/CustomCheckBox';
 
 export default class Home extends React.Component {
 
@@ -57,6 +58,10 @@ export default class Home extends React.Component {
           <Button onPress={()=>this.setState({alert_visible:true})} style={{width:200,alignSelf:'center',justifyContent:'center'}}>
               <Text style={{alignSelf:'center'}}>show alert</Text>
             </Button>
+     
+     
+      <CustomButton color={Colors.statusBarColor} text_color={'white'} title={'Title'}/>
+      <CustomCheckBox title={'Male'} checked={true}/>
             <CustomAlertComponent
               displayAlert={this.state.alert_visible}
               displayAlertIcon={true}
@@ -69,6 +74,7 @@ export default class Home extends React.Component {
               onPressPositiveButton={this.onPressAlertPositiveButton}
               onPressNegativeButton={this.onPressAlertNegativeButton}
             />
+
         
           </Content>
         </Container>
