@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Header, Body, Title, Left, Right, Icon, Text } from 'native-base';
 import { TextInput } from 'react-native';
 // Our custom files and classes import
-import Colors from '../constant/Colors';
+import Colors from '../constants/Colors';
 import { from } from 'rxjs';
 
 export default class CustomInput extends Component {

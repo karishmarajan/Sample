@@ -10,7 +10,7 @@ export default class Navbar extends Component {
     return(
       <Header
         style={{backgroundColor: Colors.navbarBackgroundColor,}}
-        backgroundColor={Colors.navbarBackgroundColor}
+        backgroundColor={Colors.white}
         androidStatusBarColor={Colors.statusBarColor}
         noShadow={true}
         >
@@ -32,7 +32,7 @@ const styles={
   },
   title: {
     fontWeight: '100',
-    color:'white',
+    color:'#57b0fc',
     
   }
 };

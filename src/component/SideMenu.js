@@ -149,14 +149,14 @@ const menusItems = [
   },
   {
     id: 519,
-    title: 'Signup',
+    title: 'Index',
     icon: 'ios-person-add',
-    key: 'signup'
+    key: 'index'
   },
   {
     id: 21,
-    title: 'Contact Us',
+    title: 'Dashboard',
     icon: 'md-phone-portrait',
-    key: 'contactus'
+    key: 'dashboard'
   },
 ];

@@ -2,8 +2,8 @@
 import React, { Component } from 'react';
 import { Header, Body, Title, Left, Right, Icon, Text, View, Col } from 'native-base';
 import { TextInput, TouchableOpacity, DatePickerAndroid, DatePickerIOS, Modal, Platform, } from 'react-native';
-import Colors from '../constant/Colors';
-import Dimen from '../constant/Dimen';
+import Colors from '../constants/Colors';
+import Dimen from '../constants/Dimen';
 import CustomButton from './CustomButton';
 import moment from 'moment';
 

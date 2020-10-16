@@ -37,14 +37,14 @@ export default class Home extends React.Component {
     var left = (
       <Left style={{ flex: 1 }}>
         <Button onPress={() => this._sideMenuDrawer.open()} transparent>
-          <Icon style={{ color: 'white' }} name='ios-menu' />
+          <Icon style={{ color: '#57b0fc' }} name='ios-menu' />
         </Button>
       </Left>
     );
     var right = (
       <Right style={{ flex: 1 }}>
         <Button onPress={() => Actions.cart()} transparent>
-          <Icon style={{ color: 'white' }} name='ios-cart' />
+          <Icon style={{ color: '#57b0fc' }} name='ios-cart' />
         </Button>
       </Right>
     );

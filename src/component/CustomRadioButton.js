@@ -4,7 +4,7 @@ import { Body,Radio, ListItem,Left,Right  } from 'native-base';
 import { TouchableOpacity } from 'react-native';
 // Our custom files and classes import
 import { Text, View } from 'react-native';
-import Colors from '../constant/Colors';
+import Colors from '../constants/Colors';
 
 
 export default class CustomRadioButton extends Component {

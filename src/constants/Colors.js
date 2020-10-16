@@ -5,6 +5,8 @@ const Colors = {
   alertButtonTextColor: '#000000',
   alertTitleTextColor:"#FFFFFF",
   alertButtonBackgroundColor: '#FFFFFF',
+  buttonBackgroundColor:'#3a3a54',
+  white:'#ffffff'
 
 };
 

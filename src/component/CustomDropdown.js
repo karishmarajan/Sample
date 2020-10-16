@@ -4,7 +4,7 @@ import { Header, Body, Title, Left, Right, Icon, Button } from 'native-base';
 import { TouchableOpacity } from 'react-native';
 // Our custom files and classes import
 import { Text, View } from 'react-native';
-import Colors from '../constant/Colors';
+import Colors from '../constants/Colors';
 import { Dropdown } from 'react-native-material-dropdown';
 export default class CustomDropdown extends Component {
     render() {

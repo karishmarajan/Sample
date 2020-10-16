@@ -1,7 +1,7 @@
 const Strings = {
-    appName: '  Dummy Project  ',
+    appName: '  Epex  ',
     cart: '  MY CART ',
-    login: '  LOGIN ',
+    login: '  Login ',
     signup: '  SIGNUP ',
     contactus: '  CONTACT US ',
     no_internet: '  NO INTERNET CONNECTION ',
