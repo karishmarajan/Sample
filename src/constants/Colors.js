@@ -6,7 +6,11 @@ const Colors = {
   alertTitleTextColor:"#FFFFFF",
   alertButtonBackgroundColor: '#FFFFFF',
   buttonBackgroundColor:'#3a3a54',
-  white:'#ffffff'
+  white:'#ffffff',
+  mainBackgroundColor:'#f0f0f6',
+  navbarTitleColor:'#57b0fc',
+  borderColor:'#c4c4cb',
+  textBackgroundColor:'#f0f0f6',
 
 };
 

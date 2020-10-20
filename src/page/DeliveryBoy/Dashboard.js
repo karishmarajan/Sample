@@ -3,20 +3,18 @@ import { Image, SafeAreaView,TouchableOpacity,StyleSheet } from 'react-native';
 import { Container, Content, View, Button, Left, Right, Icon, Card, CardItem, cardBody, Text,Input,Item } from 'native-base';
 
 import { Actions } from 'react-native-router-flux';
-import { Router, Scene, Stack } from 'react-native-router-flux';
 import Grid from 'react-native-grid-component';
+import moment from 'moment';
 // import ReactTableContainer from "react-table-container";
 
 import Navbar from '../../component/Navbar';
 import SideMenuDrawer from '../../component/SideMenuDrawer';
 import Colors from '../../constants/Colors';
 import Strings from '../../constants/Strings';
-import NetworkValidator from '../../component/NetworkValidator'
-import CustomAlertComponent from '../../component/CustomAlertComponent';
 import CustomButton from '../../component/CustomButton';
 import CustomCheckBox from '../../component/CustomCheckBox';
 
-export default class Home extends React.Component {
+export default class Dashboard extends React.Component {
 
   constructor(props) {
     super(props);
@@ -35,6 +33,8 @@ export default class Home extends React.Component {
 
 
 }
+
+
   onPressAlertPositiveButton() {
     alert('Positive Button Clicked');
 
@@ -42,17 +42,7 @@ export default class Home extends React.Component {
   onPressAlertNegativeButton() {
   this.setState({alert_visible:false})
   }
-  renderRow() {
-    return (
-        <View style={{ flex: 1, alignSelf: 'stretch', flexDirection: 'row' }}>
-            <View style={{ flex: 1, alignSelf: 'stretch' }} /> { /* Edit these as they are your cells. You may even take parameters to display different data / react elements etc. */}
-            <View style={{ flex: 1, alignSelf: 'stretch' }} />
-            <View style={{ flex: 1, alignSelf: 'stretch' }} />
-            <View style={{ flex: 1, alignSelf: 'stretch' }} />
-            <View style={{ flex: 1, alignSelf: 'stretch' }} />
-        </View>
-    );
-  }
+
 
   render() {
   
@@ -74,18 +64,13 @@ export default class Home extends React.Component {
       </Right>
     );
 
-   
-    const data = [1, 2, 3, 4, 5];
-  
-   
     return (
-      
       <SideMenuDrawer ref={(ref) => this._sideMenuDrawer = ref}>
         <Container>
-          <Navbar left={left} right={right} title="Dashboard" titleStyle={{ color: '#57b0fc'}} />
+          <Navbar left={left} right={right} title="Dashboard" titleStyle={{ color: Colors.navbarTitleColor}} />
           <Content contentContainerStyle={{justifyContent:'center',flex:1}}>
 
-          <View style={{flex: 1, flexDirection: 'column',backgroundColor:'#f0f0f6'}}>
+          <View style={{flex: 1, flexDirection: 'column',backgroundColor:Colors.mainBackgroundColor}}>
 
           <View style={{ backgroundColor:'white',marginTop:25,height:120,width:320,left:20,Right:20,borderRadius:10,padding:10}}>
            <Text style={{}}>Amount collected today</Text>
@@ -109,8 +94,8 @@ export default class Home extends React.Component {
           </View>
           <View >
           <Item>
-            <Text style={{left:10,fontSize:19,fontFamily:'normal'}}>Today</Text>
-          <Input style={{fontWeight:'bold',left:15}} type="date" name="startDate"value={this.state.startingDate}onChange={this.handleChange}/>
+            <Text style={{left:10,fontSize:19,fontFamily:'normal'}}>{`Today ${moment().format('DD')}th ${moment().format(`MMM  YYYY`)}`}</Text>
+          {/* <Input style={{fontWeight:'bold',left:15}} type="date" name="startDate"value={this.state.startingDate}onChange={this.handleChange}/> */}
           </Item>
           </View>
         
@@ -141,25 +126,3 @@ export default class Home extends React.Component {
   }
 
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  item :{
-    flex: 0.5, //why this doesnt work???
-    // width: 150, //using fixed item width instead of flex: 0.5 works
-    height: 50,
-    padding: 10,
-    backgroundColor: '#57b0fc',
-    // flexGrow: 1,
-    // flexShrink: 0,
-  },
-  column1 :{
-    height: 100,
-  },
-  column2 :{
-
-  }
-});

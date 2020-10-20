@@ -60,7 +60,7 @@ export default class Login extends Component {
             </View>
             {this.state.hasError?<Text style={{color: "#c0392b", textAlign: 'center', marginTop: 10}}>{this.state.errorText}</Text>:null}
             <View style={styles.loginTextSection}>
-              <Button onPress={() => this.login()} style={{backgroundColor: Colors.buttonBackgroundColor, marginTop: 40,width:300,justifyContent: 'center',height:50,borderRadius:10,}}>
+              <Button onPress={()=>Actions.index()} style={{backgroundColor: Colors.buttonBackgroundColor, marginTop: 40,width:300,justifyContent: 'center',height:50,borderRadius:10,}}>
                 <Text style={{color: '#fdfdfd', textAlign: 'center',alignItems: 'center',fontSize:18,fontFamily:'lucida grande'}}>LOGIN</Text>
               </Button>
               {/* <CustomInput  title="SIGN UP" /> */}
