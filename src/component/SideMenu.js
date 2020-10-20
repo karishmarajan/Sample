@@ -48,7 +48,7 @@ export default class SideMenu extends Component {
           <View style={{paddingRight: 15}}>
            <Text style={{fontSize:24,fontWeight:'bold',paddingRight: 15,paddingLeft:15,color:Colors.navbarBackgroundColor}}>{Strings.appName}</Text>
           </View>
-          <View style={styles.line} />
+          {/* <View style={styles.line} />
           <View style={{paddingRight: 15}}>
             <List>
               {this.renderMenuItems()}
@@ -67,7 +67,7 @@ export default class SideMenu extends Component {
               <Col style={{alignItems: 'center'}}><Icon style={{fontSize: 18,color:Colors.navbarBackgroundColor}} name='logo-snapchat' onPress={() => Linking.openURL('http://www.snapchat.com/').catch(err => console.error('An error occurred', err))} /></Col>
             </Grid>
           </View>
-          </View>
+          </View> */}
          
         </View>
       );
@@ -99,24 +99,24 @@ export default class SideMenu extends Component {
     let secondaryItems = [];
     menusItems.map((item, i) => {
       secondaryItems.push(
-        <ListItem
-        style={{height:70,justifyContent:'center'}}
-          last
-          icon
-          key={item.id}
-          button={true}
-          onPress={Actions[item.key]}
-        >
-         <Left>
-            <Icon style={{fontSize: 20,color:Colors.navbarBackgroundColor}} name={item.icon} />
-          </Left>
-          <Body style={{marginLeft: -15}}>
-            <Text style={{fontSize: 18,marginLeft:6}}>{item.title}</Text>
-          </Body>
-          <Right style={{alignSelf:'center'}}>
-            <Icon style={{color:Colors.navbarBackgroundColor}} name="ios-arrow-forward" />
-          </Right>
-        </ListItem>
+        // <ListItem
+        // style={{height:70,justifyContent:'center'}}
+        //   last
+        //   icon
+        //   key={item.id}
+        //   button={true}
+        //   onPress={Actions[item.key]}
+        // >
+        //  <Left>
+        //     <Icon style={{fontSize: 20,color:Colors.navbarBackgroundColor}} name={item.icon} />
+        //   </Left>
+        //   <Body style={{marginLeft: -15}}>
+        //     <Text style={{fontSize: 18,marginLeft:6}}>{item.title}</Text>
+        //   </Body>
+        //   <Right style={{alignSelf:'center'}}>
+        //     <Icon style={{color:Colors.navbarBackgroundColor}} name="ios-arrow-forward" />
+        //   </Right>
+        // </ListItem>
       );
     });
     return secondaryItems;
@@ -158,5 +158,17 @@ const menusItems = [
     title: 'Dashboard',
     icon: 'md-phone-portrait',
     key: 'dashboard'
+  },
+  {
+    id: 22,
+    title: 'VehicleScan',
+    icon: 'md-phone-portrait',
+    key: 'vehiclescan'
+  },
+  {
+    id: 23,
+    title: 'PickUp',
+    icon: 'md-phone-portrait',
+    key: 'pickup'
   },
 ];

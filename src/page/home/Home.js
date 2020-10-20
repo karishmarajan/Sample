@@ -41,20 +41,20 @@ export default class Home extends React.Component {
         </Button>
       </Left>
     );
-    var right = (
-      <Right style={{ flex: 1 }}>
-        <Button onPress={() => Actions.cart()} transparent>
-          <Icon style={{ color: '#57b0fc' }} name='ios-cart' />
-        </Button>
-      </Right>
-    );
+    // var right = (
+    //   <Right style={{ flex: 1 }}>
+    //     <Button onPress={() => Actions.cart()} transparent>
+    //       <Icon style={{ color: '#57b0fc' }} name='ios-cart' />
+    //     </Button>
+    //   </Right>
+    // );
     return (
       
       <SideMenuDrawer ref={(ref) => this._sideMenuDrawer = ref}>
         <Container>
           <NetworkValidator></NetworkValidator>
-          <Navbar left={left} right={right} title={Strings.appName} />
-          <Content contentContainerStyle={{justifyContent:'center',flex:1}}>
+          <Navbar left={left} title={Strings.appName} />
+          {/* <Content contentContainerStyle={{justifyContent:'center',flex:1}}>
           <Button onPress={()=>this.setState({alert_visible:true})} style={{width:200,alignSelf:'center',justifyContent:'center'}}>
               <Text style={{alignSelf:'center'}}>show alert</Text>
             </Button>
@@ -76,7 +76,7 @@ export default class Home extends React.Component {
             />
 
         
-          </Content>
+          </Content> */}
         </Container>
       </SideMenuDrawer>
     );
