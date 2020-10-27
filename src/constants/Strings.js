@@ -7,6 +7,12 @@ const Strings = {
     no_internet: '  NO INTERNET CONNECTION ',
     no_internet_check: '  PLEASE CHECK YOUR NETWORK SETTINGS ',
     no_data_found: '  No Data Found ',
+    title:'title',
+    subtitle:'subtitle',
+    smalltitle:'smalltitle',
+    maintext:'maintext',
+    subtext:'subtext',
+
   };
   
   export default Strings;

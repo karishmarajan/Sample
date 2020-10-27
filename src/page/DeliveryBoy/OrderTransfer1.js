@@ -14,24 +14,22 @@ export default class OrderTransfer1 extends React.Component {
     render(){
         var left = (
             <Left style={{ flex: 1 }}>
-              <Button onPress={() => this._sideMenuDrawer.open()} transparent>
-                <Icon style={{ color: '#bdbcca' }} name='ios-menu' />
-              </Button>
+                <Icon style={{ color: Colors.navbarIconColor }} name='ios-menu' />
             </Left>
           );
           var right = (
             <Right style={{ flex: 1 }}>
               <Button onPress={() => Actions.cart()} transparent>
-                <Icon style={{ color: '#bdbcca' }} name='ios-chatbubbles' />
+                <Icon style={{ color: Colors.navbarIconColor }} name='ios-chatbubbles' />
               </Button>
               <Button onPress={() => Actions.cart()} transparent>
-                <Icon style={{ color: '#bdbcca' }} name='ios-notifications' />
+                <Icon style={{ color: Colors.navbarIconColor }} name='ios-notifications' />
               </Button>
             </Right>
           );
         return(
-        <SideMenuDrawer ref={(ref) => this._sideMenuDrawer = ref}>
-        <Navbar left={left} right={right} title="Order Transfer" titleStyle={{ color: '#57b0fc'}} />
+          <Container>
+        <Navbar left={left} right={right} title="Order Transfer" />
         <ScrollView contentContainerStyle={{flexGrow:1}}>
         <View style={{flex: 1, flexDirection: 'column',backgroundColor:'#f0f0f6'}}>
         <View style={{ backgroundColor:'white',marginTop:40,height:400,width:320,left:20,Right:20,padding:20}}>
@@ -54,7 +52,7 @@ export default class OrderTransfer1 extends React.Component {
         </View>
         </View>
         </ScrollView>
-        </SideMenuDrawer>
+        </Container>
         );
     }
 
