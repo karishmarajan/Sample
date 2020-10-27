@@ -9,8 +9,8 @@ import Colors from '../constants/Colors';
 export default class CustomButton extends Component {
     render() {
         return (
-            <View style={{ justifyContent: 'center',width:this.props.width && this.props.width,borderColor:this.props.borderColor && this.props.borderColor,borderWidth:this.props.borderWidth && this.props.borderWidth ,borderRadius: 6,height: this.props.height ? this.props.height : 50,backgroundColor:this.props.color ? this.props.color : Colors.primaryColor}}>
-                <Text style={{alignSelf:'center',textAlign:'center',color:this.props.text_color ? this.props.text_color: Colors.white,fontSize: this.props.fontSize && this.props.fontSize}}>  {this.props.title}  </Text>
+            <View style={{ justifyContent: 'center',width:this.props.width && this.props.width,borderColor:this.props.borderColor && this.props.borderColor,borderWidth:this.props.borderWidth && this.props.borderWidth ,borderRadius: 6,padding:5,marginTop:20,height: this.props.height ? this.props.height : 40,backgroundColor:this.props.color ? this.props.color : Colors.buttonBackgroundColor}}>
+                <Text uppercase={false} style={{alignSelf:'center',textAlign:'center',fontFamily:'lucida grande',color:this.props.text_color ? this.props.text_color: Colors.white,fontSize: this.props.fontSize ? this.props.fontSize:16}}>  {this.props.title}  </Text>
             </View>
 
         );
@@ -20,7 +20,8 @@ export default class CustomButton extends Component {
 const styles = {
     title_style: {
         color: 'white',
-        alignSelf:'cennter',
-        
+        alignSelf:'center',  
+        fontSize:18,
+        fontFamily:'lucida grande',
     }
 };

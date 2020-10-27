@@ -4,28 +4,31 @@ import { Header, Body, Title, Left, Right, Icon, Text } from 'native-base';
 import { TextInput } from 'react-native';
 // Our custom files and classes import
 import Colors from '../constants/Colors';
-import { from } from 'rxjs';
+
 
 export default class CustomInput extends Component {
 
   render() {
     const styles = {
       input: {
-        height: this.props.height ? this.props.height : 50,
+        height: this.props.height ? this.props.height : 40,
         width: this.props.width && this.props.width,
-        borderWidth: .5,
-        marginTop: 6,
-        marginBottom: 6,
-        borderRadius: 6,
-        paddingLeft: 6,
-        paddingRight: 6,
+        borderWidth: 0,
+        marginTop: 0,
+        marginLeft:5,
+        marginRight:5,
+        marginBottom: 5,
+        borderRadius: 0,
+        paddingLeft: 5,
+        paddingRight: 5,
         paddingTop: 0,
         paddingBottom: 0,
         textAlignVertical: 'center',
-        borderColor: Colors.accentColor,
+        borderColor: Colors.borderColor,
         fontSize: this.props.fontSize,
         justifyContent: 'center',
-        color:Colors.black
+        color:Colors.black,
+        backgroundColor:Colors.textBackgroundColor,
       }
     };
     return (
