@@ -12,6 +12,7 @@ const Strings = {
     smalltitle:'smalltitle',
     maintext:'maintext',
     subtext:'subtext',
+    titlelarge:'titlelarge',
 
   };
   

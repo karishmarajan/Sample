@@ -9,14 +9,15 @@ import Cart from './page/home/Cart';
 import Login from './page/login/Login';
 import Signup from './page/signup/Signup';
 import ContactUs from './page/contact/ContactUs';
-import Index from './page/DeliveryBoy/Index';
-import Dashboard from './page/DeliveryBoy/Dashboard';
-import VehicleScan from './page/DeliveryBoy/VehicleScan';
-import PickUp from './page/DeliveryBoy/PickUp';
-import StatusUpdate from './page/DeliveryBoy/StatusUpdate';
-import OrderTransfer1 from './page/DeliveryBoy/OrderTransfer1';
-import SelfAssign from './page/DeliveryBoy/SelfAssign';
-import Delivery from './page/DeliveryBoy/Delivery';
+import Dashboard from './page/delivery_boy/Dashboard';
+import Delivery from './page/delivery_boy/Delivery';
+import Index from './page/delivery_boy/Index';
+import OrderTransfer1 from './page/delivery_boy/OrderTransfer1';
+import PickUp from './page/delivery_boy/PickUp';
+import SelfAssign from './page/delivery_boy/SelfAssign';
+import StatusUpdate from './page/delivery_boy/StatusUpdate';
+import VehicleScan from './page/delivery_boy/VehicleScan';
+
 
 export default class Main extends Component {
   componentWillMount = () => {
@@ -30,12 +31,12 @@ export default class Main extends Component {
           <Scene key="root">
             <Scene  key="home" component={Home} hideNavBar />
             <Scene key="cart" component={Cart} modal hideNavBar />
-            <Scene initial key="login" component={Login} hideNavBar />
+            <Scene  initial key="login" component={Login} hideNavBar />
             <Scene key="signup" component={Signup} hideNavBar />
             <Scene key="contactus" component={ContactUs} hideNavBar />
             <Scene  key="index" component={Index} hideNavBar />
             <Scene  key="dashboard" component={Dashboard} hideNavBar />
-            <Scene  key="vehiclescan" component={VehicleScan} hideNavBar />
+            <Scene   key="vehiclescan" component={VehicleScan} hideNavBar />
             <Scene  key="pickup" component={PickUp} hideNavBar />
             <Scene  key="statusupdate" component={StatusUpdate} hideNavBar />
             <Scene  key="ordertransfer1" component={OrderTransfer1} hideNavBar />
