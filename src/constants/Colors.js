@@ -11,7 +11,7 @@ const Colors = {
   darkSkyBlue:'#165bd6',
   mainBackgroundColor:'#f0f0f6',
   navbarTitleColor:'#57b0fc',
-  borderColor:'#c4c4cb',
+  borderColor:'#000000',
   textBackgroundColor:'#f0f0f6',
   subTextColor:'#696969',
   buttonBackgroundColor:'#3b3954',
@@ -24,6 +24,12 @@ const Colors = {
   loginBackgroundColor:'#f9fafc',
   green:'#1bda2e',
   red:'#FF0000',
+  lightborderColor:'#c4c4cb',
+  lightBackgroundColor:'#f4f4f4',
+  gray:'#d6d6d5',
+  lightgreen:'#cde7cc',
+  lightPink:'#ffccd0',
+  darkPink:'#ffaba9',
 
 };
 
