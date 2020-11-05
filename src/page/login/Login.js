@@ -1,9 +1,9 @@
 // React native and others libraries imports
 import React, { Component } from 'react';
-import { BackHandler,Image } from 'react-native';
+import { BackHandler,Image, ToastAndroid } from 'react-native';
 import { ScrollView,Keyboard,StyleSheet } from 'react-native';
 import { Container, View, Left, Right, Button, Icon, Item, Input, Text,TextInput } from 'native-base';
-import { Actions } from 'react-native-router-flux';
+import { Actions, Scene } from 'react-native-router-flux';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 
 
@@ -16,25 +16,42 @@ import CustomText from '../../component/CustomText';
 import CustomButton from '../../component/CustomButton';
 import { SECTION_MARGIN_TOP } from '../../constants/Dimen';
 
+
+
 export default class Login extends Component {
 
-  componentWillMount = () => {
-    BackHandler.addEventListener('hardwareBackPress', () => Actions.pop());
-  };
 
   constructor(props) {
-      super(props);
-      this.state = {
-        email: '',
-        password: '',
-        hasError: false,
-        errorText: ''
-      };
-  }
+    super(props);
+    this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+    this.state = {
+      email: '',
+      password: '',
+      hasError: false,
+      errorText: '',
+    };
+}
 
-  handleClick(){
-    alert("helloooo");
- }
+componentWillUnmount() {
+  BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+}
+
+  componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick  );
+  };
+
+  handleBackButtonClick() {
+    Actions.pop();
+    // this.props.navigation.goBack(null);
+    return true;
+}
+  
+   
+
+
+
+
+ 
 
 
   render() {
@@ -48,13 +65,13 @@ export default class Login extends Component {
           <View style={{flex:1,padding:20,marginTop:30}}>   
           <CustomText text={'Login'} textType={Strings.titlelarge}/>
           <View  style={{marginTop:40}}>
-            <CustomInput keyboardType={'email-address'} placeholder={'Email'} icon_name={'ios-person'} icon_color={Colors.placeholderTextColor} placeholderTextColor={Colors.placeholderTextColor} fontSize={18} showIcon={true}/>
+            <CustomInput keyboardType={'email-address'} placeholder={'Email'} icon_name={'ios-person'} icon_color={Colors.placeholderTextColor} icon_fontsize={18} placeholderTextColor={Colors.placeholderTextColor} fontSize={18} showIcon={true} height={60} borderRadius={6}/>
           </View>
           <View  style={styles.input}>
-            <CustomInput secureTextEntry={true} placeholder={'Password'} icon_name={'ios-lock'} icon_color={Colors.placeholderTextColor} placeholderTextColor={Colors.placeholderTextColor} fontSize={18} showIcon={true}/>
+            <CustomInput secureTextEntry={true} placeholder={'Password'} icon_name={'ios-lock'} icon_color={Colors.placeholderTextColor} icon_fontsize={18} placeholderTextColor={Colors.placeholderTextColor} fontSize={18} showIcon={true} height={60} borderRadius={6}/>
           </View>
           <View style={{marginTop:50}}>
-            <CustomButton  title={'Login'} fontSize={20} height={50} onPress={()=>Actions.index()}/>
+            <CustomButton  title={'LOGIN'} fontSize={18} height={60} onPress={()=>Actions.reset('dashboard')} borderRadius={6}/>
           </View>
           </View>
 

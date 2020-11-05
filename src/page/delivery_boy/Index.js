@@ -1,33 +1,41 @@
 import React, { Component } from 'react';
 import { ScrollView,StyleSheet,BackHandler } from 'react-native';
-import { Container, View, Left, Right, Button, Icon, Input, Text, Col } from 'native-base';
+import { Container, View, Left, Button, Icon, Input, Text, Col,Right } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
 import Colors from '../../constants/Colors';
 import CustomButton from '../../component/CustomButton';
+import SideMenuDrawer from '../../component/SideMenuDrawer';
 
 export default class Index extends Component{
 
 
     render(){
+
     return(
+ 
 <Container style={{backgroundColor:Colors.indexBackGroundColor, justifyContent:'center'}}>
 <ScrollView contentContainerStyle={{flexGrow:1}}>
-<Icon name="md-close" style={{position: 'absolute',right: 20,top: 20,bottom: 0,color:'white'}} />
+<Button onPress={this.props.onClose} transparent>
+        <Icon name="md-close" style={{position: 'absolute',right: 20,top: 20,bottom: 0,color:'white'}} />
+        </Button>
+
 <Text style={{fontSize: 32, justifyContent:'center', width: '100%' , color: Colors.white,textAlign:'center',marginTop:80,fontWeight:'bold',marginBottom:35}}>Epex </Text>
- <Text style={styles.index} onPress={()=>Actions.dashboard()}>Dashboard </Text>
-<Text style={styles.index} onPress={()=>Actions.delivery()}>Delivery </Text>
-<Text style={styles.index} onPress={()=>Actions.pickup()}>Pickup </Text>
-<Text style={styles.index} onPress={()=>Actions.vehiclescan()}>Vehicle Scan </Text>
-<Text style={styles.index} onPress={()=>Actions.statusupdate()}>Status Update </Text>
-<Text style={styles.index} onPress={()=>Actions.selfassign()}>Self Assign </Text>
-<Text style={styles.index} onPress={()=>Actions.ordertransfer1()}>Order Transfer </Text>
-<Button onPress={() => this.logout()} style={{backgroundColor:'#3a3954', marginTop: 70,width:330,justifyContent: 'center',height:60,borderRadius:5,left:15,Right:10}}>
-                <Text uppercase={false} style={{fontSize:18,color: '#fdfdfd',fontFamily:'lucida grande'}}>Log out</Text>
-              </Button>
-              {/* <CustomButton title={'Log out'}/> */}
+ <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.dashboard()}}>Dashboard </Text>
+<Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.delivery()}}>Delivery </Text>
+<Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.pickup();  }}>Pickup </Text>
+<Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.vehiclescan()}}>Vehicle Scan </Text>
+<Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.statusupdate()}}>Status Update </Text>
+<Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.selfassign()}}>Self Assign </Text>
+<Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.ordertransfer1()}}>Order Transfer </Text>
+ <CustomButton title={'Log out'}  height={60} fontSize={18} marginTop={70} onPress={()=>Actions.login()}/>
+
 </ScrollView>
+
 </Container>
+
+
+
 );
  }
 }

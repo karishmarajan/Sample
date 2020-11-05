@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { ScrollView,Picker,StyleSheet } from 'react-native';
-import { Container, Header, Button, Left, Right,Icon,Text, Input,TextInput,Grid,Col,Row,SearchBar,Item, View} from 'native-base';
+import { Actions } from 'react-native-router-flux';
+import { Container, Header, Button, Left, Right,Icon,Text, Input,TextInput,Grid,Col,Row,SearchBar,Item, View,Badge} from 'native-base';
 
 import Navbar from '../../component/Navbar';
 import Colors from '../../constants/Colors';
@@ -9,6 +10,7 @@ import CustomText from '../../component/CustomText';
 import CustomInput from '../../component/CustomInput';
 import { SECTION_MARGIN_TOP } from '../../constants/Dimen';
 import CustomButton from '../../component/CustomButton';
+import SideMenuDrawer from '../../component/SideMenuDrawer';
 
 import CustomDropdown from '../../component/CustomDropdown';
 
@@ -28,24 +30,29 @@ export default class PickUp extends React.Component {
       };
 
 render(){
-    var left = (
-        <Left style={{ flex: 1 }}>
-            <Icon style={{ color:Colors.navbarIconColor}} name='ios-menu' />
-        </Left>
-      );
+  var left = (
+    <Left style={{ flex: 1 }}>
+      <Button onPress={() => Actions.pop()} transparent>
+        <Icon style={{ color:Colors.navbarIconColor}} name='ios-close' />
+        </Button>
+    </Left>
+  );
+      
       var right = (
         <Right style={{ flex: 1 }}>
-          <Button onPress={() => Actions.cart()} transparent>
+          <Button  transparent>
             <Icon style={{ color:Colors.navbarIconColor }} name='ios-chatbubbles' />
           </Button>
-          <Button onPress={() => Actions.cart()} transparent>
+          <Button  transparent>
             <Icon style={{ color:Colors.navbarIconColor }} name='ios-notifications' />
+            <Badge style={{width: 10, backgroundColor: 'orange',height:12,marginTop:20,borderRadius:10}} 
+                            textStyle={{color: 'white', fontSize: 20, lineHeight: 20}}></Badge>
           </Button>
         </Right>
       );
      
     return(
-        
+      
       <Container>
         <Navbar left={left} right={right} title="PickUp" />
  <Container horizontal={true} style={{flexDirection:'column',padding:10,backgroundColor:Colors.textBackgroundColor}}>
@@ -54,15 +61,18 @@ render(){
 
 <View style={{flexDirection:'row',justifyContent:'space-around'}}>
 <CustomDropdown data={myArray1} height={35} backgroundColor={Colors.white} fontSize={14} width={100} />
- <CustomInput placeholder={'Search here'} icon_name={'ios-search'} icon_color={Colors.navbarIconColor} placeholderTextColor={Colors.navbarIconColor} fontSize={14} showIcon={true} backgroundColor={Colors.white} height={35} width={180} marginTop={5}/>
+ <CustomInput placeholder={'Search here'} icon_name={'ios-search'} icon_color={Colors.navbarIconColor}  icon_fontsize={18}   placeholderTextColor={Colors.navbarIconColor} fontSize={14} showIcon={true} backgroundColor={Colors.white} height={35} width={180} marginTop={5}/>
           </View>
 
 {/*////////////////////// Manual Pickup Button Block //////////////////////////////////////////////// */}
 
-       <View style={{flexDirection:'row',marginTop:SECTION_MARGIN_TOP}}>
-<View style={{flexDirection:'row',width:100,backgroundColor:Colors.rowBackgroundColor,height:35,justifyContent:'center'}}><Text style={{fontSize:14,fontWeight:'bold'}}>ALL</Text><Text style={{fontSize:14,fontWeight:'bold',color:Colors.darkSkyBlue}}>  (50)    </Text>
-<Icon name={'ios-arrow-down'} icon_color={Colors.navbarIconColor} size={20}/></View>
-        <CustomButton title={'Manual Pickup'} backgroundColor={Colors.darkSkyBlue} width={120} height={35} fontSize={16} marginLeft={120} marginTop={1}/></View>
+       <View style={{flexDirection:'row',marginTop:SECTION_MARGIN_TOP,marginRight:10,justifyContent:'space-between'}}>
+<View style={{flexDirection:'row',marginLeft:10,backgroundColor:Colors.rowBackgroundColor,height:35,justifyContent:'center'}}>
+<Text style={{fontSize:14,fontWeight:'bold'}}>ALL</Text>
+<Text style={{fontSize:14,fontWeight:'bold',color:Colors.darkSkyBlue}}>  (50)    </Text>
+<Icon name={'ios-arrow-down'} icon_color={Colors.navbarIconColor} style={{fontSize:18}}/>
+</View>
+        <CustomButton title={'Manual Pickup'} backgroundColor={Colors.darkSkyBlue}  height={35} fontSize={16}  marginTop={1}/></View>
 
 
 {/*//////////////////////// Horizontal Order Details Block //////////////////////////////////////////////// */}

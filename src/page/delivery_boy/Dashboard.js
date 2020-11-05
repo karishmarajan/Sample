@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { TouchableOpacity,StyleSheet,ScrollView } from 'react-native';
-import { Container, View, Button, Left, Right, Icon, Text,Grid,Col,Row } from 'native-base';
-
+import { TouchableOpacity,StyleSheet,ScrollView,BackHandler } from 'react-native';
+import { Container, View, Button, Left, Right, Icon, Text,Grid,Col,Row,Badge } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
+
+
 
 import Navbar from '../../component/Navbar';
 import Colors from '../../constants/Colors';
@@ -13,28 +14,36 @@ import CustomCheckBox from '../../component/CustomCheckBox';
 import CustomSubButton from '../../component/CustomSubButton';
 import { SECTION_MARGIN_TOP, SCREEN_HEIGHT } from '../../constants/Dimen';
 import CustomText from '../../component/CustomText';
+import SideMenuDrawer from '../../component/SideMenuDrawer';
 
 export default class Dashboard extends React.Component {
+
+
 
   render() {
   
     var left = (
-      <Left style={{ flex: 1 }}>
+      <Left  style={{ flex: 1 }}>
+        <Button onPress={() => this._sideMenuDrawer.open()} transparent>
           <Icon style={{ color:Colors.navbarIconColor }} name='ios-menu' />
+          </Button>
       </Left>
     );
     var right = (
       <Right style={{ flex: 1 }}>
-        <Button onPress={() => Actions.cart()} transparent>
+        <Button  transparent>
           <Icon style={{ color:Colors.navbarIconColor }} name='ios-chatbubbles' />
         </Button>
-        <Button onPress={() => Actions.cart()} transparent>
-          <Icon style={{color:Colors.navbarIconColor }} name='ios-notifications' />
+        <Button  transparent>
+         <Icon style={{color:Colors.navbarIconColor }} name='ios-notifications' />
+         <Badge style={{width: 10, backgroundColor: 'orange',height:12,marginTop:20,borderRadius:10}} 
+                            textStyle={{color: 'white', fontSize: 20, lineHeight: 20}}></Badge>
         </Button>
       </Right>
     );
 
     return (
+      <SideMenuDrawer ref={(ref) => this._sideMenuDrawer = ref}>
         <Container>
           <Navbar left={left} right={right} title="Dashboard"/>
           <ScrollView contentContainerStyle={{flexGrow:1}}>
@@ -59,8 +68,8 @@ export default class Dashboard extends React.Component {
           <CustomText text={'Order Transfer Status:'} textType={Strings.maintext} fontWeight={'bold'} />
           <CustomText text={'Waiting for your Approval'} textType={Strings.maintext} />
           <View style={{flex:1,flexDirection:'row'}}>
-              <CustomButton title={'Reject'} backgroundColor={Colors.red} width={80} height={30}/>
-              <CustomButton title={'Accept'} backgroundColor={Colors.green} width={80} height={30} marginLeft={20}/>
+              <CustomButton title={'Reject'} backgroundColor={Colors.red} width={80} height={30} borderRadius={4}/>
+              <CustomButton title={'Accept'} backgroundColor={Colors.green} width={80} height={30} marginLeft={20} borderRadius={4}/>
           </View>
           </View>
 
@@ -82,17 +91,17 @@ export default class Dashboard extends React.Component {
        <Col style={styles.content}><Text style={{fontSize:14,color:Colors.subTextColor,paddingLeft:10,paddingTop:5,height:30,borderRadius:5}}>100</Text></Col></Grid>
        </View> */}
 
-           <View style={{height:240,fontSize:22,borderColor:'#c4c4cb',borderWidth:1,marginBottom:10}}>
-             <View style={{backgroundColor:'#f4f4f4',padding:20,width:150}}><Text>{'Pending Orders'}</Text></View>
-             <View style={{backgroundColor:'white',padding:20}}><Text>{'Rejected Orders'}</Text></View>
-             <View style={{backgroundColor:'#f4f4f4',padding:20}}><Text>{'Delivered Orders'}</Text></View>
-             <View style={{backgroundColor:'white',padding:20}}><Text>{'Total Orders'}</Text></View>
+           <View style={{height:240,fontSize:22,borderColor:Colors.lightborderColor,borderWidth:0.5,marginBottom:10}}>
+             <View style={{backgroundColor:Colors.rowBackgroundColor,padding:20,}}><Text>{'Pending Orders'}</Text></View>
+             <View style={{backgroundColor:Colors.white,padding:20}}><Text>{'Rejected Orders'}</Text></View>
+             <View style={{backgroundColor:Colors.rowBackgroundColor,padding:20}}><Text>{'Delivered Orders'}</Text></View>
+             <View style={{backgroundColor:Colors.white,padding:20}}><Text>{'Total Orders'}</Text></View>
         </View>
-        <View style={{height:240,fontSize:22,borderColor:'#c4c4cb',borderWidth:1}}>
-             <View style={{backgroundColor:'#f4f4f4',padding:20,width:150}}><Text style={{textAlign:'center'}}>{'23'}</Text></View>
-             <View style={{backgroundColor:'white',padding:20}}><Text style={{textAlign:'center'}}>{'5'}</Text></View>
-             <View style={{backgroundColor:'#f4f4f4',padding:20}}><Text style={{textAlign:'center'}}>{'71'}</Text></View>
-             <View style={{backgroundColor:'white',padding:20}}><Text style={{textAlign:'center'}}>{'100'}</Text></View>
+        <View style={{height:240,fontSize:22,borderColor:Colors.lightborderColor,borderWidth:0.5}}>
+             <View style={{backgroundColor:Colors.rowBackgroundColor,padding:20,width:150}}><Text style={{textAlign:'center'}}>{'23'}</Text></View>
+             <View style={{backgroundColor:Colors.white,padding:20}}><Text style={{textAlign:'center'}}>{'5'}</Text></View>
+             <View style={{backgroundColor:Colors.rowBackgroundColor,padding:20}}><Text style={{textAlign:'center'}}>{'71'}</Text></View>
+             <View style={{backgroundColor:Colors.white,padding:20}}><Text style={{textAlign:'center'}}>{'100'}</Text></View>
         </View>
 
           </View>
@@ -111,10 +120,10 @@ export default class Dashboard extends React.Component {
        <View style={{flexGrow:1,flexDirection:'row'}}>
         <ScrollView contentContainerStyle={{flexGrow:1}}>
         <View style={{height:50,borderTopLeftRadius:5,borderTopRightRadius:8,backgroundColor:Colors.textBackgroundColor,marginTop:SECTION_MARGIN_TOP,marginRight:10,width:300}}>
-        <View style={{flexDirection:'row',}}>
-        <CustomCheckBox title={'MY CART'} color={Colors.buttonBackgroundColor} checked={true}/>
+        <View style={{flexDirection:'row',alignSelf:'center'}}>
+        <CustomCheckBox title={'MY CART'} color={Colors.buttonBackgroundColor} checked={true} fontSize={12}/>
         <Text style={{fontSize:14,color:Colors.darkSkyBlue,marginLeft:10,marginTop:11}}>(50)</Text>
-        <Button style={{backgroundColor:Colors.buttonBackgroundColor,height:30,marginLeft:80,marginTop:10}}><Text>Verify</Text></Button>
+        <CustomButton title={'VERIFY'} height={30} marginLeft={70} marginRight={15} marginTop={10}/>
         </View>
         </View>
 
@@ -123,8 +132,8 @@ export default class Dashboard extends React.Component {
         <Grid><Col style={styles.colstyle}><CustomCheckBox color={Colors.buttonBackgroundColor} /></Col>
         <Col><Row style={styles.contents}><CustomText text={'Order ID'} textType={Strings.maintext}/></Row>
         <Row style={styles.contents}><CustomText text={'Cust. Name'} textType={Strings.maintext}/></Row></Col>
-        <Col><Row style={styles.contents}><Text style={{fontSize:14,}}>12345</Text></Row>
-        <Row style={styles.contents}><Text style={{fontSize:14}}>Vivek purush</Text></Row></Col></Grid>
+        <Col><Row style={styles.contents}><Text style={{fontSize:14,marginTop:5}}>12345</Text></Row>
+        <Row style={styles.contents}><Text style={{fontSize:14,marginTop:5}}>Vivek purush</Text></Row></Col></Grid>
         </View>
         </View>
 
@@ -134,8 +143,8 @@ export default class Dashboard extends React.Component {
         <Grid><Col style={styles.colstyle}><CustomCheckBox color={Colors.buttonBackgroundColor}/></Col>
         <Col><Row style={styles.contents}><CustomText text={'Order ID'} textType={Strings.maintext}/></Row>
         <Row style={styles.contents}><CustomText text={'Cust. Name'} textType={Strings.maintext}/></Row></Col>
-        <Col><Row style={styles.contents}><Text style={{fontSize:14,}}>12345</Text></Row>
-        <Row style={styles.contents}><Text style={{fontSize:14}}>Vivek purush</Text></Row></Col></Grid>
+        <Col><Row style={styles.contents}><Text style={{fontSize:14,marginTop:5}}>12345</Text></Row>
+        <Row style={styles.contents}><Text style={{fontSize:14,marginTop:5}}>Vivek purush</Text></Row></Col></Grid>
         </View>
         </View>
 
@@ -144,8 +153,8 @@ export default class Dashboard extends React.Component {
         <Grid><Col style={styles.colstyle}><CustomCheckBox color={Colors.buttonBackgroundColor}/></Col>
         <Col><Row style={styles.contents}><CustomText text={'Order ID'} textType={Strings.maintext}/></Row>
         <Row style={styles.contents}><CustomText text={'Cust. Name'} textType={Strings.maintext}/></Row></Col>
-        <Col><Row style={styles.contents}><Text style={{fontSize:14,}}>12345</Text></Row>
-        <Row style={styles.contents}><Text style={{fontSize:14}}>Vivek purush</Text></Row></Col></Grid>
+        <Col ><Row style={styles.contents}><Text style={{fontSize:14,marginTop:5}}>12345</Text></Row>
+        <Row style={styles.contents}><Text style={{fontSize:14,marginTop:5}}>Vivek purush</Text></Row></Col></Grid>
         </View>
         </View>
 
@@ -169,8 +178,8 @@ export default class Dashboard extends React.Component {
         <Grid><Col style={styles.colstyle}><CustomCheckBox color={Colors.buttonBackgroundColor}/></Col>
         <Col><Row style={styles.contents}><CustomText text={'Order ID'} textType={Strings.maintext}/></Row>
         <Row style={styles.contents}><CustomText text={'Cust. Name'} textType={Strings.maintext}/></Row></Col>
-        <Col><Row style={styles.contents}><Text style={{fontSize:14,}}>12345</Text></Row>
-        <Row style={styles.contents}><Text style={{fontSize:14}}>Vivek purush</Text></Row></Col></Grid>
+        <Col><Row style={styles.contents}><Text style={{fontSize:14,marginTop:5}}>12345</Text></Row>
+        <Row style={styles.contents}><Text style={{fontSize:14,marginTop:5}}>Vivek purush</Text></Row></Col></Grid>
         </View>
         </View>
         </View>
@@ -190,8 +199,8 @@ export default class Dashboard extends React.Component {
         <Grid><Col style={styles.colstyle}><CustomCheckBox color={Colors.buttonBackgroundColor}/></Col>
         <Col><Row style={styles.contents}><CustomText text={'Order ID'} textType={Strings.maintext}/></Row>
         <Row style={styles.contents}><CustomText text={'Cust. Name'} textType={Strings.maintext}/></Row></Col>
-        <Col><Row style={styles.contents}><Text style={{fontSize:14,}}>12345</Text></Row>
-        <Row style={styles.contents}><Text style={{fontSize:14}}>Vivek purush</Text></Row></Col></Grid>
+        <Col><Row style={styles.contents}><Text style={{fontSize:14,marginTop:5}}>12345</Text></Row>
+        <Row style={styles.contents}><Text style={{fontSize:14,marginTop:5}}>Vivek purush</Text></Row></Col></Grid>
         </View>
         </View>
         </View>
@@ -210,8 +219,8 @@ export default class Dashboard extends React.Component {
         <Grid><Col style={styles.colstyle}><CustomCheckBox color={Colors.buttonBackgroundColor} /></Col>
         <Col><Row style={styles.contents}><CustomText text={'Order ID'} textType={Strings.maintext}/></Row>
         <Row style={styles.contents}><CustomText text={'Cust. Name'} textType={Strings.maintext}/></Row></Col>
-        <Col><Row style={styles.contents}><Text style={{fontSize:14,}}>12345</Text></Row>
-        <Row style={styles.contents}><Text style={{fontSize:14}}>Vivek purush</Text></Row></Col></Grid>
+        <Col><Row style={styles.contents}><Text style={{fontSize:14,marginTop:5}}>12345</Text></Row>
+        <Row style={styles.contents}><Text style={{fontSize:14,marginTop:5}}>Vivek purush</Text></Row></Col></Grid>
         </View>
         </View>
         </View>
@@ -223,7 +232,7 @@ export default class Dashboard extends React.Component {
               </View>
               </ScrollView>
         </Container>
-
+        </SideMenuDrawer>
     );
   }
 
@@ -260,6 +269,7 @@ contents: {
   minWidth: '30%',
   maxWidth: '70%',
   height: 30,
+  
 },
 
 colstyle:{

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { ScrollView,Picker,StyleSheet } from 'react-native';
-import { Container, View, Button, Left, Right,Icon,Text,Grid,Col,Input} from 'native-base';
+import { ScrollView,Picker,StyleSheet,BackHandler } from 'react-native';
+import { Container, View, Button, Left, Right,Icon,Text,Grid,Col,Input,Badge} from 'native-base';
+import { Actions } from 'react-native-router-flux';
 
 import Navbar from '../../component/Navbar';
 import Colors from '../../constants/Colors';
@@ -11,30 +12,39 @@ import CustomText from '../../component/CustomText';
 import { SECTION_MARGIN_TOP } from '../../constants/Dimen';
 import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
+import SideMenuDrawer from '../../component/SideMenuDrawer';
+import CustomSearchableDropdown from '../../component/CustomSearchableDropdown';
 
 const myArray=[{name:"Select a Status" , value:"Select a Status"},{name:"Delivered" , value:"Delivered"},{name:"Undelivered" , value:"Undelivered"}];
 const myArray1=[{name:"Select/Enter a Reason" , value:"Select/Enter a Reason"},{name:"a" , value:"a"},{name:"b" , value:"b"}];
 
 export default class Delivery extends React.Component {
+
+
 render(){
     var left = (
         <Left style={{ flex: 1 }}>
-            <Icon style={{ color:Colors.navbarIconColor}} name='ios-menu' />
+          <Button onPress={() => Actions.pop()} transparent>
+            <Icon style={{ color:Colors.navbarIconColor}} name='ios-close' />
+            </Button>
         </Left>
       );
       var right = (
         <Right style={{ flex: 1 }}>
-          <Button onPress={() => Actions.cart()} transparent>
+          <Button transparent>
             <Icon style={{color:Colors.navbarIconColor}} name='ios-chatbubbles' />
           </Button>
-          <Button onPress={() => Actions.cart()} transparent>
+          <Button  transparent>
             <Icon style={{color:Colors.navbarIconColor }} name='ios-notifications' />
+            <Badge style={{width: 10, backgroundColor: 'orange',height:12,marginTop:20,borderRadius:10}} 
+                            textStyle={{color: 'white', fontSize: 20, lineHeight: 20}}></Badge>
           </Button>
         </Right>
       );
 
 
     return(
+  
         <Container>
         <Navbar left={left} right={right} title="Delivery" />
         <ScrollView contentContainerStyle={{flexGrow:1}}>
@@ -122,6 +132,7 @@ render(){
         </View>
         </ScrollView>
         </Container>
+       
     );
 }
 }

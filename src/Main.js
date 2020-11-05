@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { BackHandler } from 'react-native';
+import { BackHandler,ToastAndroid } from 'react-native';
 import { Root } from 'native-base';
 import { Scene, Router, Actions } from 'react-native-router-flux';
 
@@ -18,11 +18,40 @@ import SelfAssign from './page/delivery_boy/SelfAssign';
 import StatusUpdate from './page/delivery_boy/StatusUpdate';
 import VehicleScan from './page/delivery_boy/VehicleScan';
 
+let backPressed = 0;
 
 export default class Main extends Component {
-  componentWillMount = () => {
-    BackHandler.addEventListener('hardwareBackPress', () => Actions.pop());
-  };
+
+
+  
+  // componentWillMount = () => {
+  //   BackHandler.addEventListener('hardwareBackPress', () => Actions.pop());
+  // };
+//   componentDidMount() {
+//     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
+// }
+
+// constructor(){
+//     super();
+//     this.state={
+//         isloggedin: false,
+//         backPressed: 1,
+//     }
+// }
+
+// handleBackButton(){
+//     if(Actions.currentScene === 'delivery' || Actions.currentScene === 'vehiclescan' || Actions.currentScene === 'dashboard' || Actions.currentScene === 'login'|| Actions.currentScene === 'pickup'|| Actions.currentScene === 'statusupdate'|| Actions.currentScene === 'ordertransfer1' || Actions.currentScene === 'selfassign'){
+//         if(backPressed > 0){
+//             BackHandler.exitApp();
+//             backPressed = 0;
+//         }else {
+//             backPressed++;
+//             ToastAndroid.show("Please logout to exit", ToastAndroid.SHORT);
+//             setTimeout( () => { backPressed = 0}, 2000);
+//             return true;
+//         }
+//     }
+// }
 
   render() {
     return(

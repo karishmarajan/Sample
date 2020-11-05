@@ -1,6 +1,7 @@
 import React, { Component , useState } from 'react';
 import { ScrollView,Picker,StyleSheet } from 'react-native';
-import { Container, Content, View, Button, Left, Right,Icon,Text, Input,TextInput,Grid,Col} from 'native-base';
+import { Container, Content, View, Button, Left, Right,Icon,Text, Input,TextInput,Grid,Col,Badge} from 'native-base';
+import { Actions } from 'react-native-router-flux';
 
 import Navbar from '../../component/Navbar';
 import Colors from '../../constants/Colors';
@@ -9,6 +10,7 @@ import CustomText from '../../component/CustomText';
 import CustomButton from '../../component/CustomButton';
 import { SECTION_MARGIN_TOP } from '../../constants/Dimen';
 import CustomDropdown from '../../component/CustomDropdown';
+import SideMenuDrawer from '../../component/SideMenuDrawer';
 
 const myArray=[{name:"Select a Status" , value:"Select a Status"},{name:"Delivered" , value:"Delivered"},{name:"Undelivered" , value:"Undelivered"}];
 const myArray1=[{name:"Select/Enter a Reason" , value:"Select/Enter a Reason"},{name:"a" , value:"a"},{name:"b" , value:"b"}];
@@ -20,18 +22,22 @@ export default class StatusUpdate extends React.Component {
 
 
 render(){
-    var left = (
-        <Left style={{ flex: 1 }}>
-            <Icon style={{ color:Colors.navbarIconColor }} name='ios-menu' />
-        </Left>
-      );
+  var left = (
+    <Left style={{ flex: 1 }}>
+      <Button onPress={() => Actions.pop()} transparent>
+        <Icon style={{ color:Colors.navbarIconColor}} name='ios-close' />
+        </Button>
+    </Left>
+  );
       var right = (
         <Right style={{ flex: 1 }}>
-          <Button onPress={() => Actions.cart()} transparent>
+          <Button  transparent>
             <Icon style={{ color:Colors.navbarIconColor }} name='ios-chatbubbles' />
           </Button>
-          <Button onPress={() => Actions.cart()} transparent>
+          <Button  transparent>
             <Icon style={{ color:Colors.navbarIconColor}} name='ios-notifications' />
+            <Badge style={{width: 10, backgroundColor: 'orange',height:12,marginTop:20,borderRadius:10}} 
+                            textStyle={{color: 'white', fontSize: 20, lineHeight: 20}}></Badge>
           </Button>
         </Right>
       );
@@ -46,12 +52,13 @@ render(){
       // }
 
     return(
+      
       <Container>
         <Navbar left={left} right={right} title="Status Update" />
         <ScrollView contentContainerStyle={{flexGrow:1}}>
         <View style={{flex: 1, flexDirection: 'column',backgroundColor:Colors.mainBackgroundColor,padding:15,}}>
         <View style={{ backgroundColor:'white',marginTop:SECTION_MARGIN_TOP,flexGrow:1,padding:10,paddingRight:20,paddingLeft:20}}>
-        <CustomButton title={'Barcode Scan'} backgroundColor={Colors.darkSkyBlue} width={120} height={30} fontSize={16}  marginTop={SECTION_MARGIN_TOP}/>
+        <CustomButton title={'Barcode Scan'} backgroundColor={Colors.darkSkyBlue} width={120} height={30} fontSize={16}  marginTop={SECTION_MARGIN_TOP} borderRadius={4}/>
         
         {/*////////////////////// Customer Details Block //////////////////////////////////////////////// */}
         
@@ -93,7 +100,7 @@ render(){
 
 <CustomText  text={'Customer Signature'} textType={Strings.subtitle}/>
 <View style={{ backgroundColor:Colors.signBackgroundColor,height:150,Right:20,borderRadius:5,padding:10}}></View>
-<CustomButton title={'Submit'}/>
+<CustomButton title={'Submit'} borderRadius={4}/>
 
 
         </View>
@@ -101,6 +108,7 @@ render(){
 
         </ScrollView>
         </Container>
+       
     );
 }
 
