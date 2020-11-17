@@ -1,20 +1,22 @@
 import React, { Component } from 'react';
 import { ScrollView,Picker,StyleSheet } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import { Container, Header, Button, Left, Right,Icon,Text, Input,TextInput,Grid,Col,Row,SearchBar,Item, View,Badge} from 'native-base';
+// import Icon from 'react-native-vector-icons/FontAwesome';
+import { Container, Header, Button, Left, Icon,Right,Text, Input,TextInput,Grid,Col,Row,SearchBar,Item, View,Badge, Body} from 'native-base';
 
 import Navbar from '../../component/Navbar';
 import Colors from '../../constants/Colors';
 import Strings from '../../constants/Strings';
 import CustomText from '../../component/CustomText';
 import CustomInput from '../../component/CustomInput';
-import { SECTION_MARGIN_TOP } from '../../constants/Dimen';
+import { SECTION_MARGIN_TOP,COLUMN_PADDING,SHORT_BUTTON_HEIGHT,SHORT_BORDER_RADIUS } from '../../constants/Dimen';
 import CustomButton from '../../component/CustomButton';
 import SideMenuDrawer from '../../component/SideMenuDrawer';
 
 import CustomDropdown from '../../component/CustomDropdown';
 
-const myArray1=[{name:"Order No." , value:"Order No."},{name:"101" , value:"101"},{name:"102" , value:"102"}];
+const myArray1=[{name:"Order No." , value:"Order No."},{name:"101" , value:"101"},{name:"102" , value:"102"},{name:"103" , value:"103"}];
+const myArray=[{name:"PENDING" , value:"PENDING"},{name:"ALL" , value:"ALL"},{name:"CANCELLED" , value:"CANCELLED"},{name:"DELIVERED" , value:"DELIVERED"}];
 
 // import SearchBar from 'react-native-search-bar';
 // import { SearchBar } from 'react-native-elements';
@@ -57,62 +59,114 @@ render(){
         <Navbar left={left} right={right} title="PickUp" />
  <Container horizontal={true} style={{flexDirection:'column',padding:10,backgroundColor:Colors.textBackgroundColor}}>
 
+ <CustomButton title={'Manual Pickup'} backgroundColor={Colors.white} text_color={Colors.darkSkyBlue} borderColor={Colors.darkSkyBlue} borderWidth={1} fontSize={16} borderRadius={3} onPress={()=>Actions.manualpickup()} />
+
 {/*////////////////////// Order and Searchbar Block //////////////////////////////////////////////// */}
 
-<View style={{flexDirection:'row',justifyContent:'space-around'}}>
-<CustomDropdown data={myArray1} height={35} backgroundColor={Colors.white} fontSize={14} width={100} />
- <CustomInput placeholder={'Search here'} icon_name={'ios-search'} icon_color={Colors.navbarIconColor}  icon_fontsize={18}   placeholderTextColor={Colors.navbarIconColor} fontSize={14} showIcon={true} backgroundColor={Colors.white} height={35} width={180} marginTop={5}/>
+<View style={{flexDirection:'row',justifyContent:'space-around',textAlignVertical:'center',marginTop:SECTION_MARGIN_TOP,}}>
+<View style={{flex:2}}><CustomDropdown data={myArray1} height={35} backgroundColor={Colors.white}  /></View>
+<View style={{flex:3,marginLeft:20}}><CustomInput placeholder={'Search here'} icon_name={'ios-search'} icon_color={Colors.navbarIconColor}  icon_fontsize={18}   placeholderTextColor={Colors.navbarIconColor} fontSize={14} showIcon={true} backgroundColor={Colors.white} height={35} marginTop={5}/></View>
           </View>
 
 {/*////////////////////// Manual Pickup Button Block //////////////////////////////////////////////// */}
 
-       <View style={{flexDirection:'row',marginTop:SECTION_MARGIN_TOP,marginRight:10,justifyContent:'space-between'}}>
-<View style={{flexDirection:'row',marginLeft:10,backgroundColor:Colors.rowBackgroundColor,height:35,justifyContent:'center'}}>
-<Text style={{fontSize:14,fontWeight:'bold'}}>ALL</Text>
-<Text style={{fontSize:14,fontWeight:'bold',color:Colors.darkSkyBlue}}>  (50)    </Text>
-<Icon name={'ios-arrow-down'} icon_color={Colors.navbarIconColor} style={{fontSize:18}}/>
+<View style={{flexDirection:'row',marginTop:SECTION_MARGIN_TOP,backgroundColor:Colors.aash,marginBottom:2,alignSelf:'center'}}>
+<View style={{flex:4,padding:10}}><CustomDropdown data={myArray} height={SHORT_BUTTON_HEIGHT} backgroundColor={Colors.aash} /></View>
+<View style={{flex:2,}}><CustomButton title={'Print'} backgroundColor={Colors.darkSkyBlue}  height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} marginTop={15} borderRadius={SHORT_BORDER_RADIUS}  /></View>
 </View>
-        <CustomButton title={'Manual Pickup'} backgroundColor={Colors.darkSkyBlue}  height={35} fontSize={16}  marginTop={1}/></View>
 
 
 {/*//////////////////////// Horizontal Order Details Block //////////////////////////////////////////////// */}
 
         <View>
-        <ScrollView horizontal={true} contentContainerStyle={{flexGrow:1}} style={{marginTop:5,backgroundColor:Colors.white}}>
-        <Grid ><Col><CustomText text={'SERIAL NO.'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/>
-        <Row style={styles.content}><Text>1234567890</Text></Row>
-        <Row style={styles.content}><Text>12345678</Text></Row></Col></Grid>
-        <Grid ><Col><CustomText text={'ORDER ID'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/>
-        <Row style={styles.content}><Text>12345</Text></Row>
-        <Row style={styles.content}><Text>12345678</Text></Row></Col></Grid>
-        <Grid ><Col><CustomText text={'CUSTOMER NAME'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/>
-        <Row style={styles.content}><Text>Vivek</Text></Row>
-        <Row style={styles.content}><Text>12345678</Text></Row></Col></Grid>
-        <Grid ><Col><CustomText text={'ADDRESS'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/>
-        <Row style={styles.content}><Text>FortKochi</Text></Row>
-        <Row style={styles.content}><Text>12345678</Text></Row></Col></Grid>
-        <Grid ><Col><CustomText text={'LOCATION'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/>
-        <Row style={styles.content}><Text>12345678</Text></Row>
-        <Row style={styles.content}><Text>12345678</Text></Row></Col></Grid>
-        <Grid ><Col><CustomText text={'MOBILE NO.'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/>
-        <Row style={styles.content}><Text>12345678</Text></Row>
-        <Row style={styles.content}><Text>12345678</Text></Row></Col></Grid>
-        <Grid ><Col><CustomText text={'DATE & TIME'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/>
-        <Row style={styles.content}><Text>12345678</Text></Row>
-        <Row style={styles.content}><Text>12345678</Text></Row></Col></Grid>
-        <Grid ><Col><CustomText text={'STATUS'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/>
-        <Row style={styles.content}><Text>12345678</Text></Row>
-        <Row style={styles.content}><Text>12345678</Text></Row></Col></Grid>
-        <Grid ><Col><CustomText text={'ATTEMPT'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/>
-        <Row style={styles.content}><Text>12345678</Text></Row>
-        <Row style={styles.content}><Text>12345678</Text></Row></Col></Grid>
-        <Grid ><Col><CustomText text={'DELIVERY TYPE'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/>
-        <Row style={styles.content}><Text>12345678</Text></Row>
-        <Row style={styles.content}><Text>12345678</Text></Row></Col></Grid>
-        <Grid ><Col><CustomText text={'TOTAL'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/>
-        <Row style={styles.content}><Text>12345678</Text></Row>
-        <Row style={styles.content}><Text>12345678</Text></Row></Col></Grid>
+        <ScrollView horizontal={true} contentContainerStyle={{flexGrow:1}} style={{backgroundColor:Colors.white}}>
+    
+          
+          
+        <Grid ><Col><View style={{backgroundColor:Colors.aash,paddingLeft:5,paddingRight:5}}><CustomText text={'SERIAL NO.'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></View>
+        <Row style={styles.content}><Text style={styles.textstyles}>1234567890</Text></Row>
+        <Row style={styles.content}><Text style={styles.textstyles}>12345678</Text></Row></Col></Grid>
+        <Grid ><Col ><View style={{backgroundColor:Colors.aash,paddingLeft:5,paddingRight:5}}><CustomText text={'ORDER ID'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></View>
+        <Row style={styles.content}><Text style={styles.textstyles}>12345</Text></Row>
+        <Row style={styles.content}><Text style={styles.textstyles}>12345</Text></Row></Col></Grid>
+        <Grid ><Col><View style={{backgroundColor:Colors.aash,paddingLeft:5,paddingRight:5}}><CustomText text={'CUSTOMER NAME'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></View>
+        <Row style={styles.content}><Text style={styles.textstyles}>Vivek</Text></Row>
+        <Row style={styles.content}><Text style={styles.textstyles}>Vivek</Text></Row></Col></Grid>
+        <Grid ><Col><View style={{backgroundColor:Colors.aash,paddingLeft:5,paddingRight:5}}><CustomText text={'ADDRESS'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></View>
+        <Row style={styles.content}><Text style={styles.textstyles}>FortKochi</Text></Row>
+        <Row style={styles.content}><Text style={styles.textstyles}>FortKochi</Text></Row></Col></Grid>
+        <Grid ><Col><View style={{backgroundColor:Colors.aash,paddingLeft:5,paddingRight:5}}><CustomText text={'LOCATION'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></View>
+        <Row style={styles.content}><Text style={styles.textstyles}>12345678</Text></Row>
+        <Row style={styles.content}><Text style={styles.textstyles}>12345678</Text></Row></Col></Grid>
+        <Grid ><Col><View style={{backgroundColor:Colors.aash,paddingLeft:5,paddingRight:5}}><CustomText text={'MOBILE NO.'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></View>
+        <Row style={styles.content}><Text style={styles.textstyles}>12345678</Text></Row>
+        <Row style={styles.content}><Text style={styles.textstyles}>12345678</Text></Row></Col></Grid>
+        <Grid ><Col><View style={{backgroundColor:Colors.aash,paddingLeft:5,paddingRight:5}}><CustomText text={'DATE & TIME'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></View>
+        <Row style={styles.content}><Text style={styles.textstyles}>12345678</Text></Row>
+        <Row style={styles.content}><Text style={styles.textstyles}>12345678</Text></Row></Col></Grid>
+        <Grid ><Col><View style={{backgroundColor:Colors.aash,paddingLeft:5,paddingRight:5}}><CustomText text={'STATUS'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></View>
+        <Row style={styles.content}><Text style={styles.textstyles}>12345678</Text></Row>
+        <Row style={styles.content}><Text style={styles.textstyles}>12345678</Text></Row></Col></Grid>
+        <Grid ><Col><View style={{backgroundColor:Colors.aash,paddingLeft:5,paddingRight:5}}><CustomText text={'ATTEMPT'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></View>
+        <Row style={styles.content}><Text style={styles.textstyles}>2</Text></Row>
+        <Row style={styles.content}><Text style={styles.textstyles}>1</Text></Row></Col></Grid>
+        <Grid ><Col><View style={{backgroundColor:Colors.aash,paddingLeft:5,paddingRight:5}}><CustomText text={'DELIVERY TYPE'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></View>
+        <Row style={styles.content}><Text style={styles.textstyles}>COD</Text></Row>
+        <Row style={styles.content}><Text style={styles.textstyles}>other</Text></Row></Col></Grid>
+        <Grid ><Col><View style={{backgroundColor:Colors.aash,paddingLeft:5,paddingRight:5}}><CustomText text={'TOTAL'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></View>
+        <Row style={styles.content}><Text style={styles.textstyles}>12345678</Text></Row>
+        <Row style={styles.content}><Text style={styles.textstyles}>12345678</Text></Row></Col></Grid>
+        <Grid ><Col><View style={{backgroundColor:Colors.aash,paddingLeft:5,paddingRight:5}}><CustomText text={''} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></View>
+        <Row style={styles.content}>
+          <View style={{flexDirection:'column',paddingLeft:10,textAlignVertical:'center'}}>
+          <CustomButton title={'Notify'} backgroundColor={Colors.darkSkyBlue}  height={20} fontSize={14}  marginTop={1} marginBottom={5}/>
+          <CustomButton title={'Call'} backgroundColor={Colors.white}  height={20} fontSize={14}  marginTop={1} marginBottom={5} textDecorationLine={'underline'} text_color={Colors.darkSkyBlue}/>
+          <CustomButton title={'Details'} backgroundColor={Colors.white}  height={20} fontSize={14}  marginTop={1} marginBottom={5} textDecorationLine={'underline'} text_color={Colors.darkSkyBlue}/>
+          </View>
+        </Row>
+        <Row style={styles.content}>
+        <View style={{flexDirection:'column',paddingLeft:10,textAlignVertical:'center'}}>
+          <CustomButton title={'Notify'} backgroundColor={Colors.darkSkyBlue}  height={20} fontSize={14}  marginTop={1} marginBottom={5}/>
+          <CustomButton title={'Call'} backgroundColor={Colors.white}  height={20} fontSize={14}  marginTop={1} marginBottom={5} textDecorationLine={'underline'} text_color={Colors.darkSkyBlue}/>
+          <CustomButton title={'Details'} backgroundColor={Colors.white}  height={20} fontSize={14}  marginTop={1} marginBottom={5} textDecorationLine={'underline'} text_color={Colors.darkSkyBlue}/>
+          </View>
+        </Row>
+        </Col></Grid>
         
+
+{/* <View style={{flex:1,flexDirection:'column',height:100}}> */}
+{/* <View style={{flex:1,flexDirection:'row'}}>
+<Grid style={{flex:1}}>
+<Col style={{backgroundColor:Colors.aash,paddingLeft:10,paddingRight:10,textAlign:'center'}}><CustomText  textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></Col>
+  <Col style={{backgroundColor:Colors.aash,paddingLeft:COLUMN_PADDING,paddingRight:COLUMN_PADDING}}><CustomText text={'SERIAL NO.'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></Col>
+  <Col style={{backgroundColor:Colors.aash,paddingLeft:10,paddingRight:10}}><CustomText text={'ORDER ID'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></Col>
+  <Col style={{backgroundColor:Colors.aash,paddingLeft:10,paddingRight:10}}><CustomText text={'CUSTOMER NAME'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></Col>
+  <Col style={{backgroundColor:Colors.aash,paddingLeft:10,paddingRight:10}}><CustomText text={'ADDRESS'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></Col>
+  <Col style={{backgroundColor:Colors.aash,paddingLeft:10,paddingRight:10}}><CustomText text={'LOCATION'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></Col>
+  <Col style={{backgroundColor:Colors.aash,paddingLeft:10,paddingRight:10}}><CustomText text={'MOBILE NO.'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></Col>
+  <Col style={{backgroundColor:Colors.aash,paddingLeft:10,paddingRight:10}}><CustomText text={'DATE & TIME'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></Col>
+  <Col style={{backgroundColor:Colors.aash,paddingLeft:10,paddingRight:10}}><CustomText text={'STATUS'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></Col>
+  <Col style={{backgroundColor:Colors.aash,paddingLeft:10,paddingRight:10}}><CustomText text={'ATTEMPT'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></Col>
+  <Col style={{backgroundColor:Colors.aash,paddingLeft:10,paddingRight:10}}><CustomText text={'DELIVERY TYPE'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></Col>
+  <Col style={{backgroundColor:Colors.aash,paddingLeft:10,paddingRight:10}}><CustomText text={'TOTAL'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></Col>
+  <Col style={{backgroundColor:Colors.aash,paddingLeft:10,paddingRight:10}}><CustomText  textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></Col>
+</Grid>
+</View>
+<View style={{flex:1,flexDirection:'row'}}>
+<Grid tyle={{flex:1}}>
+<Col ><Icon  name='align-top'  color={Colors.borderColor}/></Col>
+  <Col style={styles.content}><Text>1234567890</Text></Col>
+  <Col style={styles.content}><Text>12345</Text></Col>
+  <Col style={styles.content}><Text>Vivek</Text></Col>
+  <Col style={styles.content}><Text>FortKochi</Text></Col>
+  <Col style={styles.content}><Text>12345678</Text></Col>
+  <Col style={styles.content}><Text>12345678</Text></Col>
+  <Col style={styles.content}><Text>12345678</Text></Col>
+  <Col style={styles.content}><Text>12345678</Text></Col>
+  <Col style={styles.content}><Text>12345678</Text></Col>
+</Grid>
+</View> */}
+{/* </View> */}
         </ScrollView>
         </View>
         </Container>
@@ -149,8 +203,12 @@ content: {
     top: 5,
     padding: 5,
     color:Colors.grayTextColor,
-    
+    borderBottomWidth:5,
+    borderColor:Colors.textBackgroundColor,
   
+},
+textstyles : {
+fontSize:14,
 },
 header: {
   minWidth: '100%',

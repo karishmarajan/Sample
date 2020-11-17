@@ -17,41 +17,16 @@ import PickUp from './page/delivery_boy/PickUp';
 import SelfAssign from './page/delivery_boy/SelfAssign';
 import StatusUpdate from './page/delivery_boy/StatusUpdate';
 import VehicleScan from './page/delivery_boy/VehicleScan';
+import DeliveryFirst from './page/delivery_boy/DeliveryFirst';
+import DeliveryOutDetails from './page/delivery_boy/DeliveryOutDetails';
+import ManualPickup from './page/delivery_boy/ManualPickup';
+import StatusUpdateFirst from './page/delivery_boy/StatusUpdateFirst';
 
-let backPressed = 0;
+
+
 
 export default class Main extends Component {
 
-
-  
-  // componentWillMount = () => {
-  //   BackHandler.addEventListener('hardwareBackPress', () => Actions.pop());
-  // };
-//   componentDidMount() {
-//     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton.bind(this));
-// }
-
-// constructor(){
-//     super();
-//     this.state={
-//         isloggedin: false,
-//         backPressed: 1,
-//     }
-// }
-
-// handleBackButton(){
-//     if(Actions.currentScene === 'delivery' || Actions.currentScene === 'vehiclescan' || Actions.currentScene === 'dashboard' || Actions.currentScene === 'login'|| Actions.currentScene === 'pickup'|| Actions.currentScene === 'statusupdate'|| Actions.currentScene === 'ordertransfer1' || Actions.currentScene === 'selfassign'){
-//         if(backPressed > 0){
-//             BackHandler.exitApp();
-//             backPressed = 0;
-//         }else {
-//             backPressed++;
-//             ToastAndroid.show("Please logout to exit", ToastAndroid.SHORT);
-//             setTimeout( () => { backPressed = 0}, 2000);
-//             return true;
-//         }
-//     }
-// }
 
   render() {
     return(
@@ -71,6 +46,10 @@ export default class Main extends Component {
             <Scene  key="ordertransfer1" component={OrderTransfer1} hideNavBar />
             <Scene  key="selfassign" component={SelfAssign} hideNavBar />
             <Scene  key="delivery" component={Delivery} hideNavBar />
+            <Scene  key="deliveryfirst" component={DeliveryFirst} hideNavBar />
+            <Scene  key="deliveryoutdetails" component={DeliveryOutDetails} hideNavBar />
+            <Scene  key="manualpickup" component={ManualPickup} hideNavBar />
+            <Scene  key="statusupdatefirst" component={StatusUpdateFirst} hideNavBar />
           </Scene>
         </Router>
       </Root>

@@ -14,7 +14,7 @@ import NoDataFound from '../../component/NoDataFound';
 import CustomInput from '../../component/CustomInput';
 import CustomText from '../../component/CustomText';
 import CustomButton from '../../component/CustomButton';
-import { SECTION_MARGIN_TOP } from '../../constants/Dimen';
+import { SECTION_MARGIN_TOP ,FIELD_MARGIN_TOP, MAIN_BLOCK_BORDER_RADIUS, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,TEXT_PADDING_LEFT, SHORT_BUTTON_HEIGHT,TOTAL_BLOCK, SHORT_TEXT_FIELD_HIEGHT,TEXT_MARGIN_TOP, NORMAL_FONT,COLUMN_PADDING ,AMOUNT_BLOCK_HIEGHT,SECOND_FONT,LOGIN_FIELD_HEIGHT, FOURTH_FONT} from '../../constants/Dimen';
 
 
 
@@ -42,7 +42,6 @@ componentWillUnmount() {
 
   handleBackButtonClick() {
     Actions.pop();
-    // this.props.navigation.goBack(null);
     return true;
 }
   
@@ -58,20 +57,20 @@ componentWillUnmount() {
     return(
       <Container style={{backgroundColor:Colors.white}}>
         <KeyboardAvoidingScrollView keyboardShouldPersistTaps={'always'}>
-        <Image source={require('../../assets/logo.png')} style={{height:250,width:360,marginTop:5,}}/>
+        <Image source={require('../../assets/logo.png')} style={{height:TOTAL_BLOCK,width:360,marginTop:TEXT_PADDING_LEFT,}}/>
 
 {/*////////////////////// Login Block //////////////////////////////////////////////// */}
 
-          <View style={{flex:1,padding:20,marginTop:30}}>   
+          <View style={{flex:1,padding:MAIN_VIEW_PADDING,marginTop:SECTION_MARGIN_TOP}}>   
           <CustomText text={'Login'} textType={Strings.titlelarge}/>
-          <View  style={{marginTop:40}}>
-            <CustomInput keyboardType={'email-address'} placeholder={'Email'} icon_name={'ios-person'} icon_color={Colors.placeholderTextColor} icon_fontsize={18} placeholderTextColor={Colors.placeholderTextColor} fontSize={18} showIcon={true} height={60} borderRadius={6}/>
+          <View  style={{marginTop:TEXT_FIELD_HIEGHT}}>
+            <CustomInput keyboardType={'email-address'} placeholder={'Username'} icon_name={'ios-person'} icon_color={Colors.placeholderTextColor} icon_fontsize={FOURTH_FONT} placeholderTextColor={Colors.placeholderTextColor} fontSize={18} showIcon={true} height={LOGIN_FIELD_HEIGHT} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop_text={FIELD_MARGIN_TOP} flex={1}/>
           </View>
           <View  style={styles.input}>
-            <CustomInput secureTextEntry={true} placeholder={'Password'} icon_name={'ios-lock'} icon_color={Colors.placeholderTextColor} icon_fontsize={18} placeholderTextColor={Colors.placeholderTextColor} fontSize={18} showIcon={true} height={60} borderRadius={6}/>
+            <CustomInput secureTextEntry={true} placeholder={'Password'} icon_name={'ios-lock'} icon_color={Colors.placeholderTextColor} icon_fontsize={FOURTH_FONT} placeholderTextColor={Colors.placeholderTextColor} fontSize={18} showIcon={true} height={LOGIN_FIELD_HEIGHT} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop_text={FIELD_MARGIN_TOP} flex={1}/>
           </View>
-          <View style={{marginTop:50}}>
-            <CustomButton  title={'LOGIN'} fontSize={18} height={60} onPress={()=>Actions.reset('dashboard')} borderRadius={6}/>
+          <View style={{marginTop:LOGIN_FIELD_HEIGHT}}>
+            <CustomButton  title={'LOGIN'} fontSize={FOURTH_FONT} height={LOGIN_FIELD_HEIGHT} onPress={()=>Actions.reset('dashboard')} borderRadius={SHORT_BLOCK_BORDER_RADIUS}/>
           </View>
           </View>
 

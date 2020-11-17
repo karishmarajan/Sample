@@ -12,13 +12,14 @@ import Strings from '../../constants/Strings';
 import CustomButton from '../../component/CustomButton';
 import CustomCheckBox from '../../component/CustomCheckBox';
 import CustomSubButton from '../../component/CustomSubButton';
-import { SECTION_MARGIN_TOP, SCREEN_HEIGHT } from '../../constants/Dimen';
+import { SECTION_MARGIN_TOP,FIELD_MARGIN_TOP, MAIN_BLOCK_BORDER_RADIUS, SHORT_BLOCK_BORDER_RADIUS, ORDER_BLOCK_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,ADDRESS_FIELD_HEIGHT, SHORT_BUTTON_HEIGHT,TOTAL_BLOCK, SHORT_TEXT_FIELD_HIEGHT,TEXT_MARGIN_TOP, NORMAL_FONT,COLUMN_PADDING ,AMOUNT_BLOCK_HIEGHT,SECOND_FONT,LOGIN_FIELD_HEIGHT,FOURTH_FONT} from '../../constants/Dimen';
 import CustomText from '../../component/CustomText';
 import SideMenuDrawer from '../../component/SideMenuDrawer';
 
+
+
+
 export default class Dashboard extends React.Component {
-
-
 
   render() {
   
@@ -48,66 +49,28 @@ export default class Dashboard extends React.Component {
           <Navbar left={left} right={right} title="Dashboard"/>
           <ScrollView contentContainerStyle={{flexGrow:1}}>
 
+
+
            {/*////////////////////// main view //////////////////////////////////////////////// */}
 
-          <View style={{flex: 1, flexDirection: 'column',backgroundColor:Colors.mainBackgroundColor,padding:20}}>
+          <View style={{flex: 1, flexDirection: 'column',backgroundColor:Colors.mainBackgroundColor,padding:MAIN_VIEW_PADDING}}>
 
 
-            {/*////////////////////// Amount Collected block //////////////////////////////////////////////// */}
 
-          <View style={{ backgroundColor:Colors.white,marginTop:SECTION_MARGIN_TOP,height:120,borderRadius:10,padding:10}}>
-          <CustomText text={'Amount collected today'} textType={Strings.maintext}/>
-           <Text style={{fontSize:20,fontWeight:'bold',marginLeft:5}}>Rs:1,00,000</Text>
-           <Text style={{fontSize:12,textDecorationLine:'underline',color:Colors.darkSkyBlue,marginTop:30,marginLeft:5}}>View Details</Text>
-          </View>
+ {/*////////////////////// Order Transfer Block //////////////////////////////////////////////// */}
 
-
-          {/*////////////////////// Order Transfer Block //////////////////////////////////////////////// */}
-
-          <View style={{ backgroundColor:Colors.white,marginTop:SECTION_MARGIN_TOP,height:120,borderRadius:10,paddingLeft:10,paddingTop:10}}>
+ <View style={{ backgroundColor:Colors.white,height:ORDER_BLOCK_HIEGHT,borderRadius:MAIN_BLOCK_BORDER_RADIUS,padding:COLUMN_PADDING}}>
           <CustomText text={'Order Transfer Status:'} textType={Strings.maintext} fontWeight={'bold'} />
           <CustomText text={'Waiting for your Approval'} textType={Strings.maintext} />
-          <View style={{flex:1,flexDirection:'row'}}>
-              <CustomButton title={'Reject'} backgroundColor={Colors.red} width={80} height={30} borderRadius={4}/>
-              <CustomButton title={'Accept'} backgroundColor={Colors.green} width={80} height={30} marginLeft={20} borderRadius={4}/>
+          <View style={{flex:3,flexDirection:'row',}}>
+              <CustomButton title={'Reject'} backgroundColor={Colors.red}  height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BLOCK_BORDER_RADIUS} flex={1}/>
+              <CustomButton title={'Verify'} backgroundColor={Colors.green}  height={SHORT_BUTTON_HEIGHT} marginLeft={SECTION_MARGIN_TOP} borderRadius={SHORT_BLOCK_BORDER_RADIUS} flex={1}/>
           </View>
           </View>
 
 
-          {/*////////////////////// Today List Block //////////////////////////////////////////////// */}
-       
-<View style={{flexDirection:'row',marginTop:10}}>
-<CustomText text={'Today'} textType={Strings.title}/>
- <Text style={{marginTop:10,fontSize:16,fontFamily:'normal',fontWeight:'bold'}}>{`   ${moment().format('DD')}th ${moment().format(`MMM YYYY`)}`}</Text></View>
- <View style={{ backgroundColor:Colors.white,height:260,borderRadius:10,justifyContent:'center',padding:10,flexDirection:'row'}}>
-{/* <View style={{height:150}}>
- <Grid ><Col style={styles.content}><CustomText text={'Pending Orders'} textType={Strings.maintext} fontSize={16}/></Col>
-        <Col style={styles.content}><Text style={{fontSize:14,color:Colors.subTextColor,paddingLeft:10,paddingTop:5,height:30,borderRadius:5}}>23</Text></Col></Grid>
- <Grid ><Col style={styles.content}><CustomText text={'Rejected Orders'} textType={Strings.maintext} fontSize={16}/></Col>
-        <Col style={styles.content}><Text style={{fontSize:14,color:Colors.subTextColor,paddingLeft:10,paddingTop:5,height:30,borderRadius:5}}>5</Text></Col></Grid>
- <Grid><Col style={styles.content}><CustomText text={'Delivered Orders'} textType={Strings.maintext} fontSize={16}/></Col>
-       <Col style={styles.content}><Text style={{fontSize:14,color:Colors.subTextColor,paddingLeft:10,paddingTop:5,height:30,borderRadius:5}}>71</Text></Col></Grid>
- <Grid><Col style={styles.content}><CustomText text={'Total Orders'} textType={Strings.maintext} fontSize={16}/></Col>
-       <Col style={styles.content}><Text style={{fontSize:14,color:Colors.subTextColor,paddingLeft:10,paddingTop:5,height:30,borderRadius:5}}>100</Text></Col></Grid>
-       </View> */}
 
-           <View style={{height:240,fontSize:22,borderColor:Colors.lightborderColor,borderWidth:0.5,marginBottom:10}}>
-             <View style={{backgroundColor:Colors.rowBackgroundColor,padding:20,}}><Text>{'Pending Orders'}</Text></View>
-             <View style={{backgroundColor:Colors.white,padding:20}}><Text>{'Rejected Orders'}</Text></View>
-             <View style={{backgroundColor:Colors.rowBackgroundColor,padding:20}}><Text>{'Delivered Orders'}</Text></View>
-             <View style={{backgroundColor:Colors.white,padding:20}}><Text>{'Total Orders'}</Text></View>
-        </View>
-        <View style={{height:240,fontSize:22,borderColor:Colors.lightborderColor,borderWidth:0.5}}>
-             <View style={{backgroundColor:Colors.rowBackgroundColor,padding:20,width:150}}><Text style={{textAlign:'center'}}>{'23'}</Text></View>
-             <View style={{backgroundColor:Colors.white,padding:20}}><Text style={{textAlign:'center'}}>{'5'}</Text></View>
-             <View style={{backgroundColor:Colors.rowBackgroundColor,padding:20}}><Text style={{textAlign:'center'}}>{'71'}</Text></View>
-             <View style={{backgroundColor:Colors.white,padding:20}}><Text style={{textAlign:'center'}}>{'100'}</Text></View>
-        </View>
-
-          </View>
-
-
-{/*////////////////////// Task Assigned Block //////////////////////////////////////////////// */}
+          {/*////////////////////// Task Assigned Block //////////////////////////////////////////////// */}
 
 <ScrollView horizontal={true} contentContainerStyle={{flexGrow:1}} style={{marginTop:SECTION_MARGIN_TOP,}}>
 <View style={{height:550,padding:10,backgroundColor:Colors.white,width:'100%',flexGrow:1,}}>
@@ -127,47 +90,46 @@ export default class Dashboard extends React.Component {
         </View>
         </View>
 
-        <View style={{height:90,borderRadius:5,backgroundColor:Colors.gray,marginTop:SECTION_MARGIN_TOP,marginLeft:10,width:280}}>
-        <View style={{flexDirection:'row',marginTop:SECTION_MARGIN_TOP}}>
+        <View style={styles.cusdetails}>
         <Grid><Col style={styles.colstyle}><CustomCheckBox color={Colors.buttonBackgroundColor} /></Col>
-        <Col><Row style={styles.contents}><CustomText text={'Order ID'} textType={Strings.maintext}/></Row>
-        <Row style={styles.contents}><CustomText text={'Cust. Name'} textType={Strings.maintext}/></Row></Col>
-        <Col><Row style={styles.contents}><Text style={{fontSize:14,marginTop:5}}>12345</Text></Row>
-        <Row style={styles.contents}><Text style={{fontSize:14,marginTop:5}}>Vivek purush</Text></Row></Col></Grid>
-        </View>
+        <Col><Row style={styles.contents}><CustomText text={'Order ID'} color={Colors.black} textType={Strings.subtext}/></Row>
+        <Row style={styles.contents}><CustomText text={'Cust. Name'} color={Colors.black} textType={Strings.subtext}/></Row></Col>
+        <Col><Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>12345</Text></Row>
+        <Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>Vivek purush</Text></Row></Col></Grid>
         </View>
 
-
-        <View style={{height:90,borderRadius:5,backgroundColor:Colors.gray,marginTop:SECTION_MARGIN_TOP,marginLeft:10,width:280}}>
-        <View style={{flexDirection:'row',marginTop:SECTION_MARGIN_TOP}}>
-        <Grid><Col style={styles.colstyle}><CustomCheckBox color={Colors.buttonBackgroundColor}/></Col>
-        <Col><Row style={styles.contents}><CustomText text={'Order ID'} textType={Strings.maintext}/></Row>
-        <Row style={styles.contents}><CustomText text={'Cust. Name'} textType={Strings.maintext}/></Row></Col>
-        <Col><Row style={styles.contents}><Text style={{fontSize:14,marginTop:5}}>12345</Text></Row>
-        <Row style={styles.contents}><Text style={{fontSize:14,marginTop:5}}>Vivek purush</Text></Row></Col></Grid>
-        </View>
-        </View>
 
         <View style={{height:90,borderRadius:5,backgroundColor:Colors.gray,marginTop:SECTION_MARGIN_TOP,marginLeft:10,width:280}}>
         <View style={{flexDirection:'row',marginTop:SECTION_MARGIN_TOP}}>
         <Grid><Col style={styles.colstyle}><CustomCheckBox color={Colors.buttonBackgroundColor}/></Col>
-        <Col><Row style={styles.contents}><CustomText text={'Order ID'} textType={Strings.maintext}/></Row>
-        <Row style={styles.contents}><CustomText text={'Cust. Name'} textType={Strings.maintext}/></Row></Col>
-        <Col ><Row style={styles.contents}><Text style={{fontSize:14,marginTop:5}}>12345</Text></Row>
-        <Row style={styles.contents}><Text style={{fontSize:14,marginTop:5}}>Vivek purush</Text></Row></Col></Grid>
+        <Col><Row style={styles.contents}><CustomText text={'Order ID'} color={Colors.black} textType={Strings.subtext}/></Row>
+        <Row style={styles.contents}><CustomText text={'Cust. Name'} color={Colors.black} textType={Strings.subtext}/></Row></Col>
+        <Col><Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>12345</Text></Row>
+        <Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>Vivek purush</Text></Row></Col></Grid>
         </View>
         </View>
 
-        <View style={{flex:1,flexDirection:'row',marginLeft:10}}>
-              <CustomButton title={'Accept Selected'} backgroundColor={Colors.red} width={130} height={30} fontSize={14}/>
-              <CustomButton title={'Reject Selected'} backgroundColor={Colors.green} width={130} height={30} marginLeft={10} fontSize={14}/>
+        <View style={{height:90,borderRadius:5,backgroundColor:Colors.gray,marginTop:SECTION_MARGIN_TOP,marginLeft:10,width:280}}>
+        <View style={{flexDirection:'row',marginTop:SECTION_MARGIN_TOP}}>
+        <Grid><Col style={styles.colstyle}><CustomCheckBox color={Colors.buttonBackgroundColor}/></Col>
+        <Col><Row style={styles.contents}><CustomText text={'Order ID'} color={Colors.black} textType={Strings.subtext}/></Row>
+        <Row style={styles.contents}><CustomText text={'Cust. Name'} color={Colors.black} textType={Strings.subtext}/></Row></Col>
+        <Col ><Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>12345</Text></Row>
+        <Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>Vivek purush</Text></Row></Col></Grid>
+        </View>
+        </View>
+
+        <View style={{flex:1,flexDirection:'row',marginLeft:10,flex:8}}>
+              <CustomButton title={'Accept Selected'} backgroundColor={Colors.green}  height={SHORT_BUTTON_HEIGHT}  flex={1}/>
+              <CustomButton title={'Reject Selected'} backgroundColor={Colors.red}  height={SHORT_BUTTON_HEIGHT} marginLeft={SECTION_MARGIN_TOP}  flex={1}/>
             </View>
 
 </ScrollView>
-<View>
+
 
 {/*////////////////////////////// Active Cart //////////////////////////////////////////////// */}
 
+<View>
 <View style={{height:50,borderTopLeftRadius:5,borderTopRightRadius:8,backgroundColor:Colors.textBackgroundColor,marginTop:SECTION_MARGIN_TOP,marginRight:10,width:300}}>
         <View style={{flexDirection:'row',marginTop:SECTION_MARGIN_TOP,width:250}}>
         <CustomCheckBox title={'ACTIVE'} color={Colors.buttonBackgroundColor} checked={true}/>
@@ -176,10 +138,10 @@ export default class Dashboard extends React.Component {
         <View style={{height:90,borderRadius:5,backgroundColor:Colors.lightgreen,marginTop:SECTION_MARGIN_TOP,marginLeft:10,width:280}}>
         <View style={{flexDirection:'row',marginTop:SECTION_MARGIN_TOP}}>
         <Grid><Col style={styles.colstyle}><CustomCheckBox color={Colors.buttonBackgroundColor}/></Col>
-        <Col><Row style={styles.contents}><CustomText text={'Order ID'} textType={Strings.maintext}/></Row>
-        <Row style={styles.contents}><CustomText text={'Cust. Name'} textType={Strings.maintext}/></Row></Col>
-        <Col><Row style={styles.contents}><Text style={{fontSize:14,marginTop:5}}>12345</Text></Row>
-        <Row style={styles.contents}><Text style={{fontSize:14,marginTop:5}}>Vivek purush</Text></Row></Col></Grid>
+        <Col><Row style={styles.contents}><CustomText text={'Order ID'} color={Colors.black} textType={Strings.subtext}/></Row>
+        <Row style={styles.contents}><CustomText text={'Cust. Name'} color={Colors.black} textType={Strings.subtext}/></Row></Col>
+        <Col><Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>12345</Text></Row>
+        <Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>Vivek purush</Text></Row></Col></Grid>
         </View>
         </View>
         </View>
@@ -197,10 +159,10 @@ export default class Dashboard extends React.Component {
         <View style={{height:90,borderRadius:5,backgroundColor:Colors.lightPink,marginTop:SECTION_MARGIN_TOP,marginLeft:10,width:280}}>
         <View style={{flexDirection:'row',marginTop:SECTION_MARGIN_TOP}}>
         <Grid><Col style={styles.colstyle}><CustomCheckBox color={Colors.buttonBackgroundColor}/></Col>
-        <Col><Row style={styles.contents}><CustomText text={'Order ID'} textType={Strings.maintext}/></Row>
-        <Row style={styles.contents}><CustomText text={'Cust. Name'} textType={Strings.maintext}/></Row></Col>
-        <Col><Row style={styles.contents}><Text style={{fontSize:14,marginTop:5}}>12345</Text></Row>
-        <Row style={styles.contents}><Text style={{fontSize:14,marginTop:5}}>Vivek purush</Text></Row></Col></Grid>
+        <Col><Row style={styles.contents}><CustomText text={'Order ID'} color={Colors.black} textType={Strings.subtext}/></Row>
+        <Row style={styles.contents}><CustomText text={'Cust. Name'} color={Colors.black} textType={Strings.subtext}/></Row></Col>
+        <Col><Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>12345</Text></Row>
+        <Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>Vivek purush</Text></Row></Col></Grid>
         </View>
         </View>
         </View>
@@ -217,10 +179,10 @@ export default class Dashboard extends React.Component {
         <View style={{height:90,borderRadius:5,backgroundColor:Colors.darkPink,marginTop:SECTION_MARGIN_TOP,marginLeft:10,width:280}}>
         <View style={{flexDirection:'row',marginTop:SECTION_MARGIN_TOP}}>
         <Grid><Col style={styles.colstyle}><CustomCheckBox color={Colors.buttonBackgroundColor} /></Col>
-        <Col><Row style={styles.contents}><CustomText text={'Order ID'} textType={Strings.maintext}/></Row>
-        <Row style={styles.contents}><CustomText text={'Cust. Name'} textType={Strings.maintext}/></Row></Col>
-        <Col><Row style={styles.contents}><Text style={{fontSize:14,marginTop:5}}>12345</Text></Row>
-        <Row style={styles.contents}><Text style={{fontSize:14,marginTop:5}}>Vivek purush</Text></Row></Col></Grid>
+        <Col><Row style={styles.contents}><CustomText text={'Order ID'} color={Colors.black} textType={Strings.subtext}/></Row>
+        <Row style={styles.contents}><CustomText text={'Cust. Name'} color={Colors.black} textType={Strings.subtext}/></Row></Col>
+        <Col><Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>12345</Text></Row>
+        <Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>Vivek purush</Text></Row></Col></Grid>
         </View>
         </View>
         </View>
@@ -228,6 +190,101 @@ export default class Dashboard extends React.Component {
         </View>
 </View>
             </ScrollView>
+
+              {/*////////////////////// Pickup Notification block //////////////////////////////////////////////// */}
+
+
+              <View style={{backgroundColor:Colors.aash,flex:5,flexDirection:'row',height:LOGIN_FIELD_HEIGHT,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center'}}>
+              <CustomText  text={'Pickup Assigned'} textType={Strings.subtitle} flex={3} />
+              <CustomButton title={'Reject all'} text_color={Colors.red} backgroundColor={Colors.aash}  height={SHORT_BUTTON_HEIGHT} marginBottom={18} fontSize={14} flex={1}/>
+              <CustomButton title={'Accept all'} text_color={Colors.green} backgroundColor={Colors.aash}  height={SHORT_BUTTON_HEIGHT} marginBottom={18} fontSize={14}  flex={1}/>
+              </View>
+              <View style={{backgroundColor:Colors.white,}}>
+                <Grid>
+                  <Row style={styles.rowstyle1}>
+                    <Col style={styles.colstyle1}><Text style={{fontSize:12,}}>Order ID:      12345</Text>
+                    <Text style={{fontSize:12,}}>Cust. Name: Ram Dev</Text></Col>
+                    <Col ><CustomButton title={'Reject'} text_color={Colors.red} backgroundColor={Colors.white}   marginTop={1} fontSize={NORMAL_FONT} icon_name={'ios-close'} icon_color={Colors.red} icon_fontsize={NORMAL_FONT}/></Col>
+                    <Col ><CustomButton title={'Accept'} text_color={Colors.green} backgroundColor={Colors.white}  marginTop={1}  fontSize={NORMAL_FONT}/></Col>
+                  </Row>
+                  <Row style={styles.rowstyle1}>
+                    <Col style={styles.colstyle1}><Text style={{fontSize:12,}}>Order ID:      12345</Text>
+                    <Text style={{fontSize:12,}}>Cust. Name: Ram Dev</Text></Col>
+                    <Col><CustomButton title={'Reject'} text_color={Colors.red} backgroundColor={Colors.white}   marginTop={1} fontSize={NORMAL_FONT} icon_name={'ios-close'} icon_color={Colors.red} icon_fontsize={NORMAL_FONT}/></Col>
+                    <Col><CustomButton title={'Accept'} text_color={Colors.green} backgroundColor={Colors.white}  marginTop={1}  fontSize={NORMAL_FONT}/></Col>
+                  </Row>
+                  <Row style={styles.rowstyle1}>
+                    <Col style={styles.colstyle1}><Text style={{fontSize:12,}}>Order ID:      12345</Text>
+                    <Text style={{fontSize:12,}}>Cust. Name: Ram Dev</Text></Col>
+                    <Col><CustomButton title={'Reject'} text_color={Colors.red} backgroundColor={Colors.white}   marginTop={1} fontSize={NORMAL_FONT} icon_name={'ios-close'} icon_color={Colors.red} icon_fontsize={NORMAL_FONT}/></Col>
+                    <Col><CustomButton title={'Accept'} text_color={Colors.green} backgroundColor={Colors.white}  marginTop={1}  fontSize={NORMAL_FONT}/></Col>
+                  </Row>
+                </Grid>
+              </View>
+
+            {/*////////////////////// Amount Collected block //////////////////////////////////////////////// */}
+
+          <View style={{ backgroundColor:Colors.white,height:AMOUNT_BLOCK_HIEGHT,borderRadius:MAIN_BLOCK_BORDER_RADIUS,padding:COLUMN_PADDING,marginTop:SECTION_MARGIN_TOP}}>
+          <CustomText text={'Amount collected today'} textType={Strings.maintext}/>
+          <View style={{flexDirection:'row',flex:10}}>
+           <Text style={{fontSize:FOURTH_FONT,fontWeight:'bold',marginLeft:5,flex:9}}>Rs:1,00,000</Text>
+           <Icon name={'ios-arrow-forward'} style={{color:Colors.darkSkyBlue,fontSize:16,flex:1,}}/>
+           </View>
+          </View>
+
+ {/*////////////////////// Delivery Out Status block //////////////////////////////////////////////// */}
+
+
+ <View style={{backgroundColor:Colors.white,flex:10,flexDirection:'row',height:LOGIN_FIELD_HEIGHT,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',borderRadius:SHORT_BLOCK_BORDER_RADIUS}}>
+              <CustomText  text={'Delivery Out Status'} textType={Strings.subtitle} flex={9} />
+              <Icon name={'md-arrow-dropdown'} style={{color:Colors.black,fontSize:FOURTH_FONT,flex:1,}}/>
+              </View>
+              <View style={{backgroundColor:Colors.aash,paddingBottom:SECTION_MARGIN_TOP,paddingLeft:SECTION_MARGIN_TOP,paddingRight:SECTION_MARGIN_TOP,height:120}}>
+                <Grid>
+                  <Row style={styles.rowstyleodd}>
+                    <Col style={styles.colstyleodd}><CustomText text={'Completed'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
+                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>12</Text></Col>
+                  </Row>
+                  <Row style={styles.rowstyleeven}>
+                    <Col style={styles.colstyleodd}><CustomText text={'Pending'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
+                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>12</Text></Col>
+                  </Row>
+                  <Row style={styles.rowstyleodd}>
+                    <Col style={styles.colstyleodd}><CustomText text={'Failed'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
+                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>12</Text></Col>
+                  </Row>
+                </Grid>
+              </View>
+         
+
+
+{/*////////////////////// Delivery Out Status block //////////////////////////////////////////////// */}
+
+
+<View style={{backgroundColor:Colors.white,flex:10,flexDirection:'row',height:LOGIN_FIELD_HEIGHT,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',borderRadius:SHORT_BLOCK_BORDER_RADIUS}}>
+              <CustomText  text={'Pickup Status'} textType={Strings.subtitle} flex={9} />
+              <Icon name={'md-arrow-dropdown'} style={{color:Colors.black,fontSize:FOURTH_FONT,flex:1,}}/>
+              </View>
+              <View style={{backgroundColor:Colors.aash,paddingBottom:SECTION_MARGIN_TOP,paddingLeft:SECTION_MARGIN_TOP,paddingRight:SECTION_MARGIN_TOP,height:120}}>
+                <Grid>
+                  <Row style={styles.rowstyleodd}>
+                    <Col style={styles.colstyleodd}><CustomText text={'Completed'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
+                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>12</Text></Col>
+                  </Row>
+                  <Row style={styles.rowstyleeven}>
+                    <Col style={styles.colstyleodd}><CustomText text={'To be Collected'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
+                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>12</Text></Col>
+                  </Row>
+                  <Row style={styles.rowstyleodd}>
+                    <Col style={styles.colstyleodd}><CustomText text={'Failed'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
+                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>12</Text></Col>
+                  </Row>
+                </Grid>
+              </View>
+ 
+
+
+
 
               </View>
               </ScrollView>
@@ -240,7 +297,7 @@ export default class Dashboard extends React.Component {
 
 const styles=StyleSheet.create({
   textinput :{
-    fontSize:14,
+    fontSize:SECOND_FONT,
     color:Colors.subTextColor,
     backgroundColor:Colors.textBackgroundColor,
     paddingLeft:10,
@@ -276,6 +333,45 @@ colstyle:{
   minWidth: '10%',
   maxWidth: '15%',
   padding:0,
-}
+},
+cusdetails: {
+  height:90,
+  borderRadius:5,
+  backgroundColor:Colors.gray,
+  marginTop:SECTION_MARGIN_TOP,
+  marginLeft:10,
+  width:280,
+  paddingTop:SECTION_MARGIN_TOP,
+  flexDirection:'row'
+},
+colstyle1:{
+  minWidth: '30%',
+  maxWidth: '50%',
+  padding:10,
+  
+},
+rowstyle1:{
+ borderBottomWidth:2,
+ borderColor:Colors.textBackgroundColor,
+ 
+},
+rowstyleodd:{
+ backgroundColor:Colors.rowBackgroundColor,
+ alignItems:'center',
+  
+ },
+ rowstyleeven:{
+  backgroundColor:Colors.aash,
+ alignItems:'center',
+ },
+ colstyleodd:{
+  borderRightWidth:.5,
+  borderRightColor:Colors.lightborderColor,
 
+ },
+ colstyleeven:{
+  paddingLeft:SECTION_MARGIN_TOP,
+  minWidth:'20%',
+  maxWidth:'40%',
+ },
 });
