@@ -9,7 +9,7 @@ import Colors from '../../constants/Colors';
 import Strings from '../../constants/Strings';
 import CustomText from '../../component/CustomText';
 import CustomInput from '../../component/CustomInput';
-import { SECTION_MARGIN_TOP,COLUMN_PADDING,SHORT_BUTTON_HEIGHT,SHORT_BORDER_RADIUS } from '../../constants/Dimen';
+import { SECTION_MARGIN_TOP,COLUMN_PADDING,SHORT_BUTTON_HEIGHT,SHORT_BORDER_RADIUS , TEXT_FIELD_HIEGHT} from '../../constants/Dimen';
 import CustomButton from '../../component/CustomButton';
 import SideMenuDrawer from '../../component/SideMenuDrawer';
 
@@ -64,8 +64,8 @@ render(){
 {/*////////////////////// Order and Searchbar Block //////////////////////////////////////////////// */}
 
 <View style={{flexDirection:'row',justifyContent:'space-around',textAlignVertical:'center',marginTop:SECTION_MARGIN_TOP,}}>
-<View style={{flex:2}}><CustomDropdown data={myArray1} height={35} backgroundColor={Colors.white}  /></View>
-<View style={{flex:3,marginLeft:20}}><CustomInput placeholder={'Search here'} icon_name={'ios-search'} icon_color={Colors.navbarIconColor}  icon_fontsize={18}   placeholderTextColor={Colors.navbarIconColor} fontSize={14} showIcon={true} backgroundColor={Colors.white} height={35} marginTop={5}/></View>
+<View style={{flex:2}}><CustomDropdown data={myArray1} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white} paddingBottom={SECTION_MARGIN_TOP} /></View>
+<View style={{flex:3,marginLeft:20}}><CustomInput placeholder={'Search here'} icon_name={'ios-search'} icon_color={Colors.navbarIconColor}  icon_fontsize={18}   placeholderTextColor={Colors.navbarIconColor} fontSize={14} showIcon={true} backgroundColor={Colors.white} height={TEXT_FIELD_HIEGHT} marginTop={5}/></View>
           </View>
 
 {/*////////////////////// Manual Pickup Button Block //////////////////////////////////////////////// */}

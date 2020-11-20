@@ -1,8 +1,7 @@
-import React, { Component } from 'react';
-import { TouchableOpacity,StyleSheet,ScrollView,BackHandler } from 'react-native';
+import React, { Component, } from 'react';
+import { TouchableOpacity,StyleSheet,ScrollView,BackHandler ,AsyncStorage } from 'react-native';
 import { Container, View, Button, Left, Right, Icon, Text,Grid,Col,Row,Badge } from 'native-base';
-import { Actions } from 'react-native-router-flux';
-import moment from 'moment';
+
 
 
 
@@ -15,11 +14,69 @@ import CustomSubButton from '../../component/CustomSubButton';
 import { SECTION_MARGIN_TOP,FIELD_MARGIN_TOP, MAIN_BLOCK_BORDER_RADIUS, SHORT_BLOCK_BORDER_RADIUS, ORDER_BLOCK_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,ADDRESS_FIELD_HEIGHT, SHORT_BUTTON_HEIGHT,TOTAL_BLOCK, SHORT_TEXT_FIELD_HIEGHT,TEXT_MARGIN_TOP, NORMAL_FONT,COLUMN_PADDING ,AMOUNT_BLOCK_HIEGHT,SECOND_FONT,LOGIN_FIELD_HEIGHT,FOURTH_FONT} from '../../constants/Dimen';
 import CustomText from '../../component/CustomText';
 import SideMenuDrawer from '../../component/SideMenuDrawer';
+import session,{KEY} from '../../session/SessionManager';
+import Api from '../../component/Fetch';
+import { DELIVERY_COUNT , PICKUP_COUNT } from '../../constants/Api';
+
 
 
 
 
 export default class Dashboard extends React.Component {
+
+  state ={
+    count_list :[],
+    pick_count_list :[],
+  }
+
+
+  componentDidMount(){
+   AsyncStorage.getItem(KEY).then((value => {
+
+      let data = JSON.parse(value);
+      this.fetch_delivery_count(data.personId);
+      this.fetch_pickup_count(data.personId);
+   
+  }));
+  }
+
+   
+ fetch_delivery_count(val){
+
+  Api.fetch_request(DELIVERY_COUNT+val,'GET','')
+  .then(result => {
+   
+    if(result.error != true){
+
+      console.log('Success:', JSON.stringify(result));
+      this.setState({count_list : result.payload})
+    
+    }
+    else{
+      console.log('Failed');
+    }
+})
+
+ }
+
+
+ fetch_pickup_count(val){
+
+  Api.fetch_request(PICKUP_COUNT+val,'GET','')
+  .then(result => {
+   
+    if(result.error != true){
+
+      console.log('Success:', JSON.stringify(result));
+      this.setState({pick_count_list : result.payload})
+    
+    }
+    else{
+      console.log('Failed');
+    }
+})
+
+ }
 
   render() {
   
@@ -44,6 +101,7 @@ export default class Dashboard extends React.Component {
     );
 
     return (
+     
       <SideMenuDrawer ref={(ref) => this._sideMenuDrawer = ref}>
         <Container>
           <Navbar left={left} right={right} title="Dashboard"/>
@@ -243,22 +301,22 @@ export default class Dashboard extends React.Component {
                 <Grid>
                   <Row style={styles.rowstyleodd}>
                     <Col style={styles.colstyleodd}><CustomText text={'Completed'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
-                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>12</Text></Col>
+                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.count_list.COMPLETED ? this.state.count_list.COMPLETED :'N/A' }</Text></Col>
                   </Row>
                   <Row style={styles.rowstyleeven}>
                     <Col style={styles.colstyleodd}><CustomText text={'Pending'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
-                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>12</Text></Col>
+                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.count_list.PENDING ? this.state.count_list.PENDING :'N/A' }</Text></Col>
                   </Row>
                   <Row style={styles.rowstyleodd}>
                     <Col style={styles.colstyleodd}><CustomText text={'Failed'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
-                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>12</Text></Col>
+                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.count_list.FAILED ? this.state.count_list.FAILED :'N/A' }</Text></Col>
                   </Row>
                 </Grid>
               </View>
          
 
 
-{/*////////////////////// Delivery Out Status block //////////////////////////////////////////////// */}
+{/*////////////////////// Pickup Status block //////////////////////////////////////////////// */}
 
 
 <View style={{backgroundColor:Colors.white,flex:10,flexDirection:'row',height:LOGIN_FIELD_HEIGHT,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',borderRadius:SHORT_BLOCK_BORDER_RADIUS}}>
@@ -269,22 +327,18 @@ export default class Dashboard extends React.Component {
                 <Grid>
                   <Row style={styles.rowstyleodd}>
                     <Col style={styles.colstyleodd}><CustomText text={'Completed'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
-                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>12</Text></Col>
+    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.pick_count_list.COMPLETED ? this.state.pick_count_list.COMPLETED :'N/A' }</Text></Col>
                   </Row>
                   <Row style={styles.rowstyleeven}>
                     <Col style={styles.colstyleodd}><CustomText text={'To be Collected'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
-                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>12</Text></Col>
+                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.pick_count_list.PENDING ? this.state.pick_count_list.PENDING :'N/A' }</Text></Col>
                   </Row>
                   <Row style={styles.rowstyleodd}>
                     <Col style={styles.colstyleodd}><CustomText text={'Failed'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
-                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>12</Text></Col>
+                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.pick_count_list.FAILED ? this.state.pick_count_list.FAILED :'N/A' }</Text></Col>
                   </Row>
                 </Grid>
               </View>
- 
-
-
-
 
               </View>
               </ScrollView>
@@ -292,6 +346,7 @@ export default class Dashboard extends React.Component {
         </SideMenuDrawer>
     );
   }
+
 
 }
 

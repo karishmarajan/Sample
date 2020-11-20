@@ -12,8 +12,6 @@ import CustomText from '../../component/CustomText';
 import { SECTION_MARGIN_TOP,FIELD_MARGIN_TOP, MAIN_BLOCK_BORDER_RADIUS, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,ADDRESS_FIELD_HEIGHT, SIGNATURE_VIEW_HEIGHT,TOTAL_BLOCK, SHORT_TEXT_FIELD_HIEGHT,TEXT_MARGIN_TOP, ORDER_BLOCK } from '../../constants/Dimen';
 import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
-import SideMenuDrawer from '../../component/SideMenuDrawer';
-import CustomSearchableDropdown from '../../component/CustomSearchableDropdown';
 
 
 const myArray=[{name:"Select a Status" , value:"Select a Status"},{name:"Delivered" , value:"Delivered"},{name:"Undelivered" , value:"Undelivered"}];
@@ -42,8 +40,8 @@ render(){
           </Button>
           <Button  transparent>
             <Icon style={{color:Colors.navbarIconColor }} name='ios-notifications' />
-            <Badge style={{width: 10, backgroundColor: 'orange',height:12,marginTop:20,borderRadius:10}} 
-                            textStyle={{color: 'white', fontSize: 20, lineHeight: 20}}></Badge>
+            <Badge style={{width: 10, backgroundColor: 'orange',height:12,marginTop:SECTION_MARGIN_TOP,borderRadius:10}} 
+                            textStyle={{color: 'white', fontSize:SECTION_MARGIN_TOP, lineHeight: SECTION_MARGIN_TOP}}></Badge>
           </Button>
         </Right>
       );

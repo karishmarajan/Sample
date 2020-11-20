@@ -1,20 +1,34 @@
 import React, { Component } from 'react';
 import { ScrollView,StyleSheet} from 'react-native';
 import { Container, View, Button, Left, Right,Icon,Text,Badge,Grid,Col,Row,} from 'native-base';
+import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import { Actions } from 'react-native-router-flux';
 
 import Navbar from '../../component/Navbar';
 import Colors from '../../constants/Colors';
 import Strings from '../../constants/Strings';
-import CustomSubButton from '../../component/CustomSubButton';
 import CustomText from '../../component/CustomText';
 import CustomInput from '../../component/CustomInput';
 import CustomButton from '../../component/CustomButton';
-import { SECTION_MARGIN_TOP, SHORT_BORDER_WIDTH, SHORT_BORDER_RADIUS } from '../../constants/Dimen';
-import SideMenuDrawer from '../../component/SideMenuDrawer';
+import { SECTION_MARGIN_TOP, SHORT_BORDER_WIDTH, SHORT_BORDER_RADIUS, MAIN_VIEW_PADDING, NORMAL_FONT, BORDER_WIDTH , TEXT_PADDING_RIGHT , SECOND_FONT , CAMERA_SIZE ,COLUMN_PADDING , SHORT_BUTTON_HEIGHT , SIXTH_FONT} from '../../constants/Dimen';
 
 
 export default class SelfAssign extends React.Component {
+
+  _menu = null;
+
+  setMenuRef = ref => {
+    this._menu = ref;
+  };
+
+  hideMenu = () => {
+    this._menu.hide();
+  };
+
+  showMenu = () => {
+    this._menu.show();
+  };
+
 render(){
   var left = (
     <Left style={{ flex: 1 }}>
@@ -25,33 +39,44 @@ render(){
   );
       var right = (
         <Right style={{ flex: 1 }}>
-          <Button  transparent>
+          <Button onPress={this.showMenu} transparent>
             <Icon style={{ color:Colors.navbarIconColor}} name='md-more' />
           </Button>
         </Right>
       );
 
+
     return(
      
       <Container>
+      
+      <View style={{position:'absolute'}}>
+       <Menu
+          ref={this.setMenuRef}>
+          <MenuItem onPress={this.hideMenu}>Save</MenuItem>
+          <MenuItem onPress={this.hideMenu}>Delete</MenuItem>
+        </Menu>
+        </View>
+
         <Navbar left={left} right={right} title="Self Assign" />
         <ScrollView contentContainerStyle={{flexGrow:1}}>
-        <View style={{flex: 1, flexDirection: 'column',backgroundColor:Colors.mainBackgroundColor,padding:10}}>
-        <View style={{ backgroundColor:Colors.white,marginTop:30,padding:20,borderRadius:SHORT_BORDER_RADIUS}}>
+        <View style={{flex: 1, flexDirection: 'column',backgroundColor:Colors.mainBackgroundColor,padding:COLUMN_PADDING}}>
+        <View style={{ backgroundColor:Colors.white,padding:MAIN_VIEW_PADDING,borderRadius:SHORT_BORDER_RADIUS, marginTop:SECTION_MARGIN_TOP}}>
    
       
 
         {/*////////////////////// Selecting Order id Block //////////////////////////////////////////////// */}
 
-        <View style={{flexDirection:'row',flex:1,borderColor:Colors.borderColor,borderWidth:SHORT_BORDER_WIDTH,borderRadius:SHORT_BORDER_RADIUS,padding:1,alignItems:'center',justifyContent:'space-between',padding:5,backgroundColor:Colors.scanBackground}}>
+        <View style={{flexDirection:'row',flex:1,borderColor:Colors.borderColor,borderWidth:SHORT_BORDER_WIDTH,borderRadius:SHORT_BORDER_RADIUS,alignItems:'center',justifyContent:'space-between',padding:TEXT_PADDING_RIGHT,backgroundColor:Colors.scanBackground}}>
         <CustomText text={'Add order by scanning'} textType={Strings.subtext}  color={Colors.darkSkyBlue}/>
         <Icon style={{ color:Colors.darkSkyBlue}} name='ios-barcode' />
           </View>
 
+          <CustomText text={'or'} textType={Strings.subtext} color={Colors.black} textAlign={'center'}/>
 
-        <View style={{flexDirection:'row',flex:1,borderColor:Colors.borderColor,borderWidth:SHORT_BORDER_WIDTH,borderRadius:SHORT_BORDER_RADIUS,padding:1,alignItems:'center',justifyContent:'space-between',marginTop:SECTION_MARGIN_TOP}}>
+        <View style={{flexDirection:'row',flex:1,borderColor:Colors.borderColor,borderWidth:SHORT_BORDER_WIDTH,borderRadius:SHORT_BORDER_RADIUS,padding:1,alignItems:'center',justifyContent:'space-between',}}>
         <CustomInput backgroundColor={Colors.white} placeholder={'Enter Order Id here'}  />
-        <CustomButton title={'ADD'} marginTop={1} height={30} borderRadius={SHORT_BORDER_RADIUS} fontSize={12} marginRight={5}/>
+        <CustomButton title={'ADD'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT}/>
         </View>
       
         </View>
@@ -59,8 +84,8 @@ render(){
         {/*////////////////////// Delivery Sheet Block //////////////////////////////////////////////// */}
 
 
-<View style={{flexDirection:'row',backgroundColor:Colors.aash,height:50,marginTop:SECTION_MARGIN_TOP}}>
-<Text style={{fontSize:14,fontWeight:'bold',textAlignVertical:'center',paddingLeft:5}}>Delivery Sheet 1</Text>
+<View style={{flexDirection:'row',backgroundColor:Colors.aash,height:CAMERA_SIZE,marginTop:SECTION_MARGIN_TOP}}>
+<Text style={{fontSize:SECOND_FONT,fontWeight:'bold',textAlignVertical:'center',paddingLeft:TEXT_PADDING_RIGHT}}>Delivery Sheet 1</Text>
 </View>
 
 
@@ -95,8 +120,8 @@ render(){
         <Row style={styles.content}><Text style={styles.textstyles}>12345678</Text></Row></Col></Grid>
         <Grid ><Col><View style={styles.headingstyles}><CustomText text={''} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor}/></View>
         <Row style={styles.content}>
-          <View style={{flexDirection:'column',paddingLeft:10,textAlignVertical:'center'}}>
-     <Icon name="remove-circle" style={{color:Colors.red,paddingLeft:20,paddingRight:20,fontSize:22}}/>
+          <View style={{flexDirection:'column',paddingLeft:COLUMN_PADDING,textAlignVertical:'center'}}>
+     <Icon name="remove-circle" style={{color:Colors.red,paddingLeft:SECTION_MARGIN_TOP,paddingRight:SECTION_MARGIN_TOP,fontSize:SIXTH_FONT}}/>
           </View>
         </Row>
         </Col></Grid>
