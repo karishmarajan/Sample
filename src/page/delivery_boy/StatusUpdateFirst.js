@@ -9,7 +9,7 @@ import Strings from '../../constants/Strings';
 import CustomInput from '../../component/CustomInput';
 import CustomSubButton from '../../component/CustomSubButton';
 import CustomText from '../../component/CustomText';
-import { SECTION_MARGIN_TOP,LOGIN_FIELD_HEIGHT, MAIN_BLOCK_BORDER_RADIUS, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,ADDRESS_FIELD_HEIGHT, SIGNATURE_VIEW_HEIGHT,TOTAL_BLOCK, SHORT_TEXT_FIELD_HIEGHT,TEXT_MARGIN_TOP, ORDER_BLOCK,FOURTH_FONT } from '../../constants/Dimen';
+import { SECTION_MARGIN_TOP,LOGIN_FIELD_HEIGHT, MAIN_BLOCK_BORDER_RADIUS, SHORT_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,SECOND_FONT, SIGNATURE_VIEW_HEIGHT,TOTAL_BLOCK, SHORT_TEXT_FIELD_HIEGHT,TEXT_MARGIN_TOP, ORDER_BLOCK,FOURTH_FONT } from '../../constants/Dimen';
 import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
 import SideMenuDrawer from '../../component/SideMenuDrawer';
@@ -32,34 +32,31 @@ export default class StatusUpdateFirst extends React.Component {
       return(
     
           <Container>
-               <Navbar left={left} title="Delivery Out Details" />
+               <Navbar left={left} title="Status Update" />
         <ScrollView contentContainerStyle={{flexGrow:1}}>
 
 {/*////////////////////// main view //////////////////////////////////////////////// */}
 
-        <View style={{flex: 1, flexDirection: 'column',backgroundColor:Colors.textBackgroundColor,padding:MAIN_VIEW_PADDING}}></View>
-        <Content padder>
-          <Card>
-            <CardItem header>
-              <Text>NativeBase</Text>
-            </CardItem>
-            <CardItem bordered>
-              <Body>
-                <Text>
-                  NativeBase is a free and open source framework that enable
-                  developers to build
-                  high-quality mobile apps using React Native iOS and Android
-                  apps
-                  with a fusion of ES6.
-                </Text>
-              </Body>
-            </CardItem>
-            <CardItem footer bordered>
-              <Text>GeekyAnts</Text>
-            </CardItem>
-          </Card>
-        </Content>
-        <CustomButton/>
+        <View style={{flex: 1, flexDirection: 'column',backgroundColor:Colors.textBackgroundColor,padding:MAIN_VIEW_PADDING}}>
+        <View style={{ backgroundColor:Colors.white,padding:MAIN_VIEW_PADDING}}>
+
+{/*////////////////////// Request Order Transfer Details //////////////////////////////////////////////// */}
+
+<View style={{backgroundColor:Colors.white,flex:10,}}>
+              <CustomText  text={'Scan Order'} textType={Strings.subtitle} flex={9} fontWeight={'bold'} />
+              </View>
+
+       <CustomText text={'Looks like you haven`t scanned any order yet. Scan the order for updating the status of the particular item.'} textType={Strings.subtext} color={Colors.grayTextColor}/> 
+      
+       <CustomButton title={'Barcode Scan'} fontSize={SECOND_FONT} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.statusupdate()} />
+      
+       <CustomText text={'or'} textType={Strings.subtext} color={Colors.black} textAlign={'center'}/>
+
+       <CustomInput backgroundColor={Colors.white} placeholder={'Enter Order Id here'} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS}/>
+      
+       </View>
+        
+        </View>
              </ScrollView>
               </Container>
 

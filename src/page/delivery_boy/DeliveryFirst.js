@@ -62,7 +62,7 @@ render(){
 
 <View style={{flexDirection:'row',justifyContent:'space-between',textAlignVertical:'center'}}>
 <View style={{flex:2}}><CustomDropdown data={myArray1} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white} fontSize={14} paddingBottom={SECTION_MARGIN_TOP} marginRight={10} /></View>
-<View style={{flex:3}}><CustomInput placeholder={'Search here'} icon_name={'ios-search'} icon_color={Colors.navbarIconColor}  icon_fontsize={18}   placeholderTextColor={Colors.navbarIconColor} fontSize={14} showIcon={true} backgroundColor={Colors.white} height={TEXT_FIELD_HIEGHT} marginTop={5}  /></View>
+<View style={{flex:3,marginLeft:20}}><CustomInput placeholder={'Search here'} icon_name={'ios-search'} icon_color={Colors.navbarIconColor}  icon_fontsize={18}   placeholderTextColor={Colors.navbarIconColor} fontSize={14} showIcon={true} backgroundColor={Colors.white} height={TEXT_FIELD_HIEGHT} marginTop={5}  /></View>
           </View>
 
 {/*////////////////////// Manual Pickup Button Block //////////////////////////////////////////////// */}

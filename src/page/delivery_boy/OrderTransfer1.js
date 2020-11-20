@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { ScrollView,Picker } from 'react-native';
-import { Container, Content, View, Button, Left, Right,Icon,Text, Input,TextInput,Badge} from 'native-base';
+import { ScrollView} from 'react-native';
+import { Container, View, Button, Left, Right,Icon,} from 'native-base';
 
 import Navbar from '../../component/Navbar';
 import Colors from '../../constants/Colors';

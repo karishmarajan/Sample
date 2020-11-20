@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { BackHandler,ToastAndroid } from 'react-native';
 import { Root } from 'native-base';
-import { Scene, Router, Actions } from 'react-native-router-flux';
+import { Scene, Router, Actions, Stack } from 'react-native-router-flux';
 
 import Home from './page/home/Home';
 import Cart from './page/home/Cart';

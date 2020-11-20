@@ -6,13 +6,13 @@ import session from '../session/SessionManager';
 class Fetch extends React.Component {
 
 
-    fetch(api, method, header, body) {
+    fetch_request(api, method, header, body) {
 
         if (header == '') {
             header = {}
             header['Content-Type'] = 'application/json';
         }
-        header['Client-Type'] = 'HANDSET';
+        // header['Client-Type'] = 'HANDSET';
         return RNFetchBlob.config({ trusty: true, timeout: 240000, mimeType: 'multipart/form-data' }).fetch(method, api, header, body, { mimeType: 'multipart/formdata' })
             .then((res) => {
                 let responseJson = res.json();
@@ -24,7 +24,7 @@ class Fetch extends React.Component {
             })
 
             .catch((error, statusCode) => {
-                 session.logout();
+                //  session.logout();
                 console.log('------------------------- Api Call Start-------------------------');
                 console.log(`Fetch failed with error : ${error}`);
 

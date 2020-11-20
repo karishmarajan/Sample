@@ -1,14 +1,10 @@
 import React from 'react';
 import {AsyncStorage} from 'react-native'
 import { Actions } from 'react-native-router-flux';
-export const KEY = "USER";
+export const KEY = "USER_ID";
 
 
 
-
-
-
-import Orientation from 'react-native-orientation';
 
 
 class SessionManager extends React.Component {

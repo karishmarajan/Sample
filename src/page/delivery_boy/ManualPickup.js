@@ -9,16 +9,13 @@ import Strings from '../../constants/Strings';
 import CustomInput from '../../component/CustomInput';
 import CustomSubButton from '../../component/CustomSubButton';
 import CustomText from '../../component/CustomText';
-import { SECTION_MARGIN_TOP,LOGIN_FIELD_HEIGHT, MAIN_BLOCK_BORDER_RADIUS, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,ADDRESS_FIELD_HEIGHT, SIGNATURE_VIEW_HEIGHT,TOTAL_BLOCK, SHORT_TEXT_FIELD_HIEGHT,TEXT_MARGIN_TOP, ORDER_BLOCK,FOURTH_FONT,SHORT_BUTTON_HEIGHT,SHORT_BORDER_RADIUS } from '../../constants/Dimen';
+import { SECTION_MARGIN_TOP, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,ADDRESS_FIELD_HEIGHT, COLUMN_PADDING,TEXT_PADDING_RIGHT, CREDIT_FIELD_HEIGHT,FOURTH_FONT,SHORT_BUTTON_HEIGHT,SHORT_BORDER_RADIUS, NORMAL_FONT, THIRD_FONT } from '../../constants/Dimen';
 import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
 import CustomRadioButton from '../../component/CustomRadioButton';
 import CustomCheckBox from '../../component/CustomCheckBox';
 
 
-
-const myArray=[{name:"Select a Status" , value:"Select a Status"},{name:"Delivered" , value:"Delivered"},{name:"Undelivered" , value:"Undelivered"}];
-const myArray1=[{name:"Select/Enter a Reason" , value:"Select/Enter here"},{name:"a" , value:"a"},{name:"b" , value:"b"},{name:"Enter a Reason" , value:"Enter a Reason"}];
 const myArray2=[{name:"Cash" , value:"Cash"},{name:"Credit card" , value:"Credit card"},{name:"Debit card" , value:"Debit card"},{name:"Paytm" , value:"Paytm"}];
 const array_cus_type=[{name:"Individual" , value:"Individual"},{name:"Business" , value:"Business"},];
 const array_service_type=[{name:"Return" , value:"Return"},{name:"a" , value:"b"},];
@@ -45,7 +42,7 @@ render(){
       );
       var right = (
         <Right style={{ flex: 1 }}>
-         <CustomButton title={'Print'}  text_color={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} marginTop={1}  />
+         <CustomButton title={'Print'}  text_color={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={THIRD_FONT} marginRight={COLUMN_PADDING} marginTop={BORDER_WIDTH}  />
         </Right>
       );
 
@@ -73,12 +70,12 @@ render(){
         <CustomText text={'Mobile Number'} textType={Strings.subtext} color={Colors.black} />
         <View style={{flexDirection:'row',flex:1,borderColor:Colors.borderColor,borderWidth:SHORT_BORDER_WIDTH,borderRadius:SHORT_BORDER_RADIUS,padding:1,alignItems:'center',justifyContent:'space-between'}}>
         <CustomInput backgroundColor={Colors.white}  />
-        <CustomButton title={'SEND OTP'} marginTop={1} height={30} borderRadius={SHORT_BORDER_RADIUS} fontSize={12} marginRight={5}/>
+        <CustomButton title={'SEND OTP'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT}/>
         </View>
         <CustomText text={'Enter OTP'} textType={Strings.subtext} color={Colors.black}/>
         <View style={{flexDirection:'row',flex:1,borderColor:Colors.borderColor,borderWidth:SHORT_BORDER_WIDTH,borderRadius:SHORT_BORDER_RADIUS,padding:1,alignItems:'center',justifyContent:'space-between'}}>
         <CustomInput backgroundColor={Colors.white}  />
-        <CustomButton title={'VERIFY OTP'} marginTop={1} height={30} borderRadius={SHORT_BORDER_RADIUS} fontSize={12} marginRight={5}/>
+        <CustomButton title={'VERIFY OTP'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT}/>
         </View>
 
           <CustomText text={'Customer Type'} textType={Strings.subtext} color={Colors.black} />
@@ -249,7 +246,7 @@ render(){
               </View>
 <View style={{ backgroundColor:Colors.white,flexGrow:1,paddingLeft:MAIN_VIEW_PADDING,paddingRight:MAIN_VIEW_PADDING,paddingBottom:MAIN_VIEW_PADDING}}>
 
-<View style={{height:200}}>
+<View style={{height:CREDIT_FIELD_HEIGHT}}>
 <Grid ><Col><CustomText text={'Other Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
         <Col><CustomInput flex={1} /></Col></Grid>
  <Grid ><Col><CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
@@ -263,7 +260,7 @@ render(){
       <CustomText  text={'Payment Method'} textType={Strings.subtitle} flex={9} />
       <CustomDropdown data={myArray2} height={TEXT_FIELD_HIEGHT}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} />
 
-      <View style={{marginTop:SECTION_MARGIN_TOP,height:100}}>
+      <View style={{marginTop:SECTION_MARGIN_TOP,height:ADDRESS_FIELD_HEIGHT}}>
       <Grid><Col><CustomText text={'Amount Recieved'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><CustomInput flex={1} borderColor={Colors.lightborderColor} borderWidth={1} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} /></Col></Grid>
       <Grid><Col><CustomText text={'Balance Amount'} textType={Strings.subtext} color={Colors.black}/></Col>
