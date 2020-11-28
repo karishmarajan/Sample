@@ -38,6 +38,7 @@ export default class CustomText extends Component {
         color:this.props.color ? this.props.color : Colors.subTextColor,
         paddingLeft: 0,
         textAlign:this.props.textAlign,
+        alignSelf:this.props.alignSelf,
       },
       title: {
         marginTop:this.props.mTop ? this.props.mTop : 6,

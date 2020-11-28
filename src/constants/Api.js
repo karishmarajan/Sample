@@ -3,3 +3,4 @@ export const SUB_URL='epex/delivery/';
 export const LOGIN= BASE_URL + SUB_URL + 'login';
 export const DELIVERY_COUNT= BASE_URL + SUB_URL + 'ordersToday/';
 export const PICKUP_COUNT= BASE_URL + SUB_URL + 'pickupToday/';
+export const DELIVERY_ORDERS= BASE_URL + SUB_URL + 'deliveryList/fetch';

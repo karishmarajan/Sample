@@ -263,19 +263,19 @@ export default class Dashboard extends React.Component {
                     <Col style={styles.colstyle1}><Text style={{fontSize:12,}}>Order ID:      12345</Text>
                     <Text style={{fontSize:12,}}>Cust. Name: Ram Dev</Text></Col>
                     <Col ><CustomButton title={'Reject'} text_color={Colors.red} backgroundColor={Colors.white}   marginTop={1} fontSize={NORMAL_FONT} icon_name={'ios-close'} icon_color={Colors.red} icon_fontsize={NORMAL_FONT}/></Col>
-                    <Col ><CustomButton title={'Accept'} text_color={Colors.green} backgroundColor={Colors.white}  marginTop={1}  fontSize={NORMAL_FONT}/></Col>
+                    <Col ><CustomButton title={'Accept'} text_color={Colors.green} backgroundColor={Colors.white}  marginTop={1}  fontSize={NORMAL_FONT} icon_name={'md-checkmark'} icon_color={Colors.green} icon_fontsize={NORMAL_FONT}/></Col>
                   </Row>
                   <Row style={styles.rowstyle1}>
                     <Col style={styles.colstyle1}><Text style={{fontSize:12,}}>Order ID:      12345</Text>
                     <Text style={{fontSize:12,}}>Cust. Name: Ram Dev</Text></Col>
                     <Col><CustomButton title={'Reject'} text_color={Colors.red} backgroundColor={Colors.white}   marginTop={1} fontSize={NORMAL_FONT} icon_name={'ios-close'} icon_color={Colors.red} icon_fontsize={NORMAL_FONT}/></Col>
-                    <Col><CustomButton title={'Accept'} text_color={Colors.green} backgroundColor={Colors.white}  marginTop={1}  fontSize={NORMAL_FONT}/></Col>
+                    <Col><CustomButton title={'Accept'} text_color={Colors.green} backgroundColor={Colors.white}  marginTop={1}  fontSize={NORMAL_FONT} icon_name={'md-checkmark'} icon_color={Colors.green} icon_fontsize={NORMAL_FONT}/></Col>
                   </Row>
                   <Row style={styles.rowstyle1}>
                     <Col style={styles.colstyle1}><Text style={{fontSize:12,}}>Order ID:      12345</Text>
                     <Text style={{fontSize:12,}}>Cust. Name: Ram Dev</Text></Col>
                     <Col><CustomButton title={'Reject'} text_color={Colors.red} backgroundColor={Colors.white}   marginTop={1} fontSize={NORMAL_FONT} icon_name={'ios-close'} icon_color={Colors.red} icon_fontsize={NORMAL_FONT}/></Col>
-                    <Col><CustomButton title={'Accept'} text_color={Colors.green} backgroundColor={Colors.white}  marginTop={1}  fontSize={NORMAL_FONT}/></Col>
+                    <Col><CustomButton title={'Accept'} text_color={Colors.green} backgroundColor={Colors.white}  marginTop={1}  fontSize={NORMAL_FONT} icon_name={'md-checkmark'} icon_color={Colors.green} icon_fontsize={NORMAL_FONT}/></Col>
                   </Row>
                 </Grid>
               </View>
@@ -309,7 +309,7 @@ export default class Dashboard extends React.Component {
                   </Row>
                   <Row style={styles.rowstyleodd}>
                     <Col style={styles.colstyleodd}><CustomText text={'Failed'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
-                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.count_list.FAILED ? this.state.count_list.FAILED :'N/A' }</Text></Col>
+                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.count_list.FAILED ? this.state.count_list.FAILED :Strings.na }</Text></Col>
                   </Row>
                 </Grid>
               </View>
