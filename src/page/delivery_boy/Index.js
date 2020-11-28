@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView,StyleSheet,BackHandler } from 'react-native';
+import { ScrollView,StyleSheet,BackHandler, AsyncStorage } from 'react-native';
 import { Container, View, Left, Button, Icon, Input, Text, Col,Right } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
@@ -7,6 +7,7 @@ import Colors from '../../constants/Colors';
 import CustomButton from '../../component/CustomButton';
 import SideMenuDrawer from '../../component/SideMenuDrawer';
 import { SECTION_MARGIN_TOP, SCREEN_HEIGHT } from '../../constants/Dimen';
+import session,{KEY} from '../../session/SessionManager';
 
 export default class Index extends Component{
 
@@ -29,7 +30,7 @@ export default class Index extends Component{
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.statusupdatefirst()}}>Status Update </Text>
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.selfassign()}}>Self Assign </Text>
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.ordertransfer1()}}>Order Transfer </Text>
- <CustomButton title={'Log out'}  height={60} fontSize={18} marginTop={70} onPress={()=>Actions.login()}/>
+ <CustomButton title={'Log out'}  height={60} fontSize={18} marginTop={70} onPress={()=>{AsyncStorage.removeItem(KEY); Actions.login()}}/>
 
 </ScrollView>
 

@@ -21,6 +21,7 @@ import DeliveryFirst from './page/delivery_boy/DeliveryFirst';
 import DeliveryOutDetails from './page/delivery_boy/DeliveryOutDetails';
 import ManualPickup from './page/delivery_boy/ManualPickup';
 import StatusUpdateFirst from './page/delivery_boy/StatusUpdateFirst';
+import SplashScreen from './page/delivery_boy/SplashScreen';
 
 
 
@@ -35,7 +36,7 @@ export default class Main extends Component {
           <Scene key="root">
             <Scene  key="home" component={Home} hideNavBar />
             <Scene key="cart" component={Cart} modal hideNavBar />
-            <Scene  initial key="login" component={Login} hideNavBar />
+            <Scene  key="login" component={Login} hideNavBar />
             <Scene key="signup" component={Signup} hideNavBar />
             <Scene key="contactus" component={ContactUs} hideNavBar />
             <Scene  key="index" component={Index} hideNavBar />
@@ -50,6 +51,7 @@ export default class Main extends Component {
             <Scene  key="deliveryoutdetails" component={DeliveryOutDetails} hideNavBar />
             <Scene  key="manualpickup" component={ManualPickup} hideNavBar />
             <Scene  key="statusupdatefirst" component={StatusUpdateFirst} hideNavBar />
+            <Scene  initial key="splashscreen" component={SplashScreen} hideNavBar />
           </Scene>
         </Router>
       </Root>
