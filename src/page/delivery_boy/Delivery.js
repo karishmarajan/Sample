@@ -71,7 +71,7 @@ render(){
         <Navbar left={left} right={right} title="Delivery" />
         <ScrollView contentContainerStyle={{flexGrow:1}}>
 
-{/*////////////////////// main view //////////////////////////////////////////////// */}
+{/*//////////////////////////////////////// main view //////////////////////////////////////////////// */}
 
         <View style={{flex: 1, flexDirection: 'column',backgroundColor:Colors.textBackgroundColor,padding:MAIN_VIEW_PADDING}}>
 
@@ -83,7 +83,7 @@ render(){
         
         <View style={{ backgroundColor:Colors.white,flexGrow:1,padding:MAIN_VIEW_PADDING,marginTop:SECTION_MARGIN_TOP}}>
 
-{/*/////////////////////////// Customer Details //////////////////////////////////////////////// */}
+{/*///////////////////////////// Customer Details //////////////////////////////////////////////// */}
 
         <View style={{flexDirection:'row',marginBottom:SECTION_MARGIN_TOP}}>
           <CustomText  text={'Delivery Details'} textType={Strings.subtitle} fontWeight={'bold'}/>

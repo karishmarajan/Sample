@@ -1,6 +1,7 @@
 import React, { Component, } from 'react';
-import { TouchableOpacity,StyleSheet,ScrollView,BackHandler ,AsyncStorage } from 'react-native';
+import { TouchableOpacity,StyleSheet,ScrollView,BackHandler ,AsyncStorage , FlatList} from 'react-native';
 import { Container, View, Button, Left, Right, Icon, Text,Grid,Col,Row,Badge } from 'native-base';
+import { Actions } from 'react-native-router-flux';
 
 
 
@@ -16,7 +17,7 @@ import CustomText from '../../component/CustomText';
 import SideMenuDrawer from '../../component/SideMenuDrawer';
 import session,{KEY} from '../../session/SessionManager';
 import Api from '../../component/Fetch';
-import { DELIVERY_COUNT , PICKUP_COUNT } from '../../constants/Api';
+import { DELIVERY_COUNT , PICKUP_COUNT ,TASK_ASSIGNED } from '../../constants/Api';
 
 
 
@@ -24,11 +25,15 @@ import { DELIVERY_COUNT , PICKUP_COUNT } from '../../constants/Api';
 
 export default class Dashboard extends React.Component {
 
+  ///////////////////////////////////////// Declaring state variables ///////////////////////////////////////////////////////////////////////////////////
+
   state ={
     count_list :[],
     pick_count_list :[],
+    task_list :[],
   }
 
+  ///////////////////////////////////////// Component did mount function ///////////////////////////////////////////////////////////////////////////////
 
   componentDidMount(){
    AsyncStorage.getItem(KEY).then((value => {
@@ -36,11 +41,13 @@ export default class Dashboard extends React.Component {
       let data = JSON.parse(value);
       this.fetch_delivery_count(data.personId);
       this.fetch_pickup_count(data.personId);
+     // this.fetch_task_assigned_list(data.personId);
    
   }));
   }
 
-   
+ //////////////////////////////////////////// Delivery count fetching function  //////////////////////////////////////////////////////////////////////////////////  
+ 
  fetch_delivery_count(val){
 
   Api.fetch_request(DELIVERY_COUNT+val,'GET','')
@@ -59,6 +66,7 @@ export default class Dashboard extends React.Component {
 
  }
 
+ //////////////////////////////// Pickup count fetching function /////////////////////////////////////////////////////////////////////////////////////
 
  fetch_pickup_count(val){
 
@@ -77,6 +85,59 @@ export default class Dashboard extends React.Component {
 })
 
  }
+
+ ////////////////////////////////////// Task assigned fetching function ////////////////////////////////////////////////////////////////////////////////////
+
+//  fetch_task_assigned_list(val){
+
+//   Api.fetch_request(TASK_ASSIGNED+val,'GET','')
+//   .then(result => {
+   
+//     if(result.error != true){
+
+//       console.log('Success:', JSON.stringify(result));
+//       this.setState({task_list : result.payload})
+    
+//     }
+//     else{
+//       console.log('Failed');
+//     }
+// })
+
+//  }
+
+ ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ _body = (item) => {
+  return (
+
+    <View style={styles.cusdetails}>
+    <Grid><Col style={styles.colstyle}><CustomCheckBox color={Colors.buttonBackgroundColor} /></Col>
+    <Col><Row style={styles.contents}><CustomText text={'Order ID'} color={Colors.black} textType={Strings.subtext}/></Row>
+    <Row style={styles.contents}><CustomText text={'Cust. Name'} color={Colors.black} textType={Strings.subtext}/></Row></Col>
+    <Col><Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>{item.orderId ? item.orderId : Strings.na}</Text></Row>
+    <Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>{item.contactPersonName ? item.contactPersonName : Strings.na}</Text></Row></Col></Grid>
+    </View>
+
+
+
+  )
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+_footer = () => {
+  return (
+    <View style={{flex:1,flexDirection:'row',marginLeft:10,flex:8}}>
+              <CustomButton title={'Accept Selected'} backgroundColor={Colors.green}  height={SHORT_BUTTON_HEIGHT}  flex={1}/>
+              <CustomButton title={'Reject Selected'} backgroundColor={Colors.red}  height={SHORT_BUTTON_HEIGHT} marginLeft={SECTION_MARGIN_TOP}  flex={1}/>
+            </View>
+  )
+}
+
+
+
+/////////////////////////////////////////// Render method //////////////////////////////////////////////////////////////////////////////////
 
   render() {
   
@@ -122,7 +183,7 @@ export default class Dashboard extends React.Component {
           <CustomText text={'Waiting for your Approval'} textType={Strings.maintext} />
           <View style={{flex:3,flexDirection:'row',}}>
               <CustomButton title={'Reject'} backgroundColor={Colors.red}  height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BLOCK_BORDER_RADIUS} flex={1}/>
-              <CustomButton title={'Verify'} backgroundColor={Colors.green}  height={SHORT_BUTTON_HEIGHT} marginLeft={SECTION_MARGIN_TOP} borderRadius={SHORT_BLOCK_BORDER_RADIUS} flex={1}/>
+              <CustomButton title={'Verify'} backgroundColor={Colors.green}  height={SHORT_BUTTON_HEIGHT} marginLeft={SECTION_MARGIN_TOP} borderRadius={SHORT_BLOCK_BORDER_RADIUS} flex={1} onPress={()=>Actions.verifytasktransfer()}/>
           </View>
           </View>
 
@@ -131,7 +192,7 @@ export default class Dashboard extends React.Component {
           {/*////////////////////// Task Assigned Block //////////////////////////////////////////////// */}
 
 <ScrollView horizontal={true} contentContainerStyle={{flexGrow:1}} style={{marginTop:SECTION_MARGIN_TOP,}}>
-<View style={{height:550,padding:10,backgroundColor:Colors.white,width:'100%',flexGrow:1,}}>
+<View style={{padding:10,backgroundColor:Colors.white,width:'100%',flexGrow:1,}}>
   
 <View style={{flexDirection:'row',marginTop:10,justifyContent:'space-around',width:300}}>
         <CustomText text={'Task Assigned'} textType={Strings.maintext} fontWeight={'bold'}/>
@@ -148,7 +209,16 @@ export default class Dashboard extends React.Component {
         </View>
         </View>
 
-        <View style={styles.cusdetails}>
+        <FlatList
+                data={this.state.task_list}
+                keyExtractor={(x, i) => i}
+                ListHeaderComponent={this._header}
+                renderItem={({ item }) => this._body(item)}
+                ListHeaderComponentStyle={styles.header}
+                ListFooterComponent={this._footer}
+              />
+
+        {/* <View style={styles.cusdetails}>
         <Grid><Col style={styles.colstyle}><CustomCheckBox color={Colors.buttonBackgroundColor} /></Col>
         <Col><Row style={styles.contents}><CustomText text={'Order ID'} color={Colors.black} textType={Strings.subtext}/></Row>
         <Row style={styles.contents}><CustomText text={'Cust. Name'} color={Colors.black} textType={Strings.subtext}/></Row></Col>
@@ -180,7 +250,7 @@ export default class Dashboard extends React.Component {
         <View style={{flex:1,flexDirection:'row',marginLeft:10,flex:8}}>
               <CustomButton title={'Accept Selected'} backgroundColor={Colors.green}  height={SHORT_BUTTON_HEIGHT}  flex={1}/>
               <CustomButton title={'Reject Selected'} backgroundColor={Colors.red}  height={SHORT_BUTTON_HEIGHT} marginLeft={SECTION_MARGIN_TOP}  flex={1}/>
-            </View>
+            </View> */}
 
 </ScrollView>
 

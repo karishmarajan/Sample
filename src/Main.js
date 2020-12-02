@@ -22,6 +22,7 @@ import DeliveryOutDetails from './page/delivery_boy/DeliveryOutDetails';
 import ManualPickup from './page/delivery_boy/ManualPickup';
 import StatusUpdateFirst from './page/delivery_boy/StatusUpdateFirst';
 import SplashScreen from './page/delivery_boy/SplashScreen';
+import VerifyTaskTransfer from './page/delivery_boy/VerifyTaskTransfer';
 
 
 
@@ -52,6 +53,7 @@ export default class Main extends Component {
             <Scene  key="manualpickup" component={ManualPickup} hideNavBar />
             <Scene  key="statusupdatefirst" component={StatusUpdateFirst} hideNavBar />
             <Scene  initial key="splashscreen" component={SplashScreen} hideNavBar />
+            <Scene  key="verifytasktransfer" component={VerifyTaskTransfer} hideNavBar />
           </Scene>
         </Router>
       </Root>
