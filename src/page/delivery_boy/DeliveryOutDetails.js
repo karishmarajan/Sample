@@ -26,6 +26,11 @@ export default class DeliveryOutDetails extends React.Component {
     modal_view: false,
   };
 
+
+  componentDidMount() {
+    
+  }
+
 render(){
     var left = (
         <Left style={{ flex: 1 }}>
@@ -95,17 +100,17 @@ render(){
         </View>
 
         <CustomText text={'Deliver To'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} />
+        <View style={styles.inputview}><CustomText text={'N/A' } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Receiver Name'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} />
+          <View style={styles.inputview}><CustomText text={'N/A' } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Customer Id'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} />
+          <View style={styles.inputview}><CustomText text={'N/A' } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Mobile No.'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput keyboardType={'number-pad'} flex={1}/>
+          <View style={styles.inputview}><CustomText text={'N/A' } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Location'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1}/>
+          <View style={styles.inputview}><CustomText text={'N/A' } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Address'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput height={ADDRESS_FIELD_HEIGHT} flex={1}/>
+          <View style={styles.inputview}><CustomText text={'N/A' } textType={Strings.subtext} color={Colors.black}/></View>
 </View>
 
 
@@ -271,5 +276,11 @@ const styles=StyleSheet.create({
     paddingTop:5,
     height:30,
     borderRadius:5
+  },
+  inputview :{
+    backgroundColor:Colors.textBackgroundColor,
+    height:40,
+    alignItems:'flex-start',
+    justifyContent:'center'
   },
   });

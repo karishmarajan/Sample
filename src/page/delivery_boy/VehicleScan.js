@@ -1,20 +1,78 @@
 import React, { Component } from 'react';
-import { ScrollView,StyleSheet } from 'react-native';
-import { Container, View, Button, Left, Right,Icon,} from 'native-base';
+import { ScrollView,StyleSheet,AsyncStorage } from 'react-native';
+import { Container, View, Button, Left, Right,Icon,Text} from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
 import Navbar from '../../component/Navbar';
 import Colors from '../../constants/Colors';
 import Strings from '../../constants/Strings';
 import CustomText from '../../component/CustomText';
-import { SECTION_MARGIN_TOP ,FIELD_MARGIN_TOP,SHORT_BLOCK_BORDER_RADIUS,MAIN_VIEW_PADDING,FOURTH_FONT} from '../../constants/Dimen';
+import { SECTION_MARGIN_TOP ,FIELD_MARGIN_TOP,SHORT_BLOCK_BORDER_RADIUS,MAIN_VIEW_PADDING,FOURTH_FONT,SECOND_FONT} from '../../constants/Dimen';
 import CustomButton from '../../component/CustomButton';
 import CustomInput from '../../component/CustomInput';
 import SideMenuDrawer from '../../component/SideMenuDrawer';
+import session,{KEY} from '../../session/SessionManager';
+import Api from '../../component/Fetch';
+import { DELIVERY_COUNT , DELIVERYBOY_VEHICLE } from '../../constants/Api';
+
+import moment from 'moment';
+
+
 
 
 
 export default class VehicleScan extends React.Component {
+
+
+  state ={
+    deliveryboy_details_list :[],
+    departed_time:'',
+    arrival_time:'',
+  }
+
+
+  // componentDidMount(){
+  //   AsyncStorage.getItem(KEY).then((value => {
+ 
+  //      let data = JSON.parse(value);
+  //      this.fetch_deliveryboy_vehicle(data.personId);
+    
+  //  }));
+  //  }
+
+    
+time_setting_function_depart(){
+
+  var time = moment().utcOffset('+05:30').format(' hh:mm:ss a');
+  this.setState({departed_time:time});
+  alert(this.state.departed_time);
+}
+
+time_setting_function_arrival(){
+
+  var time = moment().utcOffset('+05:30').format(' hh:mm:ss a');
+  this.setState({arrival_time:time});
+  alert(this.state.departed_time);
+}
+ 
+  //  fetch_deliveryboy_vehicle(val){
+
+  //   Api.fetch_request(DELIVERYBOY_VEHICLE+val,'GET','')
+  //   .then(result => {
+     
+  //     if(result.error != true){
+  
+  //       console.log('Success:', JSON.stringify(result));
+  //       this.setState({deliveryboy_details_list : result.payload})
+      
+  //     }
+  //     else{
+  //       console.log('Failed');
+  //     }
+  // })
+  
+  //  }
+
 
 render(){
   var left = (
@@ -43,10 +101,15 @@ render(){
               <CustomText  text={'Vehicle Details'} textType={Strings.subtitle} flex={9} fontWeight={'bold'} />
               <Icon name={'md-arrow-dropdown'} style={{color:Colors.black,fontSize:FOURTH_FONT,flex:1,}}/>
           </View>
-        <CustomText text={'Vehicle Number'} textType={Strings.maintext} />
-        <CustomInput flex={1} />
+          <CustomText text={'Vehicle Number'} textType={Strings.maintext} />
+         <View style={{backgroundColor:Colors.textBackgroundColor,height:40,alignItems:'flex-start',justifyContent:'center'}}>
+          <Text style={{fontSize:SECOND_FONT,paddingLeft:10,textAlign:'left'}}>{this.state.deliveryboy_details_list.vehicleNumber ? this.state.deliveryboy_details_list.vehicleNumber :'N/A' }</Text> 
+         </View>
+
         <View style={{marginTop:FIELD_MARGIN_TOP,}}><CustomText text={'Vehicle Type'} textType={Strings.maintext}/>
-        <CustomInput flex={1}/>
+        <View style={{backgroundColor:Colors.textBackgroundColor,height:40,alignItems:'flex-start',justifyContent:'center'}}>
+         <Text style={{fontSize:SECOND_FONT,paddingLeft:10,textAlign:'left'}}>{this.state.deliveryboy_details_list.vehicleType ? this.state.deliveryboy_details_list.vehicleType :'N/A' }</Text> 
+        </View>
         </View>
         </View>
 
@@ -55,7 +118,7 @@ render(){
         <View style={styles.eachview}>
         <CustomText  text={'Departed Time'} textType={Strings.subtitle} fontWeight={'bold'} />
         {/* <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.gray} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} height={TEXT_FIELD_HIEGHT} flex={1}/> */}
-        <CustomButton title={'Set Departed Time'} borderRadius={SHORT_BLOCK_BORDER_RADIUS} backgroundColor={Colors.darkSkyBlue}/>
+        <CustomButton title={'Set Departed Time'} borderRadius={SHORT_BLOCK_BORDER_RADIUS} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.time_setting_function_depart()}/>
         </View>
 
 {/*////////////////////////// arrival Time Block //////////////////////////////////////////////// */}
@@ -63,7 +126,7 @@ render(){
         <View style={styles.eachview}>
         <CustomText  text={'Arrival Time'} textType={Strings.subtitle} fontWeight={'bold'} />
         {/* <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.gray} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} height={TEXT_FIELD_HIEGHT} flex={1} /> */}
-        <CustomButton title={'Set Arrival Time'} borderRadius={SHORT_BLOCK_BORDER_RADIUS} backgroundColor={Colors.darkSkyBlue}/>
+        <CustomButton title={'Set Arrival Time'} borderRadius={SHORT_BLOCK_BORDER_RADIUS} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.time_setting_function_arrival()}/>
         </View>
 
         </View>

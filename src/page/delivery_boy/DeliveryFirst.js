@@ -89,8 +89,8 @@ export default class DeliveryFirst extends React.Component {
   _header = () => {
     return (
 
-      <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 }}>
-        <View style={styles.cell}><Icon name='arrow-up' style={{ fontSize: 14 }} /></View>
+      <View style={{ flexDirection: 'row', borderBottomWidth: 0.3,borderTopWidth:0.3 , borderLeftWidth:0.3 ,marginTop:6}}>
+        <View style={styles.cell1}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={'SERIAL NO.'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={'ORDER ID'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={'CUSTOMER NAME'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
@@ -111,8 +111,8 @@ export default class DeliveryFirst extends React.Component {
   _body = (item) => {
     return (
 
-      <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 }}>
-        <View style={styles.cell}><Icon name='arrow-up' style={{ fontSize: 14 }} /></View>
+      <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3 }}>
+        <View style={styles.cell1}><Icon name='arrow-up' style={{ fontSize: 14 }} /></View>
         <View style={styles.cell}><CustomText text={item.serialId ? item.serialId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.deliveryId} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.contactPersonName} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
@@ -129,7 +129,7 @@ export default class DeliveryFirst extends React.Component {
           <View>
             <CustomButton title={'Notify'} backgroundColor={Colors.darkSkyBlue} height={20} fontSize={14} marginTop={1} marginBottom={5} />
             <CustomButton title={'Call'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5} textDecorationLine={'underline'} text_color={Colors.darkSkyBlue} />
-            <CustomButton title={'Details'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5} textDecorationLine={'underline'} text_color={Colors.darkSkyBlue} onPress={() => Actions.deliveryoutdetails()} />
+            <CustomButton title={'Details'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5} textDecorationLine={'underline'} text_color={Colors.darkSkyBlue} onPress={() => Actions.deliveryoutdetails({list:this.state.delivery_list})} />
           </View>
         </View>
 
@@ -225,6 +225,15 @@ const styles = StyleSheet.create({
   },
   cell: {
     width: 100,
+    padding: 6,
+    alignSelf: 'stretch',
+    textAlign: 'center',
+    borderRightWidth: 0.3,
+
+
+  },
+  cell1: {
+    width: 50,
     padding: 6,
     alignSelf: 'stretch',
     textAlign: 'center',
