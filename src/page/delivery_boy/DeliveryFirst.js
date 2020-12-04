@@ -129,7 +129,7 @@ export default class DeliveryFirst extends React.Component {
           <View>
             <CustomButton title={'Notify'} backgroundColor={Colors.darkSkyBlue} height={20} fontSize={14} marginTop={1} marginBottom={5} />
             <CustomButton title={'Call'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5} textDecorationLine={'underline'} text_color={Colors.darkSkyBlue} />
-            <CustomButton title={'Details'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5} textDecorationLine={'underline'} text_color={Colors.darkSkyBlue} onPress={() => Actions.deliveryoutdetails({list:this.state.delivery_list})} />
+            <CustomButton title={'Details'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5} textDecorationLine={'underline'} text_color={Colors.darkSkyBlue} onPress={() => Actions.deliveryoutdetails({delivery_id:item.deliveryId})} />
           </View>
         </View>
 

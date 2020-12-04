@@ -8,3 +8,5 @@ export const PICKUP_ORDERS= BASE_URL + SUB_URL + 'pickupOrder/fetch';
 export const DELIVERYBOY_VEHICLE= BASE_URL + SUB_URL + 'deliveryBoy/';
 export const TASK_ASSIGNED= BASE_URL + SUB_URL + 'taskAssigned/';
 export const ORDER_TRANSFER= BASE_URL + SUB_URL + 'order/transfer';
+export const DELIVERY_OUT_DETAILS= BASE_URL + SUB_URL + 'deliveryOrder/';
+export const PICKUP_DETAILS= BASE_URL + SUB_URL + 'pickupOrder/';

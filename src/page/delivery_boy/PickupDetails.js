@@ -13,21 +13,21 @@ import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
 import session,{KEY} from '../../session/SessionManager';
 import Api from '../../component/Fetch';
-import { DELIVERY_OUT_DETAILS , } from '../../constants/Api';
+import { PICKUP_DETAILS , } from '../../constants/Api';
 
 
 const myArray=[{name:"Select a Status" , value:"Select a Status"},{name:"Delivered" , value:"Delivered"},{name:"Undelivered" , value:"Undelivered"}];
 const myArray1=[{name:"Select/Enter a Reason" , value:"Select/Enter here"},{name:"a" , value:"a"},{name:"b" , value:"b"},{name:"Enter a Reason" , value:"Enter a Reason"}];
 const myArray2=[{name:"Cash" , value:"Cash"},{name:"Credit card" , value:"Credit card"},{name:"Debit card" , value:"Debit card"},{name:"Paytm" , value:"Paytm"}];
 
-export default class DeliveryOutDetails extends React.Component {
+export default class PickupDetails extends React.Component {
 
   state = {
     modal_visible: false,
     reason:'',
     reason_val:'',
     modal_view: false,
-    delivery_details:[],
+    pickup_details:[],
     ishidden :true,
 
   };
@@ -35,22 +35,22 @@ export default class DeliveryOutDetails extends React.Component {
 
   componentDidMount() {
     
-    this.fetch_delivery_out_details(this.props.delivery_id);
+    this.fetch_pickup_details(this.props.delivery_id);
   }
 
   //////////////////////////////////////////// Delivery out details fetching function  //////////////////////////////////////////////////////////////////////////////////  
  
- fetch_delivery_out_details(id){
+ fetch_pickup_details(id){
 
   // alert(id)
 
-  Api.fetch_request(DELIVERY_OUT_DETAILS+id,'GET','')
+  Api.fetch_request(PICKUP_DETAILS+id,'GET','')
   .then(result => {
    
     if(result.error != true){
 
       console.log('Success:', JSON.stringify(result));
-      this.setState({delivery_details : result.payload})
+      this.setState({pickup_details : result.payload})
     
     }
     else{
@@ -113,7 +113,7 @@ render(){
 
 {/*//////////////////////////////////////////////////////////////////////////////////////////////////// */}
 
-        <Navbar left={left} right={right} title="Delivery Out Details" />
+        <Navbar left={left} right={right} title="PickUp Details" />
         <ScrollView contentContainerStyle={{flexGrow:1}}>
 
 {/*////////////////////// main view //////////////////////////////////////////////// */}
@@ -129,20 +129,20 @@ render(){
         </View>
 
         <CustomText text={'Deliver To'} textType={Strings.subtext} color={Colors.black}/>
-        <View style={styles.inputview}><CustomText text={this.state.delivery_details.canBeDeliveredTo ? this.state.delivery_details.canBeDeliveredTo : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
+        <View style={styles.inputview}><CustomText text={this.state.pickup_details.canBeDeliveredTo ? this.state.pickup_details.canBeDeliveredTo : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Receiver Name'} textType={Strings.subtext} color={Colors.black}/>
-          <View style={styles.inputview}><CustomText text={this.state.delivery_details.contactPersonName ? this.state.delivery_details.contactPersonName : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
+          <View style={styles.inputview}><CustomText text={this.state.pickup_details.contactPersonName ? this.state.pickup_details.contactPersonName : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Customer Id'} textType={Strings.subtext} color={Colors.black}/>
-          <View style={styles.inputview}><CustomText text={this.state.delivery_details.canBeDeliveredTo ? this.state.delivery_details.canBeDeliveredTo : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>
+          <View style={styles.inputview}><CustomText text={this.state.pickup_details.canBeDeliveredTo ? this.state.pickup_details.canBeDeliveredTo : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Mobile No.'} textType={Strings.subtext} color={Colors.black}/>
-          <View style={styles.inputview}><CustomText text={this.state.delivery_details.contactPersonNumber ? this.state.delivery_details.contactPersonNumber : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>
+          <View style={styles.inputview}><CustomText text={this.state.pickup_details.contactPersonNumber ? this.state.pickup_details.contactPersonNumber : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Location'} textType={Strings.subtext} color={Colors.black}/>
-          <View style={styles.inputview}><CustomText text={this.state.delivery_details.localBodyType ? this.state.delivery_details.localBodyType : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>
+          <View style={styles.inputview}><CustomText text={this.state.pickup_details.localBodyType ? this.state.pickup_details.localBodyType : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Address'} textType={Strings.subtext} color={Colors.black}/>
           <View style={styles.inputviewaddress}>
-            <CustomText text={this.state.delivery_details.addressLine1 ? this.state.delivery_details.addressLine1 : Strings.na} textType={Strings.subtext} color={Colors.black}/>
-            <CustomText text={this.state.delivery_details.addressLine2 ? this.state.delivery_details.addressLine2 : Strings.na} textType={Strings.subtext} color={Colors.black}/>
-            <CustomText text={this.state.delivery_details.city ? this.state.delivery_details.city : Strings.na} textType={Strings.subtext} color={Colors.black}/>
+            <CustomText text={this.state.pickup_details.addressLine1 ? this.state.pickup_details.addressLine1 : Strings.na} textType={Strings.subtext} color={Colors.black}/>
+            <CustomText text={this.state.pickup_details.addressLine2 ? this.state.pickup_details.addressLine2 : Strings.na} textType={Strings.subtext} color={Colors.black}/>
+            <CustomText text={this.state.pickup_details.city ? this.state.pickup_details.city : Strings.na} textType={Strings.subtext} color={Colors.black}/>
           </View>
 </View>
 
@@ -173,19 +173,19 @@ render(){
         </View>
 
         <CustomText text={'Serial No.'} textType={Strings.subtext} color={Colors.black}/>
-        <View style={styles.inputview2}><CustomText text={this.state.delivery_details.serialId ? this.state.delivery_details.serialId : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
+        <View style={styles.inputview2}><CustomText text={this.state.pickup_details.serialId ? this.state.pickup_details.serialId : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Order No.'} textType={Strings.subtext} color={Colors.black}/>
-          <View style={styles.inputview2}><CustomText text={this.state.delivery_details.orderId ? this.state.delivery_details.orderId : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
+          <View style={styles.inputview2}><CustomText text={this.state.pickup_details.orderId ? this.state.pickup_details.orderId : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Date And Time'} textType={Strings.subtext} color={Colors.black}/>
           <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1} />
           <CustomText text={'Seller ID'} textType={Strings.subtext} color={Colors.black}/>
           <CustomInput keyboardType={'number-pad'} flex={1} backgroundColor={Colors.textBackgroundColor1}/>
           <CustomText text={'Delivery Type'} textType={Strings.subtext} color={Colors.black}/>
-          <View style={styles.inputview2}><CustomText text={this.state.delivery_details.deliveryType ? this.state.delivery_details.deliveryType : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
+          <View style={styles.inputview2}><CustomText text={this.state.pickup_details.deliveryType ? this.state.pickup_details.deliveryType : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Credit Allowed'} textType={Strings.subtext} color={Colors.black}/>
           <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1}/>
           <CustomText text={'Location'} textType={Strings.subtext} color={Colors.black}/>
-          <View style={styles.inputview2}><CustomText text={this.state.delivery_details.localBodyType ? this.state.delivery_details.localBodyType : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
+          <View style={styles.inputview2}><CustomText text={this.state.pickup_details.localBodyType ? this.state.pickup_details.localBodyType : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Package Details'} textType={Strings.subtext} color={Colors.black}/>
           <View style={{flexDirection:'row',flex:2,justifyContent:'space-between'}}>
           <CustomText text={'No. of Pieces'} textType={Strings.subtext} color={Colors.black}/>
@@ -209,7 +209,7 @@ render(){
               </View>
 <View style={{ backgroundColor:Colors.white,flexGrow:1,paddingLeft:MAIN_VIEW_PADDING,paddingRight:MAIN_VIEW_PADDING,paddingBottom:MAIN_VIEW_PADDING}}>
 <CustomText text={'Proof to be produced'} textType={Strings.subtext} color={Colors.black}/>
-<View style={styles.inputview}><CustomText text={this.state.delivery_details.proofToBeProduced ? this.state.delivery_details.proofToBeProduced : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
+<View style={styles.inputview}><CustomText text={this.state.pickup_details.proofToBeProduced ? this.state.pickup_details.proofToBeProduced : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Proof Upload'} textType={Strings.subtext} color={Colors.black}/>
 
           <View style={{height:ADDRESS_FIELD_HEIGHT,backgroundColor:Colors.lightBackgroundColor,borderColor:Colors.lightborderColor,borderWidth:0.5,alignItems:'center',flex:1}}>
@@ -241,13 +241,13 @@ render(){
 
 <View style={{height:CREDIT_FIELD_HEIGHT}}>
 <Grid ><Col><CustomText text={'Other Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
-        <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.deliveryCharge ? this.state.delivery_details.deliveryCharge : Strings.na } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+        <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.deliveryCharge ? this.state.pickup_details.deliveryCharge : Strings.na } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
  <Grid ><Col><CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
-        <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.deliveryCharge ? this.state.delivery_details.deliveryCharge : Strings.na } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+        <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.deliveryCharge ? this.state.pickup_details.deliveryCharge : Strings.na } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
  <Grid><Col><CustomText text={'Credit Allowed'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><CustomInput flex={1} /></Col></Grid>
        <Grid><Col><CustomText text={'Amount to Collect'} textType={Strings.subtext} color={Colors.black}/></Col>
-       <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.total ? this.state.delivery_details.total : Strings.na } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+       <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.total ? this.state.pickup_details.total : Strings.na } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
       </View>
 
       <CustomText  text={'Payment Method'} textType={Strings.subtitle} flex={9} />
