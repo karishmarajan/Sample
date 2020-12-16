@@ -15,8 +15,10 @@ import CustomDropdown from '../../component/CustomDropdown';
 import session, { KEY } from '../../session/SessionManager';
 import Api from '../../component/Fetch';
 import { PICKUP_ORDERS } from '../../constants/Api';
+import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 
-const myArray1 = [{ name: "Order No.", value: "Order No." }, { name: "PENDING", value: "CANCELLED" }, { name: "DELIVERED", value: "102" }, { name: "PICKUP FOR THE SAME CUSTOMER", value: "102" }];
+
+const myArray1 = [{ name: "Order No.", value: "Order No." }, { name: "CustomerName", value: "CustomerName" },];
 const myArray = [{ name: "PENDING", value: "PENDING" }, { name: "ALL", value: "ALL" }, { name: "FAILED", value: "FAILED" }, { name: "COMPLETED", value: "COMPLETED" }];
 
 
@@ -67,24 +69,6 @@ export default class PickUp extends React.Component {
     }));
   }
 
-  offset_change_next() {
-    this.setState({
-      offset: this.state.offset + 1
-    })
-    setTimeout(() => {
-      this.fetch_pickup_orders(this.state.status_type)
-    }, 1000);
-
-  }
-  offset_change_prev() {
-    this.setState({
-      offset: this.state.offset - 1
-    })
-    setTimeout(() => {
-      this.fetch_pickup_orders(this.state.status_type)
-    }, 1000);
-
-  }
 
   _header = () => {
     return (
@@ -114,9 +98,9 @@ export default class PickUp extends React.Component {
       <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3 }}>
         <View style={styles.cell1}><Icon name='arrow-up' style={{ fontSize: 14 }} /></View>
         <View style={styles.cell}><CustomText text={item.serialId ? item.serialId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText text={item.deliveryId} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText text={item.orderId ? item.orderId :Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.contactPersonName} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText text={item.addressLine1 ? item.addressLine1 : Strings.na} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText text={item.addressLine1 ? item.addressLine1 : Strings.na} textType={Strings.subtext}  color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.city} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.contactPersonNumber} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.date ? item.date : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
@@ -139,14 +123,6 @@ export default class PickUp extends React.Component {
     )
   }
 
-  _footer = () => {
-    return (
-      <View style={{ flexDirection: 'row', justifyContent: 'space-around', flex: 5 }}>
-        <View style={{ flex: 2 }}><CustomButton title={'PREV'} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={() => this.offset_change_prev()} /></View>
-        <View style={{ flex: 2, }}><CustomButton title={'NEXT'} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginLeft={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={() => this.offset_change_next()} /></View>
-      </View>
-    )
-  }
 
   render() {
     var left = (
@@ -173,6 +149,14 @@ export default class PickUp extends React.Component {
     return (
 
       <Container>
+
+  
+<CustomActivityIndicator
+               animating = {true}
+               color = '#bc2b78'
+               size = "large"
+               />
+
         <Navbar left={left} right={right} title="Pickup" />
         <ScrollView contentContainerStyle={{flexGrow:1}} style={{ flexDirection: 'column', padding: 10, backgroundColor: Colors.textBackgroundColor }}>
 
@@ -209,11 +193,7 @@ export default class PickUp extends React.Component {
                 renderItem={({ item }) => this._body(item)}
                 ListHeaderComponentStyle={styles.header}
               />
-
             </ScrollView>
-            <FlatList
-              ListFooterComponent={this._footer}
-            />
 
           </View>
           </ScrollView>

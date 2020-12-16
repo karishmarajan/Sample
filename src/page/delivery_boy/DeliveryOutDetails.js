@@ -28,7 +28,6 @@ export default class DeliveryOutDetails extends React.Component {
     reason_val:'',
     modal_view: false,
     delivery_details:[],
-    ishidden :true,
 
   };
 
@@ -233,7 +232,8 @@ render(){
 
 {/*////////////////////// Total & Payment Block //////////////////////////////////////////////// */}
 
-<View hide={this.state.ishidden} style={{backgroundColor:Colors.white,flex:10,flexDirection:'row' ,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',}}>
+{ this.state.delivery_details.deliveryType == "COD" &&  (<View>
+<View  style={{backgroundColor:Colors.white,flex:10,flexDirection:'row' ,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',}}>
               <CustomText  text={'Total & Payment'} textType={Strings.subtitle} flex={9} fontWeight={'bold'} />
               <Icon name={'md-arrow-dropdown'} style={{color:Colors.black,fontSize:FOURTH_FONT,flex:1,}}/>
               </View>
@@ -260,11 +260,11 @@ render(){
        <Col><CustomInput flex={1} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} /></Col></Grid>
        </View>
 
-       <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  />
-
-
       </View>
+      </View>)}
 
+      <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  />
+      
           </View>
         </ScrollView>
         </Container>

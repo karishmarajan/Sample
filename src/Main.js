@@ -24,6 +24,9 @@ import StatusUpdateFirst from './page/delivery_boy/StatusUpdateFirst';
 import SplashScreen from './page/delivery_boy/SplashScreen';
 import VerifyTaskTransfer from './page/delivery_boy/VerifyTaskTransfer';
 import PickupDetails from './page/delivery_boy/PickupDetails';
+import AddVehicle from './page/delivery_boy/AddVehicle';
+import DeliveryVehicles from './page/delivery_boy/DeliveryVehicles';
+import UpdateVehicleDetails from './page/delivery_boy/UpdateVehicleDetails';
 
 
 
@@ -56,6 +59,9 @@ export default class Main extends Component {
             <Scene  initial key="splashscreen" component={SplashScreen} hideNavBar />
             <Scene  key="verifytasktransfer" component={VerifyTaskTransfer} hideNavBar />
             <Scene  key="pickupdetails" component={PickupDetails} hideNavBar />
+            <Scene  key="addvehicle" component={AddVehicle} hideNavBar />
+            <Scene  key="deliveryvehicles" component={DeliveryVehicles} hideNavBar />
+            <Scene  key="updatevehicledetails" component={UpdateVehicleDetails} hideNavBar />
           </Scene>
         </Router>
       </Root>

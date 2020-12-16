@@ -5,6 +5,7 @@ import { Header, Body, Title, Left, Right, Icon, Text } from 'native-base';
 import Colors from '../constants/Colors';
 import Strings from '../constants/Strings';
 import { SECTION_MARGIN_TOP } from '../constants/Dimen';
+import { TouchableOpacity } from 'react-native';
 
 export default class CustomText extends Component {
   render() {
@@ -58,6 +59,7 @@ export default class CustomText extends Component {
         fontFamily:this.props.fontFamily,
         flex:this.props.flex,
         color:this.props.color ? this.props.color : Colors.primaryColor,
+        textDecorationLine:this.props.textDecorationLine,
       },
       smalltitle:{
         marginTop:this.props.mTop ? this.props.mTop : SECTION_MARGIN_TOP,
@@ -72,7 +74,9 @@ export default class CustomText extends Component {
       }
     };
     return(
+      <TouchableOpacity onPress={this.props.onPress}>
           <Text numberOfLines={this.props.numberOfLines} ellipsizeMode={'tail'} style={this.props.textType==Strings.maintext ? styles.maintext : this.props.textType == Strings.titlelarge?styles.titlelarge :this.props.textType == Strings.subtext ? styles.subtext : this.props.textType == Strings.title?styles.title : this.props.textType == Strings.subtitle?styles.subtitle : styles.smalltitle}>{this.props.text}</Text>
+          </TouchableOpacity>
     );
   }
 }
