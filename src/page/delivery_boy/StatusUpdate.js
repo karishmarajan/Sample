@@ -19,7 +19,7 @@ const myArray=[{name:"Select a Status" , value:"Select a Status"},{name:"Deliver
 const myArray1=[{name:"Select/Enter a Reason" , value:"Select/Enter here"},{name:"a" , value:"a"},{name:"b" , value:"b"},{name:"Enter a Reason" , value:"Enter a Reason"}];
 const myArray2=[{name:"Cash" , value:"Cash"},{name:"Credit card" , value:"Credit card"},{name:"Debit card" , value:"Debit card"},{name:"Paytm" , value:"Paytm"}];
 
-export default class DeliveryOutDetails extends React.Component {
+export default class StatusUpdate extends React.Component {
 
   state = {
     modal_visible: false,

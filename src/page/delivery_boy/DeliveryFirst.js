@@ -16,7 +16,7 @@ import session, { KEY } from '../../session/SessionManager';
 import Api from '../../component/Fetch';
 import { DELIVERY_ORDERS } from '../../constants/Api';
 
-const myArray1 = [{ name: "Order No.", value: "Order No." }, { name: "PENDING", value: "CANCELLED" }, { name: "DELIVERED", value: "102" }, { name: "PICKUP FOR THE SAME CUSTOMER", value: "102" }];
+const myArray1 = [{ name: "Order No.", value: "Order No." }, { name: "CustomerName", value: "CustomerName" },];
 const myArray = [{ name: "PENDING", value: "PENDING" }, { name: "ALL", value: "ALL" }, { name: "FAILED", value: "FAILED" }, { name: "COMPLETED", value: "COMPLETED" }];
 
 
@@ -26,7 +26,6 @@ export default class DeliveryFirst extends React.Component {
     filterType: Strings.status,
     search: '',
     delivery_list: [],
-    offset: 0,
     status_type: Strings.pending
   };
 
@@ -43,8 +42,6 @@ export default class DeliveryFirst extends React.Component {
       let data = JSON.parse(value);
 
       let body = {
-        "offset": this.state.offset,
-        "limit": 5,
         "filterType": status_type != Strings.all ? this.state.filterType : Strings.all,
         "status": status_type == Strings.all ? '0' : status_type,
         "personId": data.personId
@@ -67,24 +64,7 @@ export default class DeliveryFirst extends React.Component {
     }));
   }
 
-  offset_change_next() {
-    this.setState({
-      offset: this.state.offset + 1
-    })
-    setTimeout(() => {
-      this.fetch_delivery_orders(this.state.status_type)
-    }, 1000);
 
-  }
-  offset_change_prev() {
-    this.setState({
-      offset: this.state.offset - 1
-    })
-    setTimeout(() => {
-      this.fetch_delivery_orders(this.state.status_type)
-    }, 1000);
-
-  }
 
   _header = () => {
     return (
@@ -139,14 +119,7 @@ export default class DeliveryFirst extends React.Component {
     )
   }
 
-  _footer = () => {
-    return (
-      <View style={{ flexDirection: 'row', justifyContent: 'space-around', flex: 5 }}>
-        <View style={{ flex: 2 }}><CustomButton title={'PREV'} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={() => this.offset_change_prev()} /></View>
-        <View style={{ flex: 2, }}><CustomButton title={'NEXT'} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginLeft={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={() => this.offset_change_next()} /></View>
-      </View>
-    )
-  }
+
 
   render() {
     var left = (
@@ -203,9 +176,6 @@ export default class DeliveryFirst extends React.Component {
               />
 
             </ScrollView>
-            <FlatList
-              ListFooterComponent={this._footer}
-            />
           </View>
         </Container>
       </Container>

@@ -7,58 +7,26 @@ import Navbar from '../../component/Navbar';
 import Colors from '../../constants/Colors';
 import Strings from '../../constants/Strings';
 import CustomInput from '../../component/CustomInput';
+import CustomSubButton from '../../component/CustomSubButton';
 import CustomText from '../../component/CustomText';
-import { SECTION_MARGIN_TOP,LOGIN_FIELD_HEIGHT, MAIN_BLOCK_BORDER_RADIUS, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,ADDRESS_FIELD_HEIGHT, SIGNATURE_VIEW_HEIGHT,TOTAL_BLOCK, CREDIT_FIELD_HEIGHT,TEXT_MARGIN_TOP, CAMERA_SIZE,FOURTH_FONT } from '../../constants/Dimen';
+import { SECTION_MARGIN_TOP,CREDIT_FIELD_HEIGHT, FIELD_MARGIN_TOP, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,ADDRESS_FIELD_HEIGHT, SIGNATURE_VIEW_HEIGHT,FOURTH_FONT, COLUMN_PADDING, SECOND_FONT, CAMERA_SIZE } from '../../constants/Dimen';
 import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
-import session,{KEY} from '../../session/SessionManager';
-import Api from '../../component/Fetch';
-import { PICKUP_DETAILS , } from '../../constants/Api';
-import CustomActivityIndicator from '../../component/CustomActivityIndicator';
+
 
 
 const myArray=[{name:"Select a Status" , value:"Select a Status"},{name:"Delivered" , value:"Delivered"},{name:"Undelivered" , value:"Undelivered"}];
 const myArray1=[{name:"Select/Enter a Reason" , value:"Select/Enter here"},{name:"a" , value:"a"},{name:"b" , value:"b"},{name:"Enter a Reason" , value:"Enter a Reason"}];
 const myArray2=[{name:"Cash" , value:"Cash"},{name:"Credit card" , value:"Credit card"},{name:"Debit card" , value:"Debit card"},{name:"Paytm" , value:"Paytm"}];
 
-export default class PickupDetails extends React.Component {
+export default class StatusUpdateMultiple extends React.Component {
 
   state = {
     modal_visible: false,
     reason:'',
     reason_val:'',
     modal_view: false,
-    pickup_details:[],
-
   };
-
-
-  componentDidMount() {
-    
-    this.fetch_pickup_details(this.props.delivery_id);
-  }
-
-  //////////////////////////////////////////// Delivery out details fetching function  //////////////////////////////////////////////////////////////////////////////////  
- 
- fetch_pickup_details(id){
-
-  // alert(id)
-
-  Api.fetch_request(PICKUP_DETAILS+id,'GET','')
-  .then(result => {
-   
-    if(result.error != true){
-
-      console.log('Success:', JSON.stringify(result));
-      this.setState({pickup_details : result.payload})
-    
-    }
-    else{
-      console.log('Failed');
-    }
-})
-
- }
 
 render(){
     var left = (
@@ -68,20 +36,11 @@ render(){
             </Button>
         </Left>
       );
-      var right = (
-        <Right style={{ flex: 1 }}>
-    
-          {/* <Button onPress={() => this.setState({modal_view:true})} transparent> */}
-            <Icon style={{color:Colors.navbarIconColor }} name='md-more' />
-          {/* </Button> */}
-        </Right>
-      );
 
 
     return(
   
         <Container>
-        
 
  {/*////////////////////////////////////// Modal Block //////////////////////////////////////////////// */}
 
@@ -98,23 +57,9 @@ render(){
 </View>
 </Modal>
 
-{/* <Modal visible={this.state.modal_view1} supportedOrientations={['landscape']} transparent>
-<View style={{ justifyContent: 'center', flex: 1, backgroundColor: Colors.transparent }}>
-    <View style={{ backgroundColor: Colors.white, alignSelf: 'center', marginTop:SECTION_MARGIN_TOP }}>
-        <View style={{ flexDirection: 'row', alignSelf: 'flex-end' }}>  
-        <View style={styles.modalview}>
-        <CustomText text={'Notify Customer'} textType={Strings.subtext} />
-        <CustomText text={'Call Customer'} textType={Strings.subtext} />
-        <CustomText text={'Print'} textType={Strings.subtext} />
-        </View>
-        </View>
-    </View>
-</View>
-</Modal> */}
-
 {/*//////////////////////////////////////////////////////////////////////////////////////////////////// */}
 
-        <Navbar left={left} right={right} title="PickUp Details" />
+        <Navbar left={left} title="Status Update" />
         <ScrollView contentContainerStyle={{flexGrow:1}}>
 
 {/*////////////////////// main view //////////////////////////////////////////////// */}
@@ -123,6 +68,8 @@ render(){
 
 {/*/////////////////////////// Customer Details //////////////////////////////////////////////// */}
 
+<View style={{ backgroundColor:Colors.aash,padding:FIELD_MARGIN_TOP}}><CustomText  text={'SCANNED ORDERS'} textType={Strings.subtitle} /></View>
+
 <View style={{ backgroundColor:Colors.white,flexGrow:1,padding:MAIN_VIEW_PADDING}}>
        
         <View style={{flexDirection:'row',marginBottom:SECTION_MARGIN_TOP,}}>
@@ -130,25 +77,21 @@ render(){
         </View>
 
         <CustomText text={'Deliver To'} textType={Strings.subtext} color={Colors.black}/>
-        <View style={styles.inputview}><CustomText text={this.state.pickup_details.canBeDeliveredTo ? this.state.pickup_details.canBeDeliveredTo : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
+          <CustomInput flex={1} />
           <CustomText text={'Receiver Name'} textType={Strings.subtext} color={Colors.black}/>
-          <View style={styles.inputview}><CustomText text={this.state.pickup_details.contactPersonName ? this.state.pickup_details.contactPersonName : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
+          <CustomInput flex={1} />
           <CustomText text={'Customer Id'} textType={Strings.subtext} color={Colors.black}/>
-          <View style={styles.inputview}><CustomText text={this.state.pickup_details.canBeDeliveredTo ? this.state.pickup_details.canBeDeliveredTo : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>
+          <CustomInput flex={1} />
           <CustomText text={'Mobile No.'} textType={Strings.subtext} color={Colors.black}/>
-          <View style={styles.inputview}><CustomText text={this.state.pickup_details.contactPersonNumber ? this.state.pickup_details.contactPersonNumber : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>
+          <CustomInput keyboardType={'number-pad'} flex={1}/>
           <CustomText text={'Location'} textType={Strings.subtext} color={Colors.black}/>
-          <View style={styles.inputview}><CustomText text={this.state.pickup_details.localBodyType ? this.state.pickup_details.localBodyType : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>
+          <CustomInput flex={1}/>
           <CustomText text={'Address'} textType={Strings.subtext} color={Colors.black}/>
-          <View style={styles.inputviewaddress}>
-            <CustomText text={this.state.pickup_details.addressLine1 ? this.state.pickup_details.addressLine1 : Strings.na} textType={Strings.subtext} color={Colors.black}/>
-            <CustomText text={this.state.pickup_details.addressLine2 ? this.state.pickup_details.addressLine2 : Strings.na} textType={Strings.subtext} color={Colors.black}/>
-            <CustomText text={this.state.pickup_details.city ? this.state.pickup_details.city : Strings.na} textType={Strings.subtext} color={Colors.black}/>
-          </View>
+          <CustomInput height={ADDRESS_FIELD_HEIGHT} flex={1}/>
 </View>
 
 
-{/*///////////////////////////// Order Status Block //////////////////////////////////////////////// */}
+{/*////////////////////// Order Status Block //////////////////////////////////////////////// */}
 
 <View style={{backgroundColor:Colors.white,flex:10,flexDirection:'row' ,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',}}>
               <CustomText  text={'Status Update'} textType={Strings.subtitle} flex={9} fontWeight={'bold'}/>
@@ -174,19 +117,19 @@ render(){
         </View>
 
         <CustomText text={'Serial No.'} textType={Strings.subtext} color={Colors.black}/>
-        <View style={styles.inputview2}><CustomText text={this.state.pickup_details.serialId ? this.state.pickup_details.serialId : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
+          <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1} />
           <CustomText text={'Order No.'} textType={Strings.subtext} color={Colors.black}/>
-          <View style={styles.inputview2}><CustomText text={this.state.pickup_details.orderId ? this.state.pickup_details.orderId : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
+          <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1} />
           <CustomText text={'Date And Time'} textType={Strings.subtext} color={Colors.black}/>
           <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1} />
           <CustomText text={'Seller ID'} textType={Strings.subtext} color={Colors.black}/>
           <CustomInput keyboardType={'number-pad'} flex={1} backgroundColor={Colors.textBackgroundColor1}/>
           <CustomText text={'Delivery Type'} textType={Strings.subtext} color={Colors.black}/>
-          <View style={styles.inputview2}><CustomText text={this.state.pickup_details.deliveryType ? this.state.pickup_details.deliveryType : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
+          <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1}/>
           <CustomText text={'Credit Allowed'} textType={Strings.subtext} color={Colors.black}/>
           <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1}/>
           <CustomText text={'Location'} textType={Strings.subtext} color={Colors.black}/>
-          <View style={styles.inputview2}><CustomText text={this.state.pickup_details.localBodyType ? this.state.pickup_details.localBodyType : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
+          <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1}/>
           <CustomText text={'Package Details'} textType={Strings.subtext} color={Colors.black}/>
           <View style={{flexDirection:'row',flex:2,justifyContent:'space-between'}}>
           <CustomText text={'No. of Pieces'} textType={Strings.subtext} color={Colors.black}/>
@@ -202,11 +145,38 @@ render(){
 </View>
 
 
+{/*////////////////////// Proof Upload Block //////////////////////////////////////////////// */}
 
-{/*/////////////////////////////// Total & Payment Block //////////////////////////////////////////////// */}
+<View style={{backgroundColor:Colors.white,flex:COLUMN_PADDING,flexDirection:'row' ,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',}}>
+              <CustomText  text={'Proof Upload & Receiver Signature'} textType={Strings.subtitle} flex={9} fontWeight={'bold'}/>
+              <Icon name={'md-arrow-dropdown'} style={{color:Colors.black,fontSize:FOURTH_FONT,flex:1,}}/>
+              </View>
+<View style={{ backgroundColor:Colors.white,flexGrow:1,paddingLeft:MAIN_VIEW_PADDING,paddingRight:MAIN_VIEW_PADDING,paddingBottom:MAIN_VIEW_PADDING}}>
+<CustomText text={'Proof to be produced'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput flex={1} />
+          <CustomText text={'Proof Upload'} textType={Strings.subtext} color={Colors.black}/>
 
+          <View style={{height:ADDRESS_FIELD_HEIGHT,backgroundColor:Colors.lightBackgroundColor,borderColor:Colors.lightborderColor,borderWidth:SHORT_BORDER_WIDTH,alignItems:'center',flex:1}}>
+              <Icon name='ios-camera' style={{fontSize:CAMERA_SIZE,flex:1,marginTop:SECTION_MARGIN_TOP}}/>
+          </View>
+          <CustomButton title={'Capture Customer Photo'} text_color={Colors.darkSkyBlue} backgroundColor={Colors.white} borderColor={Colors.darkSkyBlue} borderWidth={BORDER_WIDTH} marginTop={BORDER_WIDTH} fontSize={SECOND_FONT} />
 
-{ this.state.pickup_details.deliveryType == "COD" &&  (<View>
+          <View style={{height:ADDRESS_FIELD_HEIGHT,backgroundColor:Colors.lightBackgroundColor,borderColor:Colors.lightborderColor,borderWidth:SHORT_BORDER_WIDTH,alignItems:'center',flex:1,marginTop:SECTION_MARGIN_TOP}}>
+              <Icon name='ios-camera' style={{fontSize:CAMERA_SIZE,flex:1,marginTop:SECTION_MARGIN_TOP}}/>
+          </View>
+          <CustomButton title={'Capture ID Card'} text_color={Colors.darkSkyBlue} backgroundColor={Colors.white} borderColor={Colors.darkSkyBlue} borderWidth={BORDER_WIDTH} marginTop={BORDER_WIDTH} fontSize={SECOND_FONT} />
+         
+          <View style={{height:ADDRESS_FIELD_HEIGHT,backgroundColor:Colors.lightBackgroundColor,borderColor:Colors.lightborderColor,borderWidth:SHORT_BORDER_WIDTH,alignItems:'center',flex:1,marginTop:SECTION_MARGIN_TOP}}>
+              <Icon name='ios-camera' style={{fontSize:CAMERA_SIZE,flex:1,marginTop:SECTION_MARGIN_TOP}}/>
+          </View>
+          <CustomButton title={'Capture Signature'} text_color={Colors.darkSkyBlue} backgroundColor={Colors.white} borderColor={Colors.darkSkyBlue} borderWidth={BORDER_WIDTH} marginTop={BORDER_WIDTH} fontSize={SECOND_FONT} />
+
+          <CustomText  text={'Receiver Signature'} textType={Strings.subtext} color={Colors.black} mTop={SECTION_MARGIN_TOP}/>
+<View style={{ backgroundColor:Colors.signBackgroundColor,height:SIGNATURE_VIEW_HEIGHT,}}></View>
+      </View>
+
+{/*////////////////////// Total & Payment Block //////////////////////////////////////////////// */}
+
 <View style={{backgroundColor:Colors.white,flex:10,flexDirection:'row' ,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',}}>
               <CustomText  text={'Total & Payment'} textType={Strings.subtitle} flex={9} fontWeight={'bold'} />
               <Icon name={'md-arrow-dropdown'} style={{color:Colors.black,fontSize:FOURTH_FONT,flex:1,}}/>
@@ -215,13 +185,13 @@ render(){
 
 <View style={{height:CREDIT_FIELD_HEIGHT}}>
 <Grid ><Col><CustomText text={'Other Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
-        <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.deliveryCharge ? this.state.pickup_details.deliveryCharge : Strings.na } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+        <Col><CustomInput flex={1} /></Col></Grid>
  <Grid ><Col><CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
-        <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.deliveryCharge ? this.state.pickup_details.deliveryCharge : Strings.na } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+        <Col><CustomInput flex={1} /></Col></Grid>
  <Grid><Col><CustomText text={'Credit Allowed'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><CustomInput flex={1} /></Col></Grid>
        <Grid><Col><CustomText text={'Amount to Collect'} textType={Strings.subtext} color={Colors.black}/></Col>
-       <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.total ? this.state.pickup_details.total : Strings.na } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+       <Col><CustomInput flex={1} /></Col></Grid>
       </View>
 
       <CustomText  text={'Payment Method'} textType={Strings.subtitle} flex={9} />
@@ -234,11 +204,10 @@ render(){
        <Col><CustomInput flex={1} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} /></Col></Grid>
        </View>
 
+       <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  />
+
+
       </View>
-
-      </View>)}
-
-      <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  />
 
           </View>
         </ScrollView>
@@ -284,22 +253,5 @@ const styles=StyleSheet.create({
     paddingTop:5,
     height:30,
     borderRadius:5
-  },
-  inputview :{
-    backgroundColor:Colors.textBackgroundColor,
-    height:40,
-    alignItems:'flex-start',
-    justifyContent:'center'
-  },
-  inputviewaddress :{
-    backgroundColor:Colors.textBackgroundColor,
-    height:120,
-    alignItems:'flex-start',
-  },
-  inputview2 :{
-    backgroundColor:Colors.textBackgroundColor1,
-    height:40,
-    alignItems:'flex-start',
-    justifyContent:'center'
   },
   });

@@ -13,7 +13,7 @@ import CustomButton from '../../component/CustomButton';
 import { SECTION_MARGIN_TOP, SHORT_BORDER_WIDTH, SHORT_BORDER_RADIUS, MAIN_VIEW_PADDING, NORMAL_FONT, BORDER_WIDTH , TEXT_PADDING_RIGHT , SECOND_FONT , CAMERA_SIZE ,COLUMN_PADDING , SHORT_BUTTON_HEIGHT , SIXTH_FONT} from '../../constants/Dimen';
 
 
-export default class SelfAssign extends React.Component {
+export default class VerifyTaskTransfer extends React.Component {
 
   _menu = null;
 

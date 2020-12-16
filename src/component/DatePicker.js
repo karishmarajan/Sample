@@ -18,14 +18,14 @@ export default class DatePicker extends Component {
 
     showPicker() {
 
-        if (Platform.OS == 'ios') {
+        if (Platform.OS == 'android') {
             this.setState({ modal_visible: true });
         }
     }
     ioSDateDone()
     {
         this.setState({modal_visible:false});
-        // this.setState({date: moment(this.state.chosenDate).format('YYYY-MM-DD'), time: moment(this.state.chosenDate).format('HH:mm')});
+         this.setState({date: moment(this.state.chosenDate).format('YYYY-MM-DD'), time: moment(this.state.chosenDate).format('HH:mm')});
     }
     
    
@@ -43,21 +43,21 @@ export default class DatePicker extends Component {
         }
         return (
             <TouchableOpacity onPress={() => this.showPicker()} activeOpacity={1}>
-                <View style={{ flexDirection: 'row', borderWidth: .5, borderColor: Colors.accentColor, padding: 6, height: this.props.height ? this.props.height : 50,width:this.props.width, marginTop: 6, marginBottom: 6, borderRadius: 6 }}>
+                <View style={{ flexDirection: 'row', borderWidth: .5, borderColor: Colors.accentColor, padding: 6, height: this.props.height ? this.props.height : 40,width:this.props.width, marginTop: 6, marginBottom: 6, borderRadius: 6 }}>
                     <View style={{ flexDirection: 'row', flex: 1 }}>
                         <Text  style={styles.input}>{this.props.date ?  this.props.date : this.props.place_holder }</Text>
                     </View>
-                    <Icon style={{ fontSize: this.props.iconSize ? this.props.iconSize :32, color: Colors.secondaryColor, alignSelf:'center' }} name={this.props.mode == 'time' ? 'ios-time' : 'ios-calendar'} />
+                    <Icon style={{ fontSize: this.props.iconSize ? this.props.iconSize :24, color: Colors.secondaryColor, alignSelf:'center' }} name={this.props.mode == 'time' ? 'ios-time' : 'ios-calendar'} />
                 </View>
 
                 <Modal visible={this.state.modal_visible} transparent supportedOrientations={['landscape','landscape-left','landscape-right']}>
                     <View style={{ flex: 1, justifyContent: 'center', backgroundColor: '#00000088', padding: 16 }}>
                         <View style={{ backgroundColor: Colors.primaryColor, padding: 16,justifyContent:'center' }}>
                             <View style={{backgroundColor:Colors.primaryColor,alignSelf:'center'}}>
-                                <Text style={{ fontSize: Dimen.sub_title, color: Colors.white, fontWeight: 'bold' }}> {this.props.title ? this.props.title : 'CHOOSE'} </Text>
+                                <Text style={{ fontSize: 10, color: Colors.white, fontWeight: 'bold' }}> {this.props.title ? this.props.title : 'CHOOSE'} </Text>
                             </View>
 
-                            <DatePickerIOS
+                            <DatePickerAndroid
                                 mode={this.props.mode}
                                 date={this.props.chosenDate}
                                 onDateChange={this.props.onDateChange}
