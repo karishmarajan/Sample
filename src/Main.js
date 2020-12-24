@@ -27,6 +27,9 @@ import PickupDetails from './page/delivery_boy/PickupDetails';
 import AddVehicle from './page/delivery_boy/AddVehicle';
 import DeliveryVehicles from './page/delivery_boy/DeliveryVehicles';
 import UpdateVehicleDetails from './page/delivery_boy/UpdateVehicleDetails';
+import StatusUpdateMultiple from './page/delivery_boy/StatusUpdateMultiple';
+import Notifications from './page/delivery_boy/Notifications';
+import Chat from './page/delivery_boy/Chat';
 
 
 
@@ -62,6 +65,9 @@ export default class Main extends Component {
             <Scene  key="addvehicle" component={AddVehicle} hideNavBar />
             <Scene  key="deliveryvehicles" component={DeliveryVehicles} hideNavBar />
             <Scene  key="updatevehicledetails" component={UpdateVehicleDetails} hideNavBar />
+            <Scene  key="statusupdatemultiple" component={StatusUpdateMultiple} hideNavBar />
+            <Scene  key="notification" component={Notifications} hideNavBar />
+            <Scene  key="chat" component={Chat} hideNavBar />
           </Scene>
         </Router>
       </Root>

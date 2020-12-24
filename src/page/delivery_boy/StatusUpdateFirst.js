@@ -48,7 +48,7 @@ export default class StatusUpdateFirst extends React.Component {
 
        <CustomText text={'Looks like you haven`t scanned any order yet. Scan the order for updating the status of the particular item.'} textType={Strings.subtext} color={Colors.grayTextColor}/> 
       
-       <CustomButton title={'Barcode Scan'} fontSize={SECOND_FONT} showIcon={true} icon_name={'md-barcode'} icon_color={Colors.white} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.statusupdate()} />
+       <CustomButton title={'Barcode Scan'} fontSize={SECOND_FONT} showIcon={true} icon_name={'md-barcode'} icon_color={Colors.white} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.statusupdatemultiple()} />
       
        <CustomText text={'or'} textType={Strings.subtext} color={Colors.black} textAlign={'center'}/>
 
