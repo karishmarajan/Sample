@@ -31,6 +31,7 @@ export default class Dashboard extends React.Component {
     count_list :[],
     pick_count_list :[],
     task_assigned_list :[],
+    task_assigned_active_list :[],
     amount:[],
     pickup_assigned_list:[],
   }
@@ -46,6 +47,7 @@ export default class Dashboard extends React.Component {
       this.fetch_task_assigned_list(data.personId);
      this.amount_collected_today(data.personId);
      this.fetch_pickup_assigned_list(data.personId);
+     this.fetch_task_assigned_active_list(data.personId)
    
   }));
   }
@@ -126,6 +128,32 @@ export default class Dashboard extends React.Component {
 
         console.log('Success:', JSON.stringify(result));
         this.setState({ task_assigned_list: result.payload })
+
+      }
+      else {
+        console.log('Failed');
+      }
+    })
+
+ }
+
+////////////////////////////////////// Task assigned active fetching function ////////////////////////////////////////////////////////////////////////////////////
+
+fetch_task_assigned_active_list(val){
+
+  let body = {
+    "filterType": "STATUS",
+    "status": "ACTIVE",
+    "personId": val
+  };
+
+  Api.fetch_request(DELIVERY_ORDERS, 'POST', '', JSON.stringify(body))
+    .then(result => {
+
+      if (result.error != true) {
+
+        console.log('Success:', JSON.stringify(result));
+        this.setState({ task_assigned_active_list: result.payload })
 
       }
       else {
@@ -223,6 +251,8 @@ pickup_assigned_reject(val) {
   )
 }
 
+
+
  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
  _body = (item) => {
@@ -252,6 +282,23 @@ _footer = () => {
   )
 }
 
+ ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ _body_activetask = (item) => {
+  return (
+    <View style={{height:90,borderRadius:5,backgroundColor:Colors.lightgreen,marginTop:SECTION_MARGIN_TOP,marginLeft:10,width:280}}>
+    <View style={{flexDirection:'row',marginTop:SECTION_MARGIN_TOP}}>
+    <Grid><Col style={styles.colstyle}><CustomCheckBox color={Colors.buttonBackgroundColor}/></Col>
+    <Col><Row style={styles.contents}><CustomText text={'Order ID'} color={Colors.black} textType={Strings.subtext}/></Row>
+    <Row style={styles.contents}><CustomText text={'Cust. Name'} color={Colors.black} textType={Strings.subtext}/></Row></Col>
+    <Col><Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>{item.orderId ? item.orderId : Strings.na}</Text></Row>
+    <Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>{item.contactPersonName ? item.contactPersonName : Strings.na}</Text></Row></Col></Grid>
+</View>
+</View>
+
+
+  )
+}
 
 
 /////////////////////////////////////////// Render method //////////////////////////////////////////////////////////////////////////////////
@@ -270,7 +317,7 @@ _footer = () => {
         <Button  transparent>
           <Icon style={{ color:Colors.navbarIconColor }} name='ios-chatbubbles' />
         </Button>
-        <Button  transparent>
+        <Button  transparent onPress={()=>Actions.notification()}>
          <Icon style={{color:Colors.navbarIconColor }} name='ios-notifications' />
          <Badge style={{width: 10, backgroundColor: 'orange',height:12,marginTop:20,borderRadius:10}} 
                             textStyle={{color: 'white', fontSize: 20, lineHeight: 20}}></Badge>
@@ -346,15 +393,25 @@ _footer = () => {
         <CustomCheckBox title={'ACTIVE'} color={Colors.buttonBackgroundColor} checked={true}/>
         </View>
         </View>
-        <View style={{height:90,borderRadius:5,backgroundColor:Colors.lightgreen,marginTop:SECTION_MARGIN_TOP,marginLeft:10,width:280}}>
-        <View style={{flexDirection:'row',marginTop:SECTION_MARGIN_TOP}}>
-        <Grid><Col style={styles.colstyle}><CustomCheckBox color={Colors.buttonBackgroundColor}/></Col>
+       
+
+        <FlatList
+                data={this.state.task_assigned_active_list}
+                keyExtractor={(x, i) => i}
+                ListHeaderComponent={this._header}
+                renderItem={({ item }) => this._body_activetask(item)}
+                // ListHeaderComponentStyle={styles.header}
+                // ListFooterComponent={this._footer}
+              />
+
+
+        {/* <Grid><Col style={styles.colstyle}><CustomCheckBox color={Colors.buttonBackgroundColor}/></Col>
         <Col><Row style={styles.contents}><CustomText text={'Order ID'} color={Colors.black} textType={Strings.subtext}/></Row>
         <Row style={styles.contents}><CustomText text={'Cust. Name'} color={Colors.black} textType={Strings.subtext}/></Row></Col>
         <Col><Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>12345</Text></Row>
-        <Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>Vivek purush</Text></Row></Col></Grid>
-        </View>
-        </View>
+        <Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>Vivek purush</Text></Row></Col></Grid> */}
+
+       
         </View>
 
 
@@ -407,7 +464,7 @@ _footer = () => {
 
 
               <View style={{backgroundColor:Colors.aash,flex:5,flexDirection:'row',height:LOGIN_FIELD_HEIGHT,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center'}}>
-              <CustomText  text={'Pickup Assigned'} textType={Strings.subtitle} flex={3} />
+              <CustomText  text={'Pickup Assigned'} textType={Strings.maintext} flex={3} />
               <CustomButton title={'Reject all'} text_color={Colors.red} backgroundColor={Colors.aash}  height={SHORT_BUTTON_HEIGHT} marginBottom={18} fontSize={14} flex={1}/>
               <CustomButton title={'Accept all'} text_color={Colors.green} backgroundColor={Colors.aash}  height={SHORT_BUTTON_HEIGHT} marginBottom={18} fontSize={14}  flex={1}/>
               </View>
@@ -436,8 +493,8 @@ _footer = () => {
 
 
  <View style={{backgroundColor:Colors.white,flex:10,flexDirection:'row',height:LOGIN_FIELD_HEIGHT,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',borderRadius:SHORT_BLOCK_BORDER_RADIUS}}>
-              <CustomText  text={'Delivery Out Status'} textType={Strings.subtitle} flex={9} />
-              <Icon name={'md-arrow-dropdown'} style={{color:Colors.black,fontSize:FOURTH_FONT,flex:1,}}/>
+              <CustomText  text={'Delivery Out Status'} textType={Strings.maintext} flex={9} />
+              {/* <Icon name={'md-arrow-dropdown'} style={{color:Colors.black,fontSize:FOURTH_FONT,flex:1,}}/> */}
               </View>
               <View style={{backgroundColor:Colors.aash,paddingBottom:SECTION_MARGIN_TOP,paddingLeft:SECTION_MARGIN_TOP,paddingRight:SECTION_MARGIN_TOP,height:120}}>
                 <Grid>
@@ -462,8 +519,8 @@ _footer = () => {
 
 
 <View style={{backgroundColor:Colors.white,flex:10,flexDirection:'row',height:LOGIN_FIELD_HEIGHT,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',borderRadius:SHORT_BLOCK_BORDER_RADIUS}}>
-              <CustomText  text={'Pickup Status'} textType={Strings.subtitle} flex={9} />
-              <Icon name={'md-arrow-dropdown'} style={{color:Colors.black,fontSize:FOURTH_FONT,flex:1,}}/>
+              <CustomText  text={'Pickup Status'} textType={Strings.maintext} flex={9} />
+              {/* <Icon name={'md-arrow-dropdown'} style={{color:Colors.black,fontSize:FOURTH_FONT,flex:1,}}/> */}
               </View>
               <View style={{backgroundColor:Colors.aash,paddingBottom:SECTION_MARGIN_TOP,paddingLeft:SECTION_MARGIN_TOP,paddingRight:SECTION_MARGIN_TOP,height:120}}>
                 <Grid>

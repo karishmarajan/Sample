@@ -106,46 +106,7 @@ render(){
       <CustomDropdown data={myArray1} height={TEXT_FIELD_HIEGHT}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} onChangeValue={(value,index,data)=>{if (index == (data.length)-1){this.setState({modal_visible: true});}}} value={this.state.reason_val}/>
       </View>
 
-
-{/*/////////////////////////// Customer Details //////////////////////////////////////////////// */}
-
-<View style={{ backgroundColor:Colors.white,flexGrow:1,padding:10}}>
-<View style={{ backgroundColor:Colors.signBackgroundColor,flexGrow:1,padding:MAIN_VIEW_PADDING}}>
-       
-        <View style={{flexDirection:'row',marginBottom:SECTION_MARGIN_TOP,}}>
-          <CustomText  text={'Order No. 1'} textType={Strings.subtitle} fontWeight={'bold'} />
-        </View>
-
-        <CustomText text={'Serial No.'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1} />
-          <CustomText text={'Order No.'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1} />
-          <CustomText text={'Date And Time'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1} />
-          <CustomText text={'Seller ID'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput keyboardType={'number-pad'} flex={1} backgroundColor={Colors.textBackgroundColor1}/>
-          <CustomText text={'Delivery Type'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1}/>
-          <CustomText text={'Credit Allowed'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1}/>
-          <CustomText text={'Location'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1}/>
-          <CustomText text={'Package Details'} textType={Strings.subtext} color={Colors.black}/>
-          <View style={{flexDirection:'row',flex:2,justifyContent:'space-between'}}>
-          <CustomText text={'No. of Pieces'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomText text={'Scanned Pieces'} textType={Strings.subtext} color={Colors.black}/>
-          </View>
-          <View style={{flexDirection:'row',flex:2,justifyContent:'space-between'}}>
-          <View style={{flex:1}}><CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1}/></View>
-          <View style={{flex:1,marginLeft:SECTION_MARGIN_TOP}}><CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1}/></View>
-          </View>
-         <CustomButton title={'Scan Pieces'} backgroundColor={Colors.darkSkyBlue} marginTop={SECTION_MARGIN_TOP} />
-
-          </View>
-</View>
-
-
-{/*////////////////////// Proof Upload Block //////////////////////////////////////////////// */}
+      {/*////////////////////// Proof Upload Block //////////////////////////////////////////////// */}
 
 <View style={{backgroundColor:Colors.white,flex:COLUMN_PADDING,flexDirection:'row' ,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',}}>
               <CustomText  text={'Proof Upload & Receiver Signature'} textType={Strings.subtitle} flex={9} fontWeight={'bold'}/>
@@ -175,25 +136,145 @@ render(){
 <View style={{ backgroundColor:Colors.signBackgroundColor,height:SIGNATURE_VIEW_HEIGHT,}}></View>
       </View>
 
+
+{/*/////////////////////////// Customer Details //////////////////////////////////////////////// */}
+
+<View style={{ backgroundColor:Colors.white,flexGrow:1,padding:10,marginTop:SECTION_MARGIN_TOP}}>
+<View style={{ backgroundColor:Colors.signBackgroundColor,flexGrow:1,padding:MAIN_VIEW_PADDING}}>
+       
+        <View style={{flexDirection:'row',marginBottom:SECTION_MARGIN_TOP,}}>
+          <CustomText  text={'Order No. 1'} textType={Strings.subtitle} fontWeight={'bold'} />
+        </View>
+
+        <CustomText text={'Serial No.'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1} />
+          <CustomText text={'Order No.'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1} />
+          <CustomText text={'Date And Time'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1} />
+          <CustomText text={'Seller ID'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput keyboardType={'number-pad'} flex={1} backgroundColor={Colors.textBackgroundColor1}/>
+          <CustomText text={'Delivery Type'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1}/>
+          <CustomText text={'Credit Allowed'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1}/>
+
+          <CustomText text={'Package Details'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.black}/>
+          <View style={{flexDirection:'row',flex:2,justifyContent:'space-between',paddingHorizontal:15}}>
+          <CustomText text={'Other Charges'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black}/>
+          </View>
+          <View style={{flexDirection:'row',flex:2,justifyContent:'space-between'}}>
+          <View style={{flex:1}}><CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1}/></View>
+          <View style={{flex:1,marginLeft:SECTION_MARGIN_TOP}}><CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1}/></View>
+          </View>
+
+          <CustomText text={'Total'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1}/>
+
+          <CustomText text={'Package Details'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.black}/>
+          <View style={{flexDirection:'row',flex:2,justifyContent:'space-between',paddingHorizontal:15}}>
+          <CustomText text={'No. of Pieces'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'Scanned Pieces'} textType={Strings.subtext} color={Colors.black}/>
+          </View>
+          <View style={{flexDirection:'row',flex:2,justifyContent:'space-between'}}>
+          <View style={{flex:1}}><CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1}/></View>
+          <View style={{flex:1,marginLeft:SECTION_MARGIN_TOP}}><CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1}/></View>
+          </View>
+         <CustomButton title={'Scan Pieces'} backgroundColor={Colors.darkSkyBlue} marginTop={SECTION_MARGIN_TOP} />
+
+          </View>
+     </View>
+
+
+
+          <View style={{ backgroundColor:Colors.white,flexGrow:1,padding:10}}>
+          <View style={{ backgroundColor:Colors.signBackgroundColor,flexGrow:1,padding:MAIN_VIEW_PADDING}}>
+       
+       <View style={{flexDirection:'row',marginBottom:SECTION_MARGIN_TOP,}}>
+         <CustomText  text={'Order No. 2'} textType={Strings.subtitle} fontWeight={'bold'} />
+       </View>
+
+       <CustomText text={'Serial No.'} textType={Strings.subtext} color={Colors.black}/>
+         <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1} />
+         <CustomText text={'Order No.'} textType={Strings.subtext} color={Colors.black}/>
+         <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1} />
+         <CustomText text={'Date And Time'} textType={Strings.subtext} color={Colors.black}/>
+         <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1} />
+         <CustomText text={'Seller ID'} textType={Strings.subtext} color={Colors.black}/>
+         <CustomInput keyboardType={'number-pad'} flex={1} backgroundColor={Colors.textBackgroundColor1}/>
+         <CustomText text={'Delivery Type'} textType={Strings.subtext} color={Colors.black}/>
+         <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1}/>
+         <CustomText text={'Credit Allowed'} textType={Strings.subtext} color={Colors.black}/>
+         <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1}/>
+
+         <CustomText text={'Package Details'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.black}/>
+         <View style={{flexDirection:'row',flex:2,justifyContent:'space-between',paddingHorizontal:15}}>
+         <CustomText text={'Other Charges'} textType={Strings.subtext} color={Colors.black}/>
+         <CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black}/>
+         </View>
+         <View style={{flexDirection:'row',flex:2,justifyContent:'space-between'}}>
+         <View style={{flex:1}}><CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1}/></View>
+         <View style={{flex:1,marginLeft:SECTION_MARGIN_TOP}}><CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1}/></View>
+         </View>
+
+         <CustomText text={'Total'} textType={Strings.subtext} color={Colors.black}/>
+         <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1}/>
+
+         <CustomText text={'Package Details'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.black}/>
+         <View style={{flexDirection:'row',flex:2,justifyContent:'space-between',paddingHorizontal:15}}>
+         <CustomText text={'No. of Pieces'} textType={Strings.subtext} color={Colors.black}/>
+         <CustomText text={'Scanned Pieces'} textType={Strings.subtext} color={Colors.black}/>
+         </View>
+         <View style={{flexDirection:'row',flex:2,justifyContent:'space-between'}}>
+         <View style={{flex:1}}><CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1}/></View>
+         <View style={{flex:1,marginLeft:SECTION_MARGIN_TOP}}><CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1}/></View>
+         </View>
+        <CustomButton title={'Scan Pieces'} backgroundColor={Colors.darkSkyBlue} marginTop={SECTION_MARGIN_TOP} />
+
+         </View>
+
+</View>
+
+
 {/*////////////////////// Total & Payment Block //////////////////////////////////////////////// */}
 
 <View style={{backgroundColor:Colors.white,flex:10,flexDirection:'row' ,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',}}>
               <CustomText  text={'Total & Payment'} textType={Strings.subtitle} flex={9} fontWeight={'bold'} />
-              <Icon name={'md-arrow-dropdown'} style={{color:Colors.black,fontSize:FOURTH_FONT,flex:1,}}/>
+              {/* <Icon name={'md-arrow-dropdown'} style={{color:Colors.black,fontSize:FOURTH_FONT,flex:1,}}/> */}
               </View>
 <View style={{ backgroundColor:Colors.white,flexGrow:1,paddingLeft:MAIN_VIEW_PADDING,paddingRight:MAIN_VIEW_PADDING,paddingBottom:MAIN_VIEW_PADDING}}>
+<View>
+<CustomText text={'Order No. 1'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.black}/>
 
-<View style={{height:CREDIT_FIELD_HEIGHT}}>
-<Grid ><Col><CustomText text={'Other Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
-        <Col><CustomInput flex={1} /></Col></Grid>
- <Grid ><Col><CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
-        <Col><CustomInput flex={1} /></Col></Grid>
- <Grid><Col><CustomText text={'Credit Allowed'} textType={Strings.subtext} color={Colors.black}/></Col>
-       <Col><CustomInput flex={1} /></Col></Grid>
-       <Grid><Col><CustomText text={'Amount to Collect'} textType={Strings.subtext} color={Colors.black}/></Col>
-       <Col><CustomInput flex={1} /></Col></Grid>
-      </View>
+         <CustomText text={'Order Id'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput flex={1} />
+          <CustomText text={'Seller Id'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput flex={1} />
+          <CustomText text={'CC Balance'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput flex={1} />
+          <CustomText text={'Amount to Collect'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput keyboardType={'number-pad'} flex={1}/>
 
+          <CustomButton title={'Deduct From CC'} text_color={Colors.darkSkyBlue} borderColor={Colors.darkSkyBlue} borderWidth={1} backgroundColor={Colors.white} />
+          </View>
+
+          <View style={{marginTop:6}}>
+<CustomText text={'Order No. 2'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.black}/>
+
+         <CustomText text={'Order Id'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput flex={1} />
+          <CustomText text={'Seller Id'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput flex={1} />
+          <CustomText text={'CC Balance'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput flex={1} />
+          <CustomText text={'Amount to Collect'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput keyboardType={'number-pad'} flex={1}/>
+
+          <CustomButton title={'Deduct From CC'} text_color={Colors.darkSkyBlue} borderColor={Colors.darkSkyBlue} borderWidth={1} backgroundColor={Colors.white} />
+          </View>
+
+<View style={{marginTop:SECTION_MARGIN_TOP}}>
       <CustomText  text={'Payment Method'} textType={Strings.subtitle} flex={9} />
       <CustomDropdown data={myArray2} height={TEXT_FIELD_HIEGHT}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} />
 
@@ -203,12 +284,11 @@ render(){
       <Grid><Col><CustomText text={'Balance Amount'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><CustomInput flex={1} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} /></Col></Grid>
        </View>
-
-       <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  />
-
+      
+       </View>
 
       </View>
-
+      <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  />
           </View>
         </ScrollView>
         </Container>

@@ -29,19 +29,6 @@ export default class SelfAssign extends React.Component {
     checked: [],
   };
 
-  // _menu = null;
-
-  // setMenuRef = ref => {
-  //   this._menu = ref;
-  // };
-
-  // hideMenu = () => {
-  //   this._menu.hide();
-  // };
-
-  // showMenu = () => {
-  //   this._menu.show();
-  // };
 
   componentDidMount() {
     this.fetch_delivery_orders()
@@ -286,7 +273,6 @@ render(){
   );
       var right = (
         <Right style={{ flex: 1 }}>
-          {/* <Button onPress={this.showMenu} transparent> */}
           <Button onPress={()=>this.setState({modal_visible:true})} transparent>
             <Icon style={{ color:Colors.navbarIconColor}} name='md-more' />
           </Button>

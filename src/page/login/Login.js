@@ -14,6 +14,7 @@ import NoDataFound from '../../component/NoDataFound';
 import CustomInput from '../../component/CustomInput';
 import CustomText from '../../component/CustomText';
 import CustomButton from '../../component/CustomButton';
+import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 import Fetch from '../../component/Fetch';
 import { SECTION_MARGIN_TOP ,FIELD_MARGIN_TOP, MAIN_BLOCK_BORDER_RADIUS, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,TEXT_PADDING_LEFT,TOTAL_BLOCK, SHORT_TEXT_FIELD_HIEGHT,TEXT_MARGIN_TOP, NORMAL_FONT,COLUMN_PADDING ,AMOUNT_BLOCK_HIEGHT,SECOND_FONT,LOGIN_FIELD_HEIGHT, FOURTH_FONT} from '../../constants/Dimen';
 import Api from '../../component/Fetch';
@@ -21,6 +22,7 @@ import { LOGIN } from '../../constants/Api';
 import session,{USER_ID} from '../../session/SessionManager';
 
 let user_id;
+let office_id;
 
 export default class Login extends Component {
 
@@ -36,6 +38,7 @@ export default class Login extends Component {
       hasError: false,
       errorTextuser: '',
       errorTextpass: '',
+      loader:false,
     };
 }
 
@@ -45,6 +48,7 @@ componentWillUnmount() {
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick  );
+    
   };
 
   handleBackButtonClick() {
@@ -57,7 +61,19 @@ componentWillUnmount() {
     return(
       <Container style={{backgroundColor:Colors.white}}>
         <KeyboardAvoidingScrollView keyboardShouldPersistTaps={'always'}>
+
+{/*/////////////////////////////////////////// Acivity indicator Block //////////////////////////////////////////////// */}
+
+        { this.state.loader === true && (<View style={{alignItems:'center'}}>
+        <CustomActivityIndicator/>
+        </View>)}
+
+        {/*/////////////////////////////////////////// Login image Block //////////////////////////////////////////////// */}
+
         <Image source={require('../../assets/logo.png')} style={{height:TOTAL_BLOCK,marginTop:TEXT_PADDING_LEFT,width:360}}/>
+
+
+      
 
 {/*/////////////////////////////////////////// Login Block //////////////////////////////////////////////// */}
 
@@ -102,6 +118,8 @@ componentWillUnmount() {
   
   };
     
+  this.setState({loader:true});
+  setTimeout(()=>{this.setState({loader:false})},3000);
 
     Api.fetch_request(LOGIN,'POST','',JSON.stringify(body))
     .then(result => {
@@ -112,6 +130,8 @@ componentWillUnmount() {
       alert("Login Success ")
 
       user_id=result.payload.personId;
+      office_id=result.payload.officeId;
+      
 
      session.login(JSON.stringify(result.payload));
    
@@ -122,6 +142,7 @@ componentWillUnmount() {
       else{
         console.log('Failed');
         alert("Login Failed ! Invalid username or password ")
+        Actions.login();
       }
     })
    

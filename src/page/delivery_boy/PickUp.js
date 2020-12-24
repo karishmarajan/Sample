@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, StyleSheet, AsyncStorage, FlatList } from 'react-native';
+import { ScrollView, StyleSheet, AsyncStorage, FlatList ,Linking, Platform, } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 import { Container, Header, Button, Left, Icon, Right, Text, Input, TextInput, Grid, Col, Row, SearchBar, Item, View, Badge, Body } from 'native-base';
@@ -33,9 +33,24 @@ export default class PickUp extends React.Component {
   };
 
   componentDidMount() {
-    this.fetch_pickup_orders(Strings.pending)
+   // this.fetch_pickup_orders(Strings.pending)
+  }
+ /////////////////////////////////////// Call function ////////////////////////////////////////////////////////////////////////////
+
+ dialCall = (no) => {
+
+  let phoneNumber = '';
+  if (Platform.OS === 'android') {
+    phoneNumber = 'tel:${'+no+'}';
+  }
+  else {
+    phoneNumber = 'telprompt:${'+no+'}';
   }
 
+  Linking.openURL(phoneNumber);
+};
+
+////////////////////////////////////// Pickup order fetching function ///////////////////////////////////////////////////////////////////////////////////
 
   fetch_pickup_orders(status_type) {
 
@@ -69,7 +84,7 @@ export default class PickUp extends React.Component {
     }));
   }
 
-
+///////////////////////////////////// Pickup order header part ///////////////////////////////////////////////////////////////////////////////////////////
   _header = () => {
     return (
 
@@ -92,6 +107,8 @@ export default class PickUp extends React.Component {
     )
   }
 
+  ///////////////////////////////////// Pickup order body part ///////////////////////////////////////////////////////////////////////////////////////////
+
   _body = (item) => {
     return (
 
@@ -112,7 +129,7 @@ export default class PickUp extends React.Component {
         <View style={styles.cell}>
           <View>
             <CustomButton title={'Notify'} backgroundColor={Colors.darkSkyBlue} height={20} fontSize={14} marginTop={1} marginBottom={5} />
-            <CustomButton title={'Call'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5} textDecorationLine={'underline'} text_color={Colors.darkSkyBlue} />
+            <CustomButton title={'Call'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5} textDecorationLine={'underline'} text_color={Colors.darkSkyBlue} onPress={()=>this.dialCall(item.contactPersonNumber)}/>
             <CustomButton title={'Details'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5} textDecorationLine={'underline'} text_color={Colors.darkSkyBlue} onPress={() => Actions.pickupdetails({delivery_id:item.deliveryId})} />
           </View>
         </View>
@@ -123,8 +140,9 @@ export default class PickUp extends React.Component {
     )
   }
 
+////////////////////////////////////////// Render method //////////////////////////////////////////////////////////////////////////////////////
 
-  render() {
+render() {
     var left = (
       <Left style={{ flex: 1 }}>
         <Button onPress={() => Actions.pop()} transparent>

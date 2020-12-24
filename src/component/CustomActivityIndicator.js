@@ -21,7 +21,8 @@ export default class CustomActivityIndicator extends React.Component {
     render() {
         return (
             <View>
-                <BarIndicator animating={this.props.animation} color={Colors.navbarBackgroundColor} size={50} />
+                {/* <BarIndicator animating={this.props.animation} color={Colors.navbarBackgroundColor} size={50} /> */}
+                <UIActivityIndicator animating={true} color={Colors.darkSkyBlue} size={50} />
             </View>
         );
     }

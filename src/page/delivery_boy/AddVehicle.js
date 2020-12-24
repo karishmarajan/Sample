@@ -41,6 +41,7 @@ export default class PickupDetails extends React.Component {
     radio_owned:'',
     radio_taxi:'',
     radio_rent:'',
+    
 
   };
 

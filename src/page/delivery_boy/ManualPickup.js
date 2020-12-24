@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView,Picker,StyleSheet,BackHandler,Modal } from 'react-native';
+import { ScrollView,Picker,StyleSheet,BackHandler,Modal, AsyncStorage } from 'react-native';
 import { Container, View, Button, Left, Right,Icon,Text,Grid,Col,Input,Badge, Row} from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
@@ -14,11 +14,12 @@ import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
 import CustomRadioButton from '../../component/CustomRadioButton';
 import DatePicker from '../../component/DatePicker';
+import moment from 'moment';
 
 import CustomCheckBox from '../../component/CustomCheckBox';
 import session, { KEY } from '../../session/SessionManager';
 import Api from '../../component/Fetch';
-import { COUNTRY , STATE , CITY , OTP , VERIFY_OTP , CUSTOMER_DETALS ,PACKAGE_CATEGORY, PACKAGE_SUB_CATEGORY ,SHIPMENT_BOX, ORDER} from '../../constants/Api';
+import { COUNTRY , STATE , CITY , OTP , VERIFY_OTP , CUSTOMER_DETALS ,PACKAGE_CATEGORY, PACKAGE_SUB_CATEGORY ,SHIPMENT_BOX, ORDER, ROUTES, DELIVERY_CHARGE, ADD_COD ,PAYER_PAYMENT, PAYMENT_BY_CASH} from '../../constants/Api';
 
 
 
@@ -43,6 +44,10 @@ export default class ManualPickup extends React.Component {
     sender_details:[],
     package_category_list:[],
     package_sub_category_list:[],
+    route_list:[],
+    office_list:[],
+    office_id:'',
+    route_id:'',
     code_otp:'',
     phone_otp:'',
     verify_otp:'',
@@ -90,6 +95,30 @@ export default class ManualPickup extends React.Component {
     contact_person_no:'',
     pickupdate:'',
     pickuptime:'',
+    hour:'',
+    minute:'',
+    second:'',
+    cod_credit_blnc:'',
+    invoice_des:'',
+    product_cost:'',
+    gst_no:'',
+    final_cod_charge:'',
+    min_delivery_charge:'',
+    package_applied:'',
+    credit_available:'',
+    delivery_charge:'',
+    deliveryChargePaymentBySender:true,
+    sender_selected:true,
+    reciever_selected:false,
+    payment_location:'',
+    payment_phone:'',
+    payment_comment:'',
+    sender_payment:'',
+    receiver_payment:'',
+    payment_name:'',
+    amount_recieved:'',
+    balance_amount:'',
+
   };
 
   componentDidMount() {
@@ -97,7 +126,50 @@ export default class ManualPickup extends React.Component {
     this.fetch_country_list_reciever()
     this.fetch_package_category_list()
     this.fetch_package_subcategory_list()
+    this.date_time_setting_function()
+    this.fetch_route_list_reciever()
   }
+
+isSelected(no){
+  if(no == 1){
+    this.setState({sender_selected:true})
+    this.setState({reciever_selected:false})
+    this.setState({deliveryChargePaymentBySender:true})
+
+  }if(no == 2){
+    this.setState({reciever_selected:true})
+    this.setState({sender_selected:false})
+    this.setState({deliveryChargePaymentBySender:false})
+  }
+}
+
+////////////////////////////////// Date time setting function //////////////////////////////////////////////////////////////////////////////////
+  date_time_setting_function(){
+
+    var time = moment().utcOffset('+05:30').format(' hh:mm:ss a');
+    this.setState({pickuptime:time});
+
+    var time1 = moment().format('hh:mm a');
+    this.setState({pickuptime:time1});
+
+    var date= moment().format('DD-MM-YYYY')
+    this.setState({pickupdate:date});
+    
+    var h=moment().hour();
+    this.setState({hour:h});
+
+    var m=moment().minute();
+    this.setState({minute:m});
+
+    var s=moment().second();
+    this.setState({second:s});
+
+    // var n=moment.locale('en')
+    // alert(n)
+    
+  }
+
+
 ////////////////////////////// Fetching customer details with id function //////////////////////////////////////////////////////////////////////////////
   verify_customer_id(customer_id) {
 
@@ -295,6 +367,59 @@ fetch_city_list_reciever(state_id) {
    
   }
 
+
+  //////////////////////////////// Fetching sender route function //////////////////////////////////////////////////////////////////////////////
+ 
+fetch_route_list_reciever() {
+
+  Api.fetch_request(ROUTES ,'GET','')
+  .then(result => {
+   
+    if(result.error != true){
+
+      console.log('Success:', JSON.stringify(result));
+
+      var count = (result.payload).length;
+      let route_list = [];
+
+      for(var i = 0; i < count; i++){
+        route_list.push({ value: result.payload[i].routeName , id: result.payload[i].routeId });
+     }
+     this.setState({ route_list });
+    }
+    else{
+      console.log('Failed');
+    }
+})
+ 
+}
+
+//////////////////////////////// Fetching reciever office function //////////////////////////////////////////////////////////////////////////////
+ 
+fetch_office_list_reciever() {
+
+  Api.fetch_request(OFFICE ,'GET','')
+  .then(result => {
+   
+    if(result.error != true){
+
+      console.log('Success:', JSON.stringify(result));
+      // this.setState({city_list : result.payload})
+
+      var count = (result.payload).length;
+      let office_list = [];
+
+      for(var i = 0; i < count; i++){
+        office_list.push({ value: result.payload[i].officeId , id: result.payload[i].officeId });
+     }
+     this.setState({ office_list });
+    }
+    else{
+      console.log('Failed');
+    }
+})
+ 
+}
 ///////////////////////////////// Sending OTP function /////////////////////////////////////////////////////////////////////////////////////
  
 send_otp(){
@@ -386,53 +511,53 @@ send_otp(){
  
 create_order() {
  
-  
-
   AsyncStorage.getItem(KEY).then((value => {
     let data = JSON.parse(value);
 
     let body = 
       {
         "creatorId": data.personId,
-        "creatorUserType": "CUSTOMER",
+        "creatorUserType": "DELIVERY_AGENT",
         "customerId": this.state.customer_id,
         "deliveryRequest": {
           "addressLine1": this.state.rec_address1,
           "addressLine2": this.state.rec_address2,
-          "assignedBy": "string",
+          "assignedBy": "SUPERVISOR",
           "attempt": 0,
           "canBeDeliveredTo": this.state.deliveredto,
           "city": this.state.rec_city,
           "contactPersonCountryCode": this.state.rec_country_code,
-          "contactPersonCustomerId": "string",
+          "contactPersonCustomerId": this.state.rec_id_or_no,
           "contactPersonName": this.state.recievername,
           "contactPersonNumber": this.state.recieverno,
-          "country": this.state.rec_country_code,
+          "country": this.state.rec_country,
           "customerId": this.state.rec_id_or_no,
           "deliveryId": 0,
           "deliveryType": "BULLET",
           "district": this.state.rec_district,
           "gmapLink": this.state.rec_gmap,
+          "isSameOffice": true,
           "localBodyType": this.state.rec_localbody,
           "notesToCourierBoy": this.state.rec_notes,
-          "officeId": 0,
+          "officeId": 13,
           "orderId": 0,
           "pincode": this.state.rec_pincode,
           "proofToBeProduced": this.state.proof,
-          "serialId": "string",
+          "routeId": 0,
+          "serialId": 0,
           "state": this.state.rec_state
         },
         "deliveryType": "BULLET",
         "isManualPickup": true,
-        "officeId": 0,
+        "officeId": data.officeId,
         "orderId": 0,
         "pickupRequest": {
           "addressLine1": this.state.sender_address1,
           "addressLine2": this.state.sender_address2,
-          "assignedBy": "string",
+          "assignedBy": "SUPERVISOR",
           "attempt": 0,
           "city": this.state.sender_city,
-          "contactPersonCountryCode": "string",
+          "contactPersonCountryCode": 91,
           "contactPersonName": this.state.sender_name,
           "contactPersonNumber": this.state.sender_no,
           "country": this.state.sender_country,
@@ -442,18 +567,14 @@ create_order() {
           "gmapLink": this.state.gmapLink,
           "localBodyType": this.state.localBodyType,
           "notesToCourierBoy": this.state.sender_notes,
-          "officeId": 0,
+          "officeId": 13,
           "orderId": 0,
-          "pickupDate": "2020-12-15",
+          "pickupDate": this.state.pickupdate,
           "pickupId": 0,
-          "pickupTime": {
-            "hour": "string",
-            "minute": "string",
-            "nano": 0,
-            "second": "string"
-          },
+          "pickupTime":this.state.pickuptime,
           "pincode": this.state.sender_pincode,
-          "serialId": "string",
+          "routeId": this.state.route_id,
+          "serialId": 0,
           "state": this.state.sender_state,
         }
     };
@@ -461,19 +582,18 @@ create_order() {
     Api.fetch_request(ORDER, 'POST', '', JSON.stringify(body))
       .then(result => {
 
-        if (result.error != true) {
+        // if (result.error != true) {
 
           console.log('Success:', JSON.stringify(result));
           alert("Order Created")
 
-        }
-        else {
-          console.log('Failed');
-        }
+        // }
+        // else {
+        //   console.log('Failed');
+        // }
       })
   }));
 }
-
 
   ///////////////////////////////// Creating shipment box function //////////////////////////////////////////////////////////////////////////////////////// 
  
@@ -489,7 +609,7 @@ create_shipment_box() {
       "height": this.state.Shipment_height,
       "isApprox": true,
       "length": this.state.Shipment_length,
-      "orderId": 0,
+      "orderId": 20,
       "shipmentBoxId": 0,
       "shipmentCategoryId": this.state.Shipment_category_id,
       "shipmentSubCategoryId": this.state.Shipment_subcategory_id,
@@ -505,13 +625,26 @@ create_shipment_box() {
 
           console.log('Success:', JSON.stringify(result));
           alert("Shipment Added")
+          this.submitAndClear();
 
         }
         else {
           console.log('Failed');
+          alert(result.message)
+          this.submitAndClear();
         }
       })
   }));
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+submitAndClear (){
+  this.setState({Shipment_distance:""})
+  this.setState({Shipment_weight:""})
+  this.setState({Shipment_length:""})
+  this.setState({Shipment_width:""})
+  this.setState({Shipment_height:""})
 }
 
  ///////////////////////////////// Add shipment box function //////////////////////////////////////////////////////////////////////////////////////// 
@@ -522,6 +655,124 @@ create_shipment_box() {
   
 }
 
+////////////////////////////// Fetching delivery charge details function //////////////////////////////////////////////////////////////////////////////
+
+generate_invoice() {
+
+  Api.fetch_request(DELIVERY_CHARGE + 20 ,'GET','')
+  .then(result => {
+   
+    if(result.error != true){
+
+      console.log('Success:', JSON.stringify(result));
+
+      this.setState({min_delivery_charge : JSON.stringify( result.payload.originalDeliveryCharge) })
+      this.setState({package_applied : JSON.stringify(result.payload.deliveryChargePackageDeduction)})
+      this.setState({credit_available :JSON.stringify( result.payload.deliveryChargeCreditDeduction )})
+      this.setState({delivery_charge : JSON.stringify(result.payload.deliveryChargeAfterDeductions )})
+
+    }
+    else{
+      console.log('Failed');
+    }
+})
+ 
+}
+
+ ///////////////////////////////// Add COD details function //////////////////////////////////////////////////////////////////////////////////////// 
+ 
+ generate_cod() {
+ 
+
+    let body = {
+      "codCreditBalance": this.state.cod_credit_blnc,
+      "invoiceDescription": this.state.invoice_des,
+      "orderId": 20,
+      "productCost": this.state.product_cost,
+      "receiverGSTNumber": this.state.gst_no
+
+    };
+
+    Api.fetch_request(ADD_COD, 'POST', '', JSON.stringify(body))
+      .then(result => {
+
+        if (result.error != true) {
+
+         this.setState({final_cod_charge:result.payload.finalCodCharge})
+          console.log('Success:', JSON.stringify(result));
+          alert(result.message)
+
+        }
+        else {
+          console.log('Failed');
+          alert(result.message)
+        }
+      })
+
+}
+
+///////////////////////////////////////// Payer payment function  //////////////////////////////////////////////////////////////////////////////////
+
+payer_payment() {
+
+    let body = {
+      "deliveryChargePaymentBySender": this.state.deliveryChargePaymentBySender,
+      "orderId": 1,
+      "payerComment": this.state.payment_comment,
+      "payerContactNumber": this.state.payment_phone,
+     "payerCountryCode": 91,
+     "payerLocation": this.state.payment_location,
+     "payerName": this.state.payment_name
+
+    };
+
+    Api.fetch_request(PAYER_PAYMENT, 'POST', '', JSON.stringify(body))
+      .then(result => {
+
+        if (result.error != true) {
+
+          console.log('Success:', JSON.stringify(result));
+          alert(result.message)
+
+          this.setState({sender_payment:result.payload.payableBySender})
+          this.setState({receiver_payment:result.payload.payableByReceiver})
+
+        }
+        else {
+          console.log('Failed');
+          alert(result.message)
+        }
+      })
+}
+
+///////////////////////////////////////// Payment by cash function  //////////////////////////////////////////////////////////////////////////////////
+
+cash_payment() {
+
+  let body = {
+    "amountPayed": this.state.amount_recieved,
+    "orderId": 1,
+
+  };
+
+  Api.fetch_request(PAYMENT_BY_CASH, 'POST', '', JSON.stringify(body))
+    .then(result => {
+
+      if (result.error != true) {
+
+        console.log('Success:', JSON.stringify(result));
+        alert(result.message)
+
+      }
+      else {
+        console.log('Failed');
+        alert(result.message)
+      }
+    })
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 render(){
     var left = (
         <Left style={{ flex: 1 }}>
@@ -529,11 +780,6 @@ render(){
             <Icon style={{ color:Colors.navbarIconColor}} name='md-arrow-round-back' />
             </Button>
         </Left>
-      );
-      var right = (
-        <Right style={{ flex: 1 }}>
-         <CustomButton title={'Print'}  text_color={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={THIRD_FONT} marginRight={COLUMN_PADDING} marginTop={BORDER_WIDTH}  />
-        </Right>
       );
 
 
@@ -543,7 +789,7 @@ render(){
 
 {/*//////////////////////////////////////////////////////////////////////////////////////////////////// */}
 
-        <Navbar left={left} right={right} title="Manual Pickup" />
+        <Navbar left={left}  title="Manual Pickup" />
         <ScrollView contentContainerStyle={{flexGrow:1}}>
 
 {/*////////////////////// main view //////////////////////////////////////////////// */}
@@ -588,6 +834,8 @@ render(){
         <CustomInput flex={1} value={this.state.sender_city} />
         <CustomText text={'Landmark'} textType={Strings.subtext} color={Colors.black}/>
         <CustomInput flex={1} value={this.state.sender_landmark} />
+        <CustomText text={'Route'} textType={Strings.subtext} color={Colors.black}/>
+         <CustomDropdown data={this.state.route_list} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.setState({route_id:data[index]['id']}) }, 500); }}/>
 
 </View>
 
@@ -603,11 +851,11 @@ render(){
         <CustomText text={'Contact Person Name'} textType={Strings.subtext} color={Colors.black}/>
         <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({contact_person_name: text})} value={this.state.contact_person_name}/>
         <CustomText text={'Contact Person Number'} textType={Strings.subtext} color={Colors.black}/>
-        <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({contact_person_no: text})} value={this.state.contact_person_no}/>
+        <CustomInput keyboardType={"phone-pad"} borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({contact_person_no: text})} value={this.state.contact_person_no}/>
         <CustomText text={'Notes to Courier Boy'} textType={Strings.subtext} color={Colors.black}/>
         <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({sender_notes: text})} value={this.state.sender_notes}/>
         <CustomText text={'Pickup Date'} textType={Strings.subtext} color={Colors.black}/>
-        <DatePicker  />
+        {/* <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({sender_notes: text})} value={this.state.sender_notes}/> */}
         <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({pickupdate: text})} value={this.state.pickupdate}/>
         <CustomText text={'Pickup Time'} textType={Strings.subtext} color={Colors.black}/>
         <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({pickuptime: text})} value={this.state.pickuptime}/>
@@ -641,7 +889,7 @@ render(){
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_district: text})} value={this.state.rec_district} />
 
          <CustomText text={'Pincode'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_pincode: text})} value={this.state.rec_pincode} />
+          <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_pincode: text})} value={this.state.rec_pincode} />
 
           <CustomText text={'Gmap Link'} textType={Strings.subtext} color={Colors.black}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_gmap: text})} value={this.state.rec_gmap} />
@@ -673,13 +921,13 @@ render(){
         <CustomText text={'Enter the receiving person customer id or registered mobile number.'} textType={Strings.subtext} color={Colors.grayTextColor}/>
     
         <CustomText text={'Customer Id / Mobile Number'} textType={Strings.subtext} color={Colors.black}/>
-        <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_id_or_no: text})} value={this.state.rec_id_or_no} />
+        <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_id_or_no: text})} value={this.state.rec_id_or_no} />
 
         <CustomText text={'Reciever Name'} textType={Strings.subtext} color={Colors.black}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({recievername: text})} value={this.state.recievername} />
 
           <CustomText text={'Receiver Phone Number'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({recieverno: text})} value={this.state.recieverno} />
+          <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({recieverno: text})} value={this.state.recieverno} />
 
           <CustomText text={'Proof to be produced'} textType={Strings.subtext} color={Colors.black}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({proof: text})} value={this.state.proof} />
@@ -712,7 +960,7 @@ render(){
         <CustomText text={'Shipment box'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
 
          <CustomText text={'Approx. Weight'} textType={Strings.subtext} color={Colors.black}/>
-         <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({Shipment_weight: text})} value={this.state.Shipment_weight} placeholder={'kg'} />
+         <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({Shipment_weight: text})} value={this.state.Shipment_weight} placeholder={'kg'} />
 
 <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:15}}>
 <CustomText text={'Length'} textType={Strings.subtext} color={Colors.black}/>
@@ -720,12 +968,12 @@ render(){
 <CustomText text={'Height'} textType={Strings.subtext} color={Colors.black}/>
 </View>
 <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:10}}>
-<View style={{width:60}}><CustomInput  borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} placeholder={'cm'} onChangeText={(text) => this.setState({Shipment_length: text})} value={this.state.Shipment_length}/></View>
-<View style={{width:60}}><CustomInput  borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} placeholder={'cm'} onChangeText={(text) => this.setState({Shipment_width: text})} value={this.state.Shipment_width}/></View>
-<View style={{width:60}}><CustomInput  borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} placeholder={'cm'} onChangeText={(text) => this.setState({Shipment_height: text})} value={this.state.Shipment_height} /></View>
+<View style={{width:60}}><CustomInput keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} placeholder={'cm'} onChangeText={(text) => this.setState({Shipment_length: text})} value={this.state.Shipment_length}/></View>
+<View style={{width:60}}><CustomInput keyboardType={"number-pad"}  borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} placeholder={'cm'} onChangeText={(text) => this.setState({Shipment_width: text})} value={this.state.Shipment_width}/></View>
+<View style={{width:60}}><CustomInput keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} placeholder={'cm'} onChangeText={(text) => this.setState({Shipment_height: text})} value={this.state.Shipment_height} /></View>
 </View>
 <CustomText text={'Approx. Distance'} textType={Strings.subtext} color={Colors.black}/>
-         <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({Shipment_distance: text})} value={this.state.Shipment_distance} placeholder={'kg'} />
+         <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({Shipment_distance: text})} value={this.state.Shipment_distance} placeholder={'kg'} />
 
   
         <CustomText text={'Shipment Category'} textType={Strings.subtext} color={Colors.black}/>
@@ -742,7 +990,7 @@ render(){
 
 
 
-<CustomButton title={'Generate Invoice'} text_color={Colors.darkSkyBlue} borderColor={Colors.darkSkyBlue} borderWidth={1} backgroundColor={Colors.white}/>
+<CustomButton title={'Generate Invoice'} text_color={Colors.darkSkyBlue} borderColor={Colors.darkSkyBlue} borderWidth={1} backgroundColor={Colors.white} onPress={()=>this.generate_invoice()}/>
 
 </View>
 
@@ -756,39 +1004,37 @@ render(){
         </View>
     
         <CustomText text={'Min. Delivery Charge'} textType={Strings.subtext} color={Colors.black}/>
-        <CustomInput flex={1} value={this.state.sender_name} />
+        <CustomInput flex={1} value={this.state.min_delivery_charge} />
 
         <CustomText text={'Package Applied'} textType={Strings.subtext} color={Colors.black}/>
-        <CustomInput flex={1} value={this.state.sender_name} />
+        <CustomInput flex={1} value={this.state.package_applied} />
 
         <CustomText text={'Delivery Credit Available'} textType={Strings.subtext} color={Colors.black}/>
-        <CustomInput flex={1} value={this.state.sender_name} />
+        <CustomInput flex={1} value={this.state.credit_available} />
 
         <CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black}/>
-        <CustomInput flex={1} value={this.state.sender_name} />
+        <CustomInput flex={1} value={this.state.delivery_charge} />
 
 
         <CustomRadioButton title={'COD'} selectedColor={Colors.darkSkyBlue} selected={true}/>
 
         <CustomText text={'Reciever GST Number'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({recievername: text})} value={this.state.recievername} />
+          <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({gst_no: text})} value={this.state.gst_no} />
 
           <CustomText text={'Invoie Description'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({recieverno: text})} value={this.state.recieverno} />
+          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({invoice_des: text})} value={this.state.invoice_des} />
 
           <CustomText text={'Product Cost'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({proof: text})} value={this.state.proof} />
+          <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({product_cost: text})} value={this.state.product_cost} />
 
           <CustomText text={'COD Credit balance'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({deliveredto: text})} value={this.state.deliveredto} />
+          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({cod_credit_blnc: text})} value={this.state.cod_credit_blnc} />
+        
+          <CustomButton title={'Generate COD Invoice'} text_color={Colors.darkSkyBlue} borderColor={Colors.darkSkyBlue} borderWidth={1} backgroundColor={Colors.white} onPress={()=>this.generate_cod()}/>
 
           <CustomText text={'Final COD charge'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_notes: text})} value={this.state.rec_notes} />
-        
-          <CustomButton title={'Generate COD Invoice'} text_color={Colors.darkSkyBlue} borderColor={Colors.darkSkyBlue} borderWidth={1} backgroundColor={Colors.white}/>
+          <CustomInput flex={1} value={this.state.final_cod_charge} />
 
-          <CustomText text={'Grand Total'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <CustomInput flex={1} value={this.state.sender_name} />
 </View>
 
 
@@ -801,22 +1047,34 @@ render(){
         </View>
     
         <View style={{flexDirection:'row',}}>
-         <CustomRadioButton title={'Sender'} selectedColor={Colors.darkSkyBlue} selected={true}/>
-         <CustomRadioButton title={'Receiver'} selectedColor={Colors.darkSkyBlue} selected={false}/>
+         <CustomRadioButton title={'Sender'} selectedColor={Colors.darkSkyBlue} selected={this.props.sender_selected} onPress={()=>this.isSelected(1)}/>
+         <CustomRadioButton title={'Receiver'} selectedColor={Colors.darkSkyBlue} selected={this.props.reciever_selected} onPress={()=>this.isSelected(2)}/>
          </View>
 
-        <CustomText text={'Sender Name'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({recievername: text})} value={this.state.recievername} />
+         { this.state.deliveryChargePaymentBySender == true &&  ( <View><CustomText text={'Sender Name'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({payment_name: text})} value={this.state.payment_name} />
+          </View>)}
+
+          { this.state.deliveryChargePaymentBySender == false &&  ( <View><CustomText text={'Receiver Name'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({payment_name: text})} value={this.state.payment_name} />
+          </View>)}
 
           <CustomText text={'Contact number'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({recieverno: text})} value={this.state.recieverno} />
+          <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({payment_phone: text})} value={this.state.payment_phone} />
 
           <CustomText text={'Location'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({proof: text})} value={this.state.proof} />
+          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({payment_location: text})} value={this.state.payment_location} />
 
           <CustomText text={'Comment'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({deliveredto: text})} value={this.state.deliveredto} />
+          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({payment_comment: text})} value={this.state.payment_comment} />
 
+          <CustomButton title={'Save'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.payer_payment()} />
+
+          <CustomText text={'Payment for Sender'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput flex={1} value={this.state.sender_payment} />
+
+          <CustomText text={'Payment for Receiver'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput flex={1} value={this.state.receiver_payment} />
 </View>
 
 {/*/////////////////////////////////////////////////// payment method Details //////////////////////////////////////////////// */}
@@ -835,17 +1093,17 @@ render(){
          </View>
 
         <CustomText text={'Amount Recieved'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({recievername: text})} value={this.state.recievername} />
+          <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({amount_recieved: text})} value={this.state.amount_recieved} />
 
           <CustomText text={'Balance Amount'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({recieverno: text})} value={this.state.recieverno} />
+          <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({balance_amount: text})} value={this.state.balance_amount} />
 
 
 </View>
 
 {/* ////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
 
-      <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  />
+      <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.cash_payment()}  />
           </View>
         </ScrollView>
         </Container>
