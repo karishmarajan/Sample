@@ -15,9 +15,11 @@ import CustomDropdown from '../../component/CustomDropdown';
 import CustomRadioButton from '../../component/CustomRadioButton';
 import DatePicker from '../../component/DatePicker';
 import moment from 'moment';
+import RNPrint from 'react-native-print';
 
 import CustomCheckBox from '../../component/CustomCheckBox';
 import session, { KEY } from '../../session/SessionManager';
+import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 import Api from '../../component/Fetch';
 import { COUNTRY , STATE , CITY , OTP , VERIFY_OTP , CUSTOMER_DETALS ,PACKAGE_CATEGORY, PACKAGE_SUB_CATEGORY ,SHIPMENT_BOX, ORDER, ROUTES, DELIVERY_CHARGE, ADD_COD ,PAYER_PAYMENT, PAYMENT_BY_CASH} from '../../constants/Api';
 
@@ -26,53 +28,34 @@ import { COUNTRY , STATE , CITY , OTP , VERIFY_OTP , CUSTOMER_DETALS ,PACKAGE_CA
 export default class ManualPickup extends React.Component {
 
   state = {
-    modal_visible: false,
-    reason:'',
-    reason_val:'',
-    modal_view: false,
-    country_list:[],
-    countries:[],
-    state_list:[],
-    states:[],
-    city_list:[],
-    city:[],
-    package_categories:[],
-    countries_reciever:[],
-    states_reciever:[],
-    city_reciever:[],
-    countries_code:[],
-    sender_details:[],
-    package_category_list:[],
-    package_sub_category_list:[],
-    route_list:[],
-    office_list:[],
-    office_id:'',
-    route_id:'',
-    code_otp:'',
-    phone_otp:'',
-    verify_otp:'',
-    houseno:'',
-    landmark:'',
-    roadname:'',
-    district:'',
-    pincode:'',
-    recievername:'',
-    recieverno:'',
-    proof:'',
-    deliveredto:'',
-    rec_city:'',
-    rec_country_code:'',
-    rec_country:'',
-    rec_state:'',
-    rec_landmark:'',
-    rec_district:'',
-    rec_pincode:'',
-    rec_gmap:'',
+
+    loader:false,
+
     customer_id:'',
+    customer_name : '',
+    customer_no : '',
+    customer_email : '',
+    customer_country : '',
+    customer_pincode : '',
+    customer_localbody : '',
+    customer_gmap : '',
+    customer_address1 : '',
+    customer_address2 : '',
+    customer_state : '',
+    customer_district : '',
+    customer_city : '',
+    customer_landmark : '',
+    customer_countrycode : '',
+
+    same_selected:false,
+    new_selected:true,
+
+    sender_id:'',
     sender_name:'',
     sender_no:'',
     sender_email:'',
     sender_country:'',
+    sender_countrycode:'',
     sender_pincode:'',
     sender_localbody:'',
     sender_gmap:'',
@@ -82,6 +65,64 @@ export default class ManualPickup extends React.Component {
     sender_district:'',
     sender_city:'',
     sender_landmark:'',
+
+    sender_contact_person_name:'',
+    sender_contact_person_no:'',
+    pickupdate:'',
+    pickuptime:'',
+
+    countries_sender:[],
+    states_sender:[],
+    cities_sender:[],
+    countries_reciever:[],
+    states_reciever:[],
+    city_reciever:[],
+
+    rec_city:'',
+    rec_country_code:'',
+    rec_country:'',
+    rec_state:'',
+    rec_landmark:'',
+    rec_district:'',
+    rec_pincode:'',
+    rec_gmap:'',
+    rec_localbody:'',
+    rec_address1:'',
+    rec_address2:'',
+
+    rec_id_or_no:'',
+    recievername:'',
+    recieverno:'',
+    proof:'',
+    deliveredto:'',
+    rec_notes:'',
+    sameoffice_selected:true,
+    difoffice_selected:false,
+    office_id:'',
+
+    order_id:'',
+
+    
+    
+   
+    package_categories:[],
+   
+   
+    sender_details:[],
+    package_category_list:[],
+    package_sub_category_list:[],
+    route_list:[],
+    office_list:[],
+    
+    route_id:'',
+    code_otp:'',
+    phone_otp:'',
+    verify_otp:'',
+   
+   
+    
+    
+
     package_subcategories:[],
     Shipment_weight:'',
     Shipment_height:'',
@@ -91,10 +132,8 @@ export default class ManualPickup extends React.Component {
     Shipment_category_id:'',
     Shipment_subcategory_id:'',
     shipment_view:true,
-    contact_person_name:'',
-    contact_person_no:'',
-    pickupdate:'',
-    pickuptime:'',
+    
+   
     hour:'',
     minute:'',
     second:'',
@@ -118,11 +157,12 @@ export default class ManualPickup extends React.Component {
     payment_name:'',
     amount_recieved:'',
     balance_amount:'',
+    selectedPrinter: null,
 
   };
 
   componentDidMount() {
-    this.fetch_country_list()
+    this.fetch_country_list_sender()
     this.fetch_country_list_reciever()
     this.fetch_package_category_list()
     this.fetch_package_subcategory_list()
@@ -136,11 +176,66 @@ isSelected(no){
     this.setState({reciever_selected:false})
     this.setState({deliveryChargePaymentBySender:true})
 
-  }if(no == 2){
+  }
+  if(no == 2){
     this.setState({reciever_selected:true})
     this.setState({sender_selected:false})
     this.setState({deliveryChargePaymentBySender:false})
   }
+if(no == 3){
+  this.setState({same_selected:true})
+  this.setState({new_selected:false})
+
+  this.setState({sender_id:this.state.customer_id});
+  this.setState({sender_name:this.state.customer_name});
+  this.setState({sender_no:this.state.customer_no});
+  this.setState({sender_address1:this.state.customer_address1});
+  this.setState({sender_address2:this.state.customer_address2});
+  this.setState({sender_email:this.state.customer_email});
+  this.setState({sender_countrycode:this.state.customer_countrycode});
+  this.setState({sender_country:this.state.customer_country});
+  this.setState({sender_state:this.state.customer_state});
+  this.setState({sender_district:this.state.customer_district});
+  this.setState({sender_city:this.state.customer_city});
+  this.setState({sender_localbody:this.state.customer_localbody});
+  this.setState({sender_landmark:this.state.customer_landmark});
+  this.setState({sender_gmap:this.state.customer_gmap});
+  this.setState({sender_pincode:this.state.customer_pincode});
+
+}
+if(no == 4){
+  this.setState({new_selected:true})
+  this.setState({same_selected:false})
+  
+}
+if(no == 5){
+  this.setState({sameoffice_selected:true})
+  this.setState({difoffice_selected:false})
+  AsyncStorage.getItem(KEY).then((value => {
+    let data = JSON.parse(value);
+  this.setState({office_id:data.officeId});
+  }
+   ));
+}
+if(no == 6){
+  this.setState({difoffice_selected:true})
+  this.setState({sameoffice_selected:false})
+  this.setState({deliveryChargePaymentBySender:false})
+}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+silentPrint = async () => {
+  if (!this.state.selectedPrinter) {
+    alert('Must Select Printer First')
+  }
+
+  const jobName = await RNPrint.print({
+    printerURL: this.state.selectedPrinter.url,
+    html: '<h1>Silent Print</h1>'
+  })
+
 }
 
 ////////////////////////////////// Date time setting function //////////////////////////////////////////////////////////////////////////////////
@@ -149,7 +244,7 @@ isSelected(no){
     var time = moment().utcOffset('+05:30').format(' hh:mm:ss a');
     this.setState({pickuptime:time});
 
-    var time1 = moment().format('hh:mm a');
+    var time1 = moment().format('hh:mm A');
     this.setState({pickuptime:time1});
 
     var date= moment().format('DD-MM-YYYY')
@@ -173,6 +268,9 @@ isSelected(no){
 ////////////////////////////// Fetching customer details with id function //////////////////////////////////////////////////////////////////////////////
   verify_customer_id(customer_id) {
 
+    this.setState({loader:true});
+    setTimeout(()=>{this.setState({loader:false})},1000);
+
     Api.fetch_request(CUSTOMER_DETALS + customer_id,'GET','')
     .then(result => {
      
@@ -181,19 +279,20 @@ isSelected(no){
         console.log('Success:', JSON.stringify(result));
         this.setState({sender_details : result.payload})
 
-        this.setState({sender_name : result.payload.firstName +" "+ result.payload.lastName})
-        this.setState({sender_no : result.payload.mobileNumber})
-        this.setState({sender_email : result.payload.emailId})
-        this.setState({sender_country : result.payload.country})
-        this.setState({sender_pincode : result.payload.pincode})
-        this.setState({sender_localbody : result.payload.localBodyType})
-        this.setState({sender_gmap : result.payload.gmapLink})
-        this.setState({sender_address1 : result.payload.addressLine1})
-        this.setState({sender_address2 : result.payload.addressLine2})
-        this.setState({sender_state : result.payload.state})
-        this.setState({sender_district : result.payload.district})
-        this.setState({sender_city : result.payload.city})
-        this.setState({sender_landmark : result.payload.landMark})
+        this.setState({customer_name : result.payload.firstName +" "+ result.payload.lastName})
+        this.setState({customer_no : result.payload.mobileNumber})
+        this.setState({customer_email : result.payload.emailId})
+        this.setState({customer_country : result.payload.country})
+        this.setState({customer_pincode : result.payload.pincode})
+        this.setState({customer_localbody : result.payload.localBodyType})
+        this.setState({customer_gmap : result.payload.gmapLink})
+        this.setState({customer_address1 : result.payload.addressLine1})
+        this.setState({customer_address2 : result.payload.addressLine2})
+        this.setState({customer_state : result.payload.state})
+        this.setState({customer_district : result.payload.district})
+        this.setState({customer_city : result.payload.city})
+        this.setState({customer_landmark : result.payload.landMark})
+        this.setState({customer_countrycode : result.payload.countryCode})
 
       }
       else{
@@ -205,7 +304,7 @@ isSelected(no){
 
   //////////////////////////////// Fetching sender country function //////////////////////////////////////////////////////////////////////////////
 
-  fetch_country_list() {
+  fetch_country_list_sender() {
 
     Api.fetch_request(COUNTRY,'GET','')
     .then(result => {
@@ -213,18 +312,14 @@ isSelected(no){
       if(result.error != true){
   
         console.log('Success:', JSON.stringify(result));
-        this.setState({country_list : result.payload})
 
         var count = (result.payload).length;
         let countries = [];
-        let countries_code = [];
 
         for(var i = 0; i < count; i++){
          countries.push({ value: result.payload[i].countryName , id: result.payload[i].countryId ,  code: result.payload[i].countryCode  });
-         countries_code.push({ value: result.payload[i].countryName , id: result.payload[i].countryId ,  code: result.payload[i].countryCode  });
        }
-       this.setState({ countries });
-       this.setState({ countries_code });
+       this.setState({ countries_sender: countries });
       }
       else{
         console.log('Failed');
@@ -234,7 +329,7 @@ isSelected(no){
   }
 //////////////////////////////// Fetching sender state function //////////////////////////////////////////////////////////////////////////////
 
-  fetch_state_list(country_id) {
+fetch_state_list_sender(country_id) {
 
     Api.fetch_request(STATE + country_id,'GET','')
     .then(result => {
@@ -242,7 +337,6 @@ isSelected(no){
       if(result.error != true){
   
         console.log('Success:', JSON.stringify(result));
-        this.setState({state_list : result.payload})
 
         var count = (result.payload).length;
         let states = [];
@@ -250,7 +344,7 @@ isSelected(no){
         for(var i = 0; i < count; i++){
           states.push({ value: result.payload[i].stateName ,  id: result.payload[i].stateId});
        }
-       this.setState({ states });
+       this.setState({states_sender: states });
       }
       else{
         console.log('Failed');
@@ -260,7 +354,7 @@ isSelected(no){
   }
 //////////////////////////////// Fetching sender city function //////////////////////////////////////////////////////////////////////////////
  
-fetch_city_list(state_id) {
+fetch_city_list_sender(state_id) {
 
     Api.fetch_request(CITY + state_id,'GET','')
     .then(result => {
@@ -268,7 +362,7 @@ fetch_city_list(state_id) {
       if(result.error != true){
   
         console.log('Success:', JSON.stringify(result));
-        this.setState({city_list : result.payload})
+
 
         var count = (result.payload).length;
         let city = [];
@@ -276,7 +370,7 @@ fetch_city_list(state_id) {
         for(var i = 0; i < count; i++){
           city.push({ value: result.payload[i].cityName });
        }
-       this.setState({ city });
+       this.setState({ cities_sender : city });
       }
       else{
         console.log('Failed');
@@ -295,7 +389,6 @@ fetch_country_list_reciever() {
       if(result.error != true){
   
         console.log('Success:', JSON.stringify(result));
-        this.setState({country_list : result.payload})
 
         var count = (result.payload).length;
         let countries_reciever = [];
@@ -323,7 +416,6 @@ fetch_state_list_reciever(country_id) {
       if(result.error != true){
   
         console.log('Success:', JSON.stringify(result));
-        this.setState({state_list : result.payload})
 
         var count = (result.payload).length;
         let states_reciever = [];
@@ -350,7 +442,6 @@ fetch_city_list_reciever(state_id) {
       if(result.error != true){
   
         console.log('Success:', JSON.stringify(result));
-        this.setState({city_list : result.payload})
 
         var count = (result.payload).length;
         let city_reciever = [];
@@ -539,7 +630,7 @@ create_order() {
           "isSameOffice": true,
           "localBodyType": this.state.rec_localbody,
           "notesToCourierBoy": this.state.rec_notes,
-          "officeId": 13,
+          "officeId": this.state.officeId,
           "orderId": 0,
           "pincode": this.state.rec_pincode,
           "proofToBeProduced": this.state.proof,
@@ -549,7 +640,7 @@ create_order() {
         },
         "deliveryType": "BULLET",
         "isManualPickup": true,
-        "officeId": data.officeId,
+        "officeId": this.state.officeId,
         "orderId": 0,
         "pickupRequest": {
           "addressLine1": this.state.sender_address1,
@@ -557,17 +648,17 @@ create_order() {
           "assignedBy": "SUPERVISOR",
           "attempt": 0,
           "city": this.state.sender_city,
-          "contactPersonCountryCode": 91,
-          "contactPersonName": this.state.sender_name,
-          "contactPersonNumber": this.state.sender_no,
+          "contactPersonCountryCode": this.state.sender_countrycode,
+          "contactPersonName": this.state.sender_contact_person_name,
+          "contactPersonNumber": this.state.sender_contact_person_no,
           "country": this.state.sender_country,
           "customerId": this.state.customer_id,
           "deliveryType": "BULLET",
           "district": this.state.sender_district,
-          "gmapLink": this.state.gmapLink,
-          "localBodyType": this.state.localBodyType,
+          "gmapLink": this.state.sender_gmap,
+          "localBodyType": this.state.sender_localbody,
           "notesToCourierBoy": this.state.sender_notes,
-          "officeId": 13,
+          "officeId": data.officeId,
           "orderId": 0,
           "pickupDate": this.state.pickupdate,
           "pickupId": 0,
@@ -582,15 +673,18 @@ create_order() {
     Api.fetch_request(ORDER, 'POST', '', JSON.stringify(body))
       .then(result => {
 
-        // if (result.error != true) {
+        if (result.error != true) {
 
           console.log('Success:', JSON.stringify(result));
-          alert("Order Created")
+          alert(result.message)
+          this.setState({orderId:result.payload.orderId});
+          alert(this.state.order_id)
 
-        // }
-        // else {
-        //   console.log('Failed');
-        // }
+        }
+        else {
+          console.log('Failed');
+          alert(result.message)
+        }
       })
   }));
 }
@@ -782,64 +876,155 @@ render(){
         </Left>
       );
 
-
+      var right = (
+        <Right style={{ flex: 1 }}>
+          <Button onPress={this.silentPrint} transparent>
+            <Icon style={{ color:Colors.navbarIconColor}} name='md-pint' />
+            </Button>
+        </Right>
+      );
     return(
   
         <Container>
 
 {/*//////////////////////////////////////////////////////////////////////////////////////////////////// */}
 
-        <Navbar left={left}  title="Manual Pickup" />
+        <Navbar left={left} right={right}  title="Manual Pickup" />
         <ScrollView contentContainerStyle={{flexGrow:1}}>
+
+ 
 
 {/*////////////////////// main view //////////////////////////////////////////////// */}
 
         <View style={{flex: 1, flexDirection: 'column',backgroundColor:Colors.textBackgroundColor,padding:MAIN_VIEW_PADDING}}>
 
+
 {/* /////////////////////////// Sender Details //////////////////////////////////////////////// */}
 
 <View style={{ backgroundColor:Colors.white,flexGrow:1,padding:MAIN_VIEW_PADDING}}>
+
+  {/*/////////////////////////////////////////// Acivity indicator Block //////////////////////////////////////////////// */}
+
+ { this.state.loader === true && (<View style={{justifyContent:'center'}}>
+        <CustomActivityIndicator/>
+        </View>)}
 
 <View style={{flexDirection:'row',marginBottom:SECTION_MARGIN_TOP,}}>
           <CustomText  text={'Sender Details'} textType={Strings.subtitle} textDecorationLine={'underline'} />
         </View>
         <CustomText text={'Customer Id'} textType={Strings.subtext} color={Colors.black}/>
         <View style={{flexDirection:'row',flex:1,borderColor:Colors.borderColor,borderWidth:SHORT_BORDER_WIDTH,borderRadius:SHORT_BORDER_RADIUS,padding:1,alignItems:'center',justifyContent:'space-between'}}>
-        <CustomInput backgroundColor={Colors.white} onChangeText={(text) => this.setState({customer_id: text})} value={this.state.customer_id}  />
+        <CustomInput backgroundColor={Colors.white} onChangeText={(text) => this.setState({customer_id: text})} value={this.state.customer_id} keyboardType={'number-pad'}  />
         <CustomButton title={'search'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.verify_customer_id(this.state.customer_id)}/>
         </View>
         <CustomText text={'Full Name'} textType={Strings.subtext} color={Colors.black}/>
-        <CustomInput flex={1} value={this.state.sender_name} />
+        <CustomInput flex={1} value={this.state.customer_name} />
         <CustomText text={'Mobile Number'} textType={Strings.subtext} color={Colors.black}/>
-        <CustomInput flex={1} value={this.state.sender_no} />
+        <CustomInput flex={1} value={this.state.customer_no} />
         <CustomText text={'Email Id'} textType={Strings.subtext} color={Colors.black}/>
-        <CustomInput flex={1} value={this.state.sender_email} />
+        <CustomInput flex={1} value={this.state.customer_email} />
+        <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomInput flex={1} value={this.state.customer_country} />
+        <CustomText text={'Pincode'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomInput flex={1} value={this.state.customer_pincode} />
+        <CustomText text={'Local Body Type'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomInput flex={1} value={this.state.customer_localbody} />
+        <CustomText text={'Gmap Link'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomInput flex={1} value={this.state.customer_gmap} />
+        <CustomText text={'Address Line 1'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomInput flex={1} value={this.state.customer_address1} />
+        <CustomText text={'Address Line 2'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomInput flex={1} value={this.state.customer_address2} />
+        <CustomText text={'State'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomInput flex={1} value={this.state.customer_state} />
+        <CustomText text={'District'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomInput flex={1} value={this.state.customer_district} />
+        <CustomText text={'City'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomInput flex={1} value={this.state.customer_city} />
+        <CustomText text={'Landmark'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomInput flex={1} value={this.state.customer_landmark} />
+
+</View>
+
+{/* /////////////////////////// Sender Address //////////////////////////////////////////////// */}
+
+<View style={{ backgroundColor:Colors.white,flexGrow:1,padding:MAIN_VIEW_PADDING,marginTop:SECTION_MARGIN_TOP}}>
+
+<View style={{flexDirection:'row',marginBottom:SECTION_MARGIN_TOP,}}>
+          <CustomText  text={'Sender Address'} textType={Strings.subtitle} textDecorationLine={'underline'} />
+        </View>
+
+        
+         <CustomRadioButton title={'Same as contact address'} selectedColor={Colors.darkSkyBlue} selected={this.state.same_selected} onPress={()=>this.isSelected(3)}/>
+         <CustomRadioButton title={'Enter new pickup address'} selectedColor={Colors.darkSkyBlue} selected={this.state.new_selected} onPress={()=>this.isSelected(4)}/>
+        
+
+ 
+ { this.state.same_selected === true && (<View>
+
         <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black}/>
         <CustomInput flex={1} value={this.state.sender_country} />
-        <CustomText text={'Pincode'} textType={Strings.subtext} color={Colors.black}/>
-        <CustomInput flex={1} value={this.state.sender_pincode} />
-        <CustomText text={'Local Body Type'} textType={Strings.subtext} color={Colors.black}/>
-        <CustomInput flex={1} value={this.state.sender_localbody} />
-        <CustomText text={'Gmap Link'} textType={Strings.subtext} color={Colors.black}/>
-        <CustomInput flex={1} value={this.state.sender_gmap} />
-        <CustomText text={'Address Line 1'} textType={Strings.subtext} color={Colors.black}/>
-        <CustomInput flex={1} value={this.state.sender_address1} />
-        <CustomText text={'Address Line 2'} textType={Strings.subtext} color={Colors.black}/>
-        <CustomInput flex={1} value={this.state.sender_address2} />
         <CustomText text={'State'} textType={Strings.subtext} color={Colors.black}/>
         <CustomInput flex={1} value={this.state.sender_state} />
         <CustomText text={'District'} textType={Strings.subtext} color={Colors.black}/>
         <CustomInput flex={1} value={this.state.sender_district} />
         <CustomText text={'City'} textType={Strings.subtext} color={Colors.black}/>
         <CustomInput flex={1} value={this.state.sender_city} />
+        <CustomText text={'Pincode'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomInput flex={1} value={this.state.sender_pincode} />
+        <CustomText text={'Address Line 1'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomInput flex={1} value={this.state.sender_address1} />
+        <CustomText text={'Address Line 2'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomInput flex={1} value={this.state.sender_address2} />
+        <CustomText text={'Local Body Type'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomInput flex={1} value={this.state.sender_localbody} />
         <CustomText text={'Landmark'} textType={Strings.subtext} color={Colors.black}/>
         <CustomInput flex={1} value={this.state.sender_landmark} />
+        <CustomText text={'Gmap Link'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomInput flex={1} value={this.state.sender_gmap} />
+       
+        </View>)}
+
+ { this.state.new_selected === true && (<View>
+
+  <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomDropdown data={this.state.countries_sender} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_state_list_sender(data[index]['id']) ; this.setState({sender_country:value}) ; this.setState({sender_countrycode:data[index]['code']}); }, 500); }} />
+
+          <CustomText text={'State'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomDropdown data={this.state.states_sender} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_city_list_sender(data[index]['id']) ; this.setState({sender_state:value}) }, 500); }} />
+
+          <CustomText text={'City'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomDropdown data={this.state.cities_sender} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.setState({sender_city:value}) }, 500); }} />
+ 
+          <CustomText text={'District'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_district: text})} value={this.state.sender_district} />
+
+          <CustomText text={'Pincode'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_pincode: text})} value={this.state.sender_pincode} />
+
+          <CustomText text={'Gmap Link'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_gmap: text})} value={this.state.sender_gmap} />
+         
+          <CustomText text={'Address Line 1'} textType={Strings.subtext} color={Colors.black}/>
+         <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_address1: text})} value={this.state.sender_address1} />
+
+        <CustomText text={'Address Line 2'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_address2: text})} value={this.state.sender_address2} />
+
+        <CustomText text={'Local Body Type'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_localbody: text})} value={this.state.sender_localbody} />
+
+        <CustomText text={'Landmark'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_landmark: text})} value={this.state.sender_landmark} />
+
+</View>)}
+
+
+
         <CustomText text={'Route'} textType={Strings.subtext} color={Colors.black}/>
          <CustomDropdown data={this.state.route_list} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.setState({route_id:data[index]['id']}) }, 500); }}/>
 
 </View>
-
-
 {/* /////////////////////////// Pickup Details //////////////////////////////////////////////// */}
 
 <View style={{ backgroundColor:Colors.white,flexGrow:1,padding:MAIN_VIEW_PADDING,marginTop:SECTION_MARGIN_TOP}}>
@@ -849,9 +1034,9 @@ render(){
         </View>
       
         <CustomText text={'Contact Person Name'} textType={Strings.subtext} color={Colors.black}/>
-        <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({contact_person_name: text})} value={this.state.contact_person_name}/>
+        <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({sender_contact_person_name: text})} value={this.state.sender_contact_person_name}/>
         <CustomText text={'Contact Person Number'} textType={Strings.subtext} color={Colors.black}/>
-        <CustomInput keyboardType={"phone-pad"} borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({contact_person_no: text})} value={this.state.contact_person_no}/>
+        <CustomInput keyboardType={"phone-pad"} borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({sender_contact_person_no: text})} value={this.state.sender_contact_person_no}/>
         <CustomText text={'Notes to Courier Boy'} textType={Strings.subtext} color={Colors.black}/>
         <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({sender_notes: text})} value={this.state.sender_notes}/>
         <CustomText text={'Pickup Date'} textType={Strings.subtext} color={Colors.black}/>
@@ -877,7 +1062,7 @@ render(){
          </View>
 
           <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomDropdown data={this.state.countries_reciever} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_state_list_reciever(data[index]['id']) ; this.setState({rec_country:value}) }, 500); }} />
+          <CustomDropdown data={this.state.countries_reciever} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_state_list_reciever(data[index]['id']) ; this.setState({rec_country:value}); this.setState({rec_country_code:data[index]['code']}); }, 500); }} />
 
           <CustomText text={'State'} textType={Strings.subtext} color={Colors.black}/>
           <CustomDropdown data={this.state.states_reciever} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_city_list_reciever(data[index]['id']) ; this.setState({rec_state:value}) }, 500); }} />
@@ -889,19 +1074,19 @@ render(){
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_district: text})} value={this.state.rec_district} />
 
          <CustomText text={'Pincode'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_pincode: text})} value={this.state.rec_pincode} />
+          <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_pincode: text})} value={this.state.rec_pincode} />
 
           <CustomText text={'Gmap Link'} textType={Strings.subtext} color={Colors.black}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_gmap: text})} value={this.state.rec_gmap} />
          
           <CustomText text={'Address Line 1'} textType={Strings.subtext} color={Colors.black}/>
-        <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} value={this.state.rec_address1} />
+        <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_address1: text})} value={this.state.rec_address1} />
 
         <CustomText text={'Address Line 2'} textType={Strings.subtext} color={Colors.black}/>
-        <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} value={this.state.rec_address2} />
+        <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_address2: text})} value={this.state.rec_address2} />
 
         <CustomText text={'Local Body Type'} textType={Strings.subtext} color={Colors.black}/>
-        <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} value={this.state.rec_localbody} />
+        <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_localbody: text})} value={this.state.rec_localbody} />
 
         <CustomText text={'Landmark'} textType={Strings.subtext} color={Colors.black}/>
         <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_landmark: text})} value={this.state.rec_landmark} />
@@ -937,6 +1122,11 @@ render(){
 
           <CustomText text={'Notes to Courier Boy'} textType={Strings.subtext} color={Colors.black}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_notes: text})} value={this.state.rec_notes} />
+
+          <View style={{flexDirection:'row',}}>
+         <CustomRadioButton title={'Same office'} selectedColor={Colors.darkSkyBlue} selected={this.state.sameoffice_selected} onPress={()=>this.isSelected(5)}/>
+         <CustomRadioButton title={'Different'} selectedColor={Colors.darkSkyBlue} selected={this.state.difoffice_selected} onPress={()=>this.isSelected(6)}/>
+         </View>
 
 </View>
 
@@ -1047,8 +1237,8 @@ render(){
         </View>
     
         <View style={{flexDirection:'row',}}>
-         <CustomRadioButton title={'Sender'} selectedColor={Colors.darkSkyBlue} selected={this.props.sender_selected} onPress={()=>this.isSelected(1)}/>
-         <CustomRadioButton title={'Receiver'} selectedColor={Colors.darkSkyBlue} selected={this.props.reciever_selected} onPress={()=>this.isSelected(2)}/>
+         <CustomRadioButton title={'Sender'} selectedColor={Colors.darkSkyBlue} selected={this.state.sender_selected} onPress={()=>this.isSelected(1)}/>
+         <CustomRadioButton title={'Receiver'} selectedColor={Colors.darkSkyBlue} selected={this.state.reciever_selected} onPress={()=>this.isSelected(2)}/>
          </View>
 
          { this.state.deliveryChargePaymentBySender == true &&  ( <View><CustomText text={'Sender Name'} textType={Strings.subtext} color={Colors.black}/>
