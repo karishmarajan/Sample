@@ -15,6 +15,7 @@ import CustomInput from '../../component/CustomInput';
 import CustomText from '../../component/CustomText';
 import CustomButton from '../../component/CustomButton';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
+import CustomAlert from '../../component/CustomAlert';
 import Fetch from '../../component/Fetch';
 import { SECTION_MARGIN_TOP ,FIELD_MARGIN_TOP, MAIN_BLOCK_BORDER_RADIUS, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,TEXT_PADDING_LEFT,TOTAL_BLOCK, SHORT_TEXT_FIELD_HIEGHT,TEXT_MARGIN_TOP, NORMAL_FONT,COLUMN_PADDING ,AMOUNT_BLOCK_HIEGHT,SECOND_FONT,LOGIN_FIELD_HEIGHT, FOURTH_FONT} from '../../constants/Dimen';
 import Api from '../../component/Fetch';
@@ -39,6 +40,7 @@ export default class Login extends Component {
       errorTextuser: '',
       errorTextpass: '',
       loader:false,
+      alert_visible:false,
     };
 }
 
@@ -67,6 +69,13 @@ componentWillUnmount() {
         { this.state.loader === true && (<View style={{alignItems:'center'}}>
         <CustomActivityIndicator/>
         </View>)}
+
+        <CustomAlert
+        displayAlert={this.state.alert_visible}
+        alertMessageText={'Login Success'}
+        displayAlertIcon={true}
+   
+      />
 
         {/*/////////////////////////////////////////// Login image Block //////////////////////////////////////////////// */}
 
@@ -127,7 +136,10 @@ componentWillUnmount() {
 
       if(result.error != true){
       console.log('Success:', JSON.stringify(result));
-      alert("Login Success ")
+
+
+      this.setState({alert_visible:true})
+      setTimeout(()=>{this.setState({alert_visible:false})},3000);
 
       user_id=result.payload.personId;
       office_id=result.payload.officeId;

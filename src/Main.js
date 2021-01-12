@@ -30,6 +30,7 @@ import UpdateVehicleDetails from './page/delivery_boy/UpdateVehicleDetails';
 import StatusUpdateMultiple from './page/delivery_boy/StatusUpdateMultiple';
 import Notifications from './page/delivery_boy/Notifications';
 import Chat from './page/delivery_boy/Chat';
+import RequestStatus from './page/delivery_boy/RequestStatus';
 
 
 
@@ -68,6 +69,7 @@ export default class Main extends Component {
             <Scene  key="statusupdatemultiple" component={StatusUpdateMultiple} hideNavBar />
             <Scene  key="notification" component={Notifications} hideNavBar />
             <Scene  key="chat" component={Chat} hideNavBar />
+            <Scene  key="requeststatus" component={RequestStatus} hideNavBar />
           </Scene>
         </Router>
       </Root>

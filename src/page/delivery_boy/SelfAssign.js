@@ -291,17 +291,11 @@ render(){
         <View style={styles.modalview}>
           <CustomText text={'Save'} textType={Strings.subtext} onPress={()=>this.save_assigned_multiple_orders()}/>
           <CustomText text={'Delete'} textType={Strings.subtext} onPress={()=>this.remove_assigned_multiple_orders()}/>
+          <CustomText text={'Submit'} textType={Strings.subtext} onPress={()=>this.submit_assigned_multiple_orders()}/>
         </View>
         </View>
 </Modal>
       
-      <View style={{position:'absolute'}}>
-       {/* <Menu
-          ref={this.setMenuRef}>
-          <MenuItem onPress={this.hideMenu}>Save</MenuItem>
-          <MenuItem onPress={this.hideMenu}>Delete</MenuItem>
-        </Menu> */}
-        </View>
 
         <Navbar left={left} right={right} title="Self Assign" />
         <ScrollView contentContainerStyle={{flexGrow:1}}>
