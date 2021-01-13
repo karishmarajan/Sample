@@ -606,69 +606,64 @@ create_order() {
     let data = JSON.parse(value);
 
     let body = 
-      {
-        "creatorId": data.personId,
-        "creatorUserType": "DELIVERY_AGENT",
-        "customerId": this.state.customer_id,
-        "deliveryRequest": {
-          "addressLine1": this.state.rec_address1,
-          "addressLine2": this.state.rec_address2,
-          "assignedBy": "SUPERVISOR",
-          "attempt": 0,
-          "canBeDeliveredTo": this.state.deliveredto,
-          "city": this.state.rec_city,
-          "contactPersonCountryCode": this.state.rec_country_code,
-          "contactPersonCustomerId": this.state.rec_id_or_no,
-          "contactPersonName": this.state.recievername,
-          "contactPersonNumber": this.state.recieverno,
-          "country": this.state.rec_country,
-          "customerId": this.state.rec_id_or_no,
-          "deliveryId": 0,
-          "deliveryType": "BULLET",
-          "district": this.state.rec_district,
-          "gmapLink": this.state.rec_gmap,
-          "isSameOffice": true,
-          "localBodyType": this.state.rec_localbody,
-          "notesToCourierBoy": this.state.rec_notes,
-          "officeId": this.state.officeId,
-          "orderId": 0,
-          "pincode": this.state.rec_pincode,
-          "proofToBeProduced": this.state.proof,
-          "routeId": 0,
-          "serialId": 0,
-          "state": this.state.rec_state
-        },
+    {
+      "creatorId": data.personId,
+      "creatorUserType": "DELIVERY_AGENT",
+      "customerId": this.state.customer_id,
+      "deliveryRequest": {
+        "addressLine1": this.state.rec_address1,
+        "addressLine2": this.state.rec_address2,
+        "canBeDeliveredTo":this.state.deliveredto,
+        "city": this.state.rec_city,
+        "contactPersonCountryCode": this.state.rec_country_code,
+        "contactPersonCustomerId": this.state.rec_id_or_no,
+        "contactPersonName": this.state.recievername,
+        "contactPersonNumber": this.state.recieverno,
+        "country": this.state.rec_country,
+        "customerId": this.state.rec_id_or_no,
+        "deliveryId": 0,
         "deliveryType": "BULLET",
-        "isManualPickup": true,
+        "destinationOfficeId": 119,
+        "district": this.state.rec_district,
+        "gmapLink": this.state.rec_gmap,
+        "isSameAsOffice": true,
+        "localBodyType": this.state.rec_localbody,
+        "notesToCourierBoy": this.state.rec_notes,
         "officeId": this.state.officeId,
         "orderId": 0,
-        "pickupRequest": {
-          "addressLine1": this.state.sender_address1,
-          "addressLine2": this.state.sender_address2,
-          "assignedBy": "SUPERVISOR",
-          "attempt": 0,
-          "city": this.state.sender_city,
-          "contactPersonCountryCode": this.state.sender_countrycode,
-          "contactPersonName": this.state.sender_contact_person_name,
-          "contactPersonNumber": this.state.sender_contact_person_no,
-          "country": this.state.sender_country,
-          "customerId": this.state.customer_id,
-          "deliveryType": "BULLET",
-          "district": this.state.sender_district,
-          "gmapLink": this.state.sender_gmap,
-          "localBodyType": this.state.sender_localbody,
-          "notesToCourierBoy": this.state.sender_notes,
-          "officeId": data.officeId,
-          "orderId": 0,
-          "pickupDate": this.state.pickupdate,
-          "pickupId": 0,
-          "pickupTime":this.state.pickuptime,
-          "pincode": this.state.sender_pincode,
-          "routeId": this.state.route_id,
-          "serialId": 0,
-          "state": this.state.sender_state,
-        }
-    };
+        "pincode": this.state.rec_pincode,
+        "proofToBeProduced": this.state.proof,
+        "routeId": 0,
+        "state": this.state.rec_state
+      },
+      "deliveryType": "BULLET",
+      "isManualPickup": true,
+      "officeId": this.state.officeId,
+      "orderId": 0,
+      "pickupRequest": {
+        "addressLine1": this.state.sender_address1,
+        "addressLine2": this.state.sender_address2,
+        "city": this.state.sender_city,
+        "contactPersonCountryCode": this.state.sender_countrycode,
+        "contactPersonName": this.state.sender_contact_person_name,
+        "contactPersonNumber": this.state.sender_contact_person_no,
+        "country": this.state.sender_country,
+        "customerId": this.state.customer_id,
+        "deliveryType": "BULLET",
+        "district": this.state.sender_district,
+        "gmapLink": this.state.sender_gmap,
+        "localBodyType": this.state.sender_localbody,
+        "notesToCourierBoy": this.state.sender_notes,
+        "officeId": data.officeId,
+        "orderId": 0,
+        "pickupDate": this.state.pickupdate,
+        "pickupId": 0,
+        "pickupTime":this.state.pickuptime,
+        "pincode": this.state.sender_pincode,
+        "routeId": this.state.route_id,
+        "state": this.state.sender_state,
+      }
+    }
 
     Api.fetch_request(ORDER, 'POST', '', JSON.stringify(body))
       .then(result => {
@@ -912,36 +907,36 @@ render(){
 <View style={{flexDirection:'row',marginBottom:SECTION_MARGIN_TOP,}}>
           <CustomText  text={'Sender Details'} textType={Strings.subtitle} textDecorationLine={'underline'} />
         </View>
-        <CustomText text={'Customer Id'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Customer Id'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <View style={{flexDirection:'row',flex:1,borderColor:Colors.borderColor,borderWidth:SHORT_BORDER_WIDTH,borderRadius:SHORT_BORDER_RADIUS,padding:1,alignItems:'center',justifyContent:'space-between'}}>
         <CustomInput backgroundColor={Colors.white} onChangeText={(text) => this.setState({customer_id: text})} value={this.state.customer_id} keyboardType={'number-pad'}  />
         <CustomButton title={'search'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.verify_customer_id(this.state.customer_id)}/>
         </View>
-        <CustomText text={'Full Name'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Full Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.customer_name} />
-        <CustomText text={'Mobile Number'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Mobile Number'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.customer_no} />
-        <CustomText text={'Email Id'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Email Id'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.customer_email} />
-        <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.customer_country} />
-        <CustomText text={'Pincode'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Pincode'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.customer_pincode} />
-        <CustomText text={'Local Body Type'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Local Body Type'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.customer_localbody} />
-        <CustomText text={'Gmap Link'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Gmap Link'} textType={Strings.subtext} color={Colors.black}fontWeight={'bold'} />
         <CustomInput flex={1} value={this.state.customer_gmap} />
-        <CustomText text={'Address Line 1'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Address Line 1'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.customer_address1} />
-        <CustomText text={'Address Line 2'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Address Line 2'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.customer_address2} />
-        <CustomText text={'State'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'State'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'} />
         <CustomInput flex={1} value={this.state.customer_state} />
-        <CustomText text={'District'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'District'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.customer_district} />
-        <CustomText text={'City'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'City'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.customer_city} />
-        <CustomText text={'Landmark'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Landmark'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.customer_landmark} />
 
 </View>
@@ -962,66 +957,66 @@ render(){
  
  { this.state.same_selected === true && (<View>
 
-        <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.sender_country} />
-        <CustomText text={'State'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'State'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.sender_state} />
-        <CustomText text={'District'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'District'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.sender_district} />
-        <CustomText text={'City'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'City'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.sender_city} />
-        <CustomText text={'Pincode'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Pincode'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.sender_pincode} />
-        <CustomText text={'Address Line 1'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Address Line 1'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.sender_address1} />
-        <CustomText text={'Address Line 2'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Address Line 2'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.sender_address2} />
-        <CustomText text={'Local Body Type'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Local Body Type'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.sender_localbody} />
-        <CustomText text={'Landmark'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Landmark'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.sender_landmark} />
-        <CustomText text={'Gmap Link'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Gmap Link'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.sender_gmap} />
        
         </View>)}
 
  { this.state.new_selected === true && (<View>
 
-  <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black}/>
+  <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomDropdown data={this.state.countries_sender} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_state_list_sender(data[index]['id']) ; this.setState({sender_country:value}) ; this.setState({sender_countrycode:data[index]['code']}); }, 500); }} />
 
-          <CustomText text={'State'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'State'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomDropdown data={this.state.states_sender} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_city_list_sender(data[index]['id']) ; this.setState({sender_state:value}) }, 500); }} />
 
-          <CustomText text={'City'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'City'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomDropdown data={this.state.cities_sender} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.setState({sender_city:value}) }, 500); }} />
  
-          <CustomText text={'District'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'District'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_district: text})} value={this.state.sender_district} />
 
-          <CustomText text={'Pincode'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'Pincode'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_pincode: text})} value={this.state.sender_pincode} />
 
-          <CustomText text={'Gmap Link'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'Gmap Link'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_gmap: text})} value={this.state.sender_gmap} />
          
-          <CustomText text={'Address Line 1'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'Address Line 1'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_address1: text})} value={this.state.sender_address1} />
 
-        <CustomText text={'Address Line 2'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Address Line 2'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_address2: text})} value={this.state.sender_address2} />
 
-        <CustomText text={'Local Body Type'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Local Body Type'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_localbody: text})} value={this.state.sender_localbody} />
 
-        <CustomText text={'Landmark'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Landmark'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_landmark: text})} value={this.state.sender_landmark} />
 
 </View>)}
 
 
 
-        <CustomText text={'Route'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Route'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
          <CustomDropdown data={this.state.route_list} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.setState({route_id:data[index]['id']}) }, 500); }}/>
 
 </View>
@@ -1033,16 +1028,16 @@ render(){
           <CustomText  text={'Pickup Details'} textType={Strings.subtitle} textDecorationLine={'underline'} />
         </View>
       
-        <CustomText text={'Contact Person Name'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Contact Person Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({sender_contact_person_name: text})} value={this.state.sender_contact_person_name}/>
-        <CustomText text={'Contact Person Number'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Contact Person Number'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput keyboardType={"phone-pad"} borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({sender_contact_person_no: text})} value={this.state.sender_contact_person_no}/>
-        <CustomText text={'Notes to Courier Boy'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Notes to Courier Boy'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({sender_notes: text})} value={this.state.sender_notes}/>
-        <CustomText text={'Pickup Date'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Pickup Date'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         {/* <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({sender_notes: text})} value={this.state.sender_notes}/> */}
         <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({pickupdate: text})} value={this.state.pickupdate}/>
-        <CustomText text={'Pickup Time'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Pickup Time'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({pickuptime: text})} value={this.state.pickuptime}/>
        
 
@@ -1061,34 +1056,34 @@ render(){
          <CustomRadioButton title={'Global'} selectedColor={Colors.darkSkyBlue} selected={false}/>
          </View>
 
-          <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomDropdown data={this.state.countries_reciever} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_state_list_reciever(data[index]['id']) ; this.setState({rec_country:value}); this.setState({rec_country_code:data[index]['code']}); }, 500); }} />
 
-          <CustomText text={'State'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'State'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomDropdown data={this.state.states_reciever} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_city_list_reciever(data[index]['id']) ; this.setState({rec_state:value}) }, 500); }} />
 
-          <CustomText text={'City'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'City'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomDropdown data={this.state.city_reciever} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.setState({rec_city:value}) }, 500); }} />
  
-          <CustomText text={'District'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'District'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_district: text})} value={this.state.rec_district} />
 
-         <CustomText text={'Pincode'} textType={Strings.subtext} color={Colors.black}/>
+         <CustomText text={'Pincode'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_pincode: text})} value={this.state.rec_pincode} />
 
-          <CustomText text={'Gmap Link'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'Gmap Link'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_gmap: text})} value={this.state.rec_gmap} />
          
-          <CustomText text={'Address Line 1'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'Address Line 1'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_address1: text})} value={this.state.rec_address1} />
 
-        <CustomText text={'Address Line 2'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Address Line 2'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_address2: text})} value={this.state.rec_address2} />
 
-        <CustomText text={'Local Body Type'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Local Body Type'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_localbody: text})} value={this.state.rec_localbody} />
 
-        <CustomText text={'Landmark'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Landmark'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_landmark: text})} value={this.state.rec_landmark} />
           
         
@@ -1105,22 +1100,22 @@ render(){
 
         <CustomText text={'Enter the receiving person customer id or registered mobile number.'} textType={Strings.subtext} color={Colors.grayTextColor}/>
     
-        <CustomText text={'Customer Id / Mobile Number'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Customer Id / Mobile Number'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_id_or_no: text})} value={this.state.rec_id_or_no} />
 
-        <CustomText text={'Reciever Name'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Reciever Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({recievername: text})} value={this.state.recievername} />
 
-          <CustomText text={'Receiver Phone Number'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'Receiver Phone Number'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({recieverno: text})} value={this.state.recieverno} />
 
-          <CustomText text={'Proof to be produced'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'Proof to be produced'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({proof: text})} value={this.state.proof} />
 
-          <CustomText text={'Can be delivered to'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'Can be delivered to'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({deliveredto: text})} value={this.state.deliveredto} />
 
-          <CustomText text={'Notes to Courier Boy'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'Notes to Courier Boy'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_notes: text})} value={this.state.rec_notes} />
 
           <View style={{flexDirection:'row',}}>
@@ -1149,27 +1144,27 @@ render(){
          { this.state.shipment_view == true &&  (   <View style={{marginTop:SECTION_MARGIN_TOP}}>
         <CustomText text={'Shipment box'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
 
-         <CustomText text={'Approx. Weight'} textType={Strings.subtext} color={Colors.black}/>
+         <CustomText text={'Approx. Weight'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
          <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({Shipment_weight: text})} value={this.state.Shipment_weight} placeholder={'kg'} />
 
 <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:15}}>
-<CustomText text={'Length'} textType={Strings.subtext} color={Colors.black}/>
-<CustomText text={'Width'} textType={Strings.subtext} color={Colors.black}/>
-<CustomText text={'Height'} textType={Strings.subtext} color={Colors.black}/>
+<CustomText text={'Length'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+<CustomText text={'Width'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+<CustomText text={'Height'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
 </View>
 <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:10}}>
 <View style={{width:60}}><CustomInput keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} placeholder={'cm'} onChangeText={(text) => this.setState({Shipment_length: text})} value={this.state.Shipment_length}/></View>
 <View style={{width:60}}><CustomInput keyboardType={"number-pad"}  borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} placeholder={'cm'} onChangeText={(text) => this.setState({Shipment_width: text})} value={this.state.Shipment_width}/></View>
 <View style={{width:60}}><CustomInput keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} placeholder={'cm'} onChangeText={(text) => this.setState({Shipment_height: text})} value={this.state.Shipment_height} /></View>
 </View>
-<CustomText text={'Approx. Distance'} textType={Strings.subtext} color={Colors.black}/>
+<CustomText text={'Approx. Distance'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
          <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({Shipment_distance: text})} value={this.state.Shipment_distance} placeholder={'kg'} />
 
   
-        <CustomText text={'Shipment Category'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Shipment Category'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomDropdown data={this.state.package_categories} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => {this.setState({Shipment_category_id:data[index]['id']}) }} />
     
-        <CustomText text={'Shipment Type'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Shipment Type'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomDropdown data={this.state.package_subcategories} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => {this.setState({Shipment_subcategory_id:data[index]['id']}) }} />
 
         </View>)}
@@ -1193,36 +1188,36 @@ render(){
           <CustomText  text={'Approximate Delivery Total '} textType={Strings.subtitle} textDecorationLine={'underline'} />
         </View>
     
-        <CustomText text={'Min. Delivery Charge'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Min. Delivery Charge'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.min_delivery_charge} />
 
-        <CustomText text={'Package Applied'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Package Applied'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.package_applied} />
 
-        <CustomText text={'Delivery Credit Available'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Delivery Credit Available'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.credit_available} />
 
-        <CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.delivery_charge} />
 
 
-        <CustomRadioButton title={'COD'} selectedColor={Colors.darkSkyBlue} selected={true}/>
+        <CustomRadioButton title={'COD'} selectedColor={Colors.darkSkyBlue} selected={true} />
 
-        <CustomText text={'Reciever GST Number'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Reciever GST Number'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({gst_no: text})} value={this.state.gst_no} />
 
-          <CustomText text={'Invoie Description'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'Invoie Description'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({invoice_des: text})} value={this.state.invoice_des} />
 
-          <CustomText text={'Product Cost'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'Product Cost'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({product_cost: text})} value={this.state.product_cost} />
 
-          <CustomText text={'COD Credit balance'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'COD Credit balance'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({cod_credit_blnc: text})} value={this.state.cod_credit_blnc} />
         
           <CustomButton title={'Generate COD Invoice'} text_color={Colors.darkSkyBlue} borderColor={Colors.darkSkyBlue} borderWidth={1} backgroundColor={Colors.white} onPress={()=>this.generate_cod()}/>
 
-          <CustomText text={'Final COD charge'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'Final COD charge'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} value={this.state.final_cod_charge} />
 
 </View>
@@ -1241,29 +1236,29 @@ render(){
          <CustomRadioButton title={'Receiver'} selectedColor={Colors.darkSkyBlue} selected={this.state.reciever_selected} onPress={()=>this.isSelected(2)}/>
          </View>
 
-         { this.state.deliveryChargePaymentBySender == true &&  ( <View><CustomText text={'Sender Name'} textType={Strings.subtext} color={Colors.black}/>
+         { this.state.deliveryChargePaymentBySender == true &&  ( <View><CustomText text={'Sender Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({payment_name: text})} value={this.state.payment_name} />
           </View>)}
 
-          { this.state.deliveryChargePaymentBySender == false &&  ( <View><CustomText text={'Receiver Name'} textType={Strings.subtext} color={Colors.black}/>
+          { this.state.deliveryChargePaymentBySender == false &&  ( <View><CustomText text={'Receiver Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({payment_name: text})} value={this.state.payment_name} />
           </View>)}
 
-          <CustomText text={'Contact number'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'Contact number'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({payment_phone: text})} value={this.state.payment_phone} />
 
-          <CustomText text={'Location'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'Location'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({payment_location: text})} value={this.state.payment_location} />
 
-          <CustomText text={'Comment'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'Comment'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({payment_comment: text})} value={this.state.payment_comment} />
 
           <CustomButton title={'Save'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.payer_payment()} />
 
-          <CustomText text={'Payment for Sender'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'Payment for Sender'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} value={this.state.sender_payment} />
 
-          <CustomText text={'Payment for Receiver'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'Payment for Receiver'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} value={this.state.receiver_payment} />
 </View>
 
@@ -1282,10 +1277,10 @@ render(){
          <CustomRadioButton title={'Bank Transfer'} selectedColor={Colors.darkSkyBlue} selected={false}/>
          </View>
 
-        <CustomText text={'Amount Recieved'} textType={Strings.subtext} color={Colors.black}/>
+        <CustomText text={'Amount Recieved'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({amount_recieved: text})} value={this.state.amount_recieved} />
 
-          <CustomText text={'Balance Amount'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'Balance Amount'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({balance_amount: text})} value={this.state.balance_amount} />
 
 

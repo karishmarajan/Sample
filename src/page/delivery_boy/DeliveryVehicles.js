@@ -17,8 +17,9 @@ import CustomText from '../../component/CustomText';
 import SideMenuDrawer from '../../component/SideMenuDrawer';
 import session,{KEY} from '../../session/SessionManager';
 import Api from '../../component/Fetch';
-import { VEHICLE_DETAILS } from '../../constants/Api';
+import { VEHICLE_DETAILS, VEHICLE_REQUEST } from '../../constants/Api';
 import CustomInput from '../../component/CustomInput';
+import CustomAlert from '../../component/CustomAlert';
 
 
 
@@ -30,6 +31,7 @@ export default class Dashboard extends React.Component {
 
   state ={
     vehicle_details :[],
+    alert_visible:false,
   }
 
   ///////////////////////////////////////// Component did mount function ///////////////////////////////////////////////////////////////////////////////
@@ -42,7 +44,7 @@ export default class Dashboard extends React.Component {
    
   }));
   }
-  //////////////////////////////////////////// Amount collected fetching function  //////////////////////////////////////////////////////////////////////////////////  
+  //////////////////////////////////////////// Vehicle details fetching function  //////////////////////////////////////////////////////////////////////////////////  
  
   fetch_vehicle_details(val){
 
@@ -61,6 +63,40 @@ export default class Dashboard extends React.Component {
 })
 
  }
+
+ ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ vehicle_change_request() {
+
+    AsyncStorage.getItem(KEY).then((value => {
+      let data = JSON.parse(value);
+
+  let body={
+    "requestedBy" :data.personId,
+    "requestedFrom" : "DELIVERY_AGENT",
+    "requestedTo" : "ADMIN"
+
+};
+
+  Api.fetch_request(VEHICLE_REQUEST ,'POST','',JSON.stringify(body))
+  .then(result => {
+   
+    if(result.error != true){
+    console.log('Success:', JSON.stringify(result));
+
+    this.setState({alert_visible:true})
+    setTimeout(()=>{this.setState({alert_visible:false})},3000);
+
+
+    }
+    else{
+      console.log('Failed');
+      alert(" Failed ! ")
+    }
+  })
+}));
+ 
+}
 
 
 /////////////////////////////////////////// Render method //////////////////////////////////////////////////////////////////////////////////
@@ -89,26 +125,24 @@ export default class Dashboard extends React.Component {
 
           <View style={{flex: 1, flexDirection: 'column',backgroundColor:Colors.mainBackgroundColor,padding:MAIN_VIEW_PADDING}}>
 
+
+          <CustomAlert
+        displayAlert={this.state.alert_visible}
+        alertMessageText={'Request Sent Successfully'}
+        displayAlertIcon={true}
+   
+      />
+
         {/*////////////////////// Vehicles block //////////////////////////////////////////////// */}
 
-          <View style={{ backgroundColor:Colors.white,height:100,borderRadius:MAIN_BLOCK_BORDER_RADIUS,padding:COLUMN_PADDING,marginTop:SECTION_MARGIN_TOP}}>
-          <CustomText text={'bmwww'} fontWeight={'bold'} textType={Strings.maintext}/>
-          {/* <CustomText text={this.state.vehicle_details.modalName ? this.state.vehicle_details.modalName :'N/A' } fontWeight={'bold'} textType={Strings.maintext}/> */}
-          <View style={{flexDirection:'row',flex:10}}>
-          <View style={{flex:4}}><CustomText text={'kl 234567'}  textType={Strings.maintext}/></View>
-            {/* <View style={{flex:9}}><CustomText text={this.state.vehicle_details.registrationNumber ? this.state.vehicle_details.registrationNumber :'N/A' }  textType={Strings.maintext}/></View> */}
-            <View style={{flex:4}}><CustomButton title={'Request to activate'} backgroundColor={Colors.darkSkyBlue} marginTop={1} height={30} borderRadius={5}/></View>
-          </View>
-          </View>
 
           <View style={{ backgroundColor:Colors.white,height:100,borderRadius:MAIN_BLOCK_BORDER_RADIUS,padding:COLUMN_PADDING,marginTop:SECTION_MARGIN_TOP}}>
-          <CustomText text={'bmwww'} fontWeight={'bold'} textType={Strings.maintext}/>
-          {/* <CustomText text={this.state.vehicle_details.modalName ? this.state.vehicle_details.modalName :'N/A' } fontWeight={'bold'} textType={Strings.maintext}/> */}
+          <CustomText text={this.state.vehicle_details.modelName ? this.state.vehicle_details.modelName :'N/A' } fontWeight={'bold'} textType={Strings.maintext}/>
           <View style={{flexDirection:'row',flex:10}}>
-          <View style={{flex:4}}><CustomText text={'kl 234567'}  textType={Strings.maintext}/></View>
-            {/* <View style={{flex:9}}><CustomText text={this.state.vehicle_details.registrationNumber ? this.state.vehicle_details.registrationNumber :'N/A' }  textType={Strings.maintext}/></View> */}
-            <View style={{flex:4}}><CustomText text={'Active'}  textType={Strings.maintext} color={Colors.darkSkyBlue} fontWeight={'bold'}/></View>
+            <View style={{flex:6}}><CustomText text={this.state.vehicle_details.registrationNumber ? this.state.vehicle_details.registrationNumber :'N/A' }  textType={Strings.maintext}/></View>
+            <View style={{flex:5}}><CustomButton title={'Request to change'} backgroundColor={Colors.darkSkyBlue} marginTop={1} height={30} borderRadius={5} onPress={()=>this.vehicle_change_request()}/></View>
           </View>
+          <View style={{flex:9}}><CustomText text={this.state.vehicle_details.fuelType ? this.state.vehicle_details.fuelType :'N/A' }  textType={Strings.maintext}/></View>
           </View>
 
 
