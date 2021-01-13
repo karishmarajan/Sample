@@ -18,11 +18,17 @@ export default class Index extends Component{
  
 <Container style={{backgroundColor:Colors.indexBackGroundColor, justifyContent:'center'}}>
 <ScrollView contentContainerStyle={{flexGrow:1}}>
-<Button onPress={this.props.onClose} transparent>
-        <Icon name="md-close" style={{position: 'absolute',right: 20,top: 20,bottom: 0,color:'white'}} />
-        </Button>
 
-<Text style={{fontSize: 32, justifyContent:'center', width: '100%' , color: Colors.white,textAlign:'center',marginTop:80,fontWeight:'bold',marginBottom:35}}>Epex </Text>
+<View style={{flexDirection:'row'}}>
+    <View style={{flex:4}}><Text style={{fontSize: 32, justifyContent:'center', color: Colors.white,textAlign:'center',marginTop:60,fontWeight:'bold',marginBottom:35}}>Epex </Text></View>
+    <View style={{flex:1}}><Button onPress={this.props.onClose} transparent>
+        <Icon name="md-close" style={{color:'white',marginTop:120}} />
+        </Button></View>
+</View>
+
+
+
+
  <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.dashboard()}}>Dashboard </Text>
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.deliveryfirst()}}>Delivery </Text>
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.pickup();  }}>Pickup </Text>

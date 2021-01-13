@@ -314,7 +314,7 @@ _footer = () => {
     );
     var right = (
       <Right style={{ flex: 1 }}>
-        <Button  transparent>
+        <Button  transparent onPress={()=>Actions.chat()}>
           <Icon style={{ color:Colors.navbarIconColor }} name='ios-chatbubbles' />
         </Button>
         <Button  transparent onPress={()=>Actions.notification()}>

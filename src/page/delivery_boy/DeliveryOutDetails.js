@@ -155,7 +155,7 @@ render(){
 
 {/*//////////////////////////////////////////////////////////////////////////////////////////////////// */}
 
-        <Navbar left={left} right={right} title="Delivery Out Details" />
+        <Navbar left={left} right={right} title="Delivery Details" />
         <ScrollView contentContainerStyle={{flexGrow:1}}>
 
 {/*////////////////////// main view //////////////////////////////////////////////// */}

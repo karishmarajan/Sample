@@ -16,6 +16,7 @@ import session, { KEY } from '../../session/SessionManager';
 import Api from '../../component/Fetch';
 import { PICKUP_ORDERS } from '../../constants/Api';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
+import RNPrint from 'react-native-print';
 
 
 const myArray1 = [{ name: "Order No.", value: "Order No." }, { name: "CustomerName", value: "CustomerName" },];
@@ -29,12 +30,29 @@ export default class PickUp extends React.Component {
     search: '',
     pickup_list: [],
     offset: 0,
-    status_type: Strings.pending
+    status_type: Strings.pending,
+    selectedPrinter: null,
   };
 
   componentDidMount() {
-   // this.fetch_pickup_orders(Strings.pending)
+    this.fetch_pickup_orders(Strings.pending)
   }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  silentPrint = async () => {
+    if (!this.state.selectedPrinter) {
+      alert('Must Select Printer First')
+    }
+  
+    const jobName = await RNPrint.print({
+      printerURL: this.state.selectedPrinter.url,
+      html: '<h1>Silent Print</h1>'
+    })
+  
+  }
+
+
  /////////////////////////////////////// Call function ////////////////////////////////////////////////////////////////////////////
 
  dialCall = (no) => {
@@ -128,7 +146,7 @@ export default class PickUp extends React.Component {
 
         <View style={styles.cell}>
           <View>
-            <CustomButton title={'Notify'} backgroundColor={Colors.darkSkyBlue} height={20} fontSize={14} marginTop={1} marginBottom={5} />
+            <CustomButton title={'Notify'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5} textDecorationLine={'underline'} text_color={Colors.darkSkyBlue} />
             <CustomButton title={'Call'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5} textDecorationLine={'underline'} text_color={Colors.darkSkyBlue} onPress={()=>this.dialCall(item.contactPersonNumber)}/>
             <CustomButton title={'Details'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5} textDecorationLine={'underline'} text_color={Colors.darkSkyBlue} onPress={() => Actions.pickupdetails({delivery_id:item.deliveryId})} />
           </View>
@@ -153,10 +171,10 @@ render() {
 
     var right = (
       <Right style={{ flex: 1 }}>
-        <Button transparent>
+        <Button  transparent onPress={()=>Actions.chat()}>
           <Icon style={{ color: Colors.navbarIconColor }} name='ios-chatbubbles' />
         </Button>
-        <Button transparent>
+        <Button  transparent onPress={()=>Actions.notification()}>
           <Icon style={{ color: Colors.navbarIconColor }} name='ios-notifications' />
           <Badge style={{ width: 10, backgroundColor: 'orange', height: 12, marginTop: 20, borderRadius: 10 }}
             textStyle={{ color: 'white', fontSize: 20, lineHeight: 20 }}></Badge>
@@ -197,7 +215,7 @@ render() {
 
           <View style={{ flexDirection: 'row', marginTop: SECTION_MARGIN_TOP, backgroundColor: Colors.aash, }}>
             <View style={{ flex: 4 }}><CustomDropdown data={myArray} height={SHORT_BUTTON_HEIGHT} backgroundColor={Colors.aash} onChangeValue={(value, index, data) => { this.setState({ offset: 0 }); setTimeout(() => { this.fetch_pickup_orders(value) }, 1000); }} /></View>
-            <View style={{ flex: 2, }}><CustomButton title={'Print'} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} /></View>
+            <View style={{ flex: 2, }}><CustomButton title={'Print'} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={this.silentPrint} /></View>
           </View>
 
           {/*//////////////////////// Horizontal Order Details Block //////////////////////////////////////////////// */}

@@ -107,7 +107,7 @@ export default class Dashboard extends React.Component {
           <View style={{flexDirection:'row',flex:10}}>
           <View style={{flex:4}}><CustomText text={'kl 234567'}  textType={Strings.maintext}/></View>
             {/* <View style={{flex:9}}><CustomText text={this.state.vehicle_details.registrationNumber ? this.state.vehicle_details.registrationNumber :'N/A' }  textType={Strings.maintext}/></View> */}
-            <View style={{flex:4}}><CustomText text={'Activate'}  textType={Strings.maintext} color={Colors.darkSkyBlue} fontWeight={'bold'}/></View>
+            <View style={{flex:4}}><CustomText text={'Active'}  textType={Strings.maintext} color={Colors.darkSkyBlue} fontWeight={'bold'}/></View>
           </View>
           </View>
 

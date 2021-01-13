@@ -16,6 +16,7 @@ import session, { KEY } from '../../session/SessionManager';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 import Api from '../../component/Fetch';
 import { DELIVERY_ORDERS } from '../../constants/Api';
+import RNPrint from 'react-native-print';
 
 const myArray1 = [{ name: "Order No.", value: "Order No." }, { name: "CustomerName", value: "CustomerName" },];
 const myArray = [{ name: "PENDING", value: "PENDING" }, { name: "ALL", value: "ALL" }, { name: "FAILED", value: "FAILED" }, { name: "COMPLETED", value: "COMPLETED" }];
@@ -29,12 +30,27 @@ export default class DeliveryFirst extends React.Component {
     delivery_list: [],
     status_type: Strings.pending,
     loader:true,
+    selectedPrinter: null,
   };
 
   componentDidMount() {
     this.fetch_delivery_orders(Strings.pending)
     setTimeout(()=>{this.setState({loader:false})},3000);
   }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+silentPrint = async () => {
+  if (!this.state.selectedPrinter) {
+    alert('Must Select Printer First')
+  }
+
+  const jobName = await RNPrint.print({
+    printerURL: this.state.selectedPrinter.url,
+    html: '<h1>Silent Print</h1>'
+  })
+
+}
 
  /////////////////////////////////////// Call function ////////////////////////////////////////////////////////////////////////////
 
@@ -129,9 +145,9 @@ fetch_delivery_orders(status_type) {
 
         <View style={styles.cell}>
           <View>
-            <CustomButton title={'Notify'} backgroundColor={Colors.darkSkyBlue} height={20} fontSize={14} marginTop={1} marginBottom={5} />
-            <CustomButton title={'Call'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5} textDecorationLine={'underline'} text_color={Colors.darkSkyBlue} onPress={()=>this.dialCall(item.contactPersonNumber)} />
-            <CustomButton title={'Details'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5} textDecorationLine={'underline'} text_color={Colors.darkSkyBlue} onPress={() => Actions.deliveryoutdetails({delivery_id:item.deliveryId})} />
+            <CustomButton title={'Notify'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5} text_color={Colors.darkSkyBlue} />
+            <CustomButton title={'Call'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5}  text_color={Colors.darkSkyBlue} onPress={()=>this.dialCall(item.contactPersonNumber)} />
+            <CustomButton title={'Details'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5} text_color={Colors.darkSkyBlue} onPress={() => Actions.deliveryoutdetails({delivery_id:item.deliveryId})} />
           </View>
         </View>
 
@@ -154,10 +170,10 @@ fetch_delivery_orders(status_type) {
 
     var right = (
       <Right style={{ flex: 1 }}>
-        <Button transparent>
+        <Button  transparent onPress={()=>Actions.chat()}>
           <Icon style={{ color: Colors.navbarIconColor }} name='ios-chatbubbles' />
         </Button>
-        <Button transparent>
+        <Button  transparent onPress={()=>Actions.notification()}>
           <Icon style={{ color: Colors.navbarIconColor }} name='ios-notifications' />
           <Badge style={{ width: 10, backgroundColor: 'orange', height: 12, marginTop: 20, borderRadius: 10 }}
             textStyle={{ color: 'white', fontSize: 20, lineHeight: 20 }}></Badge>
@@ -168,7 +184,7 @@ fetch_delivery_orders(status_type) {
     return (
 
       <Container>
-        <Navbar left={left} right={right} title="Delivery Out" />
+        <Navbar left={left} right={right} title="Delivery" />
         <Container horizontal={true} style={{ flexDirection: 'column', padding: 10, backgroundColor: Colors.textBackgroundColor }}>
 
         { this.state.loader === true && (<View style={{alignItems:'center'}}>
@@ -186,7 +202,7 @@ fetch_delivery_orders(status_type) {
 
           <View style={{ flexDirection: 'row', marginTop: SECTION_MARGIN_TOP, backgroundColor: Colors.aash, }}>
             <View style={{ flex: 4 }}><CustomDropdown data={myArray} height={SHORT_BUTTON_HEIGHT} backgroundColor={Colors.aash} onChangeValue={(value, index, data) => { this.setState({ offset: 0 }); setTimeout(() => { this.fetch_delivery_orders(value) }, 100); }} /></View>
-            <View style={{ flex: 2, }}><CustomButton title={'Print'} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} /></View>
+            <View style={{ flex: 2, }}><CustomButton title={'Print'} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={this.silentPrint} /></View>
           </View>
 
           {/*//////////////////////// Horizontal Order Details Block //////////////////////////////////////////////// */}
