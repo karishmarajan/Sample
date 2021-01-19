@@ -17,6 +17,7 @@ import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 import Api from '../../component/Fetch';
 import { DELIVERY_ORDERS } from '../../constants/Api';
 import RNPrint from 'react-native-print';
+import _ from "lodash"
 
 const myArray1 = [{ name: "Order No.", value: "Order No." }, { name: "CustomerName", value: "CustomerName" },];
 const myArray = [{ name: "PENDING", value: "PENDING" }, { name: "ALL", value: "ALL" }, { name: "FAILED", value: "FAILED" }, { name: "COMPLETED", value: "COMPLETED" }];
@@ -31,6 +32,10 @@ export default class DeliveryFirst extends React.Component {
     status_type: Strings.pending,
     loader:true,
     selectedPrinter: null,
+    search_critieria:'Order No.',
+    pickup_list_search:[],
+    isSearch:false,
+    searchText:'',
   };
 
   componentDidMount() {
@@ -49,6 +54,28 @@ silentPrint = async () => {
     printerURL: this.state.selectedPrinter.url,
     html: '<h1>Silent Print</h1>'
   })
+
+}
+
+ /////////////////////////////////// Searching with order no //////////////////////////////////////////////////////////////
+
+ searchtext(text){
+
+  let res=_.filter(this.state.delivery_list, obj=>obj.orderId==text);
+
+  this.setState({pickup_list_search:res})
+
+
+}
+
+ /////////////////////////////////// Searching with Customer name //////////////////////////////////////////////////////////////
+
+ searchtext_name(text){
+
+  let res=_.filter(this.state.delivery_list, obj=>obj.contactPersonName==text);
+
+  this.setState({pickup_list_search:res})
+
 
 }
 
@@ -132,7 +159,7 @@ fetch_delivery_orders(status_type) {
       <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3 }}>
         <View style={styles.cell1}><Icon name='arrow-up' style={{ fontSize: 14 }} /></View>
         <View style={styles.cell}><CustomText text={item.serialId ? item.serialId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText text={item.deliveryId ? item.deliveryId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText text={item.orderId ? item.orderId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.contactPersonName ? item.contactPersonName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.addressLine1 ? item.addressLine1 : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.city ? item.city : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
@@ -194,8 +221,10 @@ fetch_delivery_orders(status_type) {
           {/*////////////////////// Order and Searchbar Block //////////////////////////////////////////////// */}
 
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', textAlignVertical: 'center' }}>
-            <View style={{ flex: 2 }}><CustomDropdown data={myArray1} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white} fontSize={14} paddingBottom={SECTION_MARGIN_TOP} marginRight={10} /></View>
-            <View style={{ flex: 3, marginLeft: SECTION_MARGIN_TOP }}><CustomInput placeholder={'Search here'} icon_name={'ios-search'} icon_color={Colors.navbarIconColor} icon_fontsize={18} placeholderTextColor={Colors.navbarIconColor} fontSize={14} showIcon={true} backgroundColor={Colors.white} height={TEXT_FIELD_HIEGHT} marginTop={5} /></View>
+          <View style={{ flex: 2 }}><CustomDropdown data={myArray1} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white} fontSize={14} paddingBottom={SECTION_MARGIN_TOP} marginRight={10} onChangeValue={(value,index,data)=>{this.setState({search_critieria:value})}} value={this.state.search_critieria} /></View>
+            {(this.state.search_critieria === 'Order No.' && <View style={{ flex: 3, marginLeft: SECTION_MARGIN_TOP }}><CustomInput placeholder={'Search here with no'} keyboardType={'number-pad'} icon_name={'ios-search'} onChangeText={(text)=>{this.searchtext(text); this.setState({isSearch:true}); if(text==''){this.setState({isSearch:false})}}} icon_color={Colors.navbarIconColor} icon_fontsize={18} placeholderTextColor={Colors.navbarIconColor} fontSize={14} showIcon={true} backgroundColor={Colors.white} height={TEXT_FIELD_HIEGHT} marginTop={5} flex={1} /></View>)}
+
+           {(this.state.search_critieria === 'CustomerName' && <View style={{ flex: 3, marginLeft: SECTION_MARGIN_TOP }}><CustomInput placeholder={'Search here with name'} icon_name={'ios-search'} onChangeText={(text)=>{this.searchtext_name(text); this.setState({isSearch:true}); if(text==''){this.setState({isSearch:false})}}} icon_color={Colors.navbarIconColor} icon_fontsize={18} placeholderTextColor={Colors.navbarIconColor} fontSize={14} showIcon={true} backgroundColor={Colors.white} height={TEXT_FIELD_HIEGHT} marginTop={5} flex={1} /></View>)}
           </View>
 
           {/*////////////////////// Print Button Block //////////////////////////////////////////////// */}
@@ -210,7 +239,7 @@ fetch_delivery_orders(status_type) {
           <View>
             <ScrollView horizontal={true} contentContainerStyle={{ flexGrow: 1 }} style={{ backgroundColor: Colors.white }}>
               <FlatList
-                data={this.state.delivery_list}
+                data={this.state.isSearch ? this.state.pickup_list_search : this.state.delivery_list}
                 keyExtractor={(x, i) => i}
                 ListHeaderComponent={this._header}
                 renderItem={({ item }) => this._body(item)}

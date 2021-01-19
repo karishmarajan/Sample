@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView,StyleSheet,Modal } from 'react-native';
+import { ScrollView,StyleSheet,Modal,Linking } from 'react-native';
 import { Container, View, Button, Left, Right,Icon,Grid,Col,} from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
@@ -13,18 +13,19 @@ import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
 import session,{KEY} from '../../session/SessionManager';
 import Api from '../../component/Fetch';
-import { PICKUP_DETAILS , } from '../../constants/Api';
+import { PICKUP_DETAILS , PICKUP_ORDER_UPDATE } from '../../constants/Api';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 
 
-const myArray=[{name:"Select a Status" , value:"Select a Status"},{name:"Delivered" , value:"Delivered"},{name:"Undelivered" , value:"Undelivered"}];
-const myArray1=[{name:"Select/Enter a Reason" , value:"Select/Enter here"},{name:"a" , value:"a"},{name:"b" , value:"b"},{name:"Enter a Reason" , value:"Enter a Reason"}];
+const myArray=[{name:"Select a Status" , value:"Select a Status"},{name:"Completed" , value:"COMPLETED"},{name:"Failed" , value:"ATTEMPT_FAILED"}];
+const myArray1=[{name:"Select/Enter a Reason" , value:"Select/Enter here"},{name:"Address invalid" , value:"Address invalid"},{name:"Door was  locked" , value:"Door was  locked"},{name:"Enter a Reason" , value:"Enter a Reason"}];
 const myArray2=[{name:"Cash" , value:"Cash"},{name:"Credit card" , value:"Credit card"},{name:"Debit card" , value:"Debit card"},{name:"Paytm" , value:"Paytm"}];
 
 export default class PickupDetails extends React.Component {
 
   state = {
     modal_visible: false,
+    status:'',
     reason:'',
     reason_val:'',
     modal_view: false,
@@ -35,10 +36,25 @@ export default class PickupDetails extends React.Component {
 
   componentDidMount() {
     
-    this.fetch_pickup_details(this.props.delivery_id);
+    this.fetch_pickup_details(this.props.pickup_id);
   }
 
-  //////////////////////////////////////////// Delivery out details fetching function  //////////////////////////////////////////////////////////////////////////////////  
+   /////////////////////////////////////// Call function ////////////////////////////////////////////////////////////////////////////
+
+ dialCall = (no) => {
+
+  let phoneNumber = '';
+  if (Platform.OS === 'android') {
+    phoneNumber = 'tel:${'+no+'}';
+  }
+  else {
+    phoneNumber = 'telprompt:${'+no+'}';
+  }
+
+  Linking.openURL(phoneNumber);
+};
+
+  //////////////////////////////////////////// Pickup details fetching function  //////////////////////////////////////////////////////////////////////////////////  
  
  fetch_pickup_details(id){
 
@@ -60,6 +76,42 @@ export default class PickupDetails extends React.Component {
 
  }
 
+  ///////////////////////////////// Pickup order update function //////////////////////////////////////////////////////////////////////////////////////// 
+ 
+  pickup_update() {
+
+      let body = {
+
+        "amntDeliveryBoyCollectedFrSender": 0,
+        "paymentMethod": "BANK_TRANSFER",
+        "pickupFailedReason": "string",
+        "pickupId": this.props.pickup_id,
+        "pickupStatus": this.state.status
+  
+      };
+  
+      Api.fetch_request(PICKUP_ORDER_UPDATE, 'PUT', '', JSON.stringify(body))
+        .then(result => {
+  
+          if (result.error != true) {
+  
+           this.setState({final_cod_charge:result.payload.finalCodCharge})
+            console.log('Success:', JSON.stringify(result));
+            alert(result.message)
+            Actions.dashboard();
+  
+          }
+          else {
+            console.log('Failed');
+            alert(result.message)
+          }
+        })
+  
+  }
+
+
+  /////////////////////////////////// Render Method  /////////////////////////////////////////////////////////////////////////////
+
 render(){
     var left = (
         <Left style={{ flex: 1 }}>
@@ -71,9 +123,9 @@ render(){
       var right = (
         <Right style={{ flex: 1 }}>
     
-          {/* <Button onPress={() => this.setState({modal_view:true})} transparent> */}
+          <Button onPress={() => this.setState({modal_view:true})} transparent>
             <Icon style={{color:Colors.navbarIconColor }} name='md-more' />
-          {/* </Button> */}
+          </Button>
         </Right>
       );
 
@@ -98,19 +150,15 @@ render(){
 </View>
 </Modal>
 
-{/* <Modal visible={this.state.modal_view1} supportedOrientations={['landscape']} transparent>
-<View style={{ justifyContent: 'center', flex: 1, backgroundColor: Colors.transparent }}>
-    <View style={{ backgroundColor: Colors.white, alignSelf: 'center', marginTop:SECTION_MARGIN_TOP }}>
-        <View style={{ flexDirection: 'row', alignSelf: 'flex-end' }}>  
-        <View style={styles.modalview}>
-        <CustomText text={'Notify Customer'} textType={Strings.subtext} />
-        <CustomText text={'Call Customer'} textType={Strings.subtext} />
-        <CustomText text={'Print'} textType={Strings.subtext} />
-        </View>
+<Modal visible={this.state.modal_view} supportedOrientations={['landscape']} transparent>
+<View style={{ flexDirection: 'row', alignSelf: 'flex-end', }}>  
+        <View style={styles.modalview1}>
+        <CustomText text={'Notify Customer'} textType={Strings.subtext} onPress={()=>this.setState({modal_view:false})} />
+        <CustomText text={'Call Customer'} textType={Strings.subtext} onPress={()=>{this.dialCall(this.state.pickup_details.contactPersonNumber) ; this.setState({modal_view:false})}} />
+        <CustomText text={'Print'} textType={Strings.subtext} onPress={()=>this.setState({modal_view:false})}/>
         </View>
     </View>
-</View>
-</Modal> */}
+</Modal>
 
 {/*//////////////////////////////////////////////////////////////////////////////////////////////////// */}
 
@@ -129,16 +177,16 @@ render(){
           <CustomText  text={'Delivery Address & Reciever Details'} textType={Strings.subtitle} fontWeight={'bold'} />
         </View>
 
-        <CustomText text={'Deliver To'} textType={Strings.subtext} color={Colors.black}/>
-        <View style={styles.inputview}><CustomText text={this.state.pickup_details.canBeDeliveredTo ? this.state.pickup_details.canBeDeliveredTo : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
+        {/* <CustomText text={'Deliver To'} textType={Strings.subtext} color={Colors.black}/>
+        <View style={styles.inputview}><CustomText text={this.state.pickup_details.canBeDeliveredTo ? this.state.pickup_details.canBeDeliveredTo : Strings.na } textType={Strings.subtext} color={Colors.black}/></View> */}
           <CustomText text={'Receiver Name'} textType={Strings.subtext} color={Colors.black}/>
           <View style={styles.inputview}><CustomText text={this.state.pickup_details.contactPersonName ? this.state.pickup_details.contactPersonName : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Customer Id'} textType={Strings.subtext} color={Colors.black}/>
-          <View style={styles.inputview}><CustomText text={this.state.pickup_details.canBeDeliveredTo ? this.state.pickup_details.canBeDeliveredTo : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>
+          <View style={styles.inputview}><CustomText text={this.state.pickup_details.customerId ? this.state.pickup_details.customerId : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Mobile No.'} textType={Strings.subtext} color={Colors.black}/>
           <View style={styles.inputview}><CustomText text={this.state.pickup_details.contactPersonNumber ? this.state.pickup_details.contactPersonNumber : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Location'} textType={Strings.subtext} color={Colors.black}/>
-          <View style={styles.inputview}><CustomText text={this.state.pickup_details.localBodyType ? this.state.pickup_details.localBodyType : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>
+          <View style={styles.inputview}><CustomText text={this.state.pickup_details.gmapLink ? this.state.pickup_details.gmapLink : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Address'} textType={Strings.subtext} color={Colors.black}/>
           <View style={styles.inputviewaddress}>
             <CustomText text={this.state.pickup_details.addressLine1 ? this.state.pickup_details.addressLine1 : Strings.na} textType={Strings.subtext} color={Colors.black}/>
@@ -157,10 +205,13 @@ render(){
 <View style={{ backgroundColor:Colors.white,flexGrow:1,paddingLeft:MAIN_VIEW_PADDING,paddingRight:MAIN_VIEW_PADDING,paddingBottom:MAIN_VIEW_PADDING}}>
 
       <CustomText text={'Status'} textType={Strings.maintext}/> 
-      <CustomDropdown data={myArray} height={TEXT_FIELD_HIEGHT}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP}/>
+      <CustomDropdown data={myArray} height={TEXT_FIELD_HIEGHT}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} onChangeValue={(value,index,data)=>{this.setState({status:value});}} value={this.state.status}/>
  
+      
+      {this.state.status == 'ATTEMPT_FAILED' && (<View>
       <CustomText text={'Reason/Remark'} textType={Strings.maintext}/>
       <CustomDropdown data={myArray1} height={TEXT_FIELD_HIEGHT}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} onChangeValue={(value,index,data)=>{if (index == (data.length)-1){this.setState({modal_visible: true});}}} value={this.state.reason_val}/>
+      </View>)}
       </View>
 
 
@@ -178,7 +229,7 @@ render(){
           <CustomText text={'Order No.'} textType={Strings.subtext} color={Colors.black}/>
           <View style={styles.inputview2}><CustomText text={this.state.pickup_details.orderId ? this.state.pickup_details.orderId : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Date And Time'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1} />
+          <View style={styles.inputview2}><CustomText text={this.state.pickup_details.pickupDate ? this.state.pickup_details.pickupDate + ' '+ this.state.pickup_details.pickupTime  : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Seller ID'} textType={Strings.subtext} color={Colors.black}/>
           <CustomInput keyboardType={'number-pad'} flex={1} backgroundColor={Colors.textBackgroundColor1}/>
           <CustomText text={'Delivery Type'} textType={Strings.subtext} color={Colors.black}/>
@@ -186,7 +237,7 @@ render(){
           <CustomText text={'Credit Allowed'} textType={Strings.subtext} color={Colors.black}/>
           <CustomInput flex={1} backgroundColor={Colors.textBackgroundColor1}/>
           <CustomText text={'Location'} textType={Strings.subtext} color={Colors.black}/>
-          <View style={styles.inputview2}><CustomText text={this.state.pickup_details.localBodyType ? this.state.pickup_details.localBodyType : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
+          <View style={styles.inputview2}><CustomText text={this.state.pickup_details.gmapLink ? this.state.pickup_details.gmapLink : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Package Details'} textType={Strings.subtext} color={Colors.black}/>
           <View style={{flexDirection:'row',flex:2,justifyContent:'space-between'}}>
           <CustomText text={'No. of Pieces'} textType={Strings.subtext} color={Colors.black}/>
@@ -206,7 +257,7 @@ render(){
 {/*/////////////////////////////// Total & Payment Block //////////////////////////////////////////////// */}
 
 
-{ this.state.pickup_details.deliveryType == "COD" &&  (<View>
+{/* { this.state.pickup_details.deliveryType == "COD" &&  (<View> */}
 <View style={{backgroundColor:Colors.white,flex:10,flexDirection:'row' ,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',}}>
               <CustomText  text={'Total & Payment'} textType={Strings.subtitle} flex={9} fontWeight={'bold'} />
               <Icon name={'md-arrow-dropdown'} style={{color:Colors.black,fontSize:FOURTH_FONT,flex:1,}}/>
@@ -236,9 +287,9 @@ render(){
 
       </View>
 
-      </View>)}
+      {/* </View>)} */}
 
-      <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  />
+      <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>this.pickup_update()} />
 
           </View>
         </ScrollView>
@@ -256,8 +307,10 @@ const styles=StyleSheet.create({
       minWidth:'60%',
     },
     modalview1 :{
-        maxWidth:'60%',
-        minWidth:'60%',
+      padding:10 ,
+      backgroundColor: Colors.white,
+      marginTop:20,
+      marginRight:20
       },
   iconstyle :{
     position: 'absolute',

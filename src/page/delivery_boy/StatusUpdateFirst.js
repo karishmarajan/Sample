@@ -137,7 +137,7 @@ export default class StatusUpdateFirst extends React.Component {
 
         <View style={{flex:1,flexDirection:'row',marginLeft:10,flex:8}}>
               <CustomButton title={'Verify'} backgroundColor={Colors.darkSkyBlue}  height={SHORT_BUTTON_HEIGHT}  flex={1}/>
-              <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  height={SHORT_BUTTON_HEIGHT} marginLeft={SECTION_MARGIN_TOP}  flex={1} onPress={()=>{this.setState({modal_visible2:false}); Actions.statusupdatemultiple();}}/>
+              <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  height={SHORT_BUTTON_HEIGHT} marginLeft={SECTION_MARGIN_TOP}  flex={1} onPress={()=>{this.setState({modal_visible2:false}); Actions.statusupdate();}}/>
             </View>
 
         </View>
@@ -156,7 +156,7 @@ export default class StatusUpdateFirst extends React.Component {
       
        <CustomText text={'or'} textType={Strings.subtext} color={Colors.black} textAlign={'center'}/>
 
-       <CustomInput backgroundColor={Colors.white} placeholder={'Enter Order Id here'} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS}/>
+       <CustomInput backgroundColor={Colors.white} placeholder={'Enter Order Id here'} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} flex={1}/>
       
        </View>
         

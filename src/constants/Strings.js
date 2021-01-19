@@ -14,7 +14,7 @@ const Strings = {
     subtext:'subtext',
     titlelarge:'titlelarge',
     status:'STATUS',
-    pending:'PENDING',
+    pending:'ASSIGNED',
     all:'ALL',
     failed:'FAILED',
     completed:'COMPLETED',

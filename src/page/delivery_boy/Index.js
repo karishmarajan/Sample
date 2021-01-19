@@ -37,7 +37,7 @@ export default class Index extends Component{
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.selfassign()}}>Self Assign </Text>
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.ordertransfer1()}}>Order Transfer </Text>
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.requeststatus()}}>Request Status </Text>
- <CustomButton title={'Log out'}  height={60} fontSize={18} marginTop={70} onPress={()=>{AsyncStorage.removeItem(KEY); Actions.login()}}/>
+ <CustomButton title={'Log out'}  height={60} fontSize={18} marginTop={70} onPress={()=>{session.logout()}}/>
 
 </ScrollView>
 
