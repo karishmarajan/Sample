@@ -12,10 +12,11 @@ import CustomText from '../../component/CustomText';
 import { SECTION_MARGIN_TOP,CREDIT_FIELD_HEIGHT, FIELD_MARGIN_TOP, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,ADDRESS_FIELD_HEIGHT, SIGNATURE_VIEW_HEIGHT,FOURTH_FONT, COLUMN_PADDING, SECOND_FONT, CAMERA_SIZE } from '../../constants/Dimen';
 import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
+import { RNCamera } from 'react-native-camera';
 
 
 
-const myArray=[{name:"Select a Status" , value:"Select a Status"},{name:"Delivered" , value:"Delivered"},{name:"Undelivered" , value:"Undelivered"}];
+const myArray=[{name:"Select a Status" , value:"Select a Status"},{name:"Completed" , value:"COMPLETED"},{name:"Failed" , value:"FAILED"}];
 const myArray1=[{name:"Select/Enter a Reason" , value:"Select/Enter here"},{name:"a" , value:"a"},{name:"b" , value:"b"},{name:"Enter a Reason" , value:"Enter a Reason"}];
 const myArray2=[{name:"Cash" , value:"Cash"},{name:"Credit card" , value:"Credit card"},{name:"Debit card" , value:"Debit card"},{name:"Paytm" , value:"Paytm"}];
 
@@ -27,6 +28,19 @@ export default class StatusUpdate extends React.Component {
     reason_val:'',
     modal_view: false,
   };
+
+
+
+  takePicture = async () => {
+    if (this.camera) {
+      const options = { quality: 0.5, base64: true };
+      const data = await this.camera.takePictureAsync(options);
+      console.log(data.uri);
+    }
+  };
+
+
+
 
 render(){
     var left = (
@@ -155,12 +169,20 @@ render(){
 <CustomText text={'Proof to be produced'} textType={Strings.subtext} color={Colors.black}/>
           <CustomInput flex={1} />
           <CustomText text={'Proof Upload'} textType={Strings.subtext} color={Colors.black}/>
-
-          <View style={{height:ADDRESS_FIELD_HEIGHT,backgroundColor:Colors.lightBackgroundColor,borderColor:Colors.lightborderColor,borderWidth:SHORT_BORDER_WIDTH,alignItems:'center',flex:1}}>
-              <Icon name='ios-camera' style={{fontSize:CAMERA_SIZE,flex:1,marginTop:SECTION_MARGIN_TOP}}/>
-          </View>
-          <CustomButton title={'Capture Customer Photo'} text_color={Colors.darkSkyBlue} backgroundColor={Colors.white} borderColor={Colors.darkSkyBlue} borderWidth={BORDER_WIDTH} marginTop={BORDER_WIDTH} fontSize={SECOND_FONT} />
-
+<RNCamera
+   style={styles.preview}
+   type={RNCamera.Constants.Type.back}
+   flashMode={RNCamera.Constants.FlashMode.on}
+   androidCameraPermissionOptions={{
+         title: 'Permission to use camera',
+         message: 'We need your permission to use your camera',
+         buttonPositive: 'Ok',
+         buttonNegative: 'Cancel',
+        }}
+        >
+          </RNCamera>  
+          <CustomButton title={'Capture Customer Photo'} text_color={Colors.darkSkyBlue} backgroundColor={Colors.white} borderColor={Colors.darkSkyBlue} borderWidth={BORDER_WIDTH} marginTop={BORDER_WIDTH} fontSize={SECOND_FONT} onPress={this.takePicture.bind(this)} />
+          
           <View style={{height:ADDRESS_FIELD_HEIGHT,backgroundColor:Colors.lightBackgroundColor,borderColor:Colors.lightborderColor,borderWidth:SHORT_BORDER_WIDTH,alignItems:'center',flex:1,marginTop:SECTION_MARGIN_TOP}}>
               <Icon name='ios-camera' style={{fontSize:CAMERA_SIZE,flex:1,marginTop:SECTION_MARGIN_TOP}}/>
           </View>
@@ -253,5 +275,11 @@ const styles=StyleSheet.create({
     paddingTop:5,
     height:30,
     borderRadius:5
+  },
+  preview: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    height:40
   },
   });

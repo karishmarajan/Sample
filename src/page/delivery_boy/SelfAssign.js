@@ -313,9 +313,9 @@ render(){
 
           <CustomText text={'or'} textType={Strings.subtext} color={Colors.black} textAlign={'center'}/>
 
-        <View style={{flexDirection:'row',flex:1,borderColor:Colors.borderColor,borderWidth:SHORT_BORDER_WIDTH,borderRadius:SHORT_BORDER_RADIUS,padding:1,alignItems:'center',justifyContent:'space-between',}}>
-        <CustomInput backgroundColor={Colors.white} placeholder={'Enter Order Id here'} onChangeText={(text) => this.setState({order_id: text})} value={this.state.order_id}   />
-        <CustomButton title={'ADD'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.select_orders_forassign(this.state.order_id)}/>
+        <View style={{flexDirection:'row',borderColor:Colors.borderColor,borderWidth:SHORT_BORDER_WIDTH,borderRadius:SHORT_BORDER_RADIUS,padding:1,alignItems:'center',justifyContent:'space-between',}}>
+        <View style={{flex:6}}><CustomInput backgroundColor={Colors.white} placeholder={'Enter Order Id here'} onChangeText={(text) => this.setState({order_id: text})} value={this.state.order_id} flex={1}  /></View>
+        <View style={{flex:1}}><CustomButton title={'ADD'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.select_orders_forassign(this.state.order_id)}/></View>
         </View>
       
         </View>

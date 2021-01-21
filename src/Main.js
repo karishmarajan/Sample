@@ -31,6 +31,8 @@ import StatusUpdateMultiple from './page/delivery_boy/StatusUpdateMultiple';
 import Notifications from './page/delivery_boy/Notifications';
 import Chat from './page/delivery_boy/Chat';
 import RequestStatus from './page/delivery_boy/RequestStatus';
+import OrderCreation from './page/delivery_boy/OrderCreation';
+import TaskAssignedDetails from './page/delivery_boy/TaskAssignedDetails';
 
 
 
@@ -70,6 +72,8 @@ export default class Main extends Component {
             <Scene  key="notification" component={Notifications} hideNavBar />
             <Scene  key="chat" component={Chat} hideNavBar />
             <Scene  key="requeststatus" component={RequestStatus} hideNavBar />
+            <Scene  key="ordercreation" component={OrderCreation} hideNavBar />
+            <Scene  key="taskassigneddetails" component={TaskAssignedDetails} hideNavBar />
           </Scene>
         </Router>
       </Root>

@@ -18,6 +18,15 @@ class SessionManager extends React.Component {
     }
   }
 
+  async logout() {
+    try {
+      await AsyncStorage.clear();
+      Actions.reset('login')
+    } catch (error) {
+      console.error('AsyncStorage error: ' + error.message);
+    }
+  }
+
  
 }
 const session = new SessionManager();
