@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, StyleSheet, AsyncStorage, FlatList ,Linking, Platform, } from 'react-native';
+import { ScrollView, StyleSheet, AsyncStorage, FlatList ,Linking, Platform, TouchableOpacity, } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 import { Container, Header, Button, Left, Icon, Right, Text, Input, TextInput, Grid, Col, Row, SearchBar, Item, View, Badge, Body } from 'native-base';
@@ -233,7 +233,7 @@ render() {
           {/* ////////////////////////////////////// Manual Pickup Button ///////////////////////////////////////////////////////////////////////////////// */}
 
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', textAlignVertical: 'center',backgroundColor:Colors.white,height:40,borderRadius:SHORT_BLOCK_BORDER_RADIUS,padding:10,borderWidth:1,borderColor:Colors.darkSkyBlue}}>
-            <View style={{ flex: 9 }}><CustomText text={'Manual Pickup'} textType={Strings.maintext} mTop={1} color={Colors.darkSkyBlue}/></View>
+            <View  style={{ flex: 9 }}><CustomText text={'Manual Pickup'} textType={Strings.maintext} onPress={()=>Actions.ordercreation()} mTop={1} color={Colors.darkSkyBlue}/></View>
             <View style={{ flex: 1, marginLeft: SECTION_MARGIN_TOP }}><Icon name={'ios-arrow-forward'} style={{color:Colors.darkSkyBlue,fontSize:16,flex:1,}} onPress={()=>Actions.ordercreation()}/></View>
           </View>
 
