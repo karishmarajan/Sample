@@ -214,9 +214,9 @@ fetch_delivery_orders(status_type) {
         <Navbar left={left} right={right} title="Delivery" />
         <Container horizontal={true} style={{ flexDirection: 'column', padding: 10, backgroundColor: Colors.textBackgroundColor }}>
 
-        { this.state.loader === true && (<View style={{alignItems:'center'}}>
+        {/* { this.state.loader === true && (<View style={{alignItems:'center'}}>
         <CustomActivityIndicator/>
-        </View>)}
+        </View>)} */}
 
           {/*////////////////////// Order and Searchbar Block //////////////////////////////////////////////// */}
 

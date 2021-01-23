@@ -21,7 +21,7 @@ import CustomCheckBox from '../../component/CustomCheckBox';
 import session, { KEY, KEY1 } from '../../session/SessionManager';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 import Api from '../../component/Fetch';
-import { COUNTRY , STATE , CITY , OTP , VERIFY_OTP , CUSTOMER_DETALS ,PACKAGE_CATEGORY, PACKAGE_SUB_CATEGORY ,SHIPMENT_BOX, ORDER, ROUTES, DELIVERY_CHARGE, ADD_COD ,PAYER_PAYMENT, PAYMENT_BY_CASH} from '../../constants/Api';
+import { COUNTRY , STATE , CITY , COST_CHECKLIST , CUSTOMER_DETALS ,PACKAGE_CATEGORY, PACKAGE_SUB_CATEGORY ,SHIPMENT_BOX, ORDER, ROUTES, DELIVERY_CHARGE, ADD_COD ,PAYER_PAYMENT, PAYMENT_BY_CASH} from '../../constants/Api';
 
 
 
@@ -46,9 +46,14 @@ export default class OrderCreation extends React.Component {
     customer_city : '',
     customer_landmark : '',
     customer_countrycode : '',
+    customer_countryid : '',
 
     same_selected:false,
     new_selected:true,
+
+    same_selected_pickup:false,
+    new_selected_pickup:true,
+
 
     sender_id:'',
     sender_name:'',
@@ -56,6 +61,7 @@ export default class OrderCreation extends React.Component {
     sender_email:'',
     sender_country:'',
     sender_countrycode:'',
+    sender_countryid:'',
     sender_pincode:'',
     sender_localbody:'',
     sender_gmap:'',
@@ -80,6 +86,7 @@ export default class OrderCreation extends React.Component {
 
     rec_city:'',
     rec_country_code:'',
+    rec_country_id:'',
     rec_country:'',
     rec_state:'',
     rec_landmark:'',
@@ -236,6 +243,21 @@ export default class OrderCreation extends React.Component {
     this.date_time_setting_function()
   // }));
   }
+
+////////////////////////////////// Verify string function //////////////////////////////////////////////////////////////////
+
+verifyString(text) {
+  var reg = /^[a-zA-Z]+$/;
+  return reg.test(text);
+}
+
+////////////////////////////////// Verify gmap function //////////////////////////////////////////////////////////////////
+
+verifyGmap(text) {
+  var reg = /^http\:\/\/|https\:\/\/|www\.google$/;
+  return reg.test(text);
+}
+
 /////////////////////////////////// Pickup continue function //////////////////////////////////////////////////////////////
 
   pickup_continue() {
@@ -257,6 +279,10 @@ export default class OrderCreation extends React.Component {
       this.setState({hasError: true, errorTextsender_district: 'Please fill !'});
       return;
     }
+    if(!this.verifyString(this.state.sender_district)) {
+      this.setState({hasError: true, errorTextsender_district: 'Please enter a valid name !'});
+      return;
+    }
     if(this.state.sender_pincode==="") {
       this.setState({hasError: true, errorTextsender_pincode: 'Please fill !'});
       return;
@@ -269,6 +295,11 @@ export default class OrderCreation extends React.Component {
       this.setState({hasError: true, errorTextsender_gmap: 'Please fill !'});
       return;
     }
+    if(!this.verifyGmap(this.state.sender_gmap)) {
+      this.setState({hasError: true, errorTextsender_gmap: 'Please enter a valid link !'});
+      return;
+    }
+    
     if(this.state.sender_address1==="") {
       this.setState({hasError: true, errorTextsender_address1: 'Please fill !'});
       return;
@@ -279,6 +310,10 @@ export default class OrderCreation extends React.Component {
     }
     if(this.state.sender_localbody==="") {
       this.setState({hasError: true, errorTextsender_localbody: 'Please fill !'});
+      return;
+    }
+    if(!this.verifyString(this.state.sender_localbody)) {
+      this.setState({hasError: true, errorTextsender_localbody: 'Please enter a valid name !'});
       return;
     }
     if(this.state.sender_landmark==="") {
@@ -319,6 +354,10 @@ delivery_continue() {
     this.setState({hasError: true, errorTextrec_district: 'Please fill !'});
     return;
   }
+  if(!this.verifyString(this.state.rec_district)) {
+    this.setState({hasError: true, errorTextrec_district: 'Please enter a valid name !'});
+    return;
+  }
   if(this.state.rec_pincode==="") {
     this.setState({hasError: true, errorTextrec_pincode: 'Please fill !'});
     return;
@@ -329,6 +368,10 @@ delivery_continue() {
   }
   if(this.state.rec_gmap==="") {
     this.setState({hasError: true, errorTextrec_gmap: 'Please fill !'});
+    return;
+  }
+  if(!this.verifyGmap(this.state.rec_gmap)) {
+    this.setState({hasError: true, errorTextrec_gmap: 'Please enter a valid link !'});
     return;
   }
   if(this.state.rec_address1==="") {
@@ -343,6 +386,10 @@ delivery_continue() {
     this.setState({hasError: true, errorTextrec_localbody: 'Please fill !'});
     return;
   }
+  if(!this.verifyString(this.state.rec_localbody)) {
+    this.setState({hasError: true, errorTextrec_localbody: 'Please enter a valid name !'});
+    return;
+  }
   if(this.state.rec_landmark==="") {
     this.setState({hasError: true, errorTextrec_landmark: 'Please fill !'});
     return;
@@ -350,6 +397,10 @@ delivery_continue() {
  
   if(this.state.recievername==="") {
     this.setState({hasError: true, errorTextrec_name: 'Please fill !'});
+    return;
+  }
+  if(!this.verifyString(this.state.recievername)) {
+    this.setState({hasError: true, errorTextrec_name: 'Please enter a valid name !'});
     return;
   }
   if(this.state.recieverno==="") {
@@ -360,8 +411,16 @@ delivery_continue() {
     this.setState({hasError: true, errorTextrec_proof: 'Please fill !'});
     return;
   }
+  if(!this.verifyString(this.state.proof)) {
+    this.setState({hasError: true, errorTextrec_proof: 'Please enter a valid name !'});
+    return;
+  }
   if(this.state.deliveredto==="") {
     this.setState({hasError: true, errorTextrec_canbedelivered: 'Please fill !'});
+    return;
+  }
+  if(!this.verifyString(this.state.deliveredto)) {
+    this.setState({hasError: true, errorTextrec_canbedelivered: 'Please enter a valid name !'});
     return;
   }
   if(this.state.rec_notes==="") {
@@ -400,6 +459,7 @@ if(no == 3){
   this.setState({sender_address2:this.state.customer_address2});
   this.setState({sender_email:this.state.customer_email});
   this.setState({sender_countrycode:this.state.customer_countrycode});
+  this.setState({sender_countryid:this.state.customer_countryid});
   this.setState({sender_country:this.state.customer_country});
   this.setState({sender_state:this.state.customer_state});
   this.setState({sender_district:this.state.customer_district});
@@ -413,6 +473,19 @@ if(no == 3){
 if(no == 4){
   this.setState({new_selected:true})
   this.setState({same_selected:false})
+  
+}
+if(no == 7){
+  this.setState({same_selected_pickup:true})
+  this.setState({new_selected_pickup:false})
+
+  this.setState({sender_contact_person_name:this.state.customer_name});
+  this.setState({sender_contact_person_no:this.state.customer_no});
+
+}
+if(no == 8){
+  this.setState({new_selected_pickup:true})
+  this.setState({same_selected_pickup:false})
   
 }
 }
@@ -472,10 +545,12 @@ if(no == 4){
         this.setState({customer_city : result.payload.city})
         this.setState({customer_landmark : result.payload.landMark})
         this.setState({customer_countrycode : result.payload.countryCode})
+        this.setState({customer_countryid : result.payload.countryId})
 
       }
       else{
         console.log('Failed');
+        alert(result.message);
       }
   })
    
@@ -509,6 +584,8 @@ if(no == 4){
 //////////////////////////////// Fetching sender state function //////////////////////////////////////////////////////////////////////////////
 
 fetch_state_list_sender(country_id) {
+
+  this.setState({sender_countryid:country_id});
 
     Api.fetch_request(STATE + country_id,'GET','')
     .then(result => {
@@ -587,6 +664,8 @@ fetch_country_list_reciever() {
 //////////////////////////////// Fetching reciever state function //////////////////////////////////////////////////////////////////////////////
  
 fetch_state_list_reciever(country_id) {
+
+  this.setState({rec_country_id:country_id});
 
   this.setState({rec_country_code:country_id})
     Api.fetch_request(STATE + country_id,'GET','')
@@ -742,9 +821,9 @@ create_order() {
         if (result.error != true) {
 
           console.log('Success:', JSON.stringify(result));
-          alert(result.message)
-          this.setState({orderId:JSON.stringify(result.payload.orderId)});
-          alert(this.state.orderId)
+          // alert(result.message)
+          this.setState({order_id:JSON.stringify(result.payload.orderId)});
+          // alert(this.state.order_id)
           this.setState({active_page:3});
 
         }
@@ -777,10 +856,10 @@ create_shipment_box() {
     this.setState({hasError: true, errorTextshipment_height: 'Please fill !'});
     return;
   }
-  if(this.state.Shipment_distance==="") {
-    this.setState({hasError: true, errorTextshipment_distance: 'Please fill !'});
-    return;
-  }
+  // if(this.state.Shipment_distance==="") {
+  //   this.setState({hasError: true, errorTextshipment_distance: 'Please fill !'});
+  //   return;
+  // }
   if(this.state.Shipment_category_id==="") {
     this.setState({hasError: true, errorTextshipment_category_id: 'Please select category !'});
     return;
@@ -796,14 +875,17 @@ create_shipment_box() {
     let data = JSON.parse(value);
 
     let body = {
-      "approxDistance": this.state.Shipment_distance,
+      "destinationCountry":this.state.rec_country,
+      "destinationPincode":this.state.rec_pincode,
       "height": this.state.Shipment_height,
       "isApprox": true,
       "length": this.state.Shipment_length,
-      "orderId": this.state.orderId,
+      "orderId": this.state.order_id,
       "shipmentBoxId": 0,
       "shipmentCategoryId": this.state.Shipment_category_id,
       "shipmentSubCategoryId": this.state.Shipment_subcategory_id,
+      "sourceCountry": this.state.sender_country,
+      "sourcePincode": this.state.sender_pincode,
       "weight": this.state.Shipment_weight,
       "width": this.state.Shipment_width
 
@@ -815,7 +897,57 @@ create_shipment_box() {
         if (result.error != true) {
 
           console.log('Success:', JSON.stringify(result));
-          alert("Shipment Added")
+          // alert("Shipment Added")
+          this.submitAndClear();
+
+        }
+        else {
+          console.log('Failed');
+          alert(result.message)
+          this.create_cost_checklist();
+        }
+      })
+  }));
+}
+
+///////////////////////////////// Creating cost checklist function //////////////////////////////////////////////////////////////////////////////////////// 
+ 
+create_cost_checklist() {
+
+
+
+  AsyncStorage.getItem(KEY).then((value => {
+    let data = JSON.parse(value);
+
+    let body = 
+      {
+        "bulletDeliveryCost": 0,
+        "costChecklistId": 0,
+        "createdById": 0,
+        "createdByUserType": "DELIVERY_AGENT",
+        "destinationCountryId": this.state.rec_country_id,
+        "destinationPincode": this.state.rec_pincode,
+        "fromHeight": this.state.Shipment_height,
+        "fromLength": this.state.Shipment_length,
+        "fromWeight": this.state.Shipment_weight,
+        "fromWidth": this.state.Shipment_width,
+        "normalDeliveryCost": 0,
+        "shipmentCostTemplateId": 0,
+        "sourceCountryId": this.state.sender_countryid,
+        "sourcePincode": this.state.sender_pincode,
+        "toHeight": this.state.Shipment_height,
+        "toLength": this.state.Shipment_length,
+        "toWeight": this.state.Shipment_weight,
+        "toWidth": this.state.Shipment_width,
+      };
+
+    Api.fetch_request(COST_CHECKLIST, 'POST', '', JSON.stringify(body))
+      .then(result => {
+
+        if (result.error != true) {
+
+          console.log('Success:', JSON.stringify(result));
+          alert(result.message)
           this.submitAndClear();
 
         }
@@ -827,7 +959,6 @@ create_shipment_box() {
       })
   }));
 }
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 submitAndClear (){
@@ -850,12 +981,12 @@ submitAndClear (){
 
 generate_invoice() {
 
-  if(this.state.orderId==="") {
+  if(this.state.order_id==="") {
     alert("you have to create order and add shipment first")
     return;
   }
 
-  Api.fetch_request(DELIVERY_CHARGE + this.state.orderId ,'GET','')
+  Api.fetch_request(DELIVERY_CHARGE + this.state.order_id ,'GET','')
   .then(result => {
    
     if(result.error != true){
@@ -909,7 +1040,7 @@ generate_invoice() {
     let body = {
       "codCreditBalance": this.state.cod_credit_blnc,
       "invoiceDescription": this.state.invoice_des,
-      "orderId": this.state.orderId,
+      "orderId": this.state.order_id,
       "productCost": this.state.product_cost,
       "receiverGSTNumber": this.state.gst_no
 
@@ -922,7 +1053,7 @@ generate_invoice() {
 
          this.setState({final_cod_charge:result.payload.finalCodCharge})
           console.log('Success:', JSON.stringify(result));
-          alert(result.message)
+          // alert(result.message)
 
         }
         else {
@@ -957,7 +1088,7 @@ payer_payment() {
 
     let body = {
       "deliveryChargePaymentBySender": this.state.deliveryChargePaymentBySender,
-      "orderId": this.state.orderId,
+      "orderId": this.state.order_id,
       "payerComment": this.state.payment_comment,
       "payerContactNumber": this.state.payment_phone,
      "payerCountryCode": this.state.rec_country_code,
@@ -972,7 +1103,7 @@ payer_payment() {
         if (result.error != true) {
 
           console.log('Success:', JSON.stringify(result));
-          alert(result.message)
+          // alert(result.message)
 
           this.setState({sender_payment:JSON.stringify(result.payload.payableBySender)})
           this.setState({receiver_payment:JSON.stringify(result.payload.payableByReceiver)})
@@ -1013,7 +1144,7 @@ cash_payment() {
 
   let body = {
     "amountPayed": this.state.amount_recieved,
-    "orderId": this.state.orderId,
+    "orderId": this.state.order_id,
 
   };
 
@@ -1064,10 +1195,10 @@ render(){
 
         <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:20,marginBottom:SECTION_MARGIN_TOP}}>
 
-<TouchableOpacity onPress={()=>this.setState({active_page:1})} style={{ width:30,height:30,borderRadius:30/2,backgroundColor:this.state.active_page == 1 ? Colors.darkSkyBlue : Colors.gray,justifyContent:'center',}}><Text style={{textAlign:'center',color:Colors.white}}>1</Text></TouchableOpacity>
-<TouchableOpacity onPress={()=>this.setState({active_page:2})} style={{ width:30,height:30,borderRadius:30/2,backgroundColor:this.state.active_page == 2 ? Colors.darkSkyBlue : Colors.gray,justifyContent:'center',}}><Text style={{textAlign:'center',color:Colors.white}}>2</Text></TouchableOpacity>
-<TouchableOpacity onPress={()=>this.setState({active_page:3})} style={{ width:30,height:30,borderRadius:30/2,backgroundColor:this.state.active_page == 3 ? Colors.darkSkyBlue : Colors.gray,justifyContent:'center',}}><Text style={{textAlign:'center',color:Colors.white}}>3</Text></TouchableOpacity>
-<TouchableOpacity onPress={()=>this.setState({active_page:4})} style={{ width:30,height:30,borderRadius:30/2,backgroundColor:this.state.active_page == 4 ? Colors.darkSkyBlue : Colors.gray,justifyContent:'center',}}><Text style={{textAlign:'center',color:Colors.white}}>4</Text></TouchableOpacity>
+<TouchableOpacity  style={{ width:30,height:30,borderRadius:30/2,backgroundColor:this.state.active_page == 1 ? Colors.darkSkyBlue : Colors.gray,justifyContent:'center',}}><Text style={{textAlign:'center',color:Colors.white}}>1</Text></TouchableOpacity>
+<TouchableOpacity  style={{ width:30,height:30,borderRadius:30/2,backgroundColor:this.state.active_page == 2 ? Colors.darkSkyBlue : Colors.gray,justifyContent:'center',}}><Text style={{textAlign:'center',color:Colors.white}}>2</Text></TouchableOpacity>
+<TouchableOpacity  style={{ width:30,height:30,borderRadius:30/2,backgroundColor:this.state.active_page == 3 ? Colors.darkSkyBlue : Colors.gray,justifyContent:'center',}}><Text style={{textAlign:'center',color:Colors.white}}>3</Text></TouchableOpacity>
+<TouchableOpacity  style={{ width:30,height:30,borderRadius:30/2,backgroundColor:this.state.active_page == 4 ? Colors.darkSkyBlue : Colors.gray,justifyContent:'center',}}><Text style={{textAlign:'center',color:Colors.white}}>4</Text></TouchableOpacity>
 
 </View>
 
@@ -1163,43 +1294,43 @@ render(){
  { this.state.new_selected === true && (<View>
 
   <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomDropdown data={this.state.countries_sender} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_state_list_sender(data[index]['id']) ; this.setState({sender_country:value}) ; this.setState({sender_countrycode:data[index]['code']}); }, 500); }} />
+          <CustomDropdown data={this.state.countries_sender} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_state_list_sender(data[index]['id']) ; this.setState({sender_country:value , errorTextsender_country:""}) ; this.setState({sender_countrycode:data[index]['code']}); }, 500); }} />
           {!!this.state.errorTextsender_country && (<Text style={{color: 'red'}}>{this.state.errorTextsender_country}</Text>)}
 
           <CustomText text={'State'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomDropdown data={this.state.states_sender} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_city_list_sender(data[index]['id']) ; this.setState({sender_state:value}) }, 500); }} />
+          <CustomDropdown data={this.state.states_sender} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_city_list_sender(data[index]['id']) ; this.setState({sender_state:value , errorTextsender_state:""}) }, 500); }} />
           {!!this.state.errorTextsender_state && (<Text style={{color: 'red'}}>{this.state.errorTextsender_state}</Text>)}
 
           <CustomText text={'City'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomDropdown data={this.state.cities_sender} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.setState({sender_city:value}) }, 500); }} />
+          <CustomDropdown data={this.state.cities_sender} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.setState({sender_city:value , errorTextsender_city:""}) }, 500); }} />
           {!!this.state.errorTextsender_city && (<Text style={{color: 'red'}}>{this.state.errorTextsender_city}</Text>)}
 
           <CustomText text={'District'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_district: text})} value={this.state.sender_district} />
+          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_district: text , errorTextsender_district:""})} value={this.state.sender_district} />
           {!!this.state.errorTextsender_district && (<Text style={{color: 'red'}}>{this.state.errorTextsender_district}</Text>)}
 
           <CustomText text={'Pincode'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomInput flex={1} keyboardType={"number-pad"} maxLength={6} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_pincode: text})} value={this.state.sender_pincode} />
+          <CustomInput flex={1} keyboardType={"number-pad"} maxLength={6} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_pincode: text , errorTextsender_pincode:""})} value={this.state.sender_pincode} />
           {!!this.state.errorTextsender_pincode && (<Text style={{color: 'red'}}>{this.state.errorTextsender_pincode}</Text>)}
 
           <CustomText text={'Gmap Link'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_gmap: text})} value={this.state.sender_gmap} />
+          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_gmap: text, errorTextsender_gmap:""})} value={this.state.sender_gmap} />
           {!!this.state.errorTextsender_gmap && (<Text style={{color: 'red'}}>{this.state.errorTextsender_gmap}</Text>)}
 
           <CustomText text={'Address Line 1'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-         <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_address1: text})} value={this.state.sender_address1} />
+         <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_address1: text , errorTextsender_address1:""})} value={this.state.sender_address1} />
          {!!this.state.errorTextsender_address1 && (<Text style={{color: 'red'}}>{this.state.errorTextsender_address1}</Text>)}
 
         <CustomText text={'Address Line 2'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_address2: text})} value={this.state.sender_address2} />
+        <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_address2: text , errorTextsender_address2:""})} value={this.state.sender_address2} />
         {!!this.state.errorTextsender_address2 && (<Text style={{color: 'red'}}>{this.state.errorTextsender_address2}</Text>)}
 
         <CustomText text={'Local Body Type'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <CustomInput flex={1} placeholder={'Eg:Municipality/Panchayath/Corporation'} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_localbody: text})} value={this.state.sender_localbody} />
+        <CustomInput flex={1} placeholder={'Eg:Municipality/Panchayath/Corporation'} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_localbody: text , errorTextsender_localbody:""})} value={this.state.sender_localbody} />
         {!!this.state.errorTextsender_localbody && (<Text style={{color: 'red'}}>{this.state.errorTextsender_localbody}</Text>)}
 
         <CustomText text={'Landmark'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_landmark: text})} value={this.state.sender_landmark} />
+        <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_landmark: text , errorTextsender_landmark:""})} value={this.state.sender_landmark} />
         {!!this.state.errorTextsender_landmark && (<Text style={{color: 'red'}}>{this.state.errorTextsender_landmark}</Text>)}
 
 </View>)}
@@ -1214,15 +1345,34 @@ render(){
 <View style={{flexDirection:'row',marginBottom:SECTION_MARGIN_TOP,}}>
           <CustomText  text={'Pickup Details'} textType={Strings.subtitle} textDecorationLine={'underline'} />
         </View>
+        <CustomRadioButton title={'Same as contact details'} selectedColor={Colors.darkSkyBlue} selected={this.state.same_selected_pickup} onPress={()=>this.isSelected(7)}/>
+         <CustomRadioButton title={'Enter new pickup details'} selectedColor={Colors.darkSkyBlue} selected={this.state.new_selected_pickup} onPress={()=>this.isSelected(8)}/>
+
+      {this.state.same_selected_pickup == true && (<View>
+
+        <CustomText text={'Contact Person Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+        <CustomInput flex={1} value={this.state.sender_contact_person_name} />
+
+        <CustomText text={'Contact Person Number'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+        <CustomInput flex={1} value={this.state.sender_contact_person_no} />
+
+
+      </View>)}
+
+
+
+      {this.state.new_selected_pickup == true && (<View>
       
         <CustomText text={'Contact Person Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({sender_contact_person_name: text})} value={this.state.sender_contact_person_name}/>
+        <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({sender_contact_person_name: text, errorTextsender_contactname:""})} value={this.state.sender_contact_person_name}/>
         {!!this.state.errorTextsender_contactname && (<Text style={{color: 'red'}}>{this.state.errorTextsender_contactname}</Text>)}
         
         <CustomText text={'Contact Person Number'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <CustomInput keyboardType={"phone-pad"} borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({sender_contact_person_no: text})} value={this.state.sender_contact_person_no}/>
+        <CustomInput keyboardType={"phone-pad"} borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({sender_contact_person_no: text, errorTextsender_contactno:""})} value={this.state.sender_contact_person_no}/>
         {!!this.state.errorTextsender_contactno && (<Text style={{color: 'red'}}>{this.state.errorTextsender_contactno}</Text>)}
         
+        </View>)}
+
         <CustomText text={'Notes to Courier Boy'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({sender_notes: text})} value={this.state.sender_notes}/>
         <CustomText text={'Pickup Date'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
@@ -1253,43 +1403,43 @@ render(){
          </View>
 
           <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomDropdown data={this.state.countries_reciever} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_state_list_reciever(data[index]['id']) ; this.setState({rec_country:value}); this.setState({rec_country_code:data[index]['code']}); }, 500); }} />
+          <CustomDropdown data={this.state.countries_reciever} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_state_list_reciever(data[index]['id']) ; this.setState({rec_country:value , errorTextrec_country:""}); this.setState({rec_country_code:data[index]['code']}); }, 500); }} />
           {!!this.state.errorTextrec_country && (<Text style={{color: 'red'}}>{this.state.errorTextrec_country}</Text>)}
 
           <CustomText text={'State'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomDropdown data={this.state.states_reciever} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_city_list_reciever(data[index]['id']) ; this.setState({rec_state:value}) }, 500); }} />
+          <CustomDropdown data={this.state.states_reciever} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_city_list_reciever(data[index]['id']) ; this.setState({rec_state:value , errorTextrec_state:""}) }, 500); }} />
           {!!this.state.errorTextrec_state && (<Text style={{color: 'red'}}>{this.state.errorTextrec_state}</Text>)}
 
           <CustomText text={'City'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomDropdown data={this.state.city_reciever} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.setState({rec_city:value}) }, 500); }} />
+          <CustomDropdown data={this.state.city_reciever} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.setState({rec_city:value , errorTextrec_city:""}) }, 500); }} />
           {!!this.state.errorTextrec_city && (<Text style={{color: 'red'}}>{this.state.errorTextrec_city}</Text>)}
 
           <CustomText text={'District'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_district: text})} value={this.state.rec_district} />
+          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_district: text, errorTextrec_district:""})} value={this.state.rec_district} />
           {!!this.state.errorTextrec_district && (<Text style={{color: 'red'}}>{this.state.errorTextrec_district}</Text>)}
 
          <CustomText text={'Pincode'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomInput flex={1} keyboardType={"number-pad"} maxLength={6} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_pincode: text})} value={this.state.rec_pincode} />
+          <CustomInput flex={1} keyboardType={"number-pad"} maxLength={6} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_pincode: text , errorTextrec_pincode:""})} value={this.state.rec_pincode} />
           {!!this.state.errorTextrec_pincode && (<Text style={{color: 'red'}}>{this.state.errorTextrec_pincode}</Text>)}
          
           <CustomText text={'Gmap Link'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_gmap: text})} value={this.state.rec_gmap} />
+          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_gmap: text, errorTextrec_gmap:""})} value={this.state.rec_gmap} />
           {!!this.state.errorTextrec_gmap && (<Text style={{color: 'red'}}>{this.state.errorTextrec_gmap}</Text>)}
 
           <CustomText text={'Address Line 1'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_address1: text})} value={this.state.rec_address1} />
+        <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_address1: text , errorTextrec_address1:""})} value={this.state.rec_address1} />
         {!!this.state.errorTextrec_address1 && (<Text style={{color: 'red'}}>{this.state.errorTextrec_address1}</Text>)}
 
         <CustomText text={'Address Line 2'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_address2: text})} value={this.state.rec_address2} />
+        <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_address2: text, errorTextrec_address2:""})} value={this.state.rec_address2} />
         {!!this.state.errorTextrec_address2 && (<Text style={{color: 'red'}}>{this.state.errorTextrec_address2}</Text>)}
 
         <CustomText text={'Local Body Type'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_localbody: text})} value={this.state.rec_localbody} />
+        <CustomInput flex={1} placeholder={'Eg:Municipality/Panchayath/Corporation'} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_localbody: text, errorTextrec_localbody:""})} value={this.state.rec_localbody} />
         {!!this.state.errorTextrec_localbody && (<Text style={{color: 'red'}}>{this.state.errorTextrec_localbody}</Text>)}
 
         <CustomText text={'Landmark'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_landmark: text})} value={this.state.rec_landmark} />
+        <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_landmark: text, errorTextrec_landmark:""})} value={this.state.rec_landmark} />
         {!!this.state.errorTextrec_landmark && (<Text style={{color: 'red'}}>{this.state.errorTextrec_landmark}</Text>)}  
         
          
@@ -1303,29 +1453,29 @@ render(){
           <CustomText  text={'Delivery Details '} textType={Strings.subtitle} textDecorationLine={'underline'} />
         </View>
 
-        <CustomText text={'Enter the receiving person customer id or registered mobile number.'} textType={Strings.subtext} color={Colors.grayTextColor}/>
+        {/* <CustomText text={'Enter the receiving person customer id or registered mobile number.'} textType={Strings.subtext} color={Colors.grayTextColor}/> */}
     
         {/* <CustomText text={'Customer Id / Mobile Number'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_id_or_no: text})} value={this.state.rec_id_or_no} /> */}
 
         <CustomText text={'Reciever Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({recievername: text})} value={this.state.recievername} />
+          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({recievername: text , errorTextrec_name:""})} value={this.state.recievername} />
           {!!this.state.errorTextrec_name && (<Text style={{color: 'red'}}>{this.state.errorTextrec_name}</Text>)}
 
           <CustomText text={'Receiver Phone Number'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({recieverno: text})} value={this.state.recieverno} />
+          <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({recieverno: text , errorTextrec_no:""})} value={this.state.recieverno} />
           {!!this.state.errorTextrec_no && (<Text style={{color: 'red'}}>{this.state.errorTextrec_no}</Text>)}
 
           <CustomText text={'Proof to be produced'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({proof: text})} value={this.state.proof} />
+          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({proof: text , errorTextrec_proof:""})} value={this.state.proof} />
           {!!this.state.errorTextrec_proof && (<Text style={{color: 'red'}}>{this.state.errorTextrec_proof}</Text>)}
 
           <CustomText text={'Can be delivered to'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({deliveredto: text})} value={this.state.deliveredto} />
+          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({deliveredto: text , errorTextrec_canbedelivered:""})} value={this.state.deliveredto} />
           {!!this.state.errorTextrec_canbedelivered && (<Text style={{color: 'red'}}>{this.state.errorTextrec_canbedelivered}</Text>)}
 
           <CustomText text={'Notes to Courier Boy'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_notes: text})} value={this.state.rec_notes} />
+          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_notes: text , errorTextrec_notes:""})} value={this.state.rec_notes} />
           {!!this.state.errorTextrec_notes && (<Text style={{color: 'red'}}>{this.state.errorTextrec_notes}</Text>)}
 
 
@@ -1373,9 +1523,9 @@ render(){
 {!!this.state.errorTextshipment_height && (<Text style={{color: 'red'}}>{this.state.errorTextshipment_height}</Text>)}
 </View>
 </View>
-<CustomText text={'Approx. Distance'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+{/* <CustomText text={'Approx. Distance'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
          <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({Shipment_distance: text})} value={this.state.Shipment_distance} placeholder={'kg'} />
-         {!!this.state.errorTextshipment_distance && (<Text style={{color: 'red'}}>{this.state.errorTextshipment_distance}</Text>)}
+         {!!this.state.errorTextshipment_distance && (<Text style={{color: 'red'}}>{this.state.errorTextshipment_distance}</Text>)} */}
   
         <CustomText text={'Shipment Category'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomDropdown data={this.state.package_categories} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => {this.setState({Shipment_category_id:data[index]['id']}) }} />
@@ -1427,7 +1577,7 @@ render(){
           <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({gst_no: text})} value={this.state.gst_no} />
           {!!this.state.errorTextgst_no && (<Text style={{color: 'red'}}>{this.state.errorTextgst_no}</Text>)}
 
-          <CustomText text={'Invoie Description'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+          <CustomText text={'Invoice Description'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({invoice_des: text})} value={this.state.invoice_des} />
           {!!this.state.errorTextinvoice_des && (<Text style={{color: 'red'}}>{this.state.errorTextinvoice_des}</Text>)}
 

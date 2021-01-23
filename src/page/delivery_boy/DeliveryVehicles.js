@@ -138,7 +138,7 @@ export default class Dashboard extends React.Component {
 
           <View style={{ backgroundColor:Colors.white,height:100,borderRadius:MAIN_BLOCK_BORDER_RADIUS,padding:COLUMN_PADDING,marginTop:SECTION_MARGIN_TOP}}>
           <CustomText text={this.state.vehicle_details.modelName ? this.state.vehicle_details.modelName :'N/A' } fontWeight={'bold'} textType={Strings.maintext}/>
-          <View style={{flexDirection:'row',flex:10}}>
+          <View style={{flexDirection:'row'}}>
             <View style={{flex:6}}><CustomText text={this.state.vehicle_details.registrationNumber ? this.state.vehicle_details.registrationNumber :'N/A' }  textType={Strings.maintext}/></View>
             <View style={{flex:5}}><CustomButton title={'Request to change'} backgroundColor={Colors.darkSkyBlue} marginTop={1} height={30} borderRadius={5} onPress={()=>this.vehicle_change_request()}/></View>
           </View>

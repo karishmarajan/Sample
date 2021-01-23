@@ -21,9 +21,9 @@ export default class Index extends Component{
 
 <View style={{flexDirection:'row'}}>
     <View style={{flex:4}}><Text style={{fontSize: 32, justifyContent:'center', color: Colors.white,textAlign:'center',marginTop:60,fontWeight:'bold',marginBottom:35}}>Epex </Text></View>
-    <View style={{flex:1}}><Button onPress={this.props.onClose} transparent>
+    {/* <View style={{flex:1}}><Button onPress={this.props.onClose} transparent>
         <Icon name="md-close" style={{color:'white',marginTop:120}} />
-        </Button></View>
+        </Button></View> */}
 </View>
 
 
