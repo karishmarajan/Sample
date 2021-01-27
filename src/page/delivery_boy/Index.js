@@ -32,6 +32,7 @@ export default class Index extends Component{
  <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.dashboard()}}>Dashboard </Text>
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.deliveryfirst()}}>Delivery </Text>
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.pickup();  }}>Pickup </Text>
+<Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.deliveryout();  }}>Delivery Out </Text>
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.deliveryvehicles()}}>View Vehicle </Text>
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.statusupdatefirst()}}>Status Update </Text>
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.selfassign()}}>Self Assign </Text>
