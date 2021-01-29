@@ -17,17 +17,12 @@ import { PICKUP_DETAILS , PICKUP_ORDER_UPDATE } from '../../constants/Api';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 
 
-const myArray=[{name:"Select a Status" , value:"Select a Status"},{name:"Completed" , value:"COMPLETED"},{name:"Failed" , value:"ATTEMPT_FAILED"}];
-const myArray1=[{name:"Select/Enter a Reason" , value:"Select/Enter here"},{name:"Address invalid" , value:"Address invalid"},{name:"Door was  locked" , value:"Door was  locked"},{name:"Enter a Reason" , value:"Enter a Reason"}];
-const myArray2=[{name:"Cash" , value:"Cash"},{name:"Credit card" , value:"Credit card"},{name:"Debit card" , value:"Debit card"},{name:"Paytm" , value:"Paytm"}];
+
 
 export default class PickupDetailsView extends React.Component {
 
   state = {
-    
-    status:'',
-    reason:'',
-    reason_val:'',
+
     pickup_details:[],
 
   };
@@ -62,38 +57,7 @@ export default class PickupDetailsView extends React.Component {
 
  }
 
-  ///////////////////////////////// Pickup order update function //////////////////////////////////////////////////////////////////////////////////////// 
- 
-  pickup_update() {
 
-      let body = {
-
-        "amntDeliveryBoyCollectedFrSender": 0,
-        "paymentMethod": "BANK_TRANSFER",
-        "pickupFailedReason": "string",
-        "pickupId": this.props.pickup_id,
-        "pickupStatus": this.state.status
-  
-      };
-  
-      Api.fetch_request(PICKUP_ORDER_UPDATE, 'PUT', '', JSON.stringify(body))
-        .then(result => {
-  
-          if (result.error != true) {
-  
-           this.setState({final_cod_charge:result.payload.finalCodCharge})
-            console.log('Success:', JSON.stringify(result));
-            alert(result.message)
-            Actions.dashboard();
-  
-          }
-          else {
-            console.log('Failed');
-            alert(result.message)
-          }
-        })
-  
-  }
 
 
   /////////////////////////////////// Render Method  /////////////////////////////////////////////////////////////////////////////
@@ -129,12 +93,12 @@ render(){
 <View style={{ backgroundColor:Colors.white,flexGrow:1,padding:MAIN_VIEW_PADDING}}>
        
         <View style={{flexDirection:'row',marginBottom:SECTION_MARGIN_TOP,}}>
-          <CustomText  text={'Delivery Address & Reciever Details'} textType={Strings.subtitle} fontWeight={'bold'} />
+          <CustomText  text={'Sender Address &  Details'} textType={Strings.subtitle} fontWeight={'bold'} />
         </View>
 
         {/* <CustomText text={'Deliver To'} textType={Strings.subtext} color={Colors.black}/>
         <View style={styles.inputview}><CustomText text={this.state.pickup_details.canBeDeliveredTo ? this.state.pickup_details.canBeDeliveredTo : Strings.na } textType={Strings.subtext} color={Colors.black}/></View> */}
-          <CustomText text={'Receiver Name'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'Customer Name'} textType={Strings.subtext} color={Colors.black}/>
           <View style={styles.inputview}><CustomText text={this.state.pickup_details.contactPersonName ? this.state.pickup_details.contactPersonName : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Customer Id'} textType={Strings.subtext} color={Colors.black}/>
           <View style={styles.inputview}><CustomText text={this.state.pickup_details.customerId ? this.state.pickup_details.customerId : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>

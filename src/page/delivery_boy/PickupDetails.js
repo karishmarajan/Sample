@@ -87,12 +87,6 @@ export default class PickupDetails extends React.Component {
     "orderId": this.state.pickup_details.orderId,
     "pickupFailedReason": this.state.reason_val,
     "pickupStatus": this.state.status
-
-        // "amntDeliveryBoyCollectedFrSender": 0,
-        // "paymentMethod": "BANK_TRANSFER",
-        // "pickupFailedReason": "string",
-        // "pickupId": this.props.pickup_id,
-        // "pickupStatus": this.state.status
   
       };
   
@@ -233,8 +227,7 @@ render(){
           <CustomText  text={'Delivery Address & Reciever Details'} textType={Strings.subtitle} fontWeight={'bold'} />
         </View>
 
-        {/* <CustomText text={'Deliver To'} textType={Strings.subtext} color={Colors.black}/>
-        <View style={styles.inputview}><CustomText text={this.state.pickup_details.canBeDeliveredTo ? this.state.pickup_details.canBeDeliveredTo : Strings.na } textType={Strings.subtext} color={Colors.black}/></View> */}
+       
           <CustomText text={'Receiver Name'} textType={Strings.subtext} color={Colors.black}/>
           <View style={styles.inputview}><CustomText text={this.state.pickup_details.contactPersonName ? this.state.pickup_details.contactPersonName : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Customer Id'} textType={Strings.subtext} color={Colors.black}/>
