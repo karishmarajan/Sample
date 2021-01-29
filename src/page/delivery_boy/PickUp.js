@@ -222,8 +222,10 @@ export default class PickUp extends React.Component {
           </View>
         </View>
         <View style={styles.cell}>
+          {item.pickupStatus == 'COLLECTED' && (<View>
             <CustomButton title={'Close'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={30} marginBottom={5}  text_color={Colors.darkSkyBlue} onPress={()=>this.pickup_update(item.orderId)} />
-        </View>
+            </View>)}
+         </View>
 
       </View>
 
