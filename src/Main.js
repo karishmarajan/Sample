@@ -33,6 +33,8 @@ import Chat from './page/delivery_boy/Chat';
 import RequestStatus from './page/delivery_boy/RequestStatus';
 import OrderCreation from './page/delivery_boy/OrderCreation';
 import TaskAssignedDetails from './page/delivery_boy/TaskAssignedDetails';
+import DeliveryOut from './page/delivery_boy/DeliveryOut';
+import PickupDetailsView from './page/delivery_boy/PickupDetailsView';
 
 
 
@@ -74,6 +76,8 @@ export default class Main extends Component {
             <Scene  key="requeststatus" component={RequestStatus} hideNavBar />
             <Scene  key="ordercreation" component={OrderCreation} hideNavBar />
             <Scene  key="taskassigneddetails" component={TaskAssignedDetails} hideNavBar />
+            <Scene  key="deliveryout" component={DeliveryOut} hideNavBar />
+            <Scene  key="pickupdetailsview" component={PickupDetailsView} hideNavBar />
           </Scene>
         </Router>
       </Root>

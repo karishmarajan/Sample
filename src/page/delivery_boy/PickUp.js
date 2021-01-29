@@ -14,14 +14,14 @@ import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
 import session, { KEY } from '../../session/SessionManager';
 import Api from '../../component/Fetch';
-import { PICKUP_ORDERS } from '../../constants/Api';
+import { PICKUP_ORDERS, PICKUP_ORDER_UPDATE } from '../../constants/Api';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 import RNPrint from 'react-native-print';
 import _ from "lodash"
 
 
 const myArray1 = [{ name: "Order No.", value: "Order No." }, { name: "CustomerName", value: "CustomerName" },];
-const myArray = [{ name: "PENDING", value: "ASSIGNED" }, { name: "ALL", value: "ALL" }, { name: "FAILED", value: "FAILED" }, { name: "COMPLETED", value: "COMPLETED" }];
+const myArray = [{ name: "PENDING", value: "ASSIGNED" }, { name: "ALL", value: "ALL" }, { name: "FAILED", value: "FAILED" }, { name: "COLLECTED", value: "COLLECTED" }];
 
 
 
@@ -84,8 +84,7 @@ export default class PickUp extends React.Component {
       let data = JSON.parse(value);
 
       let body = {
-        "offset": this.state.offset,
-        "limit": 5,
+        
         "filterType": status_type != Strings.all ? this.state.filterType : Strings.all,
         "status": status_type == Strings.all ? '0' : status_type,
         "personId": data.personId
@@ -103,6 +102,9 @@ export default class PickUp extends React.Component {
           }
           else {
             console.log('Failed');
+            alert(result.message)
+            
+   
           }
         })
     }));
@@ -131,6 +133,39 @@ export default class PickUp extends React.Component {
 
   }
 
+   ///////////////////////////////// Pickup order update function //////////////////////////////////////////////////////////////////////////////////////// 
+ 
+   pickup_update(id) {
+
+    let body = {
+
+  "orderId": id,
+  "pickupFailedReason": "",
+  "pickupStatus": "CLOSED"
+
+
+    };
+
+    Api.fetch_request(PICKUP_ORDER_UPDATE, 'PUT', '', JSON.stringify(body))
+      .then(result => {
+
+        if (result.error != true) {
+
+         this.setState({final_cod_charge:result.payload.finalCodCharge})
+          console.log('Success:', JSON.stringify(result));
+          alert(result.message)
+          this.fetch_pickup_orders(Strings.pending)
+        
+
+        }
+        else {
+          console.log('Failed');
+          alert(result.message)
+        }
+      })
+
+}
+
 ///////////////////////////////////// Pickup order header part ///////////////////////////////////////////////////////////////////////////////////////////
   _header = () => {
     return (
@@ -148,6 +183,7 @@ export default class PickUp extends React.Component {
         <View style={styles.cell}><CustomText text={'ATTEMPT'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={'DELIVERY TYPE'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={'TOTAL'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
        
       </View>
@@ -180,10 +216,13 @@ export default class PickUp extends React.Component {
 
         <View style={styles.cell}>
           <View>
-            <CustomButton title={'Notify'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5} textDecorationLine={'underline'} text_color={Colors.darkSkyBlue} />
-            <CustomButton title={'Call'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5} textDecorationLine={'underline'} text_color={Colors.darkSkyBlue} onPress={()=>this.dialCall(item.contactPersonNumber)}/>
-            <CustomButton title={'Details'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5} textDecorationLine={'underline'} text_color={Colors.darkSkyBlue} onPress={() => Actions.pickupdetails({pickup_id:item.pickupId})} />
+            <CustomButton title={'Notify'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5}  text_color={Colors.darkSkyBlue} />
+            <CustomButton title={'Call'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5}  text_color={Colors.darkSkyBlue} onPress={()=>this.dialCall(item.contactPersonNumber)}/>
+            <CustomButton title={'Details'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5}  text_color={Colors.darkSkyBlue} onPress={() => Actions.pickupdetails({pickup_id:item.pickupId})} />
           </View>
+        </View>
+        <View style={styles.cell}>
+            <CustomButton title={'Close'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={30} marginBottom={5}  text_color={Colors.darkSkyBlue} onPress={()=>this.pickup_update(item.orderId)} />
         </View>
 
       </View>
@@ -220,12 +259,7 @@ render() {
 
       <Container>
 
-  
-<CustomActivityIndicator
-               animating = {true}
-               color = '#bc2b78'
-               size = "large"
-               />
+
 
         <Navbar left={left} right={right} title="Pickup" />
         <ScrollView contentContainerStyle={{flexGrow:1}} style={{ flexDirection: 'column', padding: 10, backgroundColor: Colors.textBackgroundColor }}>

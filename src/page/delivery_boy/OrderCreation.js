@@ -54,6 +54,15 @@ export default class OrderCreation extends React.Component {
     same_selected_pickup:false,
     new_selected_pickup:true,
 
+    same_selected_delivery:false,
+    new_selected_delivery:true,
+
+    same_selected_delivery_address:false,
+    new_selected_delivery_address:true,
+
+    normal_selected:true,
+    bullet_selected:false,
+
 
     sender_id:'',
     sender_name:'',
@@ -106,6 +115,8 @@ export default class OrderCreation extends React.Component {
     sameoffice_selected:true,
     difoffice_selected:false,
     office_id:'',
+
+    delivery_type:'NORMAL',
 
     order_id:'',
 
@@ -399,10 +410,10 @@ delivery_continue() {
     this.setState({hasError: true, errorTextrec_name: 'Please fill !'});
     return;
   }
-  if(!this.verifyString(this.state.recievername)) {
-    this.setState({hasError: true, errorTextrec_name: 'Please enter a valid name !'});
-    return;
-  }
+  // if(!this.verifyString(this.state.recievername)) {
+  //   this.setState({hasError: true, errorTextrec_name: 'Please enter a valid name !'});
+  //   return;
+  // }
   if(this.state.recieverno==="") {
     this.setState({hasError: true, errorTextrec_no: 'Please fill !'});
     return;
@@ -475,6 +486,29 @@ if(no == 4){
   this.setState({same_selected:false})
   
 }
+if(no == 5){
+  this.setState({same_selected_delivery_address:true})
+  this.setState({new_selected_delivery_address:false})
+
+  this.setState({rec_address1:this.state.customer_address1});
+  this.setState({rec_address2:this.state.customer_address2});
+  this.setState({rec_country_code:this.state.customer_countrycode});
+  this.setState({rec_country_id:this.state.customer_countryid});
+  this.setState({rec_country:this.state.customer_country});
+  this.setState({rec_state:this.state.customer_state});
+  this.setState({rec_district:this.state.customer_district});
+  this.setState({rec_city:this.state.customer_city});
+  this.setState({rec_localbody:this.state.customer_localbody});
+  this.setState({rec_landmark:this.state.customer_landmark});
+  this.setState({rec_gmap:this.state.customer_gmap});
+  this.setState({rec_pincode:this.state.customer_pincode});
+
+}
+if(no == 6){
+  this.setState({new_selected_delivery_address:true})
+  this.setState({same_selected_delivery_address:false})
+  
+}
 if(no == 7){
   this.setState({same_selected_pickup:true})
   this.setState({new_selected_pickup:false})
@@ -488,6 +522,37 @@ if(no == 8){
   this.setState({same_selected_pickup:false})
   
 }
+
+if(no == 9){
+  this.setState({same_selected_delivery:true})
+  this.setState({new_selected_delivery:false})
+
+  this.setState({recievername:this.state.customer_name});
+  this.setState({recieverno:this.state.customer_no});
+
+}
+if(no == 10){
+  this.setState({new_selected_delivery:true})
+  this.setState({same_selected_delivery:false})
+  
+}
+
+if(no == 11){
+  this.setState({normal_selected:true})
+  this.setState({bullet_selected:false})
+
+  this.setState({delivery_type:"NORMAL"});
+ 
+
+}
+if(no == 12){
+  this.setState({normal_selected:false})
+  this.setState({bullet_selected:true})
+  
+  this.setState({delivery_type:"BULLET"});
+ 
+}
+
 }
 
 ////////////////////////////////// Date time setting function //////////////////////////////////////////////////////////////////////////////////
@@ -774,7 +839,7 @@ create_order() {
       "createdAtOfficeId": 0,
       "creatorId": 0,
       "creatorUserType": "DELIVERY_AGENT",
-      "customerId": data.personId,
+      "customerId": this.state.sender_id,
       "delivery": {
         "addressLine1": this.state.rec_address1,
         "addressLine2": this.state.rec_address2,
@@ -793,7 +858,7 @@ create_order() {
         "proofToBeProduced": this.state.proof,
         "state": this.state.rec_state
       },
-      "deliveryType": "BULLET",
+      "deliveryType": this.state.delivery_type,
       "isManualPickup": true,
       "pickup": {
         "addressLine1": this.state.sender_address1,
@@ -1127,8 +1192,6 @@ if(bal>0){
 }else{
   this.setState({balance_amount:'0'});
 }
-
-
   
 
 }
@@ -1144,6 +1207,7 @@ cash_payment() {
 
   let body = {
     "amountPayed": this.state.amount_recieved,
+    "isAmountCollectedByDeliveryBoy": false,
     "orderId": this.state.order_id,
 
   };
@@ -1402,6 +1466,54 @@ render(){
          <CustomRadioButton title={'Global'} selectedColor={Colors.darkSkyBlue} selected={false}/>
          </View>
 
+         <CustomText text={'Delivery Type'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+         <View style={{flexDirection:'row',}}>
+         <CustomRadioButton title={'Normal'} selectedColor={Colors.darkSkyBlue} selected={this.state.normal_selected} onPress={()=>this.isSelected(11)}/>
+         <CustomRadioButton title={'Bullet'} selectedColor={Colors.darkSkyBlue} selected={this.state.bullet_selected} onPress={()=>this.isSelected(12)}/>
+         </View>
+
+         <View style={{marginTop:SECTION_MARGIN_TOP}}>
+         <CustomRadioButton title={'Same as contact address'} selectedColor={Colors.darkSkyBlue} selected={this.state.same_selected_delivery_address} onPress={()=>this.isSelected(5)}/>
+         <CustomRadioButton title={'Enter new delivery address'} selectedColor={Colors.darkSkyBlue} selected={this.state.new_selected_delivery_address} onPress={()=>this.isSelected(6)}/>
+        </View>
+
+ 
+ { this.state.same_selected_delivery_address === true && (<View>
+
+        <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+         <CustomInput flex={1} value={this.state.rec_country} />
+
+          <CustomText text={'State'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+          <CustomInput flex={1} value={this.state.rec_state} />
+
+          <CustomText text={'City'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+          <CustomInput flex={1} value={this.state.rec_city} />
+
+          <CustomText text={'District'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+          <CustomInput flex={1} value={this.state.rec_district} />
+
+         <CustomText text={'Pincode'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+         <CustomInput flex={1} value={this.state.rec_pincode} />
+         
+          <CustomText text={'Gmap Link'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+          <CustomInput flex={1} value={this.state.rec_gmap} />
+
+          <CustomText text={'Address Line 1'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+          <CustomInput flex={1} value={this.state.rec_address1} />
+
+        <CustomText text={'Address Line 2'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+        <CustomInput flex={1} value={this.state.rec_address2} />
+
+        <CustomText text={'Local Body Type'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+        <CustomInput flex={1} value={this.state.rec_localbody} />
+
+        <CustomText text={'Landmark'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+        <CustomInput flex={1} value={this.state.rec_landmark} />
+        
+   </View>)}
+
+   { this.state.new_selected_delivery_address === true && (<View>
+
           <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomDropdown data={this.state.countries_reciever} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_state_list_reciever(data[index]['id']) ; this.setState({rec_country:value , errorTextrec_country:""}); this.setState({rec_country_code:data[index]['code']}); }, 500); }} />
           {!!this.state.errorTextrec_country && (<Text style={{color: 'red'}}>{this.state.errorTextrec_country}</Text>)}
@@ -1441,7 +1553,8 @@ render(){
         <CustomText text={'Landmark'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_landmark: text, errorTextrec_landmark:""})} value={this.state.rec_landmark} />
         {!!this.state.errorTextrec_landmark && (<Text style={{color: 'red'}}>{this.state.errorTextrec_landmark}</Text>)}  
-        
+      
+        </View>)}
          
 </View>
 
@@ -1453,10 +1566,25 @@ render(){
           <CustomText  text={'Delivery Details '} textType={Strings.subtitle} textDecorationLine={'underline'} />
         </View>
 
-        {/* <CustomText text={'Enter the receiving person customer id or registered mobile number.'} textType={Strings.subtext} color={Colors.grayTextColor}/> */}
-    
-        {/* <CustomText text={'Customer Id / Mobile Number'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_id_or_no: text})} value={this.state.rec_id_or_no} /> */}
+        <CustomRadioButton title={'Same as contact details'} selectedColor={Colors.darkSkyBlue} selected={this.state.same_selected_delivery} onPress={()=>this.isSelected(9)}/>
+         <CustomRadioButton title={'Enter new delivery details'} selectedColor={Colors.darkSkyBlue} selected={this.state.new_selected_delivery} onPress={()=>this.isSelected(10)}/>
+
+       
+         {this.state.same_selected_delivery == true && (<View>
+
+<CustomText text={'Reciever Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+<CustomInput flex={1} value={this.state.recievername} />
+
+<CustomText text={'Receiver Phone Number'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+<CustomInput flex={1} value={this.state.recieverno} />
+
+
+</View>)}
+
+
+
+{this.state.new_selected_delivery == true && (<View>
+
 
         <CustomText text={'Reciever Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({recievername: text , errorTextrec_name:""})} value={this.state.recievername} />
@@ -1466,6 +1594,8 @@ render(){
           <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({recieverno: text , errorTextrec_no:""})} value={this.state.recieverno} />
           {!!this.state.errorTextrec_no && (<Text style={{color: 'red'}}>{this.state.errorTextrec_no}</Text>)}
 
+
+</View>)}
           <CustomText text={'Proof to be produced'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({proof: text , errorTextrec_proof:""})} value={this.state.proof} />
           {!!this.state.errorTextrec_proof && (<Text style={{color: 'red'}}>{this.state.errorTextrec_proof}</Text>)}

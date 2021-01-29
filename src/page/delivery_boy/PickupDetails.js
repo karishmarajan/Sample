@@ -11,14 +11,13 @@ import CustomText from '../../component/CustomText';
 import { SECTION_MARGIN_TOP,LOGIN_FIELD_HEIGHT, MAIN_BLOCK_BORDER_RADIUS, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,ADDRESS_FIELD_HEIGHT, SIGNATURE_VIEW_HEIGHT,TOTAL_BLOCK, CREDIT_FIELD_HEIGHT,TEXT_MARGIN_TOP, CAMERA_SIZE,FOURTH_FONT } from '../../constants/Dimen';
 import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
-import session,{KEY} from '../../session/SessionManager';
 import Api from '../../component/Fetch';
-import { PICKUP_DETAILS , PICKUP_ORDER_UPDATE } from '../../constants/Api';
+import { PICKUP_DETAILS , PICKUP_ORDER_UPDATE , PAYMENT_BY_CASH} from '../../constants/Api';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 
 
-const myArray=[{name:"Select a Status" , value:"Select a Status"},{name:"Completed" , value:"COMPLETED"},{name:"Failed" , value:"ATTEMPT_FAILED"}];
-const myArray1=[{name:"Select/Enter a Reason" , value:"Select/Enter here"},{name:"Address invalid" , value:"Address invalid"},{name:"Door was  locked" , value:"Door was  locked"},{name:"Enter a Reason" , value:"Enter a Reason"}];
+const myArray=[{name:"Select a Status" , value:"Select a Status"},{name:"COLLECTED" , value:"COLLECTED"},{name:"ATTEMPT_FAILED" , value:"ATTEMPT FAILED"},{name:"UNVISITED" , value:"UNVISITED"}];
+const myArray1=[{name:"Select/Enter a Reason" , value:"Select/Enter a reason"},{name:"Address invalid" , value:"Address invalid"},{name:"Door was  locked" , value:"Door was  locked"},{name:"Enter a Reason" , value:"Enter a Reason"}];
 const myArray2=[{name:"Cash" , value:"Cash"},{name:"Credit card" , value:"Credit card"},{name:"Debit card" , value:"Debit card"},{name:"Paytm" , value:"Paytm"}];
 
 export default class PickupDetails extends React.Component {
@@ -30,7 +29,10 @@ export default class PickupDetails extends React.Component {
     reason_val:'',
     modal_view: false,
     pickup_details:[],
-
+    amount_recieved:'',
+    balance_amount:'',
+    amount_payed:'',
+    amount_to_pay:'',
   };
 
 
@@ -82,11 +84,15 @@ export default class PickupDetails extends React.Component {
 
       let body = {
 
-        "amntDeliveryBoyCollectedFrSender": 0,
-        "paymentMethod": "BANK_TRANSFER",
-        "pickupFailedReason": "string",
-        "pickupId": this.props.pickup_id,
-        "pickupStatus": this.state.status
+    "orderId": this.state.pickup_details.orderId,
+    "pickupFailedReason": this.state.reason_val,
+    "pickupStatus": this.state.status
+
+        // "amntDeliveryBoyCollectedFrSender": 0,
+        // "paymentMethod": "BANK_TRANSFER",
+        // "pickupFailedReason": "string",
+        // "pickupId": this.props.pickup_id,
+        // "pickupStatus": this.state.status
   
       };
   
@@ -98,7 +104,7 @@ export default class PickupDetails extends React.Component {
            this.setState({final_cod_charge:result.payload.finalCodCharge})
             console.log('Success:', JSON.stringify(result));
             alert(result.message)
-            Actions.dashboard();
+           
   
           }
           else {
@@ -109,6 +115,56 @@ export default class PickupDetails extends React.Component {
   
   }
 
+  ////////////////////////////////// Balance calculating fuction /////////////////////////////////////////////////////////////////////////////////////
+
+balanceCalculate(text){
+  var myInt = parseInt(text);
+  var payment=parseInt(this.state.pickup_details.payableBySender)
+  var bal=myInt-payment;
+  var bal1=payment-myInt;
+
+if(myInt==payment){
+  this.setState({balance_amount:'0',amount_payed:this.state.amount_recieved,amount_to_pay:'0'});
+}else if(myInt>payment){
+  this.setState({balance_amount:''+bal,amount_payed:''+payment, amount_to_pay:'0'});
+}else{
+  this.setState({balance_amount:'0',amount_payed:''+myInt, amount_to_pay:''+bal1});
+}
+
+
+  
+
+}
+
+///////////////////////////////////////// Payment by cash function  //////////////////////////////////////////////////////////////////////////////////
+
+cash_payment() {
+
+
+  let body = {
+    "amountPayed": this.state.amount_payed,
+    "isAmountCollectedByDeliveryBoy": true,
+    "orderId": this.state.pickup_details.orderId,
+
+  };
+
+  Api.fetch_request(PAYMENT_BY_CASH, 'POST', '', JSON.stringify(body))
+    .then(result => {
+
+      if (result.error != true) {
+
+        console.log('Success:', JSON.stringify(result));
+        alert(result.message)
+
+        Actions.dashboard();
+
+      }
+      else {
+        console.log('Failed');
+        alert(result.message)
+      }
+    })
+}
 
   /////////////////////////////////// Render Method  /////////////////////////////////////////////////////////////////////////////
 
@@ -195,33 +251,13 @@ render(){
           </View>
 </View>
 
-
-{/*///////////////////////////// Order Status Block //////////////////////////////////////////////// */}
-
-<View style={{backgroundColor:Colors.white,flex:10,flexDirection:'row' ,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',}}>
-              <CustomText  text={'Status Update'} textType={Strings.subtitle} flex={9} fontWeight={'bold'}/>
-              <Icon name={'md-arrow-dropdown'} style={{color:Colors.black,fontSize:FOURTH_FONT,flex:1,}}/>
-              </View>
-<View style={{ backgroundColor:Colors.white,flexGrow:1,paddingLeft:MAIN_VIEW_PADDING,paddingRight:MAIN_VIEW_PADDING,paddingBottom:MAIN_VIEW_PADDING}}>
-
-      <CustomText text={'Status'} textType={Strings.maintext}/> 
-      <CustomDropdown data={myArray} height={TEXT_FIELD_HIEGHT}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} onChangeValue={(value,index,data)=>{this.setState({status:value});}} value={this.state.status}/>
- 
-      
-      {this.state.status == 'ATTEMPT_FAILED' && (<View>
-      <CustomText text={'Reason/Remark'} textType={Strings.maintext}/>
-      <CustomDropdown data={myArray1} height={TEXT_FIELD_HIEGHT}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} onChangeValue={(value,index,data)=>{if (index == (data.length)-1){this.setState({modal_visible: true});}}} value={this.state.reason_val}/>
-      </View>)}
-      </View>
-
-
 {/*/////////////////////////// Customer Details //////////////////////////////////////////////// */}
 
 <View style={{ backgroundColor:Colors.white,flexGrow:1,padding:10}}>
 <View style={{ backgroundColor:Colors.signBackgroundColor,flexGrow:1,padding:MAIN_VIEW_PADDING}}>
        
         <View style={{flexDirection:'row',marginBottom:SECTION_MARGIN_TOP,}}>
-          <CustomText  text={'Order No. 1'} textType={Strings.subtitle} fontWeight={'bold'} />
+          <CustomText  text={'Order Details'} textType={Strings.subtitle} fontWeight={'bold'} />
         </View>
 
         <CustomText text={'Serial No.'} textType={Strings.subtext} color={Colors.black}/>
@@ -252,44 +288,69 @@ render(){
           </View>
 </View>
 
+{/*///////////////////////////// Order Status Block //////////////////////////////////////////////// */}
+
+<View style={{backgroundColor:Colors.white,flex:10,flexDirection:'row' ,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',}}>
+              <CustomText  text={'Status Update'} textType={Strings.subtitle} flex={9} fontWeight={'bold'}/>
+              <Icon name={'md-arrow-dropdown'} style={{color:Colors.black,fontSize:FOURTH_FONT,flex:1,}}/>
+              </View>
+<View style={{ backgroundColor:Colors.white,flexGrow:1,paddingLeft:MAIN_VIEW_PADDING,paddingRight:MAIN_VIEW_PADDING,paddingBottom:MAIN_VIEW_PADDING}}>
+
+      <CustomText text={'Status'} textType={Strings.maintext}/> 
+      <CustomDropdown data={myArray} height={TEXT_FIELD_HIEGHT}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} onChangeValue={(value,index,data)=>{this.setState({status:data[index]['name']});}} value={this.state.status}/>
+ 
+      
+      {this.state.status == 'ATTEMPT_FAILED' && (<View>
+      <CustomText text={'Reason/Remark'} textType={Strings.maintext}/>
+      <CustomDropdown data={myArray1} height={TEXT_FIELD_HIEGHT}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} onChangeValue={(value,index,data)=>{if (index == (data.length)-1){this.setState({modal_visible: true});}else{this.setState({reason_val:value})}}} value={this.state.reason_val}/>
+      </View>)}
+      </View>
+
+
+      <CustomButton title={'Update'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>this.pickup_update()} />
+
 
 
 {/*/////////////////////////////// Total & Payment Block //////////////////////////////////////////////// */}
 
 
-{/* { this.state.pickup_details.deliveryType == "COD" &&  (<View> */}
+{ this.state.pickup_details.payableBySender > 0 &&  (<View>
 <View style={{backgroundColor:Colors.white,flex:10,flexDirection:'row' ,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',}}>
               <CustomText  text={'Total & Payment'} textType={Strings.subtitle} flex={9} fontWeight={'bold'} />
               <Icon name={'md-arrow-dropdown'} style={{color:Colors.black,fontSize:FOURTH_FONT,flex:1,}}/>
               </View>
 <View style={{ backgroundColor:Colors.white,flexGrow:1,paddingLeft:MAIN_VIEW_PADDING,paddingRight:MAIN_VIEW_PADDING,paddingBottom:MAIN_VIEW_PADDING}}>
 
-<View style={{height:CREDIT_FIELD_HEIGHT}}>
-<Grid ><Col><CustomText text={'Other Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
-        <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.deliveryCharge ? this.state.pickup_details.deliveryCharge : Strings.na } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
- <Grid ><Col><CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
-        <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.deliveryCharge ? this.state.pickup_details.deliveryCharge : Strings.na } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+<View style={{height:250}}>
+<Grid ><Col><CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
+        <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.originalDeliveryCharge  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+ <Grid ><Col><CustomText text={'Package Allowed'} textType={Strings.subtext} color={Colors.black}/></Col>
+        <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.deliveryChargePackageDeduction   } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
  <Grid><Col><CustomText text={'Credit Allowed'} textType={Strings.subtext} color={Colors.black}/></Col>
-       <Col><CustomInput flex={1} /></Col></Grid>
-       <Grid><Col><CustomText text={'Amount to Collect'} textType={Strings.subtext} color={Colors.black}/></Col>
-       <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.total ? this.state.pickup_details.total : Strings.na } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+       <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.deliveryChargeCreditDeduction } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+  <Grid><Col><CustomText text={'Amount to Collect'} textType={Strings.subtext} color={Colors.black}/></Col>
+       <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.deliveryChargeAfterDeductions  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+       <Grid><Col><CustomText text={'Sender Payment'} textType={Strings.subtext} color={Colors.black}/></Col>
+       <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.payableBySender } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
       </View>
 
       <CustomText  text={'Payment Method'} textType={Strings.subtitle} flex={9} />
       <CustomDropdown data={myArray2} height={TEXT_FIELD_HIEGHT}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} />
 
-      <View style={{marginTop:SECTION_MARGIN_TOP,height:ADDRESS_FIELD_HEIGHT}}>
+      <View style={{marginTop:SECTION_MARGIN_TOP,height:150}}>
       <Grid><Col><CustomText text={'Amount Recieved'} textType={Strings.subtext} color={Colors.black}/></Col>
-       <Col><CustomInput flex={1} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} /></Col></Grid>
+       <Col><CustomInput flex={1} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} onChangeText={(text) =>{this.balanceCalculate(text); this.setState({amount_recieved: text})}} value={this.state.amount_recieved} /></Col></Grid>
       <Grid><Col><CustomText text={'Balance Amount'} textType={Strings.subtext} color={Colors.black}/></Col>
-       <Col><CustomInput flex={1} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} /></Col></Grid>
+       <Col><CustomInput flex={1} value={this.state.balance_amount} /></Col></Grid>
+       <Grid><Col><CustomText text={'Balance To Pay'} textType={Strings.subtext} color={Colors.black}/></Col>
+       <Col><CustomInput flex={1} value={this.state.amount_to_pay} /></Col></Grid>
        </View>
 
       </View>
+      <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>this.cash_payment()} />
+      </View>)}
 
-      {/* </View>)} */}
-
-      <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>this.pickup_update()} />
+    
 
           </View>
         </ScrollView>
