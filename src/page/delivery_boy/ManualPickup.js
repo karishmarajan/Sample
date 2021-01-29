@@ -13,7 +13,6 @@ import { SECTION_MARGIN_TOP, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_V
 import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
 import CustomRadioButton from '../../component/CustomRadioButton';
-import DatePicker from '../../component/DatePicker';
 import moment from 'moment';
 import RNPrint from 'react-native-print';
 
