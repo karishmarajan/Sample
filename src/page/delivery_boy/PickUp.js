@@ -21,7 +21,7 @@ import _ from "lodash"
 
 
 const myArray1 = [{ name: "Order No.", value: "Order No." }, { name: "CustomerName", value: "CustomerName" },];
-const myArray = [{ name: "PENDING", value: "ASSIGNED" }, { name: "ALL", value: "ALL" }, { name: "FAILED", value: "FAILED" }, { name: "COLLECTED", value: "COLLECTED" }];
+const myArray = [{ name: "PENDING", value: "ASSIGNED" }, { name: "ALL", value: "ALL" }, { name: "ATTEMPT_FAILED", value: "ATTEMPT FAILED" }, { name: "COLLECTED", value: "COLLECTED" }];
 
 
 
@@ -102,7 +102,7 @@ export default class PickUp extends React.Component {
           }
           else {
             console.log('Failed');
-            alert(result.message)
+            this.setState({ pickup_list: ''})
             
    
           }
@@ -286,7 +286,7 @@ render() {
           {/*////////////////////// Print Button Block //////////////////////////////////////////////// */}
 
           <View style={{ flexDirection: 'row', marginTop: SECTION_MARGIN_TOP, backgroundColor: Colors.aash, }}>
-            <View style={{ flex: 4 }}><CustomDropdown data={myArray} height={SHORT_BUTTON_HEIGHT} backgroundColor={Colors.aash} onChangeValue={(value, index, data) => { this.setState({ offset: 0 }); setTimeout(() => { this.fetch_pickup_orders(value) }, 1000); }} /></View>
+            <View style={{ flex: 4 }}><CustomDropdown data={myArray} height={SHORT_BUTTON_HEIGHT} backgroundColor={Colors.aash} onChangeValue={(value, index, data) => { this.setState({ offset: 0 }); setTimeout(() => { this.fetch_pickup_orders(data[index]['name']) }, 100); }} /></View>
             <View style={{ flex: 2, }}><CustomButton title={'Print'} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={this.silentPrint} /></View>
           </View>
 

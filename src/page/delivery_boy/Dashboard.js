@@ -17,7 +17,7 @@ import CustomText from '../../component/CustomText';
 import SideMenuDrawer from '../../component/SideMenuDrawer';
 import session,{KEY} from '../../session/SessionManager';
 import Api from '../../component/Fetch';
-import { DELIVERY_COUNT , PICKUP_COUNT ,TASK_ASSIGNED, AMOUNT_COLLECTED ,PICKUP_ORDERS , PICKUP_ASSIGNED_ACCEPT , PICKUP_ASSIGNED_REJECT, DELIVERY_ORDERS } from '../../constants/Api';
+import { DELIVERY_COUNT , PICKUP_COUNT, DELIVERY_ASSIGNED_ACCEPT, DELIVERY_ASSIGNED_REJECT ,TASK_ASSIGNED, AMOUNT_COLLECTED ,PICKUP_ORDERS , PICKUP_ASSIGNED_ACCEPT , PICKUP_ASSIGNED_REJECT, DELIVERY_ORDERS } from '../../constants/Api';
 
 
 
@@ -28,6 +28,7 @@ export default class Dashboard extends React.Component {
   ///////////////////////////////////////// Declaring state variables ///////////////////////////////////////////////////////////////////////////////////
 
   state ={
+    mycart_count:'',
     count_list :[],
     pick_count_list :[],
     task_assigned_list :[],
@@ -35,6 +36,7 @@ export default class Dashboard extends React.Component {
     amount:[],
     pickup_assigned_list:[],
     person_id:'',
+    checked: [],
   }
 
   ///////////////////////////////////////// Component did mount function ///////////////////////////////////////////////////////////////////////////////
@@ -49,7 +51,7 @@ export default class Dashboard extends React.Component {
       this.fetch_task_assigned_list(data.personId);
      this.amount_collected_today(data.personId);
      this.fetch_pickup_assigned_list(data.personId);
-    this.fetch_task_assigned_active_list(data.personId)
+    //this.fetch_task_assigned_active_list(data.personId)
    
   }));
   }
@@ -131,13 +133,78 @@ export default class Dashboard extends React.Component {
         console.log('Success:', JSON.stringify(result));
         this.setState({ task_assigned_list: result.payload })
 
+        this.setState({mycart_count:''+(this.state.task_assigned_list).length})
+
+      }
+      else {
+        console.log('Failed');
+        this.setState({ task_assigned_list: ''})
+      }
+    })
+
+ }
+
+ /////////////////////////////// Checkbox checking function ///////////////////////////////////////////////////////////////////////////////////
+
+ checkItem = (item) => {
+  const { checked } = this.state;
+  console.log(item)
+  if (!checked.includes(item)) {
+
+    setTimeout(()=>{this.setState({ checked: [...this.state.checked, item] })},3000);
+    // setTimeout(()=>{ alert(this.state.checked)},3000);
+   
+  } else {
+    setTimeout(()=>{this.setState({ checked: checked.filter(a => a !== item) })},3000);
+  }
+  console.log(checked)
+};
+////////////////////////////////////// Delivery assigned accepting function ////////////////////////////////////////////////////////////////////////////////////
+
+delivery_assigned_accept() {
+
+  let body = {
+    "deliveryId": this.state.checked,
+  };
+
+  Api.fetch_request(DELIVERY_ASSIGNED_ACCEPT, 'POST', '', JSON.stringify(body))
+    .then(result => {
+
+      if (result.error != true) {
+
+        console.log('Success:', JSON.stringify(result));
+        this.fetch_task_assigned_list(this.state.person_id);
+
+      }
+      else {
+        console.log('Failed');
+        
+      }
+    })
+}
+
+////////////////////////////////////// Delivery assigned rejecting function ////////////////////////////////////////////////////////////////////////////////////
+
+delivery_assigned_reject() {
+
+  let body = {
+    "deliveryId": this.state.checked,
+  };
+
+  Api.fetch_request(DELIVERY_ASSIGNED_REJECT, 'POST', '', JSON.stringify(body))
+    .then(result => {
+
+      if (result.error != true) {
+
+        console.log('Success:', JSON.stringify(result));
+        this.fetch_task_assigned_list(this.state.person_id);
+
       }
       else {
         console.log('Failed');
       }
     })
-
- }
+}
 
 ////////////////////////////////////// Task assigned active fetching function ////////////////////////////////////////////////////////////////////////////////////
 
@@ -160,6 +227,7 @@ fetch_task_assigned_active_list(val){
       }
       else {
         console.log('Failed');
+        this.setState({ task_assigned_active_list:''})
       }
     })
 
@@ -186,7 +254,7 @@ fetch_pickup_assigned_list(val) {
         }
         else {
           console.log('Failed');
-          // alert(result.message)
+          this.setState({ pickup_assigned_list:''})
         }
       })
 }
@@ -244,9 +312,12 @@ pickup_assigned_reject(val) {
   return (
 
     <Row style={styles.rowstyle1}>
-    <Col style={styles.colstyle1}><Text style={{fontSize:12,}}>Order ID:      {item.orderId ? item.orderId : Strings.na}</Text>
-    <Text style={{fontSize:12,}}>Cust. Name: {item.contactPersonName ? item.contactPersonName : Strings.na}</Text>
-    <CustomText text={'Details'} color={Colors.darkSkyBlue} textType={Strings.subtext} onPress={()=>Actions.pickupdetailsview({pickup_id:item.pickupId})}/></Col>
+    <Col style={styles.colstyle1}>
+    <Text style={{fontSize:12,}}>Order ID:      {item.orderId ? item.orderId : Strings.na}</Text>
+    {/* <Text style={{fontSize:12,}}>Cust. Name: {item.contactPersonName ? item.contactPersonName : Strings.na}</Text> */}
+    <Text style={{fontSize:12,}}>After Pickup: {item.afterPickupStatus ? item.afterPickupStatus : Strings.na}</Text>
+    <CustomText text={'Details'} color={Colors.darkSkyBlue} textType={Strings.subtext} onPress={()=>Actions.pickupdetailsview({pickup_id:item.pickupId})}/>
+    </Col>
     <Col ><CustomButton title={'Reject'} text_color={Colors.red} backgroundColor={Colors.white}   marginTop={1} fontSize={NORMAL_FONT} showIcon={true} icon_name={'ios-close'} icon_color={Colors.red} icon_fontsize={NORMAL_FONT} onPress={()=>this.pickup_assigned_reject(item.pickupId)}/>
    </Col>
     <Col ><CustomButton title={'Accept'} text_color={Colors.green} backgroundColor={Colors.white}  marginTop={1}  fontSize={NORMAL_FONT} showIcon={true} icon_name={'md-checkmark'} icon_color={Colors.green} icon_fontsize={NORMAL_FONT} onPress={()=>this.pickup_assigned_accept(item.pickupId)}/></Col>
@@ -265,17 +336,18 @@ pickup_assigned_reject(val) {
   return (
 
 
-    <View style={{borderRadius:5,backgroundColor:Colors.gray,padding:6,width:280,marginTop:SECTION_MARGIN_TOP}}>
-    <View style={{flexDirection:'row'}}>
-    <Grid><Col style={styles.colstyle}><CustomCheckBox color={Colors.buttonBackgroundColor}/></Col>
-    <Col><Row style={styles.contents}><CustomText text={'Order ID'} color={Colors.black} textType={Strings.subtext}/></Row>
-    <Row style={styles.contents}><CustomText text={'Cust. Name'} color={Colors.black} textType={Strings.subtext}/></Row></Col>
-    <Col><Row style={styles.contents}><CustomText text={item.orderId ? item.orderId : Strings.na} color={Colors.black} textType={Strings.subtext}/></Row>
-    <Row style={styles.contents}><CustomText text={item.contactPersonName ? item.contactPersonName : Strings.na} color={Colors.black} textType={Strings.subtext}/></Row>
-    <Row style={styles.contents}><CustomText text={'Details'} color={Colors.darkSkyBlue} textType={Strings.subtext} onPress={()=>Actions.taskassigneddetails({delivery_id:item.deliveryId})}/></Row>
-    </Col></Grid>
-    </View>
-    </View>
+<View style={{borderRadius:5,backgroundColor:Colors.gray,padding:6,width:280,marginTop:SECTION_MARGIN_TOP}}>
+<View style={{flexDirection:'row'}}>
+<Grid><Col style={styles.colstyle}><CustomCheckBox color={Colors.buttonBackgroundColor} onPress={()=>this.checkItem(item.deliveryId)} checked={this.state.checked.includes(item.deliveryId)}/></Col>
+<Col><Row style={styles.contents}><CustomText text={'Order ID'} color={Colors.black} textType={Strings.subtext}/></Row>
+<Row style={styles.contents}><CustomText text={'Cust. Name'} color={Colors.black} textType={Strings.subtext}/></Row></Col>
+<Col><Row style={styles.contents}><CustomText text={item.orderId ? item.orderId : Strings.na} color={Colors.black} textType={Strings.subtext}/></Row>
+<Row style={styles.contents}><CustomText text={item.contactPersonName ? item.contactPersonName : Strings.na} color={Colors.black} textType={Strings.subtext}/></Row>
+<Row style={styles.contents}><CustomText text={'Details'} color={Colors.darkSkyBlue} textType={Strings.subtext} onPress={()=>Actions.taskassigneddetails({delivery_id:item.deliveryId})}/></Row>
+</Col></Grid>
+</View>
+</View>
+
 
 
   )
@@ -286,8 +358,8 @@ pickup_assigned_reject(val) {
 _footer = () => {
   return (
     <View style={{flex:1,flexDirection:'row',marginLeft:10,flex:8}}>
-              <CustomButton title={'Accept Selected'} backgroundColor={Colors.green}  height={SHORT_BUTTON_HEIGHT}  flex={1}/>
-              <CustomButton title={'Reject Selected'} backgroundColor={Colors.red}  height={SHORT_BUTTON_HEIGHT} marginLeft={SECTION_MARGIN_TOP}  flex={1}/>
+              <CustomButton title={'Accept Selected'} backgroundColor={Colors.green}  height={SHORT_BUTTON_HEIGHT}  flex={1} onPress={()=>this.delivery_assigned_accept()}/>
+              <CustomButton title={'Reject Selected'} backgroundColor={Colors.red}  height={SHORT_BUTTON_HEIGHT} marginLeft={SECTION_MARGIN_TOP}  flex={1} onPress={()=>this.delivery_assigned_reject()}/>
             </View>
   )
 }
@@ -391,7 +463,7 @@ _footer = () => {
         <View style={{height:50,borderTopLeftRadius:5,borderTopRightRadius:8,backgroundColor:Colors.textBackgroundColor,marginTop:SECTION_MARGIN_TOP,marginRight:10,width:300}}>
         <View style={{flexDirection:'row',alignSelf:'center'}}>
         <CustomCheckBox title={'MY CART'} color={Colors.buttonBackgroundColor} checked={true} fontSize={12}/>
-        <Text style={{fontSize:14,color:Colors.darkSkyBlue,marginLeft:10,marginTop:11}}>(50)</Text>
+        <Text style={{fontSize:14,color:Colors.darkSkyBlue,marginLeft:10,marginTop:11}}>({this.state.mycart_count})</Text>
         <CustomButton title={'VERIFY'} height={30} marginLeft={70} marginRight={15} marginTop={10}/>
         </View>
         </View>
@@ -487,7 +559,6 @@ _footer = () => {
 
   {/*//////////////////////////////////////// Pickup Notification block //////////////////////////////////////////////// */}
 
-
               <View style={{backgroundColor:Colors.aash,flex:5,flexDirection:'row',height:LOGIN_FIELD_HEIGHT,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center'}}>
               <CustomText  text={'Pickup Assigned'} textType={Strings.maintext} flex={3} />
               <CustomButton title={'Reject all'} text_color={Colors.red} backgroundColor={Colors.aash}  height={SHORT_BUTTON_HEIGHT} marginBottom={18} fontSize={14} flex={1}/>
@@ -505,8 +576,7 @@ _footer = () => {
 
  {/*//////////////////////////////////// Amount Collected block //////////////////////////////////////////////// */}
 
-
-          <View style={{ backgroundColor:Colors.white,height:AMOUNT_BLOCK_HIEGHT,borderRadius:MAIN_BLOCK_BORDER_RADIUS,padding:COLUMN_PADDING,marginTop:SECTION_MARGIN_TOP}}>
+          <View style={{ backgroundColor:Colors.white,borderRadius:MAIN_BLOCK_BORDER_RADIUS,padding:COLUMN_PADDING,marginTop:SECTION_MARGIN_TOP}}>
           <CustomText text={'Amount collected today'} textType={Strings.maintext}/>
           <View style={{flexDirection:'row',flex:10}}>
            <Text style={{fontSize:FOURTH_FONT,fontWeight:'bold',marginLeft:5,flex:9}}>Rs:{this.state.amount.amountCollectedToday ? this.state.amount.amountCollectedToday :'N/A' }</Text>
@@ -516,20 +586,20 @@ _footer = () => {
 
  {/*/////////////////////////////////////////////// Delivery Out Status block //////////////////////////////////////////////// */}
 
-
+<View>
  <View style={{backgroundColor:Colors.white,flex:10,flexDirection:'row',height:LOGIN_FIELD_HEIGHT,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',borderRadius:SHORT_BLOCK_BORDER_RADIUS}}>
               <CustomText  text={'Delivery Out Status'} textType={Strings.maintext} flex={9} />
-              {/* <Icon name={'md-arrow-dropdown'} style={{color:Colors.black,fontSize:FOURTH_FONT,flex:1,}}/> */}
+             
               </View>
               <View style={{backgroundColor:Colors.aash,paddingBottom:SECTION_MARGIN_TOP,paddingLeft:SECTION_MARGIN_TOP,paddingRight:SECTION_MARGIN_TOP,height:120}}>
                 <Grid>
                   <Row style={styles.rowstyleodd}>
                     <Col style={styles.colstyleodd}><CustomText text={'Completed'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
-                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.count_list.COMPLETED ? this.state.count_list.COMPLETED :'N/A' }</Text></Col>
+                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.count_list.DELIVERED ? this.state.count_list.DELIVERED :'N/A' }</Text></Col>
                   </Row>
                   <Row style={styles.rowstyleeven}>
                     <Col style={styles.colstyleodd}><CustomText text={'Pending'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
-                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.count_list.PENDING ? this.state.count_list.PENDING :'N/A' }</Text></Col>
+                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.count_list.READY_FOR_DELIVERY ? this.state.count_list.READY_FOR_DELIVERY :'N/A' }</Text></Col>
                   </Row>
                   <Row style={styles.rowstyleodd}>
                     <Col style={styles.colstyleodd}><CustomText text={'Failed'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
@@ -538,20 +608,20 @@ _footer = () => {
                 </Grid>
               </View>
          
-
+              </View>
 
 {/*//////////////////////////////////////////////// Pickup Status block //////////////////////////////////////////////// */}
 
-
+<View>
 <View style={{backgroundColor:Colors.white,flex:10,flexDirection:'row',height:LOGIN_FIELD_HEIGHT,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',borderRadius:SHORT_BLOCK_BORDER_RADIUS}}>
               <CustomText  text={'Pickup Status'} textType={Strings.maintext} flex={9} />
-              {/* <Icon name={'md-arrow-dropdown'} style={{color:Colors.black,fontSize:FOURTH_FONT,flex:1,}}/> */}
+             
               </View>
               <View style={{backgroundColor:Colors.aash,paddingBottom:SECTION_MARGIN_TOP,paddingLeft:SECTION_MARGIN_TOP,paddingRight:SECTION_MARGIN_TOP,height:120}}>
                 <Grid>
                   <Row style={styles.rowstyleodd}>
                     <Col style={styles.colstyleodd}><CustomText text={'Completed'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
-    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.pick_count_list.COMPLETED ? this.state.pick_count_list.COMPLETED :'N/A' }</Text></Col>
+    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.pick_count_list.COLLECTED ? this.state.pick_count_list.COLLECTED :'N/A' }</Text></Col>
                   </Row>
                   <Row style={styles.rowstyleeven}>
                     <Col style={styles.colstyleodd}><CustomText text={'To be Collected'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
@@ -559,10 +629,13 @@ _footer = () => {
                   </Row>
                   <Row style={styles.rowstyleodd}>
                     <Col style={styles.colstyleodd}><CustomText text={'Failed'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
-                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.pick_count_list.FAILED ? this.state.pick_count_list.FAILED :'N/A' }</Text></Col>
+                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.pick_count_list.ATTEMPT_FAILED ? this.state.pick_count_list.ATTEMPT_FAILED :'N/A' }</Text></Col>
                   </Row>
                 </Grid>
               </View>
+              </View>
+
+{/* ///////////////////////////////////////////////////////////////////////////////////////////////////////// */}
 
               </View>
               </ScrollView>
@@ -603,7 +676,7 @@ content: {
 
 contents: {
   minWidth: '30%',
-  maxWidth: '70%',
+  maxWidth: '80%',
   height: 30,
   
 },
@@ -611,7 +684,7 @@ contents: {
 colstyle:{
   minWidth: '10%',
   maxWidth: '15%',
-  padding:0,
+  paddingTop:6,
 },
 cusdetails: {
   height:90,
