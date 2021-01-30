@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ScrollView,Picker,StyleSheet,BackHandler,Modal, AsyncStorage, TouchableOpacity, EdgeInsetsPropType } from 'react-native';
-import { Container, View, Button, Left, Right,Icon,Text,Grid,Col,Badge, Row, DatePicker} from 'native-base';
+import { Container, View, Button, Left, Right,Icon,Text,Grid,Col,Badge, Row, DatePicker, Toast} from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
 import Navbar from '../../component/Navbar';
@@ -270,7 +270,7 @@ verifyNumber(text) {
 ////////////////////////////////// Verify gmap function //////////////////////////////////////////////////////////////////
 
 verifyGmap(text) {
-  var reg = /^http\:\/\/|https\:\/\/|www\.google$/;
+  var reg = /^http\:\/\/|https\:\/\/|Http\:\/\/|Https\:\/\/|www\.google$/;
   return reg.test(text);
 }
 
@@ -449,18 +449,18 @@ delivery_continue() {
     this.setState({hasError: true, errorTextrec_proof: 'Please enter a valid name !'});
     return;
   }
-  if(this.state.deliveredto==="") {
-    this.setState({hasError: true, errorTextrec_canbedelivered: 'Please fill !'});
-    return;
-  }
+  // if(this.state.deliveredto==="") {
+  //   this.setState({hasError: true, errorTextrec_canbedelivered: 'Please fill !'});
+  //   return;
+  // }
   if(!this.verifyString((this.state.deliveredto).replace(/ /g, '').trim())) {
     this.setState({hasError: true, errorTextrec_canbedelivered: 'Please enter a valid name !'});
     return;
   }
-  if(this.state.rec_notes==="") {
-    this.setState({hasError: true, errorTextrec_notes: 'Please fill !'});
-    return;
-  }
+  // if(this.state.rec_notes==="") {
+  //   this.setState({hasError: true, errorTextrec_notes: 'Please fill !'});
+  //   return;
+  // }
 
    this.create_order();
   
@@ -913,15 +913,14 @@ create_order() {
         if (result.error != true) {
 
           console.log('Success:', JSON.stringify(result));
-          // alert(result.message)
+          Toast.show({ text: result.message, type: 'success' });
           this.setState({order_id:JSON.stringify(result.payload.orderId)});
-          // alert(this.state.order_id)
           this.setState({active_page:3});
 
         }
         else {
           console.log('Failed');
-          alert(result.message)
+          Toast.show({ text: result.message, type: 'warning' });
         }
       })
   }));
@@ -1002,8 +1001,6 @@ create_shipment_box() {
  
 create_cost_checklist() {
 
-
-
   AsyncStorage.getItem(KEY).then((value => {
     let data = JSON.parse(value);
 
@@ -1035,13 +1032,13 @@ create_cost_checklist() {
         if (result.error != true) {
 
           console.log('Success:', JSON.stringify(result));
-          // alert(result.message)
+          Toast.show({ text: result.message, type: 'success' });
           this.submitAndClear();
 
         }
         else {
           console.log('Failed');
-          alert(result.message)
+          Toast.show({ text: result.message, type: 'warning' });
           this.submitAndClear();
         }
       })
@@ -1176,6 +1173,10 @@ payer_payment() {
     this.setState({hasError: true, errorTextpayment_name: 'Please enter a valid name !'});
     return;
   }
+  if(this.state.payment_phone==="") {
+    this.setState({hasError: true, errorTextpayment_phone: 'Please fill !'});
+    return;
+  }
   
   if(!this.verifyNumber((this.state.payment_phone).trim())) {
     this.setState({hasError: true, errorTextpayment_phone: 'Please enter a valid number!'});
@@ -1207,7 +1208,7 @@ payer_payment() {
         if (result.error != true) {
 
           console.log('Success:', JSON.stringify(result));
-          // alert(result.message)
+        
           this.setState({ payments: result.payload })
           this.setState({sender_payment:JSON.stringify(result.payload.payableBySender)})
           this.setState({receiver_payment:JSON.stringify(result.payload.payableByReceiver)})
@@ -1215,7 +1216,7 @@ payer_payment() {
         }
         else {
           console.log('Failed');
-          alert(result.message)
+         
         }
       })
 }
@@ -1262,14 +1263,14 @@ cash_payment() {
       if (result.error != true) {
 
         console.log('Success:', JSON.stringify(result));
-        alert(result.message)
-
+        Toast.show({ text: result.message, type: 'success' });
         Actions.dashboard();
 
       }
       else {
         console.log('Failed');
-        alert(result.message)
+        Toast.show({ text: result.message, type: 'warning' });
+        
       }
     })
 }

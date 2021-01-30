@@ -1,6 +1,6 @@
 import React, { Component, } from 'react';
 import { TouchableOpacity,StyleSheet,ScrollView,BackHandler ,AsyncStorage , FlatList} from 'react-native';
-import { Container, View, Button, Left, Right, Icon, Text,Grid,Col,Row,Badge } from 'native-base';
+import { Container, View, Button, Left, Right, Icon, Text,Grid,Col,Row,Badge ,Toast} from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
 
@@ -37,6 +37,7 @@ export default class Dashboard extends React.Component {
     pickup_assigned_list:[],
     person_id:'',
     checked: [],
+    pickup_orders:[],
   }
 
   ///////////////////////////////////////// Component did mount function ///////////////////////////////////////////////////////////////////////////////
@@ -151,11 +152,11 @@ export default class Dashboard extends React.Component {
   console.log(item)
   if (!checked.includes(item)) {
 
-    setTimeout(()=>{this.setState({ checked: [...this.state.checked, item] })},3000);
+    setTimeout(()=>{this.setState({ checked: [...this.state.checked, item] })},1000);
     // setTimeout(()=>{ alert(this.state.checked)},3000);
    
   } else {
-    setTimeout(()=>{this.setState({ checked: checked.filter(a => a !== item) })},3000);
+    setTimeout(()=>{this.setState({ checked: checked.filter(a => a !== item) })},1000);
   }
   console.log(checked)
 };
@@ -246,11 +247,21 @@ fetch_pickup_assigned_list(val) {
     Api.fetch_request(PICKUP_ORDERS, 'POST', '', JSON.stringify(body))
       .then(result => {
 
+        let orders=[];
+
         if (result.error != true) {
 
           console.log('Success:', JSON.stringify(result));
           this.setState({ pickup_assigned_list: result.payload })
+          
+          var count = (result.payload).length;
 
+          for(var i = 0; i < count; i++){
+           orders.push(result.payload[i].pickupId)
+          }
+          this.setState({ pickup_orders: orders })
+
+          console.log('###############################'+this.state.pickup_orders);
         }
         else {
           console.log('Failed');
@@ -282,6 +293,30 @@ pickup_assigned_accept(val) {
     })
 }
 
+
+////////////////////////////////////// Pickup accept all function ////////////////////////////////////////////////////////////////////////////////////
+
+pickup_assigned_acceptall() {
+
+  let body = {
+    "pickupId": this.state.pickup_orders,
+  };
+
+  Api.fetch_request(PICKUP_ASSIGNED_ACCEPT, 'POST', '', JSON.stringify(body))
+    .then(result => {
+
+      if (result.error != true) {
+
+        console.log('Success:', JSON.stringify(result));
+        this.fetch_pickup_assigned_list(this.state.person_id);
+
+      }
+      else {
+        console.log('Failed');
+      }
+    })
+}
+
 ////////////////////////////////////// Pickup assigned rejecting function ////////////////////////////////////////////////////////////////////////////////////
 
 pickup_assigned_reject(val) {
@@ -296,7 +331,29 @@ pickup_assigned_reject(val) {
       if (result.error != true) {
 
         console.log('Success:', JSON.stringify(result));
-        alert("Rejected")
+        this.fetch_pickup_assigned_list(this.state.person_id);
+
+      }
+      else {
+        console.log('Failed');
+      }
+    })
+}
+
+////////////////////////////////////// Pickup areject all function ////////////////////////////////////////////////////////////////////////////////////
+
+pickup_assigned_rejectall() {
+
+  let body = {
+    "pickupId": this.state.pickup_orders,
+  };
+
+  Api.fetch_request(PICKUP_ASSIGNED_REJECT, 'POST', '', JSON.stringify(body))
+    .then(result => {
+
+      if (result.error != true) {
+
+        console.log('Success:', JSON.stringify(result));
         this.fetch_pickup_assigned_list(this.state.person_id);
 
       }
@@ -453,10 +510,10 @@ _footer = () => {
 <ScrollView horizontal={true} contentContainerStyle={{flexGrow:1}} style={{marginTop:SECTION_MARGIN_TOP,}}>
 <View style={{padding:10,backgroundColor:Colors.white,width:'100%',flexGrow:1,}}>
   
-<View style={{flexDirection:'row',marginTop:10,justifyContent:'space-around',width:300}}>
-        <CustomText text={'Delivery Assigned'} textType={Strings.maintext} fontWeight={'bold'}/>
-        <CustomSubButton title={'Save'}/>
-        <CustomSubButton title={'Submit'}/> 
+<View style={{flexDirection:'row',marginTop:10,justifyContent:'space-around',width:'25%'}}>
+      <View style={{flex:4}}><CustomText text={'Delivery Assigned'} textType={Strings.maintext} fontWeight={'bold'}/></View>
+      <View style={{flex:2}}><CustomSubButton title={'Save'}/></View>
+      <View style={{flex:2}}><CustomSubButton title={'Submit'}/></View> 
         </View>
        <View style={{flexGrow:1,flexDirection:'row'}}>
         <ScrollView contentContainerStyle={{flexGrow:1}}>
@@ -559,10 +616,10 @@ _footer = () => {
 
   {/*//////////////////////////////////////// Pickup Notification block //////////////////////////////////////////////// */}
 
-              <View style={{backgroundColor:Colors.aash,flex:5,flexDirection:'row',height:LOGIN_FIELD_HEIGHT,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center'}}>
-              <CustomText  text={'Pickup Assigned'} textType={Strings.maintext} flex={3} />
-              <CustomButton title={'Reject all'} text_color={Colors.red} backgroundColor={Colors.aash}  height={SHORT_BUTTON_HEIGHT} marginBottom={18} fontSize={14} flex={1}/>
-              <CustomButton title={'Accept all'} text_color={Colors.green} backgroundColor={Colors.aash}  height={SHORT_BUTTON_HEIGHT} marginBottom={18} fontSize={14}  flex={1}/>
+              <View style={{backgroundColor:Colors.aash,flexDirection:'row',marginTop:SECTION_MARGIN_TOP,padding:6,alignItems:'center'}}>
+              <View style={{flex:4}}><CustomText  text={'Pickup Assigned'} textType={Strings.maintext} /></View>
+              <View style={{flex:2}}><CustomButton title={'Reject all'} text_color={Colors.red} backgroundColor={Colors.aash}  height={SHORT_BUTTON_HEIGHT} marginTop={5} fontSize={14} onPress={()=>this.pickup_assigned_rejectall()} /></View>
+              <View style={{flex:2}}><CustomButton title={'Accept all'} text_color={Colors.green} backgroundColor={Colors.aash}  height={SHORT_BUTTON_HEIGHT} marginTop={5}  fontSize={14} onPress={()=>this.pickup_assigned_acceptall()} /></View>
               </View>
               <View style={{backgroundColor:Colors.white,}}>
                 <Grid>

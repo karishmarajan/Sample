@@ -15,7 +15,7 @@ import CustomDropdown from '../../component/CustomDropdown';
 import session, { KEY } from '../../session/SessionManager';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 import Api from '../../component/Fetch';
-import { DELIVERY_ORDERS } from '../../constants/Api';
+import { DELIVERY_ORDERS, DELIVERY_STATUS_UPDATE } from '../../constants/Api';
 import RNPrint from 'react-native-print';
 import _ from "lodash"
 
@@ -127,6 +127,33 @@ fetch_delivery_orders(status_type) {
     }));
   }
 
+
+  ///////////////////////////////// Delivery order update function //////////////////////////////////////////////////////////////////////////////////////// 
+ 
+ delivery_status_update(id) {
+
+  let body = {
+
+    "deliveryFailedReason": '',
+    "deliveryStatus": 'CLOSED',
+    "orderId": id
+
+  };
+
+  Api.fetch_request(DELIVERY_STATUS_UPDATE, 'PUT', '', JSON.stringify(body))
+    .then(result => {
+
+      if (result.error != true) {
+        console.log('Success:', JSON.stringify(result));
+      this.fetch_delivery_orders(this.state.status_type);
+      }
+      else {
+        console.log('Failed');
+      }
+    })
+
+}
+
 //////////////////////////////////// Delivery orders header part ///////////////////////////////////////////////////////////////////////////////////
 
   _header = () => {
@@ -145,6 +172,7 @@ fetch_delivery_orders(status_type) {
         <View style={styles.cell}><CustomText text={'ATTEMPT'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={'DELIVERY TYPE'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={'TOTAL'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
        
       </View>
@@ -178,6 +206,11 @@ fetch_delivery_orders(status_type) {
             <CustomButton title={'Details'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5} text_color={Colors.darkSkyBlue} onPress={() => Actions.deliveryoutdetails({delivery_id:item.deliveryId})} />
           </View>
         </View>
+        <View style={styles.cell}>
+          {item.deliveryStatus == 'DELIVERED' && (<View>
+            <CustomButton title={'Close'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={30} marginBottom={5}  text_color={Colors.darkSkyBlue} onPress={()=>this.delivery_status_update(item.orderId)} />
+            </View>)}
+         </View>
 
       </View>
 

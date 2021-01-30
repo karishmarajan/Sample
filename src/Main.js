@@ -39,6 +39,7 @@ import PickupDetailsView from './page/delivery_boy/PickupDetailsView';
 
 
 
+
 export default class Main extends Component {
 
 
@@ -78,6 +79,7 @@ export default class Main extends Component {
             <Scene  key="taskassigneddetails" component={TaskAssignedDetails} hideNavBar />
             <Scene  key="deliveryout" component={DeliveryOut} hideNavBar />
             <Scene  key="pickupdetailsview" component={PickupDetailsView} hideNavBar />
+            
           </Scene>
         </Router>
       </Root>
