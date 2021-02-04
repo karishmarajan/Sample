@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView,StyleSheet,Modal, AsyncStorage , Linking, Platform, FlatList, TouchableOpacity, Image } from 'react-native';
+import { ScrollView,StyleSheet,Modal, AsyncStorage , Linking, Platform, FlatList, TouchableOpacity, Image,BackHandler, } from 'react-native';
 import { Container, View, Button, Left, Right,Icon,Grid,Col,Text, Toast} from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
@@ -70,6 +70,8 @@ export default class DeliveryOutDetails extends React.Component {
     
     this.fetch_delivery_out_details(this.props.delivery_id);
     this.generate_invoice();
+
+
   }
 
 
@@ -263,7 +265,7 @@ console.log('********', JSON.stringify(formData));
       if (result.error != true) {
 
         console.log('Success:', JSON.stringify(result));
-        Toast.show({ text: result.message, type: 'success' });
+        Toast.show({ text: 'Uploaded success', type: 'success' });
        
 
       }
@@ -400,8 +402,6 @@ render(){
 </Modal>
 
 
-
-
 {/*//////////////////////////////////////////////////////////////////////////////////////////////////// */}
 
         <Navbar left={left} right={right} title="Delivery Details" />
@@ -484,7 +484,7 @@ render(){
 {/*////////////////////// Order Status Block //////////////////////////////////////////////// */}
 
 
-{this.state.delivery_details.deliveryStatus == 'ASSIGNED' && (<View>
+{this.state.delivery_details.deliveryStatus == 'ASSIGNED'  && (<View>
 <View style={{backgroundColor:Colors.white,flex:10,flexDirection:'row' ,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',}}>
               <CustomText  text={'Status Update'} textType={Strings.subtitle} flex={9} fontWeight={'bold'}/>
               </View>
@@ -500,11 +500,10 @@ render(){
       </View>
       </View>)}
 
-      
-
-
 
   {/*////////////////////// Proof Upload Block //////////////////////////////////////////////// */}
+
+  {(this.state.delivery_details.deliveryStatus == 'ASSIGNED' || this.state.delivery_details.deliveryStatus == 'DELIVERED') && (<View>
 
       <View style={{backgroundColor:Colors.white,flex:10,flexDirection:'row' ,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',}}>
               <CustomText  text={'Proof Upload & Receiver Signature'} textType={Strings.subtitle} flex={9} fontWeight={'bold'}/>
@@ -551,6 +550,8 @@ render(){
 
       </View>
 
+      </View>)}
+
 {/*////////////////////// Total & Payment Block //////////////////////////////////////////////// */}
 
 { this.state.delivery_details.payableByReceiver > 0 &&  (<View>
@@ -567,7 +568,7 @@ render(){
         <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.deliveryChargePackageDeduction   } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
  <Grid><Col><CustomText text={'Credit Allowed'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.deliveryChargeCreditDeduction } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
-       <Grid><Col><CustomText text={'Amount to Collect'} textType={Strings.subtext} color={Colors.black}/></Col>
+       <Grid><Col><CustomText text={'Total Amount'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.deliveryChargeAfterDeductions  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
        <Grid><Col><CustomText text={'Reciever Payment'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.payableByReceiver } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
@@ -592,9 +593,6 @@ render(){
 
       <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.deliveryfirst()} />
 
-
-
-      
           </View>
         </ScrollView>
         </Container>

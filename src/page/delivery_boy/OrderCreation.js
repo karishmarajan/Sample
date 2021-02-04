@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView,Picker,StyleSheet,BackHandler,Modal, AsyncStorage, TouchableOpacity, EdgeInsetsPropType } from 'react-native';
+import { ScrollView,Picker,StyleSheet,BackHandler,Modal, AsyncStorage, TouchableOpacity, EdgeInsetsPropType , DatePickerAndroid, TimePickerAndroid } from 'react-native';
 import { Container, View, Button, Left, Right,Icon,Text,Grid,Col,Badge, Row, DatePicker, Toast} from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
@@ -13,6 +13,8 @@ import { SECTION_MARGIN_TOP, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_V
 import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
 import CustomRadioButton from '../../component/CustomRadioButton';
+import CustomDatePicker from '../../component/CustomDatePicker';
+import DatePickerAndroidCustom from '../../component/DatePickerAndroidCustom';
 import moment from 'moment';
 import RNPrint from 'react-native-print';
 
@@ -82,7 +84,9 @@ export default class OrderCreation extends React.Component {
 
     sender_contact_person_name:'',
     sender_contact_person_no:'',
+    select_date:'',
     pickupdate:'',
+    pickup_date:'',
     pickuptime:'',
 
     countries_sender:[],
@@ -240,8 +244,89 @@ export default class OrderCreation extends React.Component {
       errorTextrec_canbedelivered: '',
       errorTextrec_proof: '',
       errorTextrec_notes: '',
+      fromDate:'',
+      toDate:'',
+     
+
+      selected_date:'',
+      selected_time:'',
+      hour3:'',
+      minute3:'',
+
+      save_clicked:false,
 
   };
+
+
+
+ ///////////////////////// Date Picker Function  /////////////////////////////////////////////////////////////////////////////////////////
+
+ async showPicker(mode) {
+  if (Platform.OS == "android") {
+    if (mode == 'time') {
+      try {
+          const { action, hour, minute } = await TimePickerAndroid.open({
+              hour,
+              minute,
+              is24Hour: false, // Will display '2 PM'
+              
+          });
+          if (action !== TimePickerAndroid.dismissedAction) {
+           
+            // setting AM/PM and hour to 12 by checking condition
+             let am_pm = 'AM';
+
+             if(hour>11){
+                     am_pm = 'PM';
+                    if(hour>12){
+              let hour1 = hour - 12;
+                this.setState({ hour3: this.make_two_digit(hour1), minute3: this.make_two_digit(minute) });
+                this.setTimeout(
+                this.setState({selected_time:`${this.state.hour3}:${this.state.minute3} ${am_pm}`})
+              ,100);
+              
+               }
+          }
+
+                  if(hour == 0){
+                     let hour1 = 12;
+                       this.setState({ hour3: this.make_two_digit(hour1), minute3: this.make_two_digit(minute) });
+                       const selectedTime = `${this.state.hour3}:${this.state.minute3} ${am_pm}` ;
+                       this.setState({selected_time:selectedTime})
+                    }
+
+                    this.setState({ hour3: this.make_two_digit(hour), minute3: this.make_two_digit(minute) });
+                    const selectedTime = `${this.state.hour3}:${this.state.minute3} ${am_pm}` ;
+                    this.setState({selected_time:selectedTime})
+          
+          }
+         
+
+      } catch ({ code, message }) {
+          console.warn('Cannot open time picker', message);
+      }
+
+  } else {
+      try {
+          const { action, year, month, day } = await DatePickerAndroid.open({
+              date: new Date(),
+              minDate: new Date(),
+          });
+          if (action !== DatePickerAndroid.dismissedAction) {
+
+                  this.setState({ year: year, month: this.make_two_digit(month+1), day: this.make_two_digit(day) });
+                  this.setState({selected_date:`${this.state.day}-${this.state.month}-${this.state.year}`});
+          }
+      } catch ({ code, message }) {
+          console.warn("Cannot open date picker", message);
+      }
+
+  }
+}
+}
+make_two_digit(d) {
+  return (parseInt(d) < 10 ? "0" : "") + d;
+}
 
   ///////////////////////////////////  componentDidMount function ///////////////////////////////////////////////////////////////////////////
 
@@ -250,7 +335,6 @@ export default class OrderCreation extends React.Component {
     this.fetch_country_list_sender()
     this.fetch_country_list_reciever()
     this.fetch_package_category_list()
-    this.fetch_package_subcategory_list()
     this.date_time_setting_function()
  
   }
@@ -271,6 +355,12 @@ verifyNumber(text) {
 
 verifyGmap(text) {
   var reg = /^http\:\/\/|https\:\/\/|Http\:\/\/|Https\:\/\/|www\.google$/;
+  return reg.test(text);
+}
+////////////////////////////////// Verify alphanumeric function //////////////////////////////////////////////////////////////////
+
+verifyAlphanumeric(text) {
+  var reg = /^[a-zA-Z0-9]*$/;
   return reg.test(text);
 }
 
@@ -304,14 +394,14 @@ verifyGmap(text) {
       return;
     }
     if(this.state.sender_pincode.length<6) {
-      this.setState({hasError: true, errorTextsender_pincode: 'must be 6 digit !'});
+      this.setState({hasError: true, errorTextsender_pincode: 'Minimum 6 digit !'});
       return;
     }
     if(this.state.sender_gmap==="") {
       this.setState({hasError: true, errorTextsender_gmap: 'Please fill !'});
       return;
     }
-    if(!this.verifyGmap(this.state.sender_gmap)) {
+    if(!this.verifyGmap((this.state.sender_gmap).trim())) {
       this.setState({hasError: true, errorTextsender_gmap: 'Please enter a valid link !'});
       return;
     }
@@ -329,7 +419,7 @@ verifyGmap(text) {
       return;
     }
     if(!this.verifyString((this.state.sender_localbody).replace(/ /g, '').trim())) {
-      this.setState({hasError: true, errorTextsender_localbody: 'Please enter a valid name !'});
+      this.setState({hasError: true, errorTextsender_localbody: 'Please enter a valid data !'});
       return;
     }
     if(this.state.sender_landmark==="") {
@@ -353,12 +443,13 @@ verifyGmap(text) {
       this.setState({hasError: true, errorTextsender_contactno: 'Please enter a valid number!'});
       return;
     }
+
+    if(this.state.sender_contact_person_no.length < 10) {
+      this.setState({hasError: true, errorTextsender_contactno: 'Minimum 10 digits !'});
+      return;
+    }
    
-   
-    // if(moment(this.state.pickupdate,false).isValid()) {
-    //   this.setState({hasError: true, errorTextpickupdate: 'Please use correct format eg: DD-MM-YYYY'});
-    //   return;
-    // }
+  
     this.setState({active_page:2});
 
   }
@@ -441,26 +532,25 @@ delivery_continue() {
     this.setState({hasError: true, errorTextrec_no: 'Please enter a valid number!'});
     return;
   }
+  if(this.state.recieverno.length < 10) {
+    this.setState({hasError: true, errorTextrec_no: 'Minimum 10 digits !'});
+    return;
+  }
   if(this.state.proof==="") {
     this.setState({hasError: true, errorTextrec_proof: 'Please fill !'});
     return;
   }
   if(!this.verifyString((this.state.proof).replace(/ /g, '').trim())) {
-    this.setState({hasError: true, errorTextrec_proof: 'Please enter a valid name !'});
+    this.setState({hasError: true, errorTextrec_proof: 'Please enter a valid data !'});
     return;
   }
-  // if(this.state.deliveredto==="") {
-  //   this.setState({hasError: true, errorTextrec_canbedelivered: 'Please fill !'});
-  //   return;
-  // }
+ 
+  if(this.state.deliveredto !=""){
   if(!this.verifyString((this.state.deliveredto).replace(/ /g, '').trim())) {
     this.setState({hasError: true, errorTextrec_canbedelivered: 'Please enter a valid name !'});
     return;
   }
-  // if(this.state.rec_notes==="") {
-  //   this.setState({hasError: true, errorTextrec_notes: 'Please fill !'});
-  //   return;
-  // }
+}
 
    this.create_order();
   
@@ -476,7 +566,7 @@ isSelected(no){
     this.setState({reciever_selected:false})
     this.setState({deliveryChargePaymentBySender:true})
 
-    this.setState({payment_name:this.state.sender_name , payment_phone:this.state.sender_no});
+    this.setState({payment_name:this.state.sender_contact_person_name , payment_phone:this.state.sender_contact_person_no});
 
   }
   if(no == 2){
@@ -511,6 +601,23 @@ if(no == 3){
 if(no == 4){
   this.setState({new_selected:true})
   this.setState({same_selected:false})
+
+  this.setState({sender_id:''});
+  this.setState({sender_name:''});
+  this.setState({sender_no:''});
+  this.setState({sender_address1:''});
+  this.setState({sender_address2:''});
+  this.setState({sender_email:''});
+  this.setState({sender_countrycode:''});
+  this.setState({sender_countryid:''});
+  this.setState({sender_country:''});
+  this.setState({sender_state:''});
+  this.setState({sender_district:''});
+  this.setState({sender_city:''});
+  this.setState({sender_localbody:''});
+  this.setState({sender_landmark:''});
+  this.setState({sender_gmap:''});
+  this.setState({sender_pincode:''});
   
 }
 if(no == 5){
@@ -534,6 +641,20 @@ if(no == 5){
 if(no == 6){
   this.setState({new_selected_delivery_address:true})
   this.setState({same_selected_delivery_address:false})
+
+  this.setState({rec_address1:''});
+  this.setState({rec_address2:''});
+  this.setState({rec_country_code:''});
+  this.setState({rec_country_id:''});
+  this.setState({rec_country:''});
+  this.setState({rec_state:''});
+  this.setState({rec_district:''});
+  this.setState({rec_city:''});
+  this.setState({rec_localbody:''});
+  this.setState({rec_landmark:''});
+  this.setState({rec_gmap:''});
+  this.setState({rec_pincode:''});
+
   
 }
 if(no == 7){
@@ -547,6 +668,9 @@ if(no == 7){
 if(no == 8){
   this.setState({new_selected_pickup:true})
   this.setState({same_selected_pickup:false})
+
+  this.setState({sender_contact_person_name:''});
+  this.setState({sender_contact_person_no:''});
   
 }
 
@@ -561,6 +685,9 @@ if(no == 9){
 if(no == 10){
   this.setState({new_selected_delivery:true})
   this.setState({same_selected_delivery:false})
+
+  this.setState({recievername:''});
+  this.setState({recieverno:''});
   
 }
 
@@ -592,7 +719,7 @@ if(no == 12){
     this.setState({pickuptime:time1});
 
     var date= moment().format('DD-MM-YYYY')
-    this.setState({pickupdate:date});
+    this.setState({pickup_date:date});
     
     var h=moment().hour();
     this.setState({hour:h});
@@ -642,7 +769,24 @@ if(no == 12){
       }
       else{
         console.log('Failed');
-        alert(result.message);
+      
+        this.setState({sender_details : ''})
+        this.setState({customer_name : ''})
+        this.setState({customer_no : ''})
+        this.setState({customer_email : ''})
+        this.setState({customer_country : ''})
+        this.setState({customer_pincode :''})
+        this.setState({customer_localbody : ''})
+        this.setState({customer_gmap : ''})
+        this.setState({customer_address1 : ''})
+        this.setState({customer_address2 : ''})
+        this.setState({customer_state : ''})
+        this.setState({customer_district : ''})
+        this.setState({customer_city : ''})
+        this.setState({customer_landmark : ''})
+        this.setState({customer_countrycode : ''})
+        this.setState({customer_countryid : ''})
+        Toast.show({ text: result.message, type: 'warning' });
       }
   })
    
@@ -833,9 +977,9 @@ fetch_city_list_reciever(state_id) {
 
   //////////////////////////////////// fetching package sub category function /////////////////////////////////////////////////////////////////////////////////
 
-  fetch_package_subcategory_list() {
+  fetch_package_subcategory_list(id) {
 
-    Api.fetch_request(PACKAGE_SUB_CATEGORY,'GET','')
+    Api.fetch_request(PACKAGE_SUB_CATEGORY+id+'/package-sub-category/active','GET','')
     .then(result => {
       if(result.error != true){
         console.log('Success:', JSON.stringify(result))
@@ -849,6 +993,7 @@ fetch_city_list_reciever(state_id) {
        this.setState({ package_subcategories });
       }
       else{
+        
         console.log('Failed');
       }
   })
@@ -866,7 +1011,7 @@ create_order() {
       "createdAtOfficeId": 0,
       "creatorId": 0,
       "creatorUserType": "DELIVERY_AGENT",
-      "customerId": this.state.sender_id,
+      "customerId": this.state.customer_id,
       "delivery": {
         "addressLine1": this.state.rec_address1,
         "addressLine2": this.state.rec_address2,
@@ -887,6 +1032,7 @@ create_order() {
       },
       "deliveryType": this.state.delivery_type,
       "isManualPickup": true,
+      "isPickupRequired": true,
       "pickup": {
         "addressLine1": this.state.sender_address1,
         "addressLine2": this.state.sender_address2,
@@ -899,8 +1045,8 @@ create_order() {
         "gmapLink": this.state.sender_gmap,
         "localBodyType": this.state.sender_localbody,
         "notesToCourierBoy": this.state.sender_notes,
-        "pickupDate": this.state.pickupdate,
-        "pickupTime": this.state.pickuptime,
+        "pickupDate": this.state.selected_date,
+        "pickupTime": this.state.selected_time,
         "pincode": this.state.sender_pincode,
         "state": this.state.sender_state
       }
@@ -1097,14 +1243,12 @@ generate_invoice() {
  
  generate_cod() {
 
-  // if(this.state.gst_no==="") {
-  //   this.setState({hasError: true, errorTextgst_no: 'Please fill !'});
-  //   return;
-  // }
-  if(!this.verifyNumber((this.state.gst_no).trim())) {
-    this.setState({hasError: true, errorTextgst_no: 'Please enter a valid number!'});
+  if(this.state.gst_no !="") {
+  if(!this.verifyAlphanumeric((this.state.gst_no).trim())) {
+    this.setState({hasError: true, errorTextgst_no: 'Please enter a valid GST no!'});
     return;
   }
+}
   if(this.state.invoice_des==="") {
     this.setState({hasError: true, errorTextinvoice_des: 'Please fill !'});
     return;
@@ -1150,7 +1294,7 @@ generate_invoice() {
 
          this.setState({final_cod_charge:result.payload.finalCodCharge})
           console.log('Success:', JSON.stringify(result));
-          // alert(result.message)
+         
 
         }
         else {
@@ -1182,14 +1326,18 @@ payer_payment() {
     this.setState({hasError: true, errorTextpayment_phone: 'Please enter a valid number!'});
     return;
   }
+  if(this.state.payment_phone.length < 10) {
+    this.setState({hasError: true, errorTextpayment_phone: 'Minimum 10 digit !'});
+    return;
+  }
   if(this.state.payment_location==="") {
     this.setState({hasError: true, errorTextpayment_location: 'Please fill !'});
     return;
   }
-  if(this.state.payment_comment==="") {
-    this.setState({hasError: true, errorTextpayment_comment: 'Please fill !'});
-    return;
-  }
+  // if(this.state.payment_comment==="") {
+  //   this.setState({hasError: true, errorTextpayment_comment: 'Please fill !'});
+  //   return;
+  // }
 
     let body = {
       "deliveryChargePaymentBySender": this.state.deliveryChargePaymentBySender,
@@ -1210,6 +1358,7 @@ payer_payment() {
           console.log('Success:', JSON.stringify(result));
         
           this.setState({ payments: result.payload })
+          this.setState({ save_clicked:true })
           this.setState({sender_payment:JSON.stringify(result.payload.payableBySender)})
           this.setState({receiver_payment:JSON.stringify(result.payload.payableByReceiver)})
 
@@ -1480,7 +1629,7 @@ render(){
         {!!this.state.errorTextsender_contactname && (<Text style={{color: 'red'}}>{this.state.errorTextsender_contactname}</Text>)}
         
         <CustomText text={'Contact Person Number'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <CustomInput keyboardType={"phone-pad"} borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({sender_contact_person_no: text, errorTextsender_contactno:""})} value={this.state.sender_contact_person_no}/>
+        <CustomInput keyboardType={"phone-pad"} maxLength={12} borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({sender_contact_person_no: text, errorTextsender_contactno:""})} value={this.state.sender_contact_person_no}/>
         {!!this.state.errorTextsender_contactno && (<Text style={{color: 'red'}}>{this.state.errorTextsender_contactno}</Text>)}
         
         </View>)}
@@ -1488,27 +1637,48 @@ render(){
         <CustomText text={'Notes to Courier Boy'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({sender_notes: text})} value={this.state.sender_notes}/>
        
-        <CustomText text={'Pickup Date'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+        {/* <CustomText text={'Pickup Date'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({pickupdate: text , errorTextpickupdate:""})} value={this.state.pickupdate}/>
-        {!!this.state.errorTextpickupdate && (<Text style={{color: 'red'}}>{this.state.errorTextpickupdate}</Text>)}
+        {!!this.state.errorTextpickupdate && (<Text style={{color: 'red'}}>{this.state.errorTextpickupdate}</Text>)} */}
        
+        {/* <CustomText text={'Pickup Time'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+        <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({pickuptime: text})} value={this.state.pickuptime}/> */}
+
+<CustomText text={'Pickup Date'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+        <TouchableOpacity onPress={() => this.showPicker("date")}>
+                                    <DatePickerAndroidCustom
+                                        // fontSize={tab_title2}
+                                        // iconSize={this.state.Icon}
+                                        // width={tab_width / 1.4}
+                                        backgroundColor={'#fff'}
+                                        elevation={8}
+                                        // height={tab_input_size}
+                                        mode={"date"}
+                                        date={this.state.selected_date}
+                                        place_holder={this.state.pickup_date}
+                                        
+                                    />
+                                    
+                                    </TouchableOpacity>
+
+
         <CustomText text={'Pickup Time'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({pickuptime: text})} value={this.state.pickuptime}/>
-        {/* <DatePicker
-            defaultDate={this.state.pickupdate}
-            minimumDate={today}
-            maximumDate={new Date(2022, 12, 31)}
-            locale={"en"}
-            timeZoneOffsetInMinutes={undefined}
-            modalTransparent={false}
-            animationType={"fade"}
-            androidMode={"default"}
-            placeHolderText="Select date"
-            textStyle={{ color: "black" }}
-            placeHolderTextStyle={{ color: "black" }}
-            onDateChange={this.setDate}
-            // chosenDate={this.state.pickupdate}
-          /> */}
+         <TouchableOpacity onPress={() => this.showPicker("time")}>
+                                    <DatePickerAndroidCustom
+                                        // fontSize={tab_title2}
+                                        // iconSize={this.state.Icon}
+                                        // width={tab_width / 1.4}
+                                        backgroundColor={'#fff'}
+                                        elevation={8}
+                                        // height={tab_input_size}
+                                        mode={"time"}
+                                        date={this.state.selected_time}
+                                        place_holder={this.state.pickuptime}
+                                        
+                                    />
+                                    </TouchableOpacity>
+
+        
          
 
 </View>
@@ -1656,7 +1826,7 @@ render(){
           {!!this.state.errorTextrec_name && (<Text style={{color: 'red'}}>{this.state.errorTextrec_name}</Text>)}
 
           <CustomText text={'Receiver Phone Number'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({recieverno: text , errorTextrec_no:""})} value={this.state.recieverno} />
+          <CustomInput flex={1} keyboardType={"phone-pad"} maxLength={12} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({recieverno: text , errorTextrec_no:""})} value={this.state.recieverno} />
           {!!this.state.errorTextrec_no && (<Text style={{color: 'red'}}>{this.state.errorTextrec_no}</Text>)}
 
 
@@ -1723,10 +1893,10 @@ render(){
          {!!this.state.errorTextshipment_distance && (<Text style={{color: 'red'}}>{this.state.errorTextshipment_distance}</Text>)} */}
   
         <CustomText text={'Shipment Category'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <CustomDropdown data={this.state.package_categories} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => {this.setState({Shipment_category_id:data[index]['id']}) }} />
+        <CustomDropdown data={this.state.package_categories} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => {this.setState({Shipment_category_id:data[index]['id']}); this.fetch_package_subcategory_list(data[index]['id']); }} />
         {!!this.state.errorTextshipment_category_id && (<Text style={{color: 'red'}}>{this.state.errorTextshipment_category_id}</Text>)}
 
-        <CustomText text={'Shipment Type'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+        <CustomText text={'Shipment Sub-category'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomDropdown data={this.state.package_subcategories} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => {this.setState({Shipment_subcategory_id:data[index]['id']}) }} />
         {!!this.state.errorTextshipment_subcategory_id && (<Text style={{color: 'red'}}>{this.state.errorTextshipment_subcategory_id}</Text>)}
 
@@ -1769,19 +1939,19 @@ render(){
         <CustomRadioButton title={'COD'} selectedColor={Colors.darkSkyBlue} selected={true}/>
 
         <CustomText text={'Reciever GST Number'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({gst_no: text})} value={this.state.gst_no} />
+          <CustomInput flex={1}  borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({gst_no: text, errorTextgst_no:''})} value={this.state.gst_no} />
           {!!this.state.errorTextgst_no && (<Text style={{color: 'red'}}>{this.state.errorTextgst_no}</Text>)}
 
           <CustomText text={'Invoice Description'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({invoice_des: text})} value={this.state.invoice_des} />
+          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({invoice_des: text, errorTextinvoice_des:''})} value={this.state.invoice_des} />
           {!!this.state.errorTextinvoice_des && (<Text style={{color: 'red'}}>{this.state.errorTextinvoice_des}</Text>)}
 
           <CustomText text={'Product Cost'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({product_cost: text})} value={this.state.product_cost} />
+          <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({product_cost: text , errorTextproduct_cost:''})} value={this.state.product_cost} />
           {!!this.state.errorTextproduct_cost && (<Text style={{color: 'red'}}>{this.state.errorTextproduct_cost}</Text>)}
 
           <CustomText text={'COD Credit balance'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({cod_credit_blnc: text})} value={this.state.cod_credit_blnc} />
+          <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({cod_credit_blnc: text, errorTextcod_credit_blnc:''})} value={this.state.cod_credit_blnc} />
           {!!this.state.errorTextcod_credit_blnc && (<Text style={{color: 'red'}}>{this.state.errorTextcod_credit_blnc}</Text>)}
 
           <CustomButton title={'Generate COD Invoice'} text_color={Colors.darkSkyBlue} borderColor={Colors.darkSkyBlue} borderWidth={1} backgroundColor={Colors.white} onPress={()=>this.generate_cod()}/>
@@ -1810,7 +1980,7 @@ render(){
           {!!this.state.errorTextpayment_name && (<Text style={{color: 'red'}}>{this.state.errorTextpayment_name}</Text>)}
          
           <CustomText text={'Contact number'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({payment_phone: text,errorTextpayment_phone:''})} value={this.state.payment_phone} />
+          <CustomInput flex={1} keyboardType={"phone-pad"} maxLength={12} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({payment_phone: text,errorTextpayment_phone:''})} value={this.state.payment_phone} />
           {!!this.state.errorTextpayment_phone && (<Text style={{color: 'red'}}>{this.state.errorTextpayment_phone}</Text>)}
          
           </View>)}
@@ -1820,7 +1990,7 @@ render(){
           {!!this.state.errorTexterrorTextpayment_name && (<Text style={{color: 'red'}}>{this.state.errorTextpayment_name}</Text>)}
          
           <CustomText text={'Contact number'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({payment_phone: text,errorTextpayment_phone:''})} value={this.state.payment_phone} />
+          <CustomInput flex={1} keyboardType={"phone-pad"} maxLength={12} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({payment_phone: text,errorTextpayment_phone:''})} value={this.state.payment_phone} />
           {!!this.state.errorTextpayment_phone && (<Text style={{color: 'red'}}>{this.state.errorTextpayment_phone}</Text>)}
          
           </View>)}
@@ -1834,9 +2004,9 @@ render(){
           <CustomText text={'Comment'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({payment_comment: text,errorTextpayment_comment:''})} value={this.state.payment_comment} />
           {!!this.state.errorTextpayment_comment && (<Text style={{color: 'red'}}>{this.state.errorTextpayment_comment}</Text>)}
-
+{this.state.save_clicked === false && (<View>
           <CustomButton title={'Save'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.payer_payment()} />
-
+          </View>)}
           
           <CustomText text={'Payment for Sender'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} value={this.state.sender_payment} />

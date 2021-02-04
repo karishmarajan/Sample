@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { AsyncStorage, BackHandler,Image, ToastAndroid } from 'react-native';
 import { ScrollView,StyleSheet } from 'react-native';
-import { Container, View,Text, } from 'native-base';
+import { Container, View,Text,Toast } from 'native-base';
 import { Actions, Scene } from 'react-native-router-flux';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 
@@ -90,12 +90,12 @@ componentWillUnmount() {
           <CustomText text={'Login'} textType={Strings.titlelarge}/>
 
           <View  style={{marginTop:TEXT_FIELD_HIEGHT}}>
-            <CustomInput keyboardType={'email-address'} placeholder={'Username'} icon_name={'ios-person'} icon_color={Colors.placeholderTextColor} icon_fontsize={FOURTH_FONT} placeholderTextColor={Colors.placeholderTextColor} fontSize={FOURTH_FONT} showIcon={true} height={LOGIN_FIELD_HEIGHT} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop_text={FIELD_MARGIN_TOP} onChangeText={(text) => this.setState({username: text})} value={this.state.username}  flex={1}/>
+            <CustomInput  placeholder={'Username'} icon_name={'ios-person'} icon_color={Colors.placeholderTextColor} icon_fontsize={FOURTH_FONT} placeholderTextColor={Colors.placeholderTextColor} fontSize={FOURTH_FONT} showIcon={true} height={LOGIN_FIELD_HEIGHT} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop_text={FIELD_MARGIN_TOP} onChangeText={(text) => this.setState({username: text, errorTextuser:''})} value={this.state.username}  flex={1}/>
             {!!this.state.errorTextuser && (<Text style={{color: 'red'}}>{this.state.errorTextuser}</Text>)}
           </View>
          
           <View  style={styles.input}>
-            <CustomInput secureTextEntry={true} placeholder={'Password'} icon_name={'ios-lock'} icon_color={Colors.placeholderTextColor} icon_fontsize={FOURTH_FONT} placeholderTextColor={Colors.placeholderTextColor} fontSize={FOURTH_FONT} showIcon={true} height={LOGIN_FIELD_HEIGHT} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop_text={FIELD_MARGIN_TOP} onChangeText={(text) => this.setState({password: text})} value={this.state.password} flex={1}/>
+            <CustomInput secureTextEntry={true} placeholder={'Password'} icon_name={'ios-lock'} icon_color={Colors.placeholderTextColor} icon_fontsize={FOURTH_FONT} placeholderTextColor={Colors.placeholderTextColor} fontSize={FOURTH_FONT} showIcon={true} height={LOGIN_FIELD_HEIGHT} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop_text={FIELD_MARGIN_TOP} onChangeText={(text) => this.setState({password: text, errorTextpass:''})} value={this.state.password} flex={1}/>
             {!!this.state.errorTextpass && (<Text style={{color: 'red'}}>{this.state.errorTextpass}</Text>)}
           </View>
 
@@ -111,12 +111,12 @@ componentWillUnmount() {
 
   login() {
 
-    if(this.state.username===""||this.state.password==="") {
-      this.setState({hasError: true, errorTextuser: 'Please fill all fields !' , errorTextpass: 'Please fill all fields !'} );
+    if(this.state.username==="") {
+      this.setState({hasError: true, errorTextuser: 'Please fill  !' });
       return;
     }
-    if(this.state.password.length < 6) {
-      this.setState({hasError: true, errorTextpass: 'Passwords must contains at least 6 characters !'});
+    if(this.state.password==="") {
+      this.setState({hasError: true, errorTextpass: 'Please fill  !'} );
       return;
     }
 
@@ -153,7 +153,7 @@ componentWillUnmount() {
       }
       else{
         console.log('Failed');
-        alert("Login Failed ! Invalid username or password ")
+        Toast.show({ text: "Login Failed ! Invalid username or password", type: 'warning' });
         Actions.login();
       }
     })

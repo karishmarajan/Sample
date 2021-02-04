@@ -7,7 +7,7 @@ import Dimen from '../constants/Dimen';
 import CustomButton from './CustomButton';
 import moment from 'moment';
 
-export default class DatePicker extends Component {
+export default class CustomDatePicker extends Component {
     constructor(props) {
         super(props);
         this.state = {
