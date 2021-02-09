@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ScrollView,StyleSheet,Modal,Linking } from 'react-native';
-import { Container, View, Button, Left, Right,Icon,Grid,Col,} from 'native-base';
+import { Container, View, Button, Left, Right,Icon,Grid,Col, Toast} from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
 import Navbar from '../../component/Navbar';
@@ -97,13 +97,14 @@ export default class PickupDetails extends React.Component {
   
            this.setState({final_cod_charge:result.payload.finalCodCharge})
             console.log('Success:', JSON.stringify(result));
-            alert(result.message)
+            Toast.show({ text: result.message, type: 'success' });
+
            
   
           }
           else {
             console.log('Failed');
-            alert(result.message)
+            Toast.show({ text: result.message, type: 'warning' });
           }
         })
   
@@ -148,14 +149,14 @@ cash_payment() {
       if (result.error != true) {
 
         console.log('Success:', JSON.stringify(result));
-        alert(result.message)
+        Toast.show({ text: result.message, type: 'success' });
 
-        Actions.dashboard();
+        Actions.pickup();
 
       }
       else {
         console.log('Failed');
-        alert(result.message)
+        Toast.show({ text: result.message, type: 'warning' });
       }
     })
 }
@@ -283,6 +284,8 @@ render(){
 
 {/*///////////////////////////// Order Status Block //////////////////////////////////////////////// */}
 
+{this.state.pickup_details.pickupStatus == 'ASSIGNED' && (<View>
+
 <View style={{backgroundColor:Colors.white,flex:10,flexDirection:'row' ,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',}}>
               <CustomText  text={'Status Update'} textType={Strings.subtitle} flex={9} fontWeight={'bold'}/>
               <Icon name={'md-arrow-dropdown'} style={{color:Colors.black,fontSize:FOURTH_FONT,flex:1,}}/>
@@ -297,10 +300,12 @@ render(){
       <CustomText text={'Reason/Remark'} textType={Strings.maintext}/>
       <CustomDropdown data={myArray1} height={TEXT_FIELD_HIEGHT}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} onChangeValue={(value,index,data)=>{if (index == (data.length)-1){this.setState({modal_visible: true});}else{this.setState({reason_val:value})}}} value={this.state.reason_val}/>
       </View>)}
-      </View>
-
-
       <CustomButton title={'Update'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>this.pickup_update()} />
+      </View>
+      </View>)}
+
+
+     
 
 
 
@@ -343,7 +348,7 @@ render(){
       <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>this.cash_payment()} />
       </View>)}
 
-    
+      <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>Actions.pickup()} />
 
           </View>
         </ScrollView>

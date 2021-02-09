@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { ScrollView,StyleSheet,Modal, AsyncStorage , Linking, Platform, FlatList, TouchableOpacity } from 'react-native';
-import { Container, View, Button, Left, Right,Icon,Grid,Col,Text} from 'native-base';
+import { ScrollView,StyleSheet,Modal, AsyncStorage , Linking, Platform, FlatList, TouchableOpacity, Image } from 'react-native';
+import { Container, View, Button, Left, Right,Icon,Grid,Col,Text, Toast} from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
 import Navbar from '../../component/Navbar';
@@ -15,6 +15,7 @@ import session,{KEY} from '../../session/SessionManager';
 import Api from '../../component/Fetch';
 import { DELIVERY_OUT_DETAILS , DELIVERY_CHARGE ,DELIVERY_STATUS_UPDATE, DELIVERY_ORDER_PAYMENT, DELIVERY_PROOF_UPLOAD} from '../../constants/Api';
 import { RNCamera } from 'react-native-camera';
+import RNFetchBlob from 'rn-fetch-blob';
 
 
 const myArray=[{name:"Select a Status" , value:"Select a Status"},{name:"DELIVERED" , value:"DELIVERED"},{name:"ATTEMPT_FAILED" , value:"ATTEMPT FAILED"},{name:"UNVISITED" , value:"UNVISITED"}];
@@ -56,6 +57,12 @@ export default class DeliveryOutDetails extends React.Component {
     errorTextamount_recieved:'',
     hasError:false,
 
+    modal_proof:false,
+    modal_signature:false,
+
+    proof_img:'',
+    sign_img:'',
+
   };
 
 
@@ -65,6 +72,7 @@ export default class DeliveryOutDetails extends React.Component {
     this.generate_invoice();
   }
 
+
 ///////////////////////////// Taking image function ////////////////////////////////////////////////////////////////////////////////
 
   takePicture = async function (camera) {
@@ -73,7 +81,20 @@ export default class DeliveryOutDetails extends React.Component {
     this.setState({ capture_url: data.uri })
     //  eslint-disable-next-line
     console.log(this.state.capture_url);
+
+    this.setState({ proof_img:this.state.capture_url , modal_proof:false})
     // this.punch();
+};
+
+takePicture_sign = async function (camera) {
+  const options = { quality: 0.5, base64: true };
+  const data = await camera.takePictureAsync(options);
+  this.setState({ capture_url: data.uri })
+  //  eslint-disable-next-line
+  console.log(this.state.capture_url);
+
+  this.setState({ sign_img:this.state.capture_url , modal_signature:false})
+  // this.punch();
 };
 
 
@@ -152,16 +173,12 @@ generate_invoice() {
     .then(result => {
 
       if (result.error != true) {
-
-      // this.setState({final_cod_charge:result.payload.finalCodCharge})
         console.log('Success:', JSON.stringify(result));
-        alert(result.message)
-       
-
+        Toast.show({ text: result.message, type: 'success' });
       }
       else {
         console.log('Failed');
-        alert(result.message)
+        Toast.show({ text: result.message, type: 'warning' });
       }
     })
 
@@ -208,14 +225,12 @@ delivery_cash_payment() {
       if (result.error != true) {
 
         console.log('Success:', JSON.stringify(result));
-        // alert(result.message)
-
-        Actions.dashboard();
+        Toast.show({ text: result.message, type: 'success' });
 
       }
       else {
         console.log('Failed');
-        // alert(result.message)
+        Toast.show({ text: result.message, type: 'warning' });
       }
     })
 }
@@ -224,23 +239,41 @@ delivery_cash_payment() {
  
 delivery_proof_upload() {
 
+  if (this.state.proof_img != '') {
+    var filename = this.state.proof_img.substring(this.state.proof_img.lastIndexOf('/') + 1, this.state.proof_img.length);
+}
 
-  Api.fetch_request(DELIVERY_PROOF_UPLOAD+this.state.delivery_details.orderId+'/'+proof-produced, 'PUT', '', JSON.stringify(body))
+let document_image_proof = this.state.proof_img != '' ? { name: 'proofProduced', filename: filename, type: 'image/jpeg', data: Platform.OS == 'android' ? RNFetchBlob.wrap(this.state.proof_img) : RNFetchBlob.wrap(this.state.proof_img.replace('file:///', '')) } : { name: 'image', data: '' };
+
+if (this.state.sign_img != '') {
+  var filename1 = this.state.sign_img.substring(this.state.sign_img.lastIndexOf('/') + 1, this.state.sign_img.length);
+}
+
+let document_image_sign = this.state.sign_img != '' ? { name: 'receiverSignature', filename: filename1, type: 'image/jpeg', data: Platform.OS == 'android' ? RNFetchBlob.wrap(this.state.sign_img) : RNFetchBlob.wrap(this.state.sign_img.replace('file:///', '')) } : { name: 'image', data: '' };
+
+let formData = [];
+formData.push(document_image_proof);
+formData.push(document_image_sign);
+
+console.log('********', JSON.stringify(formData));
+
+  Api.fetch_request(DELIVERY_PROOF_UPLOAD+this.state.delivery_details.orderId+'/proof-produced', 'PUT', { "Content-Type": "multipart/form-data" }, formData)
     .then(result => {
-
+      setTimeout(() => {
       if (result.error != true) {
 
         console.log('Success:', JSON.stringify(result));
-        alert(result.message)
+        Toast.show({ text: result.message, type: 'success' });
        
 
       }
       else {
         console.log('Failed');
-        alert(result.message)
+        Toast.show({ text: 'Someting went wrong', type: 'warning' });
       }
-    })
 
+    })
+ }, 100);
 }
  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -291,6 +324,83 @@ render(){
         </View>
     </View>
 </Modal>
+
+{/* ////////////////////////////////////// Proof modal //////////////////////////////////////////////////////////////////////////// */}
+
+<Modal visible={this.state.modal_proof} supportedOrientations={['landscape']} transparent>
+  
+
+                        <RNCamera
+                            style={styles.preview}
+                            type={RNCamera.Constants.Type.back}
+                            flashMode={RNCamera.Constants.FlashMode.on}
+                            androidCameraPermissionOptions={{
+                                title: 'Permission to use camera',
+                                message: 'We need your permission to use your camera',
+                                buttonPositive: 'Ok',
+                                buttonNegative: 'Cancel',
+                            }}
+                            androidRecordAudioPermissionOptions={{
+                                title: 'Permission to use audio recording',
+                                message: 'We need your permission to use your audio',
+                                buttonPositive: 'Ok',
+                                buttonNegative: 'Cancel',
+                            }}
+                        >
+                            {({ camera, status, recordAudioPermissionStatus }) => {
+                                if (status !== 'READY') return <PendingView />;
+                                return (
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                                      
+                                        <TouchableOpacity onPress={() => this.takePicture(camera)} style={styles.capture}>
+                                            <Text style={{ fontSize: 14, }}> Click here </Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                );
+                            }}
+                        </RNCamera>
+
+</Modal>
+
+{/* ////////////////////////////////////// Signature modal //////////////////////////////////////////////////////////////////////////// */}
+
+<Modal visible={this.state.modal_signature} supportedOrientations={['landscape']} transparent>
+  
+
+                        <RNCamera
+                            style={styles.preview}
+                            type={RNCamera.Constants.Type.back}
+                            flashMode={RNCamera.Constants.FlashMode.on}
+                            androidCameraPermissionOptions={{
+                                title: 'Permission to use camera',
+                                message: 'We need your permission to use your camera',
+                                buttonPositive: 'Ok',
+                                buttonNegative: 'Cancel',
+                            }}
+                            androidRecordAudioPermissionOptions={{
+                                title: 'Permission to use audio recording',
+                                message: 'We need your permission to use your audio',
+                                buttonPositive: 'Ok',
+                                buttonNegative: 'Cancel',
+                            }}
+                        >
+                            {({ camera, status, recordAudioPermissionStatus }) => {
+                                if (status !== 'READY') return <PendingView />;
+                                return (
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                                      
+                                        <TouchableOpacity onPress={() => this.takePicture_sign(camera)} style={styles.capture}>
+                                            <Text style={{ fontSize: 14, }}> Click here </Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                );
+                            }}
+                        </RNCamera>
+
+</Modal>
+
+
+
 
 {/*//////////////////////////////////////////////////////////////////////////////////////////////////// */}
 
@@ -373,6 +483,8 @@ render(){
 
 {/*////////////////////// Order Status Block //////////////////////////////////////////////// */}
 
+
+{this.state.delivery_details.deliveryStatus == 'ASSIGNED' && (<View>
 <View style={{backgroundColor:Colors.white,flex:10,flexDirection:'row' ,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',}}>
               <CustomText  text={'Status Update'} textType={Strings.subtitle} flex={9} fontWeight={'bold'}/>
               </View>
@@ -384,10 +496,11 @@ render(){
    {this.state.status == 'ATTEMPT_FAILED' && (<View><CustomText text={'Reason/Remark'} textType={Strings.maintext}/>
       <CustomDropdown data={myArray1} height={TEXT_FIELD_HIEGHT}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} onChangeValue={(value,index,data)=>{if (index == (data.length)-1){this.setState({modal_visible: true});}}} value={this.state.reason_val}/>
       </View>)}
-      
-      </View>
-
       <CustomButton title={'Update'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>this.delivery_status_update()} />
+      </View>
+      </View>)}
+
+      
 
 
 
@@ -396,68 +509,47 @@ render(){
       <View style={{backgroundColor:Colors.white,flex:10,flexDirection:'row' ,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',}}>
               <CustomText  text={'Proof Upload & Receiver Signature'} textType={Strings.subtitle} flex={9} fontWeight={'bold'}/>
               </View>
-          <View style={{marginTop:SECTION_MARGIN_TOP}}>
 
 
 
-<View style={styles.container}>
-
-                        <RNCamera
-                            style={styles.preview}
-                            type={RNCamera.Constants.Type.back}
-                            flashMode={RNCamera.Constants.FlashMode.on}
-                            androidCameraPermissionOptions={{
-                                title: 'Permission to use camera',
-                                message: 'We need your permission to use your camera',
-                                buttonPositive: 'Ok',
-                                buttonNegative: 'Cancel',
-                            }}
-                            androidRecordAudioPermissionOptions={{
-                                title: 'Permission to use audio recording',
-                                message: 'We need your permission to use your audio',
-                                buttonPositive: 'Ok',
-                                buttonNegative: 'Cancel',
-                            }}
-                        >
-                            {({ camera, status, recordAudioPermissionStatus }) => {
-                                if (status !== 'READY') return <PendingView />;
-                                return (
-                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
-                                      
-                                        <TouchableOpacity onPress={() => this.takePicture(camera)} style={styles.capture}>
-                                            <Text style={{ fontSize: 14, }}> Punch here </Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                );
-                            }}
-                        </RNCamera>
-
-                    </View>
-                    </View>
-
-
-{/* <View style={{ backgroundColor:Colors.white,flexGrow:1,paddingLeft:MAIN_VIEW_PADDING,paddingRight:MAIN_VIEW_PADDING,paddingBottom:MAIN_VIEW_PADDING}}>
+<View style={{ backgroundColor:Colors.white,flexGrow:1,paddingLeft:MAIN_VIEW_PADDING,paddingRight:MAIN_VIEW_PADDING,paddingBottom:MAIN_VIEW_PADDING}}>
 
           <CustomText text={'Proof Upload'} textType={Strings.subtext} color={Colors.black}/>
 
-          <View style={{height:ADDRESS_FIELD_HEIGHT,backgroundColor:Colors.lightBackgroundColor,borderColor:Colors.lightborderColor,borderWidth:0.5,alignItems:'center',flex:1}}>
+          <View style={{height:ADDRESS_FIELD_HEIGHT,backgroundColor:Colors.lightBackgroundColor,borderColor:Colors.lightborderColor,borderWidth:0.5,alignItems:'center'}}>
+          <Image
+              style={{height:'100%',width:'100%',resizeMode:'contain'}}
+              source={{uri: this.state.proof_img ? this.state.proof_img : ''}}
+            />
+          {/* <Button onPress={() => this.setState({modal_proof:true})} transparent>
               <Icon name='ios-camera' style={{fontSize:CAMERA_SIZE,flex:1,marginTop:SECTION_MARGIN_TOP}}/>
+              </Button> */}
           </View>
-          <CustomButton title={'Capture Customer Photo'} text_color={Colors.darkSkyBlue} backgroundColor={Colors.white} borderColor={Colors.darkSkyBlue} borderWidth={1} marginTop={1} fontSize={14} />
+          <CustomButton title={'Capture Proof Photo'} text_color={Colors.darkSkyBlue} backgroundColor={Colors.white} borderColor={Colors.darkSkyBlue} borderWidth={1} marginTop={1} fontSize={14} onPress={() => this.setState({modal_proof:true})} />
+
 
           <View style={{height:ADDRESS_FIELD_HEIGHT,backgroundColor:Colors.lightBackgroundColor,borderColor:Colors.lightborderColor,borderWidth:0.5,alignItems:'center',flex:1,marginTop:SECTION_MARGIN_TOP}}>
+          <Image
+              style={{height:'100%',width:'100%',resizeMode:'contain'}}
+              source={{uri: this.state.sign_img ? this.state.sign_img : ''}}
+            />
+          {/* <Button onPress={() => this.setState({modal_signature:true})} transparent>
               <Icon name='ios-camera' style={{fontSize:CAMERA_SIZE,flex:1,marginTop:SECTION_MARGIN_TOP}}/>
+              </Button> */}
           </View>
-          <CustomButton title={'Capture ID Card'} text_color={Colors.darkSkyBlue} backgroundColor={Colors.white} borderColor={Colors.darkSkyBlue} borderWidth={1} marginTop={1} fontSize={14} />
+          <CustomButton title={'Capture Signature'} text_color={Colors.darkSkyBlue} backgroundColor={Colors.white} borderColor={Colors.darkSkyBlue} borderWidth={1} marginTop={1} fontSize={14} onPress={() => this.setState({modal_signature:true})} />
          
-          <View style={{height:ADDRESS_FIELD_HEIGHT,backgroundColor:Colors.lightBackgroundColor,borderColor:Colors.lightborderColor,borderWidth:0.5,alignItems:'center',flex:1,marginTop:SECTION_MARGIN_TOP}}>
+          {/* <View style={{height:ADDRESS_FIELD_HEIGHT,backgroundColor:Colors.lightBackgroundColor,borderColor:Colors.lightborderColor,borderWidth:0.5,alignItems:'center',flex:1,marginTop:SECTION_MARGIN_TOP}}>
               <Icon name='ios-camera' style={{fontSize:CAMERA_SIZE,flex:1,marginTop:SECTION_MARGIN_TOP}}/>
           </View>
           <CustomButton title={'Capture Signature'} text_color={Colors.darkSkyBlue} backgroundColor={Colors.white} borderColor={Colors.darkSkyBlue} borderWidth={1} marginTop={1} fontSize={14} />
 
           <CustomText  text={'Receiver Signature'} textType={Strings.subtext} color={Colors.black} mTop={SECTION_MARGIN_TOP}/>
-<View style={{ backgroundColor:Colors.signBackgroundColor,height:SIGNATURE_VIEW_HEIGHT,}}></View>
-      </View> */}
+<View style={{ backgroundColor:Colors.signBackgroundColor,height:SIGNATURE_VIEW_HEIGHT,}}></View> */}
+
+<CustomButton title={'Upload'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.delivery_proof_upload()} />
+
+      </View>
 
 {/*////////////////////// Total & Payment Block //////////////////////////////////////////////// */}
 
@@ -493,11 +585,12 @@ render(){
       <Grid><Col><CustomText text={'Balance Amount'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><CustomInput flex={1} value={this.state.balance_amount} /></Col></Grid>
        </View>
-
+       <CustomButton title={'Update'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.delivery_cash_payment()} />
       </View>
+     
       </View>)}
 
-      <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.delivery_cash_payment()} />
+      <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.deliveryfirst()} />
 
 
 

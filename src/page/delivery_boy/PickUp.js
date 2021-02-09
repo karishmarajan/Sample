@@ -154,7 +154,7 @@ export default class PickUp extends React.Component {
          this.setState({final_cod_charge:result.payload.finalCodCharge})
           console.log('Success:', JSON.stringify(result));
           alert(result.message)
-          this.fetch_pickup_orders(Strings.pending)
+          this.fetch_pickup_orders(this.state.status_type)
         
 
         }
