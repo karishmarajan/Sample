@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { ScrollView, StyleSheet, AsyncStorage, TouchableOpacity, Linking, Platform, FlatList } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 // import Icon from 'react-native-vector-icons/FontAwesome';
-import { Container, Header, Button, Left, Icon, Right, View, Badge, Body } from 'native-base';
+import { Container, Header, Button, Left, Icon, Right, View, Badge, Body, Toast } from 'native-base';
 
 import Navbar from '../../component/Navbar';
 import Colors from '../../constants/Colors';
@@ -50,10 +50,11 @@ delivery_status_update(id) {
 
             console.log('Success:', JSON.stringify(result));
              this.fetch_delivery_out();
+             Toast.show({ text: result.message, type: 'success' });
           }
           else {
             console.log('Failed');
-            alert(result.message)
+            Toast.show({ text: result.message, type: 'warning' });
           }
         })
     

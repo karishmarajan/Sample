@@ -21,7 +21,7 @@ import _ from "lodash"
 
 
 const myArray1 = [{ name: "Order No.", value: "Order No." }, { name: "CustomerName", value: "CustomerName" },];
-const myArray = [{ name: "PENDING", value: "ASSIGNED" }, { name: "ALL", value: "ALL" }, { name: "ATTEMPT_FAILED", value: "ATTEMPT FAILED" }, { name: "COLLECTED", value: "COLLECTED" }];
+const myArray = [{ name: "ASSIGNED", value: "ASSIGNED" }, { name: "ALL", value: "ALL" }, { name: "ATTEMPT_FAILED", value: "ATTEMPT FAILED" }, { name: "COLLECTED", value: "COLLECTED" }];
 
 
 
@@ -31,7 +31,7 @@ export default class PickUp extends React.Component {
     search: '',
     pickup_list: [],
     offset: 0,
-    status_type: Strings.pending,
+    status_type: Strings.assigned,
     selectedPrinter: null,
     search_critieria:'Order No.',
     pickup_list_search:[],
@@ -40,7 +40,7 @@ export default class PickUp extends React.Component {
   };
 
   componentDidMount() {
-    this.fetch_pickup_orders(Strings.pending)
+    this.fetch_pickup_orders(Strings.assigned)
     setTimeout(()=>{this.setState({loader:false})},3000);
   }
 
@@ -110,7 +110,11 @@ export default class PickUp extends React.Component {
     }));
   }
 
+//////////////////////////////// Word capitalizing function /////////////////////////////////////////////////////////////////////////////////////////////
 
+capitalizeName(name) {
+  return name.replace(/\b(\w)/g, s => s.toUpperCase());
+}
   /////////////////////////////////// Searching with order no //////////////////////////////////////////////////////////////
 
   searchtext(text){
@@ -126,11 +130,37 @@ export default class PickUp extends React.Component {
 
    searchtext_name(text){
 
-    let res=_.filter(this.state.pickup_list, obj=>obj.contactPersonName==text);
+    var res1=text.trim();
+    let res=_.filter(this.state.pickup_list, obj=>obj.contactPersonName==res1.trim());
 
+    var lower= (text).toLowerCase();
+    let reslower=_.filter(this.state.pickup_list, obj=>obj.contactPersonName==lower.trim());
+
+    var upper= (text).toUpperCase();
+    let resupper=_.filter(this.state.pickup_list, obj=>obj.contactPersonName==upper.trim());
+
+    var capitalize= this.capitalizeName(text);
+    let rescapitalize=_.filter(this.state.pickup_list, obj=>obj.contactPersonName==capitalize.trim());
+
+    if (res!= ''){ 
     this.setState({pickup_list_search:res})
-
-
+    }
+    else if (reslower != ''){ 
+    
+    this.setState({pickup_list_search:reslower})
+    }
+    else if (resupper != ''){ 
+    
+    this.setState({pickup_list_search:resupper})
+    }
+    else if (rescapitalize != ''){ 
+    
+      this.setState({pickup_list_search:rescapitalize})
+      }
+    else{
+      this.setState({pickup_list_search:''})
+    }
+     
   }
 
    ///////////////////////////////// Pickup order update function //////////////////////////////////////////////////////////////////////////////////////// 
@@ -153,14 +183,14 @@ export default class PickUp extends React.Component {
 
          this.setState({final_cod_charge:result.payload.finalCodCharge})
           console.log('Success:', JSON.stringify(result));
-          alert(result.message)
+          
           this.fetch_pickup_orders(this.state.status_type)
         
 
         }
         else {
           console.log('Failed');
-          alert(result.message)
+          
         }
       })
 
@@ -277,7 +307,7 @@ render() {
           {/*////////////////////// Order and Searchbar Block //////////////////////////////////////////////// */}
 
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', textAlignVertical: 'center',marginTop:SECTION_MARGIN_TOP }}>
-            <View style={{ flex: 2 }}><CustomDropdown data={myArray1} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white} fontSize={14} paddingBottom={SECTION_MARGIN_TOP} marginRight={10} onChangeValue={(value,index,data)=>{this.setState({search_critieria:value})}} value={this.state.search_critieria} /></View>
+            <View style={{ flex: 2 }}><CustomDropdown data={myArray1} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white} fontSize={14} paddingBottom={SECTION_MARGIN_TOP} onChangeValue={(value,index,data)=>{this.setState({search_critieria:value})}} value={this.state.search_critieria} /></View>
            {(this.state.search_critieria === 'Order No.' && <View style={{ flex: 3, marginLeft: SECTION_MARGIN_TOP }}><CustomInput placeholder={'Search here with no'} keyboardType={'number-pad'} icon_name={'ios-search'} onChangeText={(text)=>{this.searchtext(text); this.setState({isSearch:true}); if(text==''){this.setState({isSearch:false})}}} icon_color={Colors.navbarIconColor} icon_fontsize={18} placeholderTextColor={Colors.navbarIconColor} fontSize={14} showIcon={true} backgroundColor={Colors.white} height={TEXT_FIELD_HIEGHT} marginTop={5} flex={1} /></View>)}
 
            {(this.state.search_critieria === 'CustomerName' && <View style={{ flex: 3, marginLeft: SECTION_MARGIN_TOP }}><CustomInput placeholder={'Search here with name'} icon_name={'ios-search'} onChangeText={(text)=>{this.searchtext_name(text); this.setState({isSearch:true}); if(text==''){this.setState({isSearch:false})}}} icon_color={Colors.navbarIconColor} icon_fontsize={18} placeholderTextColor={Colors.navbarIconColor} fontSize={14} showIcon={true} backgroundColor={Colors.white} height={TEXT_FIELD_HIEGHT} marginTop={5} flex={1} /></View>)}

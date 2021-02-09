@@ -56,6 +56,23 @@ export default class Dashboard extends React.Component {
    
   }));
   }
+  //////////////////////////////////////////////////// Refresh function //////////////////////////////////////////////////////////////
+
+refresh(){
+  AsyncStorage.getItem(KEY).then((value => {
+
+    let data = JSON.parse(value);
+    this.setState({person_id:data.personId});
+   this.fetch_delivery_count(data.personId);
+   this.fetch_pickup_count(data.personId);
+    this.fetch_task_assigned_list(data.personId);
+   this.amount_collected_today(data.personId);
+   this.fetch_pickup_assigned_list(data.personId);
+
+ 
+}));
+}
+
   //////////////////////////////////////////// Amount collected fetching function  //////////////////////////////////////////////////////////////////////////////////  
  
  amount_collected_today(val){
@@ -152,11 +169,11 @@ export default class Dashboard extends React.Component {
   console.log(item)
   if (!checked.includes(item)) {
 
-    setTimeout(()=>{this.setState({ checked: [...this.state.checked, item] })},1000);
+    setTimeout(()=>{this.setState({ checked: [...this.state.checked, item] })},100);
     // setTimeout(()=>{ alert(this.state.checked)},3000);
    
   } else {
-    setTimeout(()=>{this.setState({ checked: checked.filter(a => a !== item) })},1000);
+    setTimeout(()=>{this.setState({ checked: checked.filter(a => a !== item) })},100);
   }
   console.log(checked)
 };
@@ -372,7 +389,7 @@ pickup_assigned_rejectall() {
     <Col style={styles.colstyle1}>
     <Text style={{fontSize:12,}}>Order ID:      {item.orderId ? item.orderId : Strings.na}</Text>
     {/* <Text style={{fontSize:12,}}>Cust. Name: {item.contactPersonName ? item.contactPersonName : Strings.na}</Text> */}
-    <Text style={{fontSize:12,}}>After Pickup: {item.afterPickupStatus ? item.afterPickupStatus : Strings.na}</Text>
+    <Text style={{fontSize:12,}}>After Pickup: {item.afterPickupStatus == 'TO_OFFICE' ? 'To Office' :'To Reciever'}</Text>
     <CustomText text={'Details'} color={Colors.darkSkyBlue} textType={Strings.subtext} onPress={()=>Actions.pickupdetailsview({pickup_id:item.pickupId})}/>
     </Col>
     <Col ><CustomButton title={'Reject'} text_color={Colors.red} backgroundColor={Colors.white}   marginTop={1} fontSize={NORMAL_FONT} showIcon={true} icon_name={'ios-close'} icon_color={Colors.red} icon_fontsize={NORMAL_FONT} onPress={()=>this.pickup_assigned_reject(item.pickupId)}/>
@@ -462,15 +479,7 @@ _footer = () => {
          <Badge style={{width: 10, backgroundColor: 'orange',height:12,marginTop:20,borderRadius:10}} 
                             textStyle={{color: 'white', fontSize: 20, lineHeight: 20}}></Badge>
         </Button>
-        <Button  transparent onPress={()=>{
-          // alert(this.state.person_id)
-            this.fetch_delivery_count(this.state.person_id);
-            this.fetch_pickup_count(this.state.person_id);
-          this.fetch_task_assigned_list(this.state.person_id);
-           this.amount_collected_today(this.state.person_id);
-           this.fetch_pickup_assigned_list(this.state.person_id);
-         //  this.fetch_task_assigned_active_list(this.state.person_id)
-        }}>
+        <Button  transparent onPress={()=>this.refresh()}>
           <Icon style={{ color:Colors.navbarIconColor }} name='ios-refresh' />
         </Button>
        
@@ -486,13 +495,11 @@ _footer = () => {
 
 
 
-           {/*////////////////////// main view //////////////////////////////////////////////// */}
+  {/*////////////////////////////////////////////////// main view //////////////////////////////////////////////// */}
 
           <View style={{flex: 1, flexDirection: 'column',backgroundColor:Colors.mainBackgroundColor,padding:MAIN_VIEW_PADDING}}>
 
-
-
- {/*////////////////////// Order Transfer Block //////////////////////////////////////////////// */}
+ {/*////////////////////////////////////// Order Transfer Block //////////////////////////////////////////////// */}
 
  <View style={{ backgroundColor:Colors.white,height:ORDER_BLOCK_HIEGHT,borderRadius:MAIN_BLOCK_BORDER_RADIUS,padding:COLUMN_PADDING}}>
           <CustomText text={'Order Transfer Status:'} textType={Strings.maintext} fontWeight={'bold'} />
@@ -618,8 +625,8 @@ _footer = () => {
 
               <View style={{backgroundColor:Colors.aash,flexDirection:'row',marginTop:SECTION_MARGIN_TOP,padding:6,alignItems:'center'}}>
               <View style={{flex:4}}><CustomText  text={'Pickup Assigned'} textType={Strings.maintext} /></View>
-              <View style={{flex:2}}><CustomButton title={'Reject all'} text_color={Colors.red} backgroundColor={Colors.aash}  height={SHORT_BUTTON_HEIGHT} marginTop={5} fontSize={14} onPress={()=>this.pickup_assigned_rejectall()} /></View>
-              <View style={{flex:2}}><CustomButton title={'Accept all'} text_color={Colors.green} backgroundColor={Colors.aash}  height={SHORT_BUTTON_HEIGHT} marginTop={5}  fontSize={14} onPress={()=>this.pickup_assigned_acceptall()} /></View>
+              <View style={{flex:2}}><CustomButton title={'Reject all'} text_color={Colors.red} backgroundColor={Colors.aash}  height={SHORT_BUTTON_HEIGHT} marginTop={5} paddingTop={2} paddingBottom={2} paddingRight={2} paddingLeft={2} fontSize={SECOND_FONT} onPress={()=>this.pickup_assigned_rejectall()} /></View>
+              <View style={{flex:2}}><CustomButton title={'Accept all'} text_color={Colors.green} backgroundColor={Colors.aash}  height={SHORT_BUTTON_HEIGHT} marginTop={5} paddingTop={2} paddingBottom={2} paddingRight={2} paddingLeft={2} fontSize={SECOND_FONT} onPress={()=>this.pickup_assigned_acceptall()} /></View>
               </View>
               <View style={{backgroundColor:Colors.white,}}>
                 <Grid>
@@ -637,7 +644,7 @@ _footer = () => {
           <CustomText text={'Amount collected today'} textType={Strings.maintext}/>
           <View style={{flexDirection:'row',flex:10}}>
            <Text style={{fontSize:FOURTH_FONT,fontWeight:'bold',marginLeft:5,flex:9}}>Rs:{this.state.amount.amountCollectedToday ? this.state.amount.amountCollectedToday :'N/A' }</Text>
-           <Icon name={'ios-arrow-forward'} style={{color:Colors.darkSkyBlue,fontSize:16,flex:1,}}/>
+           {/* <Icon name={'ios-arrow-forward'} style={{color:Colors.darkSkyBlue,fontSize:16,flex:1,}}/> */}
            </View>
           </View>
 
@@ -656,11 +663,11 @@ _footer = () => {
                   </Row>
                   <Row style={styles.rowstyleeven}>
                     <Col style={styles.colstyleodd}><CustomText text={'Pending'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
-                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.count_list.READY_FOR_DELIVERY ? this.state.count_list.READY_FOR_DELIVERY :'N/A' }</Text></Col>
+                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.count_list.ASSIGNED ? this.state.count_list.ASSIGNED :'N/A' }</Text></Col>
                   </Row>
                   <Row style={styles.rowstyleodd}>
                     <Col style={styles.colstyleodd}><CustomText text={'Failed'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
-                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.count_list.FAILED ? this.state.count_list.FAILED :Strings.na }</Text></Col>
+                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.count_list.ATTEMPT_FAILED ? this.state.count_list.ATTEMPT_FAILED :Strings.na }</Text></Col>
                   </Row>
                 </Grid>
               </View>

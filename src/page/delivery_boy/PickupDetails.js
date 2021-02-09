@@ -225,11 +225,11 @@ render(){
 <View style={{ backgroundColor:Colors.white,flexGrow:1,padding:MAIN_VIEW_PADDING}}>
        
         <View style={{flexDirection:'row',marginBottom:SECTION_MARGIN_TOP,}}>
-          <CustomText  text={'Delivery Address & Reciever Details'} textType={Strings.subtitle} fontWeight={'bold'} />
+          <CustomText  text={'Pickup Address & Details'} textType={Strings.subtitle} fontWeight={'bold'} />
         </View>
 
        
-          <CustomText text={'Receiver Name'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomText text={'Name'} textType={Strings.subtext} color={Colors.black}/>
           <View style={styles.inputview}><CustomText text={this.state.pickup_details.contactPersonName ? this.state.pickup_details.contactPersonName : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Customer Id'} textType={Strings.subtext} color={Colors.black}/>
           <View style={styles.inputview}><CustomText text={this.state.pickup_details.customerId ? this.state.pickup_details.customerId : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>
@@ -326,7 +326,7 @@ render(){
         <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.deliveryChargePackageDeduction   } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
  <Grid><Col><CustomText text={'Credit Allowed'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.deliveryChargeCreditDeduction } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
-  <Grid><Col><CustomText text={'Amount to Collect'} textType={Strings.subtext} color={Colors.black}/></Col>
+  <Grid><Col><CustomText text={'Total'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.deliveryChargeAfterDeductions  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
        <Grid><Col><CustomText text={'Sender Payment'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.payableBySender } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
@@ -343,9 +343,9 @@ render(){
        <Grid><Col><CustomText text={'Balance To Pay'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><CustomInput flex={1} value={this.state.amount_to_pay} /></Col></Grid>
        </View>
-
+       <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>this.cash_payment()} />
       </View>
-      <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>this.cash_payment()} />
+    
       </View>)}
 
       <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>Actions.pickup()} />

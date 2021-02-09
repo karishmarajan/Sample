@@ -136,13 +136,32 @@ export default class Dashboard extends React.Component {
         {/*////////////////////// Vehicles block //////////////////////////////////////////////// */}
 
 
-          <View style={{ backgroundColor:Colors.white,height:100,borderRadius:MAIN_BLOCK_BORDER_RADIUS,padding:COLUMN_PADDING,marginTop:SECTION_MARGIN_TOP}}>
+          {/* <View style={{ backgroundColor:Colors.white,height:100,borderRadius:MAIN_BLOCK_BORDER_RADIUS,padding:COLUMN_PADDING,marginTop:SECTION_MARGIN_TOP}}>
           <CustomText text={this.state.vehicle_details.modelName ? this.state.vehicle_details.modelName :'N/A' } fontWeight={'bold'} textType={Strings.maintext}/>
           <View style={{flexDirection:'row'}}>
             <View style={{flex:6}}><CustomText text={this.state.vehicle_details.registrationNumber ? this.state.vehicle_details.registrationNumber :'N/A' }  textType={Strings.maintext}/></View>
             <View style={{flex:5}}><CustomButton title={'Request to change'} backgroundColor={Colors.darkSkyBlue} marginTop={1} height={30} borderRadius={5} onPress={()=>this.vehicle_change_request()}/></View>
           </View>
           <View style={{flex:9}}><CustomText text={this.state.vehicle_details.fuelType ? this.state.vehicle_details.fuelType :'N/A' }  textType={Strings.maintext}/></View>
+          </View> */}
+
+          <View style={{ backgroundColor:Colors.white,borderRadius:MAIN_BLOCK_BORDER_RADIUS,padding:COLUMN_PADDING,marginTop:SECTION_MARGIN_TOP}}>
+          <View style={{flexDirection:'row'}}>
+          <View style={{flex:5}}><CustomText text={'Modal Name               : '} fontWeight={'bold'} textType={Strings.maintext}/></View>
+          <View style={{flex:4}}><CustomText text={this.state.vehicle_details.modelName ? this.state.vehicle_details.modelName :'N/A' } fontWeight={'bold'} textType={Strings.maintext}/></View>
+          </View>
+          
+          <View style={{flexDirection:'row'}}>
+          <View style={{flex:5}}><CustomText text={'Registration Number : '}  textType={Strings.maintext}/></View>
+          <View style={{flex:4}}><CustomText text={this.state.vehicle_details.registrationNumber ? this.state.vehicle_details.registrationNumber :'N/A' }  textType={Strings.maintext}/></View>
+          </View>
+          
+          <View style={{flexDirection:'row'}}>
+          <View style={{flex:5}}><CustomText text={'Fuel Type                     :'} textType={Strings.maintext}/></View>
+          <View style={{flex:4}}><CustomText text={this.state.vehicle_details.fuelType ? this.state.vehicle_details.fuelType :'N/A' }  textType={Strings.maintext}/></View>
+          </View>
+         
+          <CustomButton title={'Request to change'} backgroundColor={Colors.darkSkyBlue} marginTop={SECTION_MARGIN_TOP} height={30} borderRadius={5} onPress={()=>this.vehicle_change_request()}/>
           </View>
 
 
