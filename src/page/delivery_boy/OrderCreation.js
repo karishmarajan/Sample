@@ -214,6 +214,7 @@ export default class OrderCreation extends React.Component {
     active_page:1,
 
     hasError: false,
+    errorTextcustomer_id: '',
       errorTextsender_country: '',
       errorTextsender_state: '',
       errorTextsender_city: '',
@@ -368,6 +369,10 @@ verifyAlphanumeric(text) {
 
   pickup_continue() {
 
+    if(this.state.customer_name==="") {
+      this.setState({hasError: true, errorTextcustomer_id: 'Provide valid customer id and details !'});
+      return;
+    }
     if(this.state.sender_country==="") {
       this.setState({hasError: true, errorTextsender_country: 'Please select country !'});
       return;
@@ -738,6 +743,11 @@ if(no == 12){
 
 ////////////////////////////// Fetching customer details with id function //////////////////////////////////////////////////////////////////////////////
   verify_customer_id(customer_id) {
+
+    if(customer_id=="") {
+      this.setState({hasError: true, errorTextcustomer_id: 'Provide customer id !'});
+      return;
+    }
 
     this.setState({loader:true});
     setTimeout(()=>{this.setState({loader:false})},1000);
@@ -1480,9 +1490,10 @@ render(){
 
         <CustomText text={'Customer Id'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <View style={{flexDirection:'row',borderColor:Colors.borderColor,borderWidth:SHORT_BORDER_WIDTH,borderRadius:SHORT_BORDER_RADIUS,padding:1,alignItems:'center',justifyContent:'space-between'}}>
-        <View style={{flex:6}}><CustomInput backgroundColor={Colors.white} onChangeText={(text) => this.setState({customer_id: text})} value={this.state.customer_id} keyboardType={'number-pad'} flex={1} /></View>
+        <View style={{flex:6}}><CustomInput backgroundColor={Colors.white} onChangeText={(text) => this.setState({customer_id: text, errorTextcustomer_id:''})} value={this.state.customer_id} keyboardType={'number-pad'} flex={1} /></View>
         <View style={{flex:2}}><CustomButton title={'search'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.verify_customer_id(this.state.customer_id)}/></View>
         </View>
+        {!!this.state.errorTextcustomer_id && (<Text style={{color: 'red'}}>{this.state.errorTextcustomer_id}</Text>)}
        
         <CustomText text={'Full Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.customer_name} />
@@ -1987,7 +1998,7 @@ render(){
 
           { this.state.deliveryChargePaymentBySender == false &&  ( <View><CustomText text={'Receiver Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({payment_name: text, errorTextpayment_name:''})} value={this.state.payment_name} />
-          {!!this.state.errorTexterrorTextpayment_name && (<Text style={{color: 'red'}}>{this.state.errorTextpayment_name}</Text>)}
+          {!!this.state.errorTextpayment_name && (<Text style={{color: 'red'}}>{this.state.errorTextpayment_name}</Text>)}
          
           <CustomText text={'Contact number'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} keyboardType={"phone-pad"} maxLength={12} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({payment_phone: text,errorTextpayment_phone:''})} value={this.state.payment_phone} />

@@ -35,6 +35,7 @@ const Colors = {
   lightBlueTitleColor:'#57b0fc',
   black:'#000000',
   scanBackground:'#F8FAFB',
+  dimColor:'#00000088',
 
 };
 

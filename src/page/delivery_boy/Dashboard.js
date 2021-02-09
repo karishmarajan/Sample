@@ -1,5 +1,5 @@
 import React, { Component, } from 'react';
-import { TouchableOpacity,StyleSheet,ScrollView,BackHandler ,AsyncStorage , FlatList} from 'react-native';
+import { TouchableOpacity,StyleSheet,ScrollView,BackHandler ,AsyncStorage , FlatList ,Modal} from 'react-native';
 import { Container, View, Button, Left, Right, Icon, Text,Grid,Col,Row,Badge ,Toast} from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
@@ -12,6 +12,7 @@ import Strings from '../../constants/Strings';
 import CustomButton from '../../component/CustomButton';
 import CustomCheckBox from '../../component/CustomCheckBox';
 import CustomSubButton from '../../component/CustomSubButton';
+import CustomInput from '../../component/CustomInput';
 import { SECTION_MARGIN_TOP,FIELD_MARGIN_TOP, MAIN_BLOCK_BORDER_RADIUS, SHORT_BLOCK_BORDER_RADIUS, ORDER_BLOCK_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,ADDRESS_FIELD_HEIGHT, SHORT_BUTTON_HEIGHT,TOTAL_BLOCK, SHORT_TEXT_FIELD_HIEGHT,TEXT_MARGIN_TOP, NORMAL_FONT,COLUMN_PADDING ,AMOUNT_BLOCK_HIEGHT,SECOND_FONT,LOGIN_FIELD_HEIGHT,FOURTH_FONT} from '../../constants/Dimen';
 import CustomText from '../../component/CustomText';
 import SideMenuDrawer from '../../component/SideMenuDrawer';
@@ -38,6 +39,12 @@ export default class Dashboard extends React.Component {
     person_id:'',
     checked: [],
     pickup_orders:[],
+    delivery_reject_modal:false,
+    pickup_reject_modal:false,
+    pickup_rejectall_modal:false,
+    reject_reason_delivery:'',
+    reject_reason_pickup:'',
+    selected_pickup_id:'',
   }
 
   ///////////////////////////////////////// Component did mount function ///////////////////////////////////////////////////////////////////////////////
@@ -205,7 +212,13 @@ delivery_assigned_accept() {
 
 delivery_assigned_reject() {
 
+  if(this.state.reject_reason_delivery==="") {
+    Toast.show({ text:"You have to provide reason", type: 'warning' });
+    return;
+  }
+
   let body = {
+    "deliveryFailedReason": this.state.reject_reason_delivery ,
     "deliveryId": this.state.checked,
   };
 
@@ -216,6 +229,7 @@ delivery_assigned_reject() {
 
         console.log('Success:', JSON.stringify(result));
         this.fetch_task_assigned_list(this.state.person_id);
+        this.setState({reject_reason_delivery:''})
 
       }
       else {
@@ -336,10 +350,17 @@ pickup_assigned_acceptall() {
 
 ////////////////////////////////////// Pickup assigned rejecting function ////////////////////////////////////////////////////////////////////////////////////
 
-pickup_assigned_reject(val) {
+pickup_assigned_reject() {
+ 
+
+  if(this.state.reject_reason_pickup==="") {
+    Toast.show({ text:"You have to provide reason", type: 'warning' });
+    return;
+  }
 
   let body = {
-    "pickupId": [val],
+    "pickupFailedReason": this.state.reject_reason_pickup,
+    "pickupId": [this.state.selected_pickup_id],
   };
 
   Api.fetch_request(PICKUP_ASSIGNED_REJECT, 'POST', '', JSON.stringify(body))
@@ -349,6 +370,7 @@ pickup_assigned_reject(val) {
 
         console.log('Success:', JSON.stringify(result));
         this.fetch_pickup_assigned_list(this.state.person_id);
+        this.setState({reject_reason_pickup:''})
 
       }
       else {
@@ -361,7 +383,13 @@ pickup_assigned_reject(val) {
 
 pickup_assigned_rejectall() {
 
+  if(this.state.reject_reason_pickup==="") {
+    Toast.show({ text:"You have to provide reason", type: 'warning' });
+    return;
+  }
+
   let body = {
+    "pickupFailedReason": this.state.reject_reason_pickup,
     "pickupId": this.state.pickup_orders,
   };
 
@@ -372,6 +400,7 @@ pickup_assigned_rejectall() {
 
         console.log('Success:', JSON.stringify(result));
         this.fetch_pickup_assigned_list(this.state.person_id);
+        this.setState({reject_reason_pickup:''})
 
       }
       else {
@@ -392,7 +421,7 @@ pickup_assigned_rejectall() {
     <Text style={{fontSize:12,}}>After Pickup: {item.afterPickupStatus == 'TO_OFFICE' ? 'To Office' :'To Reciever'}</Text>
     <CustomText text={'Details'} color={Colors.darkSkyBlue} textType={Strings.subtext} onPress={()=>Actions.pickupdetailsview({pickup_id:item.pickupId})}/>
     </Col>
-    <Col ><CustomButton title={'Reject'} text_color={Colors.red} backgroundColor={Colors.white}   marginTop={1} fontSize={NORMAL_FONT} showIcon={true} icon_name={'ios-close'} icon_color={Colors.red} icon_fontsize={NORMAL_FONT} onPress={()=>this.pickup_assigned_reject(item.pickupId)}/>
+    <Col ><CustomButton title={'Reject'} text_color={Colors.red} backgroundColor={Colors.white}   marginTop={1} fontSize={NORMAL_FONT} showIcon={true} icon_name={'ios-close'} icon_color={Colors.red} icon_fontsize={NORMAL_FONT} onPress={()=>{this.setState({pickup_reject_modal:true,selected_pickup_id:item.pickupId});}}/>
    </Col>
     <Col ><CustomButton title={'Accept'} text_color={Colors.green} backgroundColor={Colors.white}  marginTop={1}  fontSize={NORMAL_FONT} showIcon={true} icon_name={'md-checkmark'} icon_color={Colors.green} icon_fontsize={NORMAL_FONT} onPress={()=>this.pickup_assigned_accept(item.pickupId)}/></Col>
   </Row>
@@ -433,7 +462,7 @@ _footer = () => {
   return (
     <View style={{flex:1,flexDirection:'row',marginLeft:10,flex:8}}>
               <CustomButton title={'Accept Selected'} backgroundColor={Colors.green}  height={SHORT_BUTTON_HEIGHT}  flex={1} onPress={()=>this.delivery_assigned_accept()}/>
-              <CustomButton title={'Reject Selected'} backgroundColor={Colors.red}  height={SHORT_BUTTON_HEIGHT} marginLeft={SECTION_MARGIN_TOP}  flex={1} onPress={()=>this.delivery_assigned_reject()}/>
+              <CustomButton title={'Reject Selected'} backgroundColor={Colors.red}  height={SHORT_BUTTON_HEIGHT} marginLeft={SECTION_MARGIN_TOP}  flex={1} onPress={()=>{this.setState({delivery_reject_modal:true});}}/>
             </View>
   )
 }
@@ -490,6 +519,52 @@ _footer = () => {
      
       <SideMenuDrawer ref={(ref) => this._sideMenuDrawer = ref}>
         <Container>
+
+
+ {/*////////////////////////////////////// Modal Delivery reject Block //////////////////////////////////////////////// */}
+
+ <Modal visible={this.state.delivery_reject_modal}  transparent={true} animationType={"fade"} supportedOrientations={['landscape']} >
+<View style={{ justifyContent: 'center', flex: 1, backgroundColor: Colors.dimColor }}>
+    <View style={{ backgroundColor: Colors.white, alignSelf: 'center',justifyContent:'center', width:'80%', padding:20,borderRadius:SHORT_BLOCK_BORDER_RADIUS }}>
+       
+          <CustomText text={'Enter Reason'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+          <CustomInput borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} onChangeText={(text)=>this.setState({reject_reason_delivery:text})} flex={1}/>
+          <CustomButton title={'Submit'} onPress={()=>{this.setState({delivery_reject_modal:false});  this.delivery_assigned_reject()}}/>
+     
+    </View>
+</View>
+</Modal>
+
+ {/*////////////////////////////////////// Modal Pickup reject Block //////////////////////////////////////////////// */}
+
+ <Modal visible={this.state.pickup_reject_modal}  transparent={true} animationType={"fade"} supportedOrientations={['landscape']} >
+<View style={{ justifyContent: 'center', flex: 1, backgroundColor: Colors.dimColor }}>
+    <View style={{ backgroundColor: Colors.white, alignSelf: 'center',justifyContent:'center',width:'80%',padding:20,borderRadius:SHORT_BLOCK_BORDER_RADIUS }}>
+       
+          <CustomText text={'Enter Reason'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+          <CustomInput borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} onChangeText={(text)=>this.setState({reject_reason_pickup:text})} flex={1}/>
+          <CustomButton title={'Submit'} onPress={()=>{this.setState({pickup_reject_modal:false}); this.pickup_assigned_reject()}}/>
+     
+    </View>
+</View>
+</Modal>
+
+ {/*////////////////////////////////////// Modal Pickup reject All Block //////////////////////////////////////////////// */}
+
+ <Modal visible={this.state.pickup_rejectall_modal}  transparent={true} animationType={"fade"} supportedOrientations={['landscape']} >
+<View style={{ justifyContent: 'center', flex: 1, backgroundColor: Colors.dimColor }}>
+    <View style={{ backgroundColor: Colors.white, alignSelf: 'center',justifyContent:'center',width:'80%',padding:20,borderRadius:SHORT_BLOCK_BORDER_RADIUS }}>
+       
+          <CustomText text={'Enter Reason'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+          <CustomInput borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} onChangeText={(text)=>this.setState({reject_reason_pickup:text})} flex={1}/>
+          <CustomButton title={'Submit'} onPress={()=>{this.setState({pickup_rejectall_modal:false}); this.pickup_assigned_rejectall()}}/>
+     
+    </View>
+</View>
+</Modal>
+
+{/* ////////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
+
           <Navbar left={left} right={right} title="Dashboard"/>
           <ScrollView contentContainerStyle={{flexGrow:1}}>
 
@@ -625,7 +700,7 @@ _footer = () => {
 
               <View style={{backgroundColor:Colors.aash,flexDirection:'row',marginTop:SECTION_MARGIN_TOP,padding:6,alignItems:'center'}}>
               <View style={{flex:4}}><CustomText  text={'Pickup Assigned'} textType={Strings.maintext} /></View>
-              <View style={{flex:2}}><CustomButton title={'Reject all'} text_color={Colors.red} backgroundColor={Colors.aash}  height={SHORT_BUTTON_HEIGHT} marginTop={5} paddingTop={2} paddingBottom={2} paddingRight={2} paddingLeft={2} fontSize={SECOND_FONT} onPress={()=>this.pickup_assigned_rejectall()} /></View>
+              <View style={{flex:2}}><CustomButton title={'Reject all'} text_color={Colors.red} backgroundColor={Colors.aash}  height={SHORT_BUTTON_HEIGHT} marginTop={5} paddingTop={2} paddingBottom={2} paddingRight={2} paddingLeft={2} fontSize={SECOND_FONT} onPress={()=>this.setState({pickup_rejectall_modal:true})} /></View>
               <View style={{flex:2}}><CustomButton title={'Accept all'} text_color={Colors.green} backgroundColor={Colors.aash}  height={SHORT_BUTTON_HEIGHT} marginTop={5} paddingTop={2} paddingBottom={2} paddingRight={2} paddingLeft={2} fontSize={SECOND_FONT} onPress={()=>this.pickup_assigned_acceptall()} /></View>
               </View>
               <View style={{backgroundColor:Colors.white,}}>

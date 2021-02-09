@@ -142,6 +142,23 @@ capitalizeName(name) {
     var capitalize= this.capitalizeName(text);
     let rescapitalize=_.filter(this.state.pickup_list, obj=>obj.contactPersonName==capitalize.trim());
 
+    
+   let fullList=this.state.pickup_list;
+   let filteredList = fullList.filter((item) => { // search from a full list, and not from a previous search results list
+     if(item.contactPersonName.toLowerCase().match(text))
+       return item;
+   })
+ 
+   let filteredList_upper = fullList.filter((item) => { // search from a full list, and not from a previous search results list
+     if(item.contactPersonName.toUpperCase().match(text))
+       return item;
+   })
+ 
+   let filteredList_capitalize= fullList.filter((item) => { // search from a full list, and not from a previous search results list
+     if(this.capitalizeName(item.contactPersonName).match(text))
+       return item;
+   })
+
     if (res!= ''){ 
     this.setState({pickup_list_search:res})
     }
@@ -156,6 +173,18 @@ capitalizeName(name) {
     else if (rescapitalize != ''){ 
     
       this.setState({pickup_list_search:rescapitalize})
+      }
+      else if (filteredList != '')
+      { 
+        this.setState({pickup_list_search:filteredList}) 
+      }
+      else if (filteredList_upper != '')
+      { 
+        this.setState({pickup_list_search:filteredList_upper}) 
+      }
+      else if (filteredList_capitalize != '')
+      { 
+        this.setState({pickup_list_search:filteredList_capitalize}) 
       }
     else{
       this.setState({pickup_list_search:''})
