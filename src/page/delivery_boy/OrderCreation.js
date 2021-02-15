@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { ScrollView,Picker,StyleSheet,BackHandler,Modal, AsyncStorage, TouchableOpacity, EdgeInsetsPropType , DatePickerAndroid, TimePickerAndroid } from 'react-native';
+import { ScrollView,Picker,StyleSheet, SafeAreaView ,Modal, AsyncStorage, TouchableOpacity, EdgeInsetsPropType , DatePickerAndroid, TimePickerAndroid } from 'react-native';
 import { Container, View, Button, Left, Right,Icon,Text,Grid,Col,Badge, Row, DatePicker, Toast} from 'native-base';
 import { Actions } from 'react-native-router-flux';
+import SearchableDropdown from 'react-native-searchable-dropdown';
 
 import Navbar from '../../component/Navbar';
 import Colors from '../../constants/Colors';
@@ -23,7 +24,43 @@ import session, { KEY, KEY1 } from '../../session/SessionManager';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 import Api from '../../component/Fetch';
 import { COUNTRY , STATE , CITY , COST_CHECKLIST , CUSTOMER_DETALS ,PACKAGE_CATEGORY, PACKAGE_SUB_CATEGORY ,SHIPMENT_BOX, ORDER, ROUTES, DELIVERY_CHARGE, ADD_COD ,PAYER_PAYMENT, PAYMENT_BY_CASH} from '../../constants/Api';
+import CustomSearchBox from '../../component/CustomSearchBox';
 
+
+var items = [
+  {
+    id: 1,
+    name: 'JavaScript',
+  },
+  {
+    id: 2,
+    name: 'Java',
+  },
+  {
+    id: 3,
+    name: 'Ruby',
+  },
+  {
+    id: 4,
+    name: 'React Native',
+  },
+  {
+    id: 5,
+    name: 'PHP',
+  },
+  {
+    id: 6,
+    name: 'Python',
+  },
+  {
+    id: 7,
+    name: 'Go',
+  },
+  {
+    id: 8,
+    name: 'Swift',
+  },
+];
 
 
 export default class OrderCreation extends React.Component {
@@ -444,6 +481,14 @@ verifyAlphanumeric(text) {
       this.setState({hasError: true, errorTextsender_contactno: 'Please fill !'});
       return;
     }
+    if(this.state.selected_date==="") {
+      this.setState({hasError: true, errorTextsender_contactno: 'Date cannot be null !'});
+      return;
+    }
+    if(this.state.selected_time==="") {
+      this.setState({hasError: true, errorTextsender_contactno: 'Time cannot be null !'});
+      return;
+    }
     if(!this.verifyNumber((this.state.sender_contact_person_no).trim())) {
       this.setState({hasError: true, errorTextsender_contactno: 'Please enter a valid number!'});
       return;
@@ -541,14 +586,16 @@ delivery_continue() {
     this.setState({hasError: true, errorTextrec_no: 'Minimum 10 digits !'});
     return;
   }
-  if(this.state.proof==="") {
-    this.setState({hasError: true, errorTextrec_proof: 'Please fill !'});
-    return;
-  }
+  // if(this.state.proof==="") {
+  //   this.setState({hasError: true, errorTextrec_proof: 'Please fill !'});
+  //   return;
+  // }
+  if(this.state.proof !="") {
   if(!this.verifyString((this.state.proof).replace(/ /g, '').trim())) {
     this.setState({hasError: true, errorTextrec_proof: 'Please enter a valid data !'});
     return;
   }
+}
  
   if(this.state.deliveredto !=""){
   if(!this.verifyString((this.state.deliveredto).replace(/ /g, '').trim())) {
@@ -717,14 +764,16 @@ if(no == 12){
 ////////////////////////////////// Date time setting function //////////////////////////////////////////////////////////////////////////////////
   date_time_setting_function(){
 
-    var time = moment().utcOffset('+05:30').format(' hh:mm:ss a');
-    this.setState({pickuptime:time});
+    // var time = moment().utcOffset('+05:30').format(' hh:mm:ss a');
+    // this.setState({pickuptime:time});
 
     var time1 = moment().format('hh:mm A');
     this.setState({pickuptime:time1});
+    this.setState({selected_time:time1});
 
     var date= moment().format('DD-MM-YYYY')
     this.setState({pickup_date:date});
+    this.setState({selected_date:date});
     
     var h=moment().hour();
     this.setState({hour:h});
@@ -817,7 +866,7 @@ if(no == 12){
         let countries = [];
 
         for(var i = 0; i < count; i++){
-         countries.push({ value: result.payload[i].countryName , id: result.payload[i].countryId ,  code: result.payload[i].countryCode  });
+         countries.push({name: result.payload[i].countryName , id: result.payload[i].countryId ,  code: result.payload[i].countryCode  });
        }
        this.setState({ countries_sender: countries });
       }
@@ -844,7 +893,7 @@ fetch_state_list_sender(country_id) {
         let states = [];
 
         for(var i = 0; i < count; i++){
-          states.push({ value: result.payload[i].stateName ,  id: result.payload[i].stateId});
+          states.push({ name: result.payload[i].stateName ,  id: result.payload[i].stateId});
        }
        this.setState({states_sender: states });
       }
@@ -870,7 +919,7 @@ fetch_city_list_sender(state_id) {
         let city = [];
 
         for(var i = 0; i < count; i++){
-          city.push({ value: result.payload[i].cityName });
+          city.push({ name: result.payload[i].cityName });
        }
        this.setState({ cities_sender : city });
       }
@@ -896,7 +945,7 @@ fetch_country_list_reciever() {
         let countries_reciever = [];
 
         for(var i = 0; i < count; i++){
-         countries_reciever.push({ value: result.payload[i].countryName , id: result.payload[i].countryId ,  code: result.payload[i].countryCode  });
+         countries_reciever.push({ name: result.payload[i].countryName , id: result.payload[i].countryId ,  code: result.payload[i].countryCode  });
        }
        this.setState({ countries_reciever });
       }
@@ -925,7 +974,7 @@ fetch_state_list_reciever(country_id) {
         let states_reciever = [];
 
         for(var i = 0; i < count; i++){
-          states_reciever.push({ value: result.payload[i].stateName ,  id: result.payload[i].stateId});
+          states_reciever.push({ name: result.payload[i].stateName ,  id: result.payload[i].stateId});
        }
        this.setState({ states_reciever });
       }
@@ -948,12 +997,12 @@ fetch_city_list_reciever(state_id) {
         console.log('Success:', JSON.stringify(result));
 
         var count = (result.payload).length;
-        let city_reciever = [];
+        let city = [];
 
         for(var i = 0; i < count; i++){
-          city_reciever.push({ value: result.payload[i].cityName });
+          city.push({ name: result.payload[i].cityName });
        }
-       this.setState({ city_reciever });
+       this.setState({ city_reciever : city});
       }
       else{
         console.log('Failed');
@@ -1456,7 +1505,8 @@ render(){
 {/*//////////////////////////////////////////////////////////////////////////////////////////////////// */}
 
         <Navbar left={left} title="Ship a new Package" />
-        <ScrollView contentContainerStyle={{flexGrow:1}}>
+        
+        <ScrollView contentContainerStyle={{flexGrow:1}} keyboardShouldPersistTaps = 'always'>
 
  
 
@@ -1566,15 +1616,43 @@ render(){
  { this.state.new_selected === true && (<View>
 
   <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+  <CustomSearchBox
+  fontSizeInput={12}
+  onTextChange={(text)=> this.setState({sender_country: text})} 
+  color={Colors.white}
+  value={this.state.sender_country} 
+  placeholder={'Select country'} 
+  onItemSelect={(item) =>{ setTimeout(() => { this.fetch_state_list_sender(item.id) ; this.setState({sender_country:item.name , errorTextsender_country:""}) ; this.setState({sender_countrycode:item.code}); }, 500); }} 
+  items={this.state.countries_sender} />
+  
+
+
+  {/* <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomDropdown data={this.state.countries_sender} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_state_list_sender(data[index]['id']) ; this.setState({sender_country:value , errorTextsender_country:""}) ; this.setState({sender_countrycode:data[index]['code']}); }, 500); }} />
-          {!!this.state.errorTextsender_country && (<Text style={{color: 'red'}}>{this.state.errorTextsender_country}</Text>)}
+          {!!this.state.errorTextsender_country && (<Text style={{color: 'red'}}>{this.state.errorTextsender_country}</Text>)} */}
 
           <CustomText text={'State'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomDropdown data={this.state.states_sender} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_city_list_sender(data[index]['id']) ; this.setState({sender_state:value , errorTextsender_state:""}) }, 500); }} />
+          <CustomSearchBox
+            fontSizeInput={12}
+            onTextChange={(text)=> this.setState({sender_state: text})} 
+            color={Colors.white}
+            value={this.state.sender_state} 
+            placeholder={'Select state'} 
+            onItemSelect={(item) =>{ setTimeout(() => { this.fetch_city_list_sender(item.id) ; this.setState({sender_state:item.name , errorTextsender_state:""}) }, 500); }} 
+            items={this.state.states_sender} />
+          {/* <CustomDropdown data={this.state.states_sender} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_city_list_sender(data[index]['id']) ; this.setState({sender_state:value , errorTextsender_state:""}) }, 500); }} /> */}
           {!!this.state.errorTextsender_state && (<Text style={{color: 'red'}}>{this.state.errorTextsender_state}</Text>)}
 
           <CustomText text={'City'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomDropdown data={this.state.cities_sender} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.setState({sender_city:value , errorTextsender_city:""}) }, 500); }} />
+          <CustomSearchBox
+            fontSizeInput={12}
+            onTextChange={(text)=> this.setState({sender_city: text})} 
+            color={Colors.white}
+            value={this.state.sender_city} 
+            placeholder={'Select city'} 
+            onItemSelect={(item) =>{ setTimeout(() => { this.setState({sender_city:item.name , errorTextsender_city:""}) }, 500); }} 
+            items={this.state.cities_sender} />
+          {/* <CustomDropdown data={this.state.cities_sender} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.setState({sender_city:value , errorTextsender_city:""}) }, 500); }} /> */}
           {!!this.state.errorTextsender_city && (<Text style={{color: 'red'}}>{this.state.errorTextsender_city}</Text>)}
 
           <CustomText text={'District'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
@@ -1647,50 +1725,18 @@ render(){
 
         <CustomText text={'Notes to Courier Boy'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({sender_notes: text})} value={this.state.sender_notes}/>
-       
-        {/* <CustomText text={'Pickup Date'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({pickupdate: text , errorTextpickupdate:""})} value={this.state.pickupdate}/>
-        {!!this.state.errorTextpickupdate && (<Text style={{color: 'red'}}>{this.state.errorTextpickupdate}</Text>)} */}
-       
-        {/* <CustomText text={'Pickup Time'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({pickuptime: text})} value={this.state.pickuptime}/> */}
 
-<CustomText text={'Pickup Date'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+        <CustomText text={'Pickup Date'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <TouchableOpacity onPress={() => this.showPicker("date")}>
-                                    <DatePickerAndroidCustom
-                                        // fontSize={tab_title2}
-                                        // iconSize={this.state.Icon}
-                                        // width={tab_width / 1.4}
-                                        backgroundColor={'#fff'}
-                                        elevation={8}
-                                        // height={tab_input_size}
-                                        mode={"date"}
-                                        date={this.state.selected_date}
-                                        place_holder={this.state.pickup_date}
-                                        
-                                    />
-                                    
-                                    </TouchableOpacity>
+         <DatePickerAndroidCustom backgroundColor={'#fff'} elevation={8} mode={"date"}date={this.state.selected_date} place_holder={this.state.pickup_date} />
+        </TouchableOpacity>
+        {!!this.state.errorTextpickupdate && (<Text style={{color: 'red'}}>{this.state.errorTextpickupdate}</Text>)}
 
 
         <CustomText text={'Pickup Time'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
          <TouchableOpacity onPress={() => this.showPicker("time")}>
-                                    <DatePickerAndroidCustom
-                                        // fontSize={tab_title2}
-                                        // iconSize={this.state.Icon}
-                                        // width={tab_width / 1.4}
-                                        backgroundColor={'#fff'}
-                                        elevation={8}
-                                        // height={tab_input_size}
-                                        mode={"time"}
-                                        date={this.state.selected_time}
-                                        place_holder={this.state.pickuptime}
-                                        
-                                    />
-                                    </TouchableOpacity>
-
-        
-         
+        <DatePickerAndroidCustom backgroundColor={'#fff'} elevation={8} mode={"time"} date={this.state.selected_time} place_holder={this.state.pickuptime} />
+        </TouchableOpacity>
 
 </View>
 
@@ -1761,15 +1807,40 @@ render(){
    { this.state.new_selected_delivery_address === true && (<View>
 
           <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomDropdown data={this.state.countries_reciever} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_state_list_reciever(data[index]['id']) ; this.setState({rec_country:value , errorTextrec_country:""}); this.setState({rec_country_code:data[index]['code']}); }, 500); }} />
+          <CustomSearchBox
+  fontSizeInput={12}
+  onTextChange={(text)=> this.setState({rec_country: text})} 
+  color={Colors.white}
+  value={this.state.rec_country} 
+  placeholder={'Select country'} 
+  onItemSelect={(item) =>{ setTimeout(() => { this.fetch_state_list_reciever(item.id) ; this.setState({rec_country:item.name , errorTextrec_country:""}) ; this.setState({rec_country_code:item.code}); }, 500); }} 
+  items={this.state.countries_reciever} />
+          {/* <CustomDropdown data={this.state.countries_reciever} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_state_list_reciever(data[index]['id']) ; this.setState({rec_country:value , errorTextrec_country:""}); this.setState({rec_country_code:data[index]['code']}); }, 500); }} /> */}
           {!!this.state.errorTextrec_country && (<Text style={{color: 'red'}}>{this.state.errorTextrec_country}</Text>)}
 
           <CustomText text={'State'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomDropdown data={this.state.states_reciever} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_city_list_reciever(data[index]['id']) ; this.setState({rec_state:value , errorTextrec_state:""}) }, 500); }} />
+          <CustomSearchBox
+            fontSizeInput={12}
+            onTextChange={(text)=> this.setState({rec_state: text})} 
+            color={Colors.white}
+            value={this.state.rec_state} 
+            placeholder={'Select state'} 
+            onItemSelect={(item) =>{ setTimeout(() => { this.fetch_city_list_reciever(item.id) ; this.setState({rec_state:item.name , errorTextrec_state:""}) }, 500); }} 
+            items={this.state.states_reciever} />
+          
+          {/* <CustomDropdown data={this.state.states_reciever} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_city_list_reciever(data[index]['id']) ; this.setState({rec_state:value , errorTextrec_state:""}) }, 500); }} /> */}
           {!!this.state.errorTextrec_state && (<Text style={{color: 'red'}}>{this.state.errorTextrec_state}</Text>)}
 
           <CustomText text={'City'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomDropdown data={this.state.city_reciever} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.setState({rec_city:value , errorTextrec_city:""}) }, 500); }} />
+          <CustomSearchBox
+            fontSizeInput={12}
+            onTextChange={(text)=> this.setState({rec_city: text})} 
+            color={Colors.white}
+            value={this.state.rec_city} 
+            placeholder={'Select city'} 
+            onItemSelect={(item) =>{ setTimeout(() => { this.setState({rec_city:item.name , errorTextrec_city:""}) }, 500); }} 
+            items={this.state.city_reciever} />
+          {/* <CustomDropdown data={this.state.city_reciever} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.setState({rec_city:value , errorTextrec_city:""}) }, 500); }} /> */}
           {!!this.state.errorTextrec_city && (<Text style={{color: 'red'}}>{this.state.errorTextrec_city}</Text>)}
 
           <CustomText text={'District'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
@@ -2070,6 +2141,7 @@ render(){
      </View>)} 
           </View>
         </ScrollView>
+       
         </Container>
     );
 
