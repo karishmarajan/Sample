@@ -23,7 +23,7 @@ import CustomCheckBox from '../../component/CustomCheckBox';
 import session, { KEY, KEY1 } from '../../session/SessionManager';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 import Api from '../../component/Fetch';
-import { COUNTRY , STATE , CITY , COST_CHECKLIST , CUSTOMER_DETALS ,PACKAGE_CATEGORY, PACKAGE_SUB_CATEGORY ,SHIPMENT_BOX, ORDER, ROUTES, DELIVERY_CHARGE, ADD_COD ,PAYER_PAYMENT, PAYMENT_BY_CASH} from '../../constants/Api';
+import { COUNTRY , STATE , CITY , COST_CHECKLIST , CUSTOMER_DETAILS ,BRANCH_CUSTOMER_DETAILS  ,PACKAGE_CATEGORY, PACKAGE_SUB_CATEGORY ,SHIPMENT_BOX, ORDER, ROUTES, DELIVERY_CHARGE, ADD_COD ,PAYER_PAYMENT, PAYMENT_BY_CASH} from '../../constants/Api';
 import CustomSearchBox from '../../component/CustomSearchBox';
 
 
@@ -85,6 +85,9 @@ export default class OrderCreation extends React.Component {
     customer_landmark : '',
     customer_countrycode : '',
     customer_countryid : '',
+    branchUserId:'',
+    branchUserIdCode:'',
+    parent_user_id:'',
 
     same_selected:false,
     new_selected:true,
@@ -100,6 +103,8 @@ export default class OrderCreation extends React.Component {
 
     normal_selected:true,
     bullet_selected:false,
+
+    checked_cod:false,
 
 
     sender_id:'',
@@ -801,7 +806,7 @@ if(no == 12){
     this.setState({loader:true});
     setTimeout(()=>{this.setState({loader:false})},1000);
 
-    Api.fetch_request(CUSTOMER_DETALS + customer_id,'GET','')
+    Api.fetch_request(CUSTOMER_DETAILS + customer_id,'GET','')
     .then(result => {
      
       if(result.error != true){
@@ -850,6 +855,75 @@ if(no == 12){
   })
    
   }
+
+  ////////////////////////////// Fetching branch customer details with id function //////////////////////////////////////////////////////////////////////////////
+ 
+  verify_branch_customer_id(customer_id) {
+
+    if(customer_id=="") {
+      this.setState({hasError: true, errorTextcustomer_id: 'Provide customer id !'});
+      return;
+    }
+
+    var id= customer_id.replace('B', '');
+
+    this.setState({loader:true});
+    setTimeout(()=>{this.setState({loader:false})},1000);
+
+    Api.fetch_request(BRANCH_CUSTOMER_DETAILS + id,'GET','')
+    .then(result => {
+     
+      if(result.error != true){
+  
+        console.log('Success:', JSON.stringify(result));
+        this.setState({sender_details : result.payload})
+
+       this.setState({branchUserId : result.payload.branchUserId })
+       this.setState({customer_id : result.payload.branchUserId })
+       this.setState({branchUserIdCode : result.payload.branchUserIdCode })
+       this.setState({parent_user_id : result.payload.parent.userId })
+        this.setState({customer_name : result.payload.firstName })
+        this.setState({customer_no : result.payload.mobileNumber})
+        this.setState({customer_email : result.payload.email})
+        this.setState({customer_country : result.payload.country})
+        this.setState({customer_pincode : result.payload.pincode})
+        this.setState({customer_localbody : result.payload.localBodyType})
+        this.setState({customer_gmap : result.payload.gmapLink})
+        this.setState({customer_address1 : result.payload.addressLine1})
+        this.setState({customer_address2 : result.payload.addressLine2})
+        this.setState({customer_state : result.payload.state})
+        this.setState({customer_district : result.payload.district})
+        this.setState({customer_city : result.payload.city})
+        this.setState({customer_landmark : result.payload.landMark})
+        this.setState({customer_countrycode : result.payload.countryCode})
+        this.setState({customer_countryid : result.payload.countryId})
+
+      }
+      else{
+        console.log('Failed');
+      
+        this.setState({sender_details : ''})
+        this.setState({customer_name : ''})
+        this.setState({customer_no : ''})
+        this.setState({customer_email : ''})
+        this.setState({customer_country : ''})
+        this.setState({customer_pincode :''})
+        this.setState({customer_localbody : ''})
+        this.setState({customer_gmap : ''})
+        this.setState({customer_address1 : ''})
+        this.setState({customer_address2 : ''})
+        this.setState({customer_state : ''})
+        this.setState({customer_district : ''})
+        this.setState({customer_city : ''})
+        this.setState({customer_landmark : ''})
+        this.setState({customer_countrycode : ''})
+        this.setState({customer_countryid : ''})
+        Toast.show({ text: result.message, type: 'warning' });
+      }
+  })
+   
+  }
+
 
   //////////////////////////////// Fetching sender country function //////////////////////////////////////////////////////////////////////////////
 
@@ -1081,6 +1155,7 @@ create_order() {
         "contactPersonName": this.state.recievername,
         "contactPersonNumber": this.state.recieverno,
         "country": this.state.rec_country,
+        "countryId": this.state.rec_country_id,
         "district": this.state.rec_district,
         "gmapLink": this.state.rec_gmap,
         "localBodyType": this.state.rec_localbody,
@@ -1100,6 +1175,7 @@ create_order() {
         "contactPersonName": this.state.sender_contact_person_name,
         "contactPersonNumber": this.state.sender_contact_person_no,
         "country": this.state.sender_country,
+        "countryId": this.state.sender_countryid,
         "district": this.state.sender_district,
         "gmapLink": this.state.sender_gmap,
         "localBodyType": this.state.sender_localbody,
@@ -1540,8 +1616,8 @@ render(){
 
         <CustomText text={'Customer Id'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <View style={{flexDirection:'row',borderColor:Colors.borderColor,borderWidth:SHORT_BORDER_WIDTH,borderRadius:SHORT_BORDER_RADIUS,padding:1,alignItems:'center',justifyContent:'space-between'}}>
-        <View style={{flex:6}}><CustomInput backgroundColor={Colors.white} onChangeText={(text) => this.setState({customer_id: text, errorTextcustomer_id:''})} value={this.state.customer_id} keyboardType={'number-pad'} flex={1} /></View>
-        <View style={{flex:2}}><CustomButton title={'search'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.verify_customer_id(this.state.customer_id)}/></View>
+        <View style={{flex:6}}><CustomInput backgroundColor={Colors.white} onChangeText={(text) => this.setState({customer_id: text, errorTextcustomer_id:''})} value={this.state.customer_id}  flex={1} /></View>
+        <View style={{flex:2}}><CustomButton title={'search'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>{if(this.state.customer_id.charAt(0)=='B'){this.verify_branch_customer_id(this.state.customer_id)}else{this.verify_customer_id(this.state.customer_id)}}}/></View>
         </View>
         {!!this.state.errorTextcustomer_id && (<Text style={{color: 'red'}}>{this.state.errorTextcustomer_id}</Text>)}
        
@@ -1618,7 +1694,7 @@ render(){
   <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
   <CustomSearchBox
   fontSizeInput={12}
-  onTextChange={(text)=> this.setState({sender_country: text})} 
+  onTextChange={(text)=>{setTimeout(()=>{this.setState({sender_country: text})},0)}} 
   color={Colors.white}
   value={this.state.sender_country} 
   placeholder={'Select country'} 
@@ -2017,8 +2093,14 @@ render(){
         <CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.delivery_charge} />
 
+        <View style={{marginTop:SECTION_MARGIN_TOP, flexDirection:'row'}}>
+          <CustomCheckBox color={Colors.buttonBackgroundColor} onPress={()=>{if(this.state.checked_cod==true){this.setState({checked_cod:false})}else{this.setState({checked_cod:true})}}} checked={this.state.checked_cod}/>
+          <CustomText text={'COD'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'} paddingLeft={1} mTop={5} />
+        </View>
 
-        <CustomRadioButton title={'COD'} selectedColor={Colors.darkSkyBlue} selected={true}/>
+
+
+       {this.state.checked_cod === true && (<View>
 
         <CustomText text={'Reciever GST Number'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1}  borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({gst_no: text, errorTextgst_no:''})} value={this.state.gst_no} />
@@ -2040,6 +2122,8 @@ render(){
 
           <CustomText text={'Final COD charge'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} value={this.state.final_cod_charge} />
+
+          </View>)}
 
 </View>
 
