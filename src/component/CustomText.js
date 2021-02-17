@@ -37,7 +37,7 @@ export default class CustomText extends Component {
         fontSize:14,
         fontFamily:this.props.fontFamily ? this.props.fontFamily :'OpenSans-SemiBold',
         color:this.props.color ? this.props.color : Colors.subTextColor,
-        paddingLeft: 5,
+        paddingLeft: this.props.paddingLeft ? this.props.paddingLeft : 5,
         textAlign:this.props.textAlign,
         alignSelf:this.props.alignSelf,
         
