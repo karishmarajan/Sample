@@ -431,8 +431,6 @@ pickup_assigned_rejectall() {
   )
 }
 
-
-
  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
  _body = (item) => {
@@ -734,15 +732,15 @@ _footer = () => {
                 <Grid>
                   <Row style={styles.rowstyleodd}>
                     <Col style={styles.colstyleodd}><CustomText text={'Completed'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
-                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.count_list.DELIVERED ? this.state.count_list.DELIVERED :'N/A' }</Text></Col>
+                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.count_list.DELIVERED ? this.state.count_list.DELIVERED :'0' }</Text></Col>
                   </Row>
                   <Row style={styles.rowstyleeven}>
                     <Col style={styles.colstyleodd}><CustomText text={'Pending'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
-                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.count_list.ASSIGNED ? this.state.count_list.ASSIGNED :'N/A' }</Text></Col>
+                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.count_list.ASSIGNED ? this.state.count_list.ASSIGNED :'0' }</Text></Col>
                   </Row>
                   <Row style={styles.rowstyleodd}>
                     <Col style={styles.colstyleodd}><CustomText text={'Failed'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
-                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.count_list.ATTEMPT_FAILED ? this.state.count_list.ATTEMPT_FAILED :Strings.na }</Text></Col>
+                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.count_list.ATTEMPT_FAILED ? this.state.count_list.ATTEMPT_FAILED :'0' }</Text></Col>
                   </Row>
                 </Grid>
               </View>
@@ -760,15 +758,15 @@ _footer = () => {
                 <Grid>
                   <Row style={styles.rowstyleodd}>
                     <Col style={styles.colstyleodd}><CustomText text={'Completed'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
-    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.pick_count_list.COLLECTED ? this.state.pick_count_list.COLLECTED :'N/A' }</Text></Col>
+    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.pick_count_list.COLLECTED ? this.state.pick_count_list.COLLECTED :'0' }</Text></Col>
                   </Row>
                   <Row style={styles.rowstyleeven}>
                     <Col style={styles.colstyleodd}><CustomText text={'To be Collected'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
-                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.pick_count_list.ASSIGNED ? this.state.pick_count_list.ASSIGNED :'N/A' }</Text></Col>
+                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.pick_count_list.ASSIGNED ? this.state.pick_count_list.ASSIGNED :'0' }</Text></Col>
                   </Row>
                   <Row style={styles.rowstyleodd}>
                     <Col style={styles.colstyleodd}><CustomText text={'Failed'} textType={Strings.maintext} fontSize={SECOND_FONT}/></Col>
-                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.pick_count_list.ATTEMPT_FAILED ? this.state.pick_count_list.ATTEMPT_FAILED :'N/A' }</Text></Col>
+                    <Col style={styles.colstyleeven}><Text style={{fontSize:SECOND_FONT,}}>{this.state.pick_count_list.ATTEMPT_FAILED ? this.state.pick_count_list.ATTEMPT_FAILED :'0' }</Text></Col>
                   </Row>
                 </Grid>
               </View>

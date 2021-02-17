@@ -8,13 +8,11 @@ import Navbar from '../../component/Navbar';
 import Colors from '../../constants/Colors';
 import Strings from '../../constants/Strings';
 import CustomInput from '../../component/CustomInput';
-import CustomSubButton from '../../component/CustomSubButton';
 import CustomText from '../../component/CustomText';
 import { SECTION_MARGIN_TOP, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,ADDRESS_FIELD_HEIGHT, COLUMN_PADDING,TEXT_PADDING_RIGHT, CREDIT_FIELD_HEIGHT,FOURTH_FONT,SHORT_BUTTON_HEIGHT,SHORT_BORDER_RADIUS, NORMAL_FONT, THIRD_FONT } from '../../constants/Dimen';
 import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
 import CustomRadioButton from '../../component/CustomRadioButton';
-import CustomDatePicker from '../../component/CustomDatePicker';
 import DatePickerAndroidCustom from '../../component/DatePickerAndroidCustom';
 import moment from 'moment';
 import RNPrint from 'react-native-print';
@@ -26,41 +24,6 @@ import Api from '../../component/Fetch';
 import { COUNTRY , STATE , CITY , COST_CHECKLIST , CUSTOMER_DETAILS ,BRANCH_CUSTOMER_DETAILS  ,PACKAGE_CATEGORY, PACKAGE_SUB_CATEGORY ,SHIPMENT_BOX, ORDER, ROUTES, DELIVERY_CHARGE, ADD_COD ,PAYER_PAYMENT, PAYMENT_BY_CASH} from '../../constants/Api';
 import CustomSearchBox from '../../component/CustomSearchBox';
 
-
-var items = [
-  {
-    id: 1,
-    name: 'JavaScript',
-  },
-  {
-    id: 2,
-    name: 'Java',
-  },
-  {
-    id: 3,
-    name: 'Ruby',
-  },
-  {
-    id: 4,
-    name: 'React Native',
-  },
-  {
-    id: 5,
-    name: 'PHP',
-  },
-  {
-    id: 6,
-    name: 'Python',
-  },
-  {
-    id: 7,
-    name: 'Go',
-  },
-  {
-    id: 8,
-    name: 'Swift',
-  },
-];
 
 
 export default class OrderCreation extends React.Component {
