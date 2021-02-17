@@ -26,7 +26,7 @@ const PendingView = () => (
   <View
     style={{
       flex: 1,
-      backgroundColor: 'lightgreen',
+      backgroundColor: 'white',
       justifyContent: 'center',
       alignItems: 'center',
     }}
@@ -69,7 +69,6 @@ export default class DeliveryOutDetails extends React.Component {
   componentDidMount() {
     
     this.fetch_delivery_out_details(this.props.delivery_id);
-    this.generate_invoice();
 
 
   }
@@ -126,6 +125,7 @@ takePicture_sign = async function (camera) {
 
       console.log('Success:', JSON.stringify(result));
       this.setState({delivery_details : result.payload})
+      this.generate_invoice();
     
     }
     else{
@@ -139,7 +139,7 @@ takePicture_sign = async function (camera) {
 
 generate_invoice() {
 
-  Api.fetch_request(DELIVERY_CHARGE + 20 ,'GET','')
+  Api.fetch_request(DELIVERY_CHARGE + this.state.delivery_details.orderId ,'GET','')
   .then(result => {
    
     if(result.error != true){
@@ -171,18 +171,25 @@ generate_invoice() {
 
   };
 
+
+if(this.state.status == 'DELIVERED' && this.state.delivery_details.payableByReceiver > 0){
+  Toast.show({ text: "Complete the payment first", type: 'warning' });
+}else{
+
   Api.fetch_request(DELIVERY_STATUS_UPDATE, 'PUT', '', JSON.stringify(body))
     .then(result => {
 
       if (result.error != true) {
         console.log('Success:', JSON.stringify(result));
         Toast.show({ text: result.message, type: 'success' });
+        Actions.deliveryfirst();
       }
       else {
         console.log('Failed');
         Toast.show({ text: result.message, type: 'warning' });
       }
     })
+  }
 
 }
 
@@ -228,6 +235,8 @@ delivery_cash_payment() {
 
         console.log('Success:', JSON.stringify(result));
         Toast.show({ text: result.message, type: 'success' });
+
+        this.fetch_delivery_out_details(this.props.delivery_id);
 
       }
       else {
@@ -481,24 +490,7 @@ render(){
           </View>
 </View>
 
-{/*////////////////////// Order Status Block //////////////////////////////////////////////// */}
 
-
-{this.state.delivery_details.deliveryStatus == 'ASSIGNED'  && (<View>
-<View style={{backgroundColor:Colors.white,flex:10,flexDirection:'row' ,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',}}>
-              <CustomText  text={'Status Update'} textType={Strings.subtitle} flex={9} fontWeight={'bold'}/>
-              </View>
-<View style={{ backgroundColor:Colors.white,flexGrow:1,paddingLeft:MAIN_VIEW_PADDING,paddingRight:MAIN_VIEW_PADDING,paddingBottom:MAIN_VIEW_PADDING}}>
-
-      <CustomText text={'Status'} textType={Strings.maintext}/> 
-      <CustomDropdown data={myArray} height={TEXT_FIELD_HIEGHT}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} onChangeValue={(value,index,data)=>{this.setState({status:data[index]['name']})}} value={this.state.status}/>
- 
-   {this.state.status == 'ATTEMPT_FAILED' && (<View><CustomText text={'Reason/Remark'} textType={Strings.maintext}/>
-      <CustomDropdown data={myArray1} height={TEXT_FIELD_HIEGHT}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} onChangeValue={(value,index,data)=>{if (index == (data.length)-1){this.setState({modal_visible: true});}}} value={this.state.reason_val}/>
-      </View>)}
-      <CustomButton title={'Update'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>this.delivery_status_update()} />
-      </View>
-      </View>)}
 
 
   {/*////////////////////// Proof Upload Block //////////////////////////////////////////////// */}
@@ -589,6 +581,25 @@ render(){
        <CustomButton title={'Update'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.delivery_cash_payment()} />
       </View>
      
+      </View>)}
+
+      {/*////////////////////// Order Status Block //////////////////////////////////////////////// */}
+
+
+{this.state.delivery_details.deliveryStatus == 'ASSIGNED'  && (<View>
+<View style={{backgroundColor:Colors.white,flex:10,flexDirection:'row' ,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',}}>
+              <CustomText  text={'Status Update'} textType={Strings.subtitle} flex={9} fontWeight={'bold'}/>
+              </View>
+<View style={{ backgroundColor:Colors.white,flexGrow:1,paddingLeft:MAIN_VIEW_PADDING,paddingRight:MAIN_VIEW_PADDING,paddingBottom:MAIN_VIEW_PADDING}}>
+
+      <CustomText text={'Status'} textType={Strings.maintext}/> 
+      <CustomDropdown data={myArray} height={TEXT_FIELD_HIEGHT}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} onChangeValue={(value,index,data)=>{this.setState({status:data[index]['name']})}} value={this.state.status}/>
+ 
+   {this.state.status == 'ATTEMPT_FAILED' && (<View><CustomText text={'Reason/Remark'} textType={Strings.maintext}/>
+      <CustomDropdown data={myArray1} height={TEXT_FIELD_HIEGHT}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} onChangeValue={(value,index,data)=>{if (index == (data.length)-1){this.setState({modal_visible: true});}}} value={this.state.reason_val}/>
+      </View>)}
+      <CustomButton title={'Update'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>this.delivery_status_update()} />
+      </View>
       </View>)}
 
       <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.deliveryfirst()} />
