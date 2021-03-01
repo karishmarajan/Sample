@@ -51,6 +51,7 @@ export default class OrderCreation extends React.Component {
     branchUserId:'',
     branchUserIdCode:'',
     parent_user_id:'',
+    customer_type:'',
 
     same_selected:false,
     new_selected:true,
@@ -792,6 +793,8 @@ if(no == 12){
         this.setState({customer_landmark : result.payload.landMark})
         this.setState({customer_countrycode : result.payload.countryCode})
         this.setState({customer_countryid : result.payload.countryId})
+        this.setState({customer_type: 'COMMON_USER'})
+        this.setState({parent_user_id : '0' })
 
       }
       else{
@@ -813,6 +816,7 @@ if(no == 12){
         this.setState({customer_landmark : ''})
         this.setState({customer_countrycode : ''})
         this.setState({customer_countryid : ''})
+        this.setState({customer_type: ''})
         Toast.show({ text: result.message, type: 'warning' });
       }
   })
@@ -860,6 +864,7 @@ if(no == 12){
         this.setState({customer_landmark : result.payload.landMark})
         this.setState({customer_countrycode : result.payload.countryCode})
         this.setState({customer_countryid : result.payload.countryId})
+        this.setState({customer_type: 'BRANCH_USER'})
 
       }
       else{
@@ -881,6 +886,7 @@ if(no == 12){
         this.setState({customer_landmark : ''})
         this.setState({customer_countrycode : ''})
         this.setState({customer_countryid : ''})
+        this.setState({customer_type: ''})
         Toast.show({ text: result.message, type: 'warning' });
       }
   })
@@ -1108,6 +1114,7 @@ create_order() {
       "creatorId": 0,
       "creatorUserType": "DELIVERY_AGENT",
       "customerId": this.state.customer_id,
+      "customerIdentityType": this.state.customer_type,
       "delivery": {
         "addressLine1": this.state.rec_address1,
         "addressLine2": this.state.rec_address2,
@@ -1212,6 +1219,7 @@ create_shipment_box() {
       "isApprox": true,
       "length": this.state.Shipment_length,
       "orderId": this.state.order_id,
+      "parentUserId": this.state.parent_user_id,
       "shipmentBoxId": 0,
       "shipmentCategoryId": this.state.Shipment_category_id,
       "shipmentSubCategoryId": this.state.Shipment_subcategory_id,
