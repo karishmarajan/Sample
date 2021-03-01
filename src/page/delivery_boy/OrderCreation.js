@@ -817,6 +817,13 @@ if(no == 12){
         this.setState({customer_countrycode : ''})
         this.setState({customer_countryid : ''})
         this.setState({customer_type: ''})
+
+        this.setState({same_selected:false,
+          new_selected:true,
+      
+          same_selected_pickup:false,
+          new_selected_pickup:true,})
+        
         Toast.show({ text: result.message, type: 'warning' });
       }
   })
@@ -1171,7 +1178,15 @@ create_order() {
         }
         else {
           console.log('Failed');
-          Toast.show({ text: result.message, type: 'warning' });
+          if(result.message === 'epex/master/office/destination-point/{pincode} - pickupOffice ->No content available now'){
+            Toast.show({ text: "No office available for this pickup pincode", type: 'warning' });
+          }
+          else if(result.message === 'epex/master/office/destination-point/{pincode} - deliveryOffice -> No content available now'){
+            Toast.show({ text: "No office available for this delivery pincode", type: 'warning' });
+          }
+            else{
+            Toast.show({ text:result.message , type: 'warning' });
+          }
         }
       })
   }));
