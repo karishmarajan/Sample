@@ -21,7 +21,7 @@ import CustomCheckBox from '../../component/CustomCheckBox';
 import session, { KEY, KEY1 } from '../../session/SessionManager';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 import Api from '../../component/Fetch';
-import { COUNTRY , STATE , CITY , COST_CHECKLIST , CUSTOMER_DETAILS ,BRANCH_CUSTOMER_DETAILS  ,PACKAGE_CATEGORY, PACKAGE_SUB_CATEGORY ,SHIPMENT_BOX, ORDER, ROUTES, DELIVERY_CHARGE, ADD_COD ,PAYER_PAYMENT, PAYMENT_BY_CASH} from '../../constants/Api';
+import { COUNTRY , STATE , CITY , COST_CHECKLIST , CUSTOMER_DETAILS ,BRANCH_CUSTOMER_DETAILS  ,PACKAGE_CATEGORY, PACKAGE_SUB_CATEGORY ,SHIPMENT_BOX, ORDER, PRODUCT_BILL_UPLOAD, DELIVERY_CHARGE, ADD_COD ,PAYER_PAYMENT, PAYMENT_BY_CASH} from '../../constants/Api';
 import CustomSearchBox from '../../component/CustomSearchBox';
 
 
@@ -261,6 +261,8 @@ export default class OrderCreation extends React.Component {
       minute3:'',
 
       save_clicked:false,
+      shipment_total:'',
+      errorTextshipment_total: '',
 
   };
 
@@ -1118,7 +1120,7 @@ create_order() {
     let body =
     {
       "createdAtOfficeId": 0,
-      "creatorId": 0,
+      "creatorId": data.personId,
       "creatorUserType": "DELIVERY_AGENT",
       "customerId": this.state.customer_id,
       "customerIdentityType": this.state.customer_type,
@@ -1543,6 +1545,35 @@ cash_payment() {
         
       }
     })
+}
+///////////////////////////////// file upload function //////////////////////////////////////////////////////////////////////////////////////// 
+ 
+productcost_file_upload() {
+
+  if(this.state.shipment_total==="") {
+    this.setState({hasError: true, errorTextshipment_total: 'Please fill !'});
+    return;
+  }
+  let formData = [];
+
+  Api.fetch_request(PRODUCT_BILL_UPLOAD+this.state.order_id+'/e-way-bill-produced/'+this.state.shipment_total, 'PUT', { "Content-Type": "multipart/form-data" }, formData)
+    .then(result => {
+      setTimeout(() => {
+      if (result.error != true) {
+
+        console.log('Success:', JSON.stringify(result));
+        // Toast.show({ text: 'Uploaded success', type: 'success' });
+        this.generate_invoice();
+       
+
+      }
+      else {
+        console.log('Failed');
+        Toast.show({ text: 'Someting went wrong', type: 'warning' });
+      }
+
+    })
+ }, 100);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2013,7 +2044,7 @@ render(){
         <CustomText text={'Shipment box'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
 
          <CustomText text={'Approx. Weight'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-         <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({Shipment_weight: text})} value={this.state.Shipment_weight} placeholder={'kg'} />
+         <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({Shipment_weight: text, errorTextshipment_weight:""})} value={this.state.Shipment_weight} placeholder={'kg'} />
          {!!this.state.errorTextshipment_weight && (<Text style={{color: 'red'}}>{this.state.errorTextshipment_weight}</Text>)}
 
 <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:15}}>
@@ -2022,13 +2053,13 @@ render(){
 <CustomText text={'Height'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
 </View>
 <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:10}}>
-<View style={{width:60}}><CustomInput keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} placeholder={'cm'} onChangeText={(text) => this.setState({Shipment_length: text})} value={this.state.Shipment_length}/>
+<View style={{width:60}}><CustomInput keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} placeholder={'cm'} onChangeText={(text) => this.setState({Shipment_length: text , errorTextshipment_length:""})} value={this.state.Shipment_length}/>
 {!!this.state.errorTextshipment_length && (<Text style={{color: 'red'}}>{this.state.errorTextshipment_length}</Text>)}
 </View>
-<View style={{width:60}}><CustomInput keyboardType={"number-pad"}  borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} placeholder={'cm'} onChangeText={(text) => this.setState({Shipment_width: text})} value={this.state.Shipment_width}/>
+<View style={{width:60}}><CustomInput keyboardType={"number-pad"}  borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} placeholder={'cm'} onChangeText={(text) => this.setState({Shipment_width: text, errorTextshipment_width:""})} value={this.state.Shipment_width}/>
 {!!this.state.errorTextshipment_width && (<Text style={{color: 'red'}}>{this.state.errorTextshipment_width}</Text>)}
 </View>
-<View style={{width:60}}><CustomInput keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} placeholder={'cm'} onChangeText={(text) => this.setState({Shipment_height: text})} value={this.state.Shipment_height} />
+<View style={{width:60}}><CustomInput keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} placeholder={'cm'} onChangeText={(text) => this.setState({Shipment_height: text , errorTextshipment_height:""})} value={this.state.Shipment_height} />
 {!!this.state.errorTextshipment_height && (<Text style={{color: 'red'}}>{this.state.errorTextshipment_height}</Text>)}
 </View>
 </View>
@@ -2037,11 +2068,11 @@ render(){
          {!!this.state.errorTextshipment_distance && (<Text style={{color: 'red'}}>{this.state.errorTextshipment_distance}</Text>)} */}
   
         <CustomText text={'Shipment Category'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <CustomDropdown data={this.state.package_categories} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => {this.setState({Shipment_category_id:data[index]['id']}); this.fetch_package_subcategory_list(data[index]['id']); }} />
+        <CustomDropdown data={this.state.package_categories} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => {this.setState({Shipment_category_id:data[index]['id'] , errorTextshipment_category_id:""}); this.fetch_package_subcategory_list(data[index]['id']); }} />
         {!!this.state.errorTextshipment_category_id && (<Text style={{color: 'red'}}>{this.state.errorTextshipment_category_id}</Text>)}
 
         <CustomText text={'Shipment Sub-category'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <CustomDropdown data={this.state.package_subcategories} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => {this.setState({Shipment_subcategory_id:data[index]['id']}) }} />
+        <CustomDropdown data={this.state.package_subcategories} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => {this.setState({Shipment_subcategory_id:data[index]['id'], errorTextshipment_subcategory_id:"" }) }} />
         {!!this.state.errorTextshipment_subcategory_id && (<Text style={{color: 'red'}}>{this.state.errorTextshipment_subcategory_id}</Text>)}
 
         </View>)}
@@ -2050,9 +2081,11 @@ render(){
         <CustomButton title={'Add Shipment'} backgroundColor={Colors.darkSkyBlue} height={30} onPress={()=>this.add_shipment_box()} />
          </View>
 
+         <CustomText text={'Considered value of all shipments'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+        <CustomInput flex={1} keyboardType={'number-pad'} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({shipment_total: text, errorTextshipment_total:""})} value={this.state.shipment_total} />
+        {!!this.state.errorTextshipment_total && (<Text style={{color: 'red'}}>{this.state.errorTextshipment_total}</Text>)}
 
-
-<CustomButton title={'Generate Invoice'} text_color={Colors.darkSkyBlue} borderColor={Colors.darkSkyBlue} borderWidth={1} backgroundColor={Colors.white} onPress={()=>this.generate_invoice()}/>
+<CustomButton title={'Generate Invoice'} text_color={Colors.darkSkyBlue} borderColor={Colors.darkSkyBlue} borderWidth={1} backgroundColor={Colors.white} onPress={()=>this.productcost_file_upload()}/>
 
 </View>
 

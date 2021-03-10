@@ -345,6 +345,7 @@ render(){
                             style={styles.preview}
                             type={RNCamera.Constants.Type.back}
                             flashMode={RNCamera.Constants.FlashMode.on}
+                            ratio={'4:4'}
                             androidCameraPermissionOptions={{
                                 title: 'Permission to use camera',
                                 message: 'We need your permission to use your camera',
@@ -382,6 +383,7 @@ render(){
                             style={styles.preview}
                             type={RNCamera.Constants.Type.back}
                             flashMode={RNCamera.Constants.FlashMode.on}
+                            ratio={'4:4'}
                             androidCameraPermissionOptions={{
                                 title: 'Permission to use camera',
                                 message: 'We need your permission to use your camera',
@@ -495,7 +497,7 @@ render(){
 
   {/*////////////////////// Proof Upload Block //////////////////////////////////////////////// */}
 
-  {(this.state.delivery_details.deliveryStatus == 'ASSIGNED' || this.state.delivery_details.deliveryStatus == 'DELIVERED') && (<View>
+  {(this.state.delivery_details.deliveryStatus == 'ASSIGNED' ) && (<View>
 
       <View style={{backgroundColor:Colors.white,flex:10,flexDirection:'row' ,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',}}>
               <CustomText  text={'Proof Upload & Receiver Signature'} textType={Strings.subtitle} flex={9} fontWeight={'bold'}/>
@@ -602,7 +604,7 @@ render(){
       </View>
       </View>)}
 
-      <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.deliveryfirst()} />
+      {/* <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.deliveryfirst()} /> */}
 
           </View>
         </ScrollView>
