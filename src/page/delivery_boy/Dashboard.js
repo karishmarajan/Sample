@@ -574,14 +574,14 @@ _footer = () => {
 
  {/*////////////////////////////////////// Order Transfer Block //////////////////////////////////////////////// */}
 
- <View style={{ backgroundColor:Colors.white,height:ORDER_BLOCK_HIEGHT,borderRadius:MAIN_BLOCK_BORDER_RADIUS,padding:COLUMN_PADDING}}>
+ {/* <View style={{ backgroundColor:Colors.white,height:ORDER_BLOCK_HIEGHT,borderRadius:MAIN_BLOCK_BORDER_RADIUS,padding:COLUMN_PADDING}}>
           <CustomText text={'Order Transfer Status:'} textType={Strings.maintext} fontWeight={'bold'} />
           <CustomText text={'Waiting for your Approval'} textType={Strings.maintext} />
           <View style={{flex:3,flexDirection:'row',}}>
               <CustomButton title={'Reject'} backgroundColor={Colors.red}  height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BLOCK_BORDER_RADIUS} flex={1}/>
               <CustomButton title={'Verify'} backgroundColor={Colors.green}  height={SHORT_BUTTON_HEIGHT} marginLeft={SECTION_MARGIN_TOP} borderRadius={SHORT_BLOCK_BORDER_RADIUS} flex={1} onPress={()=>Actions.verifytasktransfer()}/>
           </View>
-          </View>
+          </View> */}
 
 
 

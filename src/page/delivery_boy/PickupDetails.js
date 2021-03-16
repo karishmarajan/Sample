@@ -150,8 +150,8 @@ cash_payment() {
 
         console.log('Success:', JSON.stringify(result));
         Toast.show({ text: result.message, type: 'success' });
+        this.fetch_pickup_details(this.props.pickup_id);
 
-        Actions.pickup();
 
       }
       else {
