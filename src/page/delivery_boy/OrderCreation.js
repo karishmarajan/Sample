@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { ScrollView,Picker,StyleSheet, SafeAreaView ,Modal, AsyncStorage, TouchableOpacity, EdgeInsetsPropType , DatePickerAndroid, TimePickerAndroid } from 'react-native';
+import { ScrollView,Picker,StyleSheet, SafeAreaView ,Modal, AsyncStorage, TouchableOpacity , DatePickerAndroid, TimePickerAndroid } from 'react-native';
 import { Container, View, Button, Left, Right,Icon,Text,Grid,Col,Badge, Row, DatePicker, Toast} from 'native-base';
 import { Actions } from 'react-native-router-flux';
-import SearchableDropdown from 'react-native-searchable-dropdown';
+import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 
 import Navbar from '../../component/Navbar';
 import Colors from '../../constants/Colors';
@@ -1599,7 +1599,7 @@ render(){
 
         <Navbar left={left} title="Ship a new Package" />
         
-        <ScrollView contentContainerStyle={{flexGrow:1}} keyboardShouldPersistTaps = 'always'>
+        <KeyboardAvoidingScrollView contentContainerStyle={{flexGrow:1}} keyboardShouldPersistTaps = 'always'>
 
  
 
@@ -2243,7 +2243,7 @@ render(){
 
      </View>)} 
           </View>
-        </ScrollView>
+        </KeyboardAvoidingScrollView>
        
         </Container>
     );
