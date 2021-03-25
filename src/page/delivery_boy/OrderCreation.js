@@ -21,7 +21,7 @@ import CustomCheckBox from '../../component/CustomCheckBox';
 import session, { KEY, KEY1 } from '../../session/SessionManager';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 import Api from '../../component/Fetch';
-import { COUNTRY , STATE , CITY , COST_CHECKLIST , CUSTOMER_DETAILS ,BRANCH_CUSTOMER_DETAILS  ,PACKAGE_CATEGORY, PACKAGE_SUB_CATEGORY ,SHIPMENT_BOX, ORDER, PRODUCT_BILL_UPLOAD, DELIVERY_CHARGE, ADD_COD ,PAYER_PAYMENT, PAYMENT_BY_CASH} from '../../constants/Api';
+import { COUNTRY , STATE , CITY , COST_CHECKLIST , CUSTOMER_DETAILS ,BRANCH_CUSTOMER_DETAILS  ,PACKAGE_CATEGORY, PACKAGE_SUB_CATEGORY ,SHIPMENT_BOX, ORDER, PRODUCT_BILL_UPLOAD, DELIVERY_CHARGE, ADD_COD ,PAYER_PAYMENT, PAYMENT_BY_CASH, ORDER_TRACKING} from '../../constants/Api';
 import CustomSearchBox from '../../component/CustomSearchBox';
 
 
@@ -141,6 +141,7 @@ export default class OrderCreation extends React.Component {
     package_sub_category_list:[],
     route_list:[],
     office_list:[],
+    order_track_details:[],
     
     route_id:'',
     code_otp:'',
@@ -263,6 +264,7 @@ export default class OrderCreation extends React.Component {
       save_clicked:false,
       shipment_total:'',
       errorTextshipment_total: '',
+      cod_check:true,
 
   };
 
@@ -798,6 +800,30 @@ if(no == 12){
         this.setState({customer_type: 'COMMON_USER'})
         this.setState({parent_user_id : '0' })
 
+        this.setState({sender_id:''});
+  this.setState({sender_name:''});
+  this.setState({sender_no:''});
+  this.setState({sender_address1:''});
+  this.setState({sender_address2:''});
+  this.setState({sender_email:''});
+  this.setState({sender_countrycode:''});
+  this.setState({sender_countryid:''});
+  this.setState({sender_country:''});
+  this.setState({sender_state:''});
+  this.setState({sender_district:''});
+  this.setState({sender_city:''});
+  this.setState({sender_localbody:''});
+  this.setState({sender_landmark:''});
+  this.setState({sender_gmap:''});
+  this.setState({sender_pincode:''});
+
+  this.setState({sender_contact_person_name:''});
+  this.setState({sender_contact_person_no:''});
+  this.setState({same_selected:false,
+    new_selected:true,
+    same_selected_pickup:false,
+    new_selected_pickup:true,})
+
       }
       else{
         console.log('Failed');
@@ -822,9 +848,10 @@ if(no == 12){
 
         this.setState({same_selected:false,
           new_selected:true,
-      
           same_selected_pickup:false,
           new_selected_pickup:true,})
+
+
         
         Toast.show({ text: result.message, type: 'warning' });
       }
@@ -1176,6 +1203,7 @@ create_order() {
           Toast.show({ text: result.message, type: 'success' });
           this.setState({order_id:JSON.stringify(result.payload.orderId)});
           this.setState({active_page:3});
+          this.fetching_order_details();
 
         }
         else {
@@ -1253,13 +1281,13 @@ create_shipment_box() {
         if (result.error != true) {
 
           console.log('Success:', JSON.stringify(result));
-          // alert("Shipment Added")
+          Toast.show({ text: result.message, type: 'success' });
           this.submitAndClear();
+          this.fetching_order_details();
 
         }
         else {
           console.log('Failed');
-          // alert(result.message)
           this.create_cost_checklist();
         }
       })
@@ -1277,7 +1305,7 @@ create_cost_checklist() {
       {
         "bulletDeliveryCost": 0,
         "costChecklistId": 0,
-        "createdById": 0,
+        "createdById": data.personId,
         "createdByUserType": "DELIVERY_AGENT",
         "destinationCountryId": this.state.rec_country_id,
         "destinationPincode": this.state.rec_pincode,
@@ -1303,6 +1331,7 @@ create_cost_checklist() {
           console.log('Success:', JSON.stringify(result));
           Toast.show({ text: result.message, type: 'success' });
           this.submitAndClear();
+          this.fetching_order_details();
 
         }
         else {
@@ -1481,7 +1510,7 @@ payer_payment() {
           console.log('Success:', JSON.stringify(result));
         
           this.setState({ payments: result.payload })
-          this.setState({ save_clicked:true })
+          this.setState({ save_clicked:true, cod_check:false })
           this.setState({sender_payment:JSON.stringify(result.payload.payableBySender)})
           this.setState({receiver_payment:JSON.stringify(result.payload.payableByReceiver)})
 
@@ -1576,6 +1605,28 @@ productcost_file_upload() {
  }, 100);
 }
 
+////////////////////////////// Fetching order details function //////////////////////////////////////////////////////////////////////////////
+  
+fetching_order_details() {
+
+  Api.fetch_request(ORDER_TRACKING + this.state.order_id,'GET','')
+  .then(result => {
+   
+    if(result.error != true){
+
+      console.log('Success:', JSON.stringify(result));
+      this.setState({order_track_details : result.payload})
+
+
+    }
+    else{
+      console.log('Failed');
+    }
+})
+ 
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 render(){
@@ -1667,6 +1718,8 @@ render(){
 
 </View>
 
+
+{this.state.customer_name != '' && (<View>
 {/* /////////////////////////// Sender Address //////////////////////////////////////////////// */}
 
 <View style={{ backgroundColor:Colors.white,flexGrow:1,padding:MAIN_VIEW_PADDING,marginTop:SECTION_MARGIN_TOP}}>
@@ -1832,6 +1885,8 @@ render(){
         </TouchableOpacity>
 
 </View>
+
+</View>)}
 
 <CustomButton title={'Continue'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.pickup_continue()} />
 
@@ -2081,11 +2136,15 @@ render(){
         <CustomButton title={'Add Shipment'} backgroundColor={Colors.darkSkyBlue} height={30} onPress={()=>this.add_shipment_box()} />
          </View>
 
+         <CustomText text={'No. of Shipmentbox you added'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+        <CustomInput flex={1} value={String(this.state.order_track_details.noOfShipmentBoxes)} editable={false} />
+
          <CustomText text={'Considered value of all shipments'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} keyboardType={'number-pad'} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({shipment_total: text, errorTextshipment_total:""})} value={this.state.shipment_total} />
         {!!this.state.errorTextshipment_total && (<Text style={{color: 'red'}}>{this.state.errorTextshipment_total}</Text>)}
 
-<CustomButton title={'Generate Invoice'} text_color={Colors.darkSkyBlue} borderColor={Colors.darkSkyBlue} borderWidth={1} backgroundColor={Colors.white} onPress={()=>this.productcost_file_upload()}/>
+{this.state.order_track_details.noOfShipmentBoxes >0 && (<View><CustomButton title={'Generate Invoice'} text_color={Colors.darkSkyBlue} borderColor={Colors.darkSkyBlue} borderWidth={1} backgroundColor={Colors.white} onPress={()=>this.productcost_file_upload()}/>
+ </View>)}
 
 </View>
 
@@ -2112,10 +2171,10 @@ render(){
         <CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.delivery_charge} />
 
-        <View style={{marginTop:SECTION_MARGIN_TOP, flexDirection:'row'}}>
+        {this.state.cod_check === true &&(  <View style={{marginTop:SECTION_MARGIN_TOP, flexDirection:'row'}}>
           <CustomCheckBox color={Colors.buttonBackgroundColor} onPress={()=>{if(this.state.checked_cod==true){this.setState({checked_cod:false})}else{this.setState({checked_cod:true})}}} checked={this.state.checked_cod}/>
           <CustomText text={'COD'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'} paddingLeft={1} mTop={5} />
-        </View>
+        </View>)}
 
 
 

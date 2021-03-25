@@ -52,3 +52,4 @@ export const ADD_COD= BASE_URL_ORDER + SUB_URL_ORDER + 'order/cod';
 export const PAYER_PAYMENT= BASE_URL_ORDER + SUB_URL_ORDER + 'order/cod/payer';
 export const PAYMENT_BY_CASH= BASE_URL_ORDER + SUB_URL_ORDER + 'order/sender/payment/cash';
 export const PRODUCT_BILL_UPLOAD= BASE_URL_ORDER + SUB_URL_ORDER + 'order/';
+export const ORDER_TRACKING= BASE_URL_ORDER + SUB_URL_ORDER+ 'order-track/';
