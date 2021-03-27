@@ -102,6 +102,7 @@ componentWillUnmount() {
           <View style={{marginTop:LOGIN_FIELD_HEIGHT}}>
             <CustomButton  title={'LOGIN'} fontSize={FOURTH_FONT} height={LOGIN_FIELD_HEIGHT} onPress={()=>this.login()} borderRadius={SHORT_BLOCK_BORDER_RADIUS}/>
           </View>
+          <View style={{alignItems:'flex-end',marginTop:SECTION_MARGIN_TOP}}><CustomText  text={Strings.version} textType={Strings.subtext} color={Colors.darkSkyBlue} /></View>
           </View>
         </KeyboardAvoidingScrollView>
       </Container>

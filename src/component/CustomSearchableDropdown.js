@@ -34,37 +34,34 @@ export default class CustomDropdown extends Component {
 
 
         return (
+//             <View >
+//                 <SearchableDropdown
 
-            <View >
-
-                <SearchableDropdown
-
-
-onTextChange={this.props.onChangeValue}
-// onItemSelect={item => alert(JSON.stringify(item))}
-containerStyle={{ padding: 5 }}
-textInputStyle={{
-  padding: 12,
-  borderWidth: 1,
-  borderColor: '#ccc',
-  backgroundColor: '#FAF7F6',
-}}
-itemStyle={{
-  padding: 10,
-  marginTop: 2,
-  backgroundColor: '#FAF9F8',
-  borderColor: '#bbb',
-  borderWidth: 1,
-}}
-itemTextStyle={{color: '#222',}}
-itemsContainerStyle={{ maxHeight: '60%',}}
-data={data}
-defaultIndex={2}
-placeholder="placeholder"
-resetValue={false}
-underlineColorAndroid="transparent"
-value={this.props.value ? this.props.value : data.length != 0 ? data[0]['value'] : ''}
-/>
+// onTextChange={this.props.onChangeValue}
+// onItemSelect={this.props.onItemSelect}
+// containerStyle={{ padding: 5 }}
+// textInputStyle={{
+//   padding: 12,
+//   borderWidth: 1,
+//   borderColor: '#ccc',
+//   backgroundColor: '#FAF7F6',
+// }}
+// itemStyle={{
+//   padding: 10,
+//   marginTop: 2,
+//   backgroundColor: '#FAF9F8',
+//   borderColor: '#bbb',
+//   borderWidth: 1,
+// }}
+// itemTextStyle={{color: '#222',}}
+// itemsContainerStyle={{ maxHeight: '60%',}}
+// data={data}
+// defaultIndex={2}
+// placeholder="placeholder"
+// resetValue={false}
+// underlineColorAndroid="transparent"
+// value={this.props.value ? this.props.value : data.length != 0 ? data[0]['value'] : ''}
+// />
 
 
 
@@ -78,18 +75,49 @@ value={this.props.value ? this.props.value : data.length != 0 ? data[0]['value']
                     // dropdownPosition={this.props.position ? this.props.position : 0}
                     // value={this.props.value ? this.props.value : data.length != 0 ? data[0]['value'] : ''}
                     // onChangeText={this.props.onChangeValue}
-                    
-
-
-
-
+   
                 > */}
 
+            // </View>
+
+<View>
+                        <SearchableDropdown
+                           onItemSelect={this.props.onItemSelect}
+                            containerStyle={{ padding: 5 }}
+                            itemStyle={{
+                                padding: 10,
+                                marginTop: 2,
+                                backgroundColor: '#ddd',
+                                borderColor: '#bbb',
+                                borderWidth: 1,
+                                borderRadius: 5,
+                    
+                            }}
+                            itemsContainerStyle={{ maxHeight: 140 }}
+                            items={this.props.items}
+                            resetValue={false}
+                            textInputProps={
+                                {
+                                    placeholder: this.props.placeholder,
+                                    underlineColorAndroid: "transparent",
+                                    style: {
+                                        padding: 12,
+                                        borderWidth: 1,
+                                        borderColor: '#ccc',
+                                        borderRadius: 5,
+                                    },
+
+                                }
+                            }
+                            listProps={
+                                {
+                                    nestedScrollEnabled: true,
+                                }
+                            }
+                        />
                 
+              
 
-
-
-            </View>
 
         );
     }

@@ -164,7 +164,7 @@ export default class Dashboard extends React.Component {
           <CustomButton title={'Request to change'} backgroundColor={Colors.darkSkyBlue} marginTop={SECTION_MARGIN_TOP} height={30} borderRadius={5} onPress={()=>this.vehicle_change_request()}/>
           </View>
 
-
+          <View style={{alignItems:'flex-end',marginTop:SECTION_MARGIN_TOP}}><CustomText  text={Strings.version} textType={Strings.subtext} color={Colors.darkSkyBlue} /></View>
               </View>
               </ScrollView>
         </Container>
