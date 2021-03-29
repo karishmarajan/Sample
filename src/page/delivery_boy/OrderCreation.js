@@ -23,6 +23,7 @@ import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 import Api from '../../component/Fetch';
 import { COUNTRY , STATE , CITY , COST_CHECKLIST , CUSTOMER_DETAILS ,BRANCH_CUSTOMER_DETAILS  ,PACKAGE_CATEGORY, PACKAGE_SUB_CATEGORY ,SHIPMENT_BOX, ORDER, PRODUCT_BILL_UPLOAD, DELIVERY_CHARGE, ADD_COD ,PAYER_PAYMENT, PAYMENT_BY_CASH, ORDER_TRACKING} from '../../constants/Api';
 import CustomSearchBox from '../../component/CustomSearchBox';
+import CustomSearchableDropdown from '../../component/CustomSearchableDropdown';
 
 
 
@@ -161,6 +162,7 @@ export default class OrderCreation extends React.Component {
     Shipment_category_id:'',
     Shipment_subcategory_id:'',
     shipment_view:true,
+    shipment_sub_category:'',
 
     
       errorTextshipment_weight: '',
@@ -1126,7 +1128,7 @@ fetch_city_list_reciever(state_id) {
         let package_subcategories = [];
 
         for(var i = 0; i < count; i++){
-          package_subcategories.push({ value: result.payload[i].pkgSubCategoryName , id: result.payload[i].pkgSubCategoryId , });
+          package_subcategories.push({ name: result.payload[i].pkgSubCategoryName , id: result.payload[i].pkgSubCategoryId , });
        }
        this.setState({ package_subcategories });
       }
@@ -1764,13 +1766,17 @@ render(){
   <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
   <CustomSearchBox
   fontSizeInput={12}
-  onTextChange={(text)=>{setTimeout(()=>{this.setState({sender_country: text})},0)}} 
-  color={Colors.white}
+  onTextChange={(text)=>this.setState({sender_country: text})} 
   value={this.state.sender_country} 
+  color={Colors.white}
   placeholder={'Select country'} 
   onItemSelect={(item) =>{ setTimeout(() => { this.fetch_state_list_sender(item.id) ; this.setState({sender_country:item.name , errorTextsender_country:""}) ; this.setState({sender_countrycode:item.code}); }, 500); }} 
   items={this.state.countries_sender} />
   
+  {/* <CustomSearchableDropdown
+  placeholder={'Select country'} 
+  onItemSelect={(item) =>{ setTimeout(() => { this.fetch_state_list_sender(item.id) ; this.setState({sender_country:item.name , errorTextsender_country:""}) ; this.setState({sender_countrycode:item.code}); }, 500); }} 
+  items={this.state.countries_sender} /> */}
 
 
   {/* <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
@@ -2127,7 +2133,15 @@ render(){
         {!!this.state.errorTextshipment_category_id && (<Text style={{color: 'red'}}>{this.state.errorTextshipment_category_id}</Text>)}
 
         <CustomText text={'Shipment Sub-category'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <CustomDropdown data={this.state.package_subcategories} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => {this.setState({Shipment_subcategory_id:data[index]['id'], errorTextshipment_subcategory_id:"" }) }} />
+        <CustomSearchBox
+  fontSizeInput={12}
+  onTextChange={(text)=>{setTimeout(()=>{this.setState({shipment_sub_category: text})},0)}} 
+  color={Colors.white}
+  value={this.state.shipment_sub_category} 
+  placeholder={'Select sub-category'} 
+  onItemSelect={(item) =>{ setTimeout(() => {this.setState({shipment_sub_category:item.name,Shipment_subcategory_id:item.id, errorTextshipment_subcategory_id:"" }) }, 500); }} 
+  items={this.state.package_subcategories} />
+        {/* <CustomDropdown label={'select sub-category'} data={this.state.package_subcategories} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => {this.setState({Shipment_subcategory_id:data[index]['id'], errorTextshipment_subcategory_id:"" }) }} /> */}
         {!!this.state.errorTextshipment_subcategory_id && (<Text style={{color: 'red'}}>{this.state.errorTextshipment_subcategory_id}</Text>)}
 
         </View>)}
@@ -2301,6 +2315,7 @@ render(){
 </View>)}
 
      </View>)} 
+     <View style={{alignItems:'flex-end',marginTop:SECTION_MARGIN_TOP}}><CustomText  text={Strings.version} textType={Strings.subtext} color={Colors.darkSkyBlue} /></View>
           </View>
         </KeyboardAvoidingScrollView>
        

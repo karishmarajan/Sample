@@ -46,6 +46,8 @@ export default class CustomDropdown extends Component {
                     selectedItemColor={Colors.primaryColor}
                     itemColor={Colors.secondaryColor}
                     inputContainerStyle={{ borderBottomWidth: 0, }}
+                    label={this.props.label}
+                    labelFontSize={16}
                     data={data}
                     dropdownPosition={this.props.position ? this.props.position : 0}
                     value={this.props.value ? this.props.value : data.length != 0 ? data[0]['value'] : ''}

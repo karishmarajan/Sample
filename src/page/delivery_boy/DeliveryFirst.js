@@ -340,6 +340,7 @@ fetch_delivery_orders(status_type) {
               />
 
             </ScrollView>
+            <View style={{alignItems:'flex-end',marginTop:SECTION_MARGIN_TOP}}><CustomText  text={Strings.version} textType={Strings.subtext} color={Colors.darkSkyBlue} /></View>
           </View>
         </Container>
       </Container>

@@ -8,12 +8,12 @@ import Colors from '../../constants/Colors';
 import Strings from '../../constants/Strings';
 import CustomInput from '../../component/CustomInput';
 import CustomText from '../../component/CustomText';
-import { SECTION_MARGIN_TOP,LOGIN_FIELD_HEIGHT, MAIN_BLOCK_BORDER_RADIUS, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,ADDRESS_FIELD_HEIGHT, SIGNATURE_VIEW_HEIGHT,TOTAL_BLOCK, CREDIT_FIELD_HEIGHT,TEXT_MARGIN_TOP, CAMERA_SIZE,FOURTH_FONT } from '../../constants/Dimen';
+import { SECTION_MARGIN_TOP,SHORT_BORDER_RADIUS, MAIN_BLOCK_BORDER_RADIUS, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,ADDRESS_FIELD_HEIGHT, SIGNATURE_VIEW_HEIGHT,TOTAL_BLOCK, CREDIT_FIELD_HEIGHT,TEXT_MARGIN_TOP, CAMERA_SIZE,FOURTH_FONT } from '../../constants/Dimen';
 import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
 import session,{KEY} from '../../session/SessionManager';
 import Api from '../../component/Fetch';
-import { DELIVERY_OUT_DETAILS , DELIVERY_CHARGE ,DELIVERY_STATUS_UPDATE, DELIVERY_ORDER_PAYMENT, DELIVERY_PROOF_UPLOAD} from '../../constants/Api';
+import { DELIVERY_OUT_DETAILS , DELIVERY_CHARGE ,DELIVERY_STATUS_UPDATE, DELIVERY_ORDER_PAYMENT, DELIVERY_PROOF_UPLOAD, UPDATE_RECEIVER_NAME} from '../../constants/Api';
 import { RNCamera } from 'react-native-camera';
 import RNFetchBlob from 'rn-fetch-blob';
 
@@ -62,6 +62,9 @@ export default class DeliveryOutDetails extends React.Component {
 
     proof_img:'',
     sign_img:'',
+
+    receiver_name:'',
+    errorTextreceiver_name:'',
 
   };
 
@@ -125,6 +128,7 @@ takePicture_sign = async function (camera) {
 
       console.log('Success:', JSON.stringify(result));
       this.setState({delivery_details : result.payload})
+      this.setState({receiver_name : result.payload.contactPersonName})
       this.generate_invoice();
     
     }
@@ -182,7 +186,7 @@ if(this.state.status == 'DELIVERED' && this.state.delivery_details.payableByRece
       if (result.error != true) {
         console.log('Success:', JSON.stringify(result));
         Toast.show({ text: result.message, type: 'success' });
-        Actions.deliveryfirst();
+        this.fetch_delivery_out_details(this.props.delivery_id);
       }
       else {
         console.log('Failed');
@@ -237,6 +241,38 @@ delivery_cash_payment() {
         Toast.show({ text: result.message, type: 'success' });
 
         this.fetch_delivery_out_details(this.props.delivery_id);
+
+      }
+      else {
+        console.log('Failed');
+        Toast.show({ text: result.message, type: 'warning' });
+      }
+    })
+}
+
+///////////////////////////////////////// Update receivername function  //////////////////////////////////////////////////////////////////////////////////
+
+update_receiver_name() {
+
+  if(this.state.receiver_name==="") {
+    this.setState({hasError: true, errorTextreceiver_name: 'Please fill !'});
+    return;
+  }
+
+  let body = {
+    "contactPersonName": this.state.receiver_name,
+    "deliveryId": this.props.delivery_id
+  };
+
+  Api.fetch_request(UPDATE_RECEIVER_NAME, 'PUT', '', JSON.stringify(body))
+    .then(result => {
+
+      if (result.error != true) {
+
+        console.log('Success:', JSON.stringify(result));
+        Toast.show({ text: result.message, type: 'success' });
+
+        Actions.deliveryfirst();
 
       }
       else {
@@ -430,12 +466,11 @@ render(){
           <CustomText  text={'Delivery Address & Reciever Details'} textType={Strings.subtitle} fontWeight={'bold'} />
         </View>
 
+      
         <CustomText text={'Deliver To'} textType={Strings.subtext} color={Colors.black}/>
         <View style={styles.inputview}><CustomText text={this.state.delivery_details.canBeDeliveredTo ? this.state.delivery_details.canBeDeliveredTo : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
-          <CustomText text={'Receiver Name'} textType={Strings.subtext} color={Colors.black}/>
-          <View style={styles.inputview}><CustomText text={this.state.delivery_details.contactPersonName ? this.state.delivery_details.contactPersonName : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
-          <CustomText text={'Customer Id'} textType={Strings.subtext} color={Colors.black}/>
-          <View style={styles.inputview}><CustomText text={this.state.delivery_details.customerId ? this.state.delivery_details.customerId : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>
+          {/* <CustomText text={'Customer Id'} textType={Strings.subtext} color={Colors.black}/>
+          <View style={styles.inputview}><CustomText text={this.state.delivery_details.customerId ? this.state.delivery_details.customerId : Strings.na} textType={Strings.subtext} color={Colors.black}/></View> */}
           <CustomText text={'Mobile No.'} textType={Strings.subtext} color={Colors.black}/>
           <View style={styles.inputview}><CustomText text={this.state.delivery_details.contactPersonNumber ? this.state.delivery_details.contactPersonNumber : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Location'} textType={Strings.subtext} color={Colors.black}/>
@@ -449,10 +484,7 @@ render(){
 </View>
 
 
-
-
-
-{/*/////////////////////////// Customer Details //////////////////////////////////////////////// */}
+{/*/////////////////////////// Order Details //////////////////////////////////////////////// */}
 
 <View style={{ backgroundColor:Colors.white,flexGrow:1,padding:10}}>
 <View style={{ backgroundColor:Colors.signBackgroundColor,flexGrow:1,padding:MAIN_VIEW_PADDING}}>
@@ -491,8 +523,6 @@ render(){
 
           </View>
 </View>
-
-
 
 
   {/*////////////////////// Proof Upload Block //////////////////////////////////////////////// */}
@@ -547,7 +577,7 @@ render(){
       </View>)}
 
 {/*////////////////////// Total & Payment Block //////////////////////////////////////////////// */}
-
+{this.state.delivery_details.deliveryStatus == 'ASSIGNED'  && (<View>
 { this.state.delivery_details.payableByReceiver > 0 &&  (<View>
 <View  style={{backgroundColor:Colors.white,flex:10,flexDirection:'row' ,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',}}>
               <CustomText  text={'Total & Payment'} textType={Strings.subtitle} flex={9} fontWeight={'bold'} />
@@ -584,6 +614,7 @@ render(){
       </View>
      
       </View>)}
+      </View>)}
 
       {/*////////////////////// Order Status Block //////////////////////////////////////////////// */}
 
@@ -598,14 +629,19 @@ render(){
       <CustomDropdown data={myArray} height={TEXT_FIELD_HIEGHT}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} onChangeValue={(value,index,data)=>{this.setState({status:data[index]['name']})}} value={this.state.status}/>
  
    {this.state.status == 'ATTEMPT_FAILED' && (<View><CustomText text={'Reason/Remark'} textType={Strings.maintext}/>
-      <CustomDropdown data={myArray1} height={TEXT_FIELD_HIEGHT}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} onChangeValue={(value,index,data)=>{if (index == (data.length)-1){this.setState({modal_visible: true});}}} value={this.state.reason_val}/>
+      <CustomDropdown data={myArray1} height={TEXT_FIELD_HIEGHT}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} onChangeValue={(value,index,data)=>{if (index == (data.length)-1){this.setState({modal_visible: true});}else{this.setState({reason_val:value})}}} value={this.state.reason_val}/>
       </View>)}
       <CustomButton title={'Update'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>this.delivery_status_update()} />
       </View>
       </View>)}
 
-      {/* <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.deliveryfirst()} /> */}
+      <CustomText text={'Receiver Name'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({receiver_name: text, errorTextreceiver_name:''})} value={this.state.receiver_name} />
+          {!!this.state.errorTextreceiver_name && (<Text style={{color: 'red'}}>{this.state.errorTextreceiver_name}</Text>)}
 
+      <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.update_receiver_name()} />
+
+      <View style={{alignItems:'flex-end',marginTop:SECTION_MARGIN_TOP}}><CustomText  text={Strings.version} textType={Strings.subtext} color={Colors.darkSkyBlue} /></View>
           </View>
         </ScrollView>
         </Container>
