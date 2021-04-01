@@ -21,7 +21,7 @@ import CustomCheckBox from '../../component/CustomCheckBox';
 import session, { KEY, KEY1 } from '../../session/SessionManager';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 import Api from '../../component/Fetch';
-import { COUNTRY , STATE , CITY , COST_CHECKLIST , CUSTOMER_DETAILS ,BRANCH_CUSTOMER_DETAILS  ,PACKAGE_CATEGORY, PACKAGE_SUB_CATEGORY ,SHIPMENT_BOX, ORDER, PRODUCT_BILL_UPLOAD, DELIVERY_CHARGE, ADD_COD ,PAYER_PAYMENT, PAYMENT_BY_CASH, ORDER_TRACKING} from '../../constants/Api';
+import { COUNTRY , STATE , DISTRICT , CITY , COST_CHECKLIST , CUSTOMER_DETAILS ,BRANCH_CUSTOMER_DETAILS  ,PACKAGE_CATEGORY, PACKAGE_SUB_CATEGORY ,SHIPMENT_BOX, ORDER, PRODUCT_BILL_UPLOAD, DELIVERY_CHARGE, ADD_COD ,PAYER_PAYMENT, PAYMENT_BY_CASH, ORDER_TRACKING} from '../../constants/Api';
 import CustomSearchBox from '../../component/CustomSearchBox';
 import CustomSearchableDropdown from '../../component/CustomSearchableDropdown';
 
@@ -45,6 +45,7 @@ export default class OrderCreation extends React.Component {
     customer_address2 : '',
     customer_state : '',
     customer_district : '',
+    customer_district_id:'',
     customer_city : '',
     customer_landmark : '',
     customer_countrycode : '',
@@ -86,6 +87,7 @@ export default class OrderCreation extends React.Component {
     sender_address2:'',
     sender_state:'',
     sender_district:'',
+    sender_district_id:'',
     sender_city:'',
     sender_landmark:'',
 
@@ -99,8 +101,10 @@ export default class OrderCreation extends React.Component {
     countries_sender:[],
     states_sender:[],
     cities_sender:[],
+    districts_sender:[],
     countries_reciever:[],
     states_reciever:[],
+    districts_reciever:[],
     city_reciever:[],
     payments:[],
 
@@ -111,6 +115,7 @@ export default class OrderCreation extends React.Component {
     rec_state:'',
     rec_landmark:'',
     rec_district:'',
+    rec_district_id:'',
     rec_pincode:'',
     rec_gmap:'',
     rec_localbody:'',
@@ -431,14 +436,16 @@ verifyAlphanumeric(text) {
       this.setState({hasError: true, errorTextsender_address2: 'Please fill !'});
       return;
     }
-    if(this.state.sender_localbody==="") {
-      this.setState({hasError: true, errorTextsender_localbody: 'Please fill !'});
-      return;
-    }
+    // if(this.state.sender_localbody==="") {
+    //   this.setState({hasError: true, errorTextsender_localbody: 'Please fill !'});
+    //   return;
+    // }
+    if(this.state.sender_localbody !="") {
     if(!this.verifyString((this.state.sender_localbody).replace(/ /g, '').trim())) {
       this.setState({hasError: true, errorTextsender_localbody: 'Please enter a valid data !'});
       return;
     }
+  }
     if(this.state.sender_landmark==="") {
       this.setState({hasError: true, errorTextsender_landmark: 'Please fill !'});
       return;
@@ -528,14 +535,16 @@ delivery_continue() {
     this.setState({hasError: true, errorTextrec_address2: 'Please fill !'});
     return;
   }
-  if(this.state.rec_localbody==="") {
-    this.setState({hasError: true, errorTextrec_localbody: 'Please fill !'});
-    return;
-  }
+  // if(this.state.rec_localbody==="") {
+  //   this.setState({hasError: true, errorTextrec_localbody: 'Please fill !'});
+  //   return;
+  // }
+  if(this.state.rec_localbody !="") {
   if(!this.verifyString((this.state.rec_localbody).replace(/ /g, '').trim())) {
     this.setState({hasError: true, errorTextrec_localbody: 'Please enter a valid data !'});
     return;
   }
+}
   if(this.state.rec_landmark==="") {
     this.setState({hasError: true, errorTextrec_landmark: 'Please fill !'});
     return;
@@ -618,6 +627,7 @@ if(no == 3){
   this.setState({sender_country:this.state.customer_country});
   this.setState({sender_state:this.state.customer_state});
   this.setState({sender_district:this.state.customer_district});
+  this.setState({sender_district_id:this.state.customer_district_id});
   this.setState({sender_city:this.state.customer_city});
   this.setState({sender_localbody:this.state.customer_localbody});
   this.setState({sender_landmark:this.state.customer_landmark});
@@ -640,6 +650,7 @@ if(no == 4){
   this.setState({sender_country:''});
   this.setState({sender_state:''});
   this.setState({sender_district:''});
+  this.setState({sender_district_id:''});
   this.setState({sender_city:''});
   this.setState({sender_localbody:''});
   this.setState({sender_landmark:''});
@@ -658,6 +669,7 @@ if(no == 5){
   this.setState({rec_country:this.state.customer_country});
   this.setState({rec_state:this.state.customer_state});
   this.setState({rec_district:this.state.customer_district});
+  this.setState({rec_district_id:this.state.customer_district_id});
   this.setState({rec_city:this.state.customer_city});
   this.setState({rec_localbody:this.state.customer_localbody});
   this.setState({rec_landmark:this.state.customer_landmark});
@@ -676,6 +688,7 @@ if(no == 6){
   this.setState({rec_country:''});
   this.setState({rec_state:''});
   this.setState({rec_district:''});
+  this.setState({rec_district_id:''});
   this.setState({rec_city:''});
   this.setState({rec_localbody:''});
   this.setState({rec_landmark:''});
@@ -795,12 +808,14 @@ if(no == 12){
         this.setState({customer_address2 : result.payload.addressLine2})
         this.setState({customer_state : result.payload.state})
         this.setState({customer_district : result.payload.district})
+        this.setState({customer_district_id : result.payload.districtId})
         this.setState({customer_city : result.payload.city})
         this.setState({customer_landmark : result.payload.landMark})
         this.setState({customer_countrycode : result.payload.countryCode})
         this.setState({customer_countryid : result.payload.countryId})
         this.setState({customer_type: 'COMMON_USER'})
         this.setState({parent_user_id : '0' })
+        
 
         this.setState({sender_id:''});
   this.setState({sender_name:''});
@@ -813,6 +828,7 @@ if(no == 12){
   this.setState({sender_country:''});
   this.setState({sender_state:''});
   this.setState({sender_district:''});
+  this.setState({sender_district_id :''})
   this.setState({sender_city:''});
   this.setState({sender_localbody:''});
   this.setState({sender_landmark:''});
@@ -842,6 +858,7 @@ if(no == 12){
         this.setState({customer_address2 : ''})
         this.setState({customer_state : ''})
         this.setState({customer_district : ''})
+        this.setState({customer_district_id : ''})
         this.setState({customer_city : ''})
         this.setState({customer_landmark : ''})
         this.setState({customer_countrycode : ''})
@@ -898,6 +915,7 @@ if(no == 12){
         this.setState({customer_address2 : result.payload.addressLine2})
         this.setState({customer_state : result.payload.state})
         this.setState({customer_district : result.payload.district})
+        this.setState({customer_district_id : result.payload.districtId})
         this.setState({customer_city : result.payload.city})
         this.setState({customer_landmark : result.payload.landMark})
         this.setState({customer_countrycode : result.payload.countryCode})
@@ -984,6 +1002,32 @@ fetch_state_list_sender(country_id) {
   })
    
   }
+  //////////////////////////////// Fetching sender district function //////////////////////////////////////////////////////////////////////////////
+ 
+fetch_district_list_sender(state_id) {
+
+  Api.fetch_request(DISTRICT + state_id,'GET','')
+  .then(result => {
+   
+    if(result.error != true){
+
+      console.log('Success:', JSON.stringify(result));
+
+
+      var count = (result.payload).length;
+      let district = [];
+
+      for(var i = 0; i < count; i++){
+        district.push({ name: result.payload[i].districtName ,  id: result.payload[i].districtId});
+     }
+     this.setState({ districts_sender : district });
+    }
+    else{
+      console.log('Failed');
+    }
+})
+ 
+}
 //////////////////////////////// Fetching sender city function //////////////////////////////////////////////////////////////////////////////
  
 fetch_city_list_sender(state_id) {
@@ -1065,6 +1109,33 @@ fetch_state_list_reciever(country_id) {
   })
    
   }
+
+  //////////////////////////////// Fetching reciever district function //////////////////////////////////////////////////////////////////////////////
+ 
+fetch_district_list_reciever(state_id) {
+
+  Api.fetch_request(DISTRICT + state_id,'GET','')
+  .then(result => {
+   
+    if(result.error != true){
+
+      console.log('Success:', JSON.stringify(result));
+
+      var count = (result.payload).length;
+      let district = [];
+
+      for(var i = 0; i < count; i++){
+        district.push({ name: result.payload[i].districtName ,  id: result.payload[i].districtId});
+     }
+     this.setState({ districts_reciever : district});
+    }
+    else{
+      console.log('Failed');
+    }
+})
+ 
+}
+
 
 //////////////////////////////// Fetching reciever city function //////////////////////////////////////////////////////////////////////////////
  
@@ -1165,6 +1236,7 @@ create_order() {
         "country": this.state.rec_country,
         "countryId": this.state.rec_country_id,
         "district": this.state.rec_district,
+        "districtId":this.state.rec_district_id,
         "gmapLink": this.state.rec_gmap,
         "localBodyType": this.state.rec_localbody,
         "notesToCourierBoy": this.state.rec_notes,
@@ -1185,6 +1257,7 @@ create_order() {
         "country": this.state.sender_country,
         "countryId": this.state.sender_countryid,
         "district": this.state.sender_district,
+        "districtId":this.state.sender_district_id,
         "gmapLink": this.state.sender_gmap,
         "localBodyType": this.state.sender_localbody,
         "notesToCourierBoy": this.state.sender_notes,
@@ -1261,7 +1334,7 @@ create_shipment_box() {
 
     let body = {
       "destinationCountry":this.state.rec_country,
-      "destinationPincode":this.state.rec_pincode,
+      "destinationDistrictId":this.state.rec_district_id,
       "height": this.state.Shipment_height,
       "isApprox": true,
       "length": this.state.Shipment_length,
@@ -1271,7 +1344,7 @@ create_shipment_box() {
       "shipmentCategoryId": this.state.Shipment_category_id,
       "shipmentSubCategoryId": this.state.Shipment_subcategory_id,
       "sourceCountry": this.state.sender_country,
-      "sourcePincode": this.state.sender_pincode,
+      "sourceDistrictId": this.state.sender_district_id,
       "weight": this.state.Shipment_weight,
       "width": this.state.Shipment_width
 
@@ -1310,7 +1383,7 @@ create_cost_checklist() {
         "createdById": data.personId,
         "createdByUserType": "DELIVERY_AGENT",
         "destinationCountryId": this.state.rec_country_id,
-        "destinationPincode": this.state.rec_pincode,
+        "destinationDistrictId": this.state.rec_district_id,
         "fromHeight": this.state.Shipment_height,
         "fromLength": this.state.Shipment_length,
         "fromWeight": this.state.Shipment_weight,
@@ -1318,7 +1391,7 @@ create_cost_checklist() {
         "normalDeliveryCost": 0,
         "shipmentCostTemplateId": 0,
         "sourceCountryId": this.state.sender_countryid,
-        "sourcePincode": this.state.sender_pincode,
+        "sourceDistrictId": this.state.sender_district_id,
         "toHeight": this.state.Shipment_height,
         "toLength": this.state.Shipment_length,
         "toWeight": this.state.Shipment_weight,
@@ -1790,10 +1863,22 @@ render(){
             color={Colors.white}
             value={this.state.sender_state} 
             placeholder={'Select state'} 
-            onItemSelect={(item) =>{ setTimeout(() => { this.fetch_city_list_sender(item.id) ; this.setState({sender_state:item.name , errorTextsender_state:""}) }, 500); }} 
+            onItemSelect={(item) =>{ setTimeout(() => { this.fetch_district_list_sender(item.id); this.fetch_city_list_sender(item.id) ; this.setState({sender_state:item.name , errorTextsender_state:""}) }, 500); }} 
             items={this.state.states_sender} />
           {/* <CustomDropdown data={this.state.states_sender} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_city_list_sender(data[index]['id']) ; this.setState({sender_state:value , errorTextsender_state:""}) }, 500); }} /> */}
           {!!this.state.errorTextsender_state && (<Text style={{color: 'red'}}>{this.state.errorTextsender_state}</Text>)}
+
+          <CustomText text={'District'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+          {/* <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_district: text , errorTextsender_district:""})} value={this.state.sender_district} /> */}
+          <CustomSearchBox
+            fontSizeInput={12}
+            onTextChange={(text)=> this.setState({sender_district: text})} 
+            color={Colors.white}
+            value={this.state.sender_district} 
+            placeholder={'Select district'} 
+            onItemSelect={(item) =>{ setTimeout(() => { this.setState({sender_district:item.name, sender_district_id:item.id , errorTextsender_district:""}) }, 500); }} 
+            items={this.state.districts_sender} />
+          {!!this.state.errorTextsender_district && (<Text style={{color: 'red'}}>{this.state.errorTextsender_district}</Text>)}
 
           <CustomText text={'City'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomSearchBox
@@ -1807,9 +1892,7 @@ render(){
           {/* <CustomDropdown data={this.state.cities_sender} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.setState({sender_city:value , errorTextsender_city:""}) }, 500); }} /> */}
           {!!this.state.errorTextsender_city && (<Text style={{color: 'red'}}>{this.state.errorTextsender_city}</Text>)}
 
-          <CustomText text={'District'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_district: text , errorTextsender_district:""})} value={this.state.sender_district} />
-          {!!this.state.errorTextsender_district && (<Text style={{color: 'red'}}>{this.state.errorTextsender_district}</Text>)}
+         
 
           <CustomText text={'Pincode'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} keyboardType={"number-pad"} maxLength={6} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_pincode: text , errorTextsender_pincode:""})} value={this.state.sender_pincode} />
@@ -1979,11 +2062,23 @@ render(){
             color={Colors.white}
             value={this.state.rec_state} 
             placeholder={'Select state'} 
-            onItemSelect={(item) =>{ setTimeout(() => { this.fetch_city_list_reciever(item.id) ; this.setState({rec_state:item.name , errorTextrec_state:""}) }, 500); }} 
+            onItemSelect={(item) =>{ setTimeout(() => { this.fetch_district_list_reciever(item.id); this.fetch_city_list_reciever(item.id) ; this.setState({rec_state:item.name , errorTextrec_state:""}) }, 500); }} 
             items={this.state.states_reciever} />
           
           {/* <CustomDropdown data={this.state.states_reciever} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_city_list_reciever(data[index]['id']) ; this.setState({rec_state:value , errorTextrec_state:""}) }, 500); }} /> */}
           {!!this.state.errorTextrec_state && (<Text style={{color: 'red'}}>{this.state.errorTextrec_state}</Text>)}
+
+          <CustomText text={'District'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+          {/* <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_district: text, errorTextrec_district:""})} value={this.state.rec_district} /> */}
+          <CustomSearchBox
+            fontSizeInput={12}
+            onTextChange={(text)=> this.setState({rec_district: text})} 
+            color={Colors.white}
+            value={this.state.rec_district} 
+            placeholder={'Select district'} 
+            onItemSelect={(item) =>{ setTimeout(() => { this.setState({rec_district:item.name, rec_district_id:item.id , errorTextrec_district:""}) }, 500); }} 
+            items={this.state.districts_reciever} />
+          {!!this.state.errorTextrec_district && (<Text style={{color: 'red'}}>{this.state.errorTextrec_district}</Text>)}
 
           <CustomText text={'City'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomSearchBox
@@ -1997,9 +2092,7 @@ render(){
           {/* <CustomDropdown data={this.state.city_reciever} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.setState({rec_city:value , errorTextrec_city:""}) }, 500); }} /> */}
           {!!this.state.errorTextrec_city && (<Text style={{color: 'red'}}>{this.state.errorTextrec_city}</Text>)}
 
-          <CustomText text={'District'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_district: text, errorTextrec_district:""})} value={this.state.rec_district} />
-          {!!this.state.errorTextrec_district && (<Text style={{color: 'red'}}>{this.state.errorTextrec_district}</Text>)}
+         
 
          <CustomText text={'Pincode'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} keyboardType={"number-pad"} maxLength={6} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_pincode: text , errorTextrec_pincode:""})} value={this.state.rec_pincode} />
