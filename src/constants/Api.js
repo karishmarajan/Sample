@@ -28,6 +28,7 @@ export const BASE_URL_MASTER= 'http://45.79.124.220:6080/';
 export const SUB_URL_MASTER='epex/master/';
 export const COUNTRY= BASE_URL_MASTER + SUB_URL_MASTER + 'country';
 export const STATE= BASE_URL_MASTER + SUB_URL_MASTER + 'state/country/';
+export const DISTRICT= BASE_URL_MASTER + SUB_URL_MASTER + 'district/state/';
 export const CITY= BASE_URL_MASTER + SUB_URL_MASTER + 'city/state/';
 export const OTP= BASE_URL_MASTER + SUB_URL_MASTER + 'otp';
 export const VERIFY_OTP= BASE_URL_MASTER + SUB_URL_MASTER + 'otp/';

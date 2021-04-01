@@ -305,7 +305,7 @@ fetch_delivery_orders(status_type) {
 
       <Container>
         <Navbar left={left} right={right} title="Delivery" />
-        <Container horizontal={true} style={{ flexDirection: 'column', padding: 10, backgroundColor: Colors.textBackgroundColor }}>
+        <ScrollView contentContainerStyle={{flexGrow:1}} style={{ flexDirection: 'column', padding: 10, backgroundColor: Colors.textBackgroundColor }}>
 
         {/* { this.state.loader === true && (<View style={{alignItems:'center'}}>
         <CustomActivityIndicator/>
@@ -340,9 +340,9 @@ fetch_delivery_orders(status_type) {
               />
 
             </ScrollView>
-            <View style={{alignItems:'flex-end',marginTop:SECTION_MARGIN_TOP}}><CustomText  text={Strings.version} textType={Strings.subtext} color={Colors.darkSkyBlue} /></View>
+            <View style={{alignItems:'flex-end',marginTop:SECTION_MARGIN_TOP ,marginBottom:SECTION_MARGIN_TOP}}><CustomText  text={Strings.version} textType={Strings.subtext} color={Colors.darkSkyBlue} /></View>
           </View>
-        </Container>
+        </ScrollView>
       </Container>
 
 
