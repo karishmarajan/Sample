@@ -9,7 +9,7 @@ import Colors from '../../constants/Colors';
 import Strings from '../../constants/Strings';
 import CustomInput from '../../component/CustomInput';
 import CustomText from '../../component/CustomText';
-import { SECTION_MARGIN_TOP, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,ADDRESS_FIELD_HEIGHT, COLUMN_PADDING,TEXT_PADDING_RIGHT, CREDIT_FIELD_HEIGHT,FOURTH_FONT,SHORT_BUTTON_HEIGHT,SHORT_BORDER_RADIUS, NORMAL_FONT, THIRD_FONT } from '../../constants/Dimen';
+import { SECTION_MARGIN_TOP, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,LOGIN_FIELD_HEIGHT, COLUMN_PADDING,TEXT_PADDING_RIGHT, CREDIT_FIELD_HEIGHT,FOURTH_FONT,SHORT_BUTTON_HEIGHT,SHORT_BORDER_RADIUS, NORMAL_FONT, THIRD_FONT } from '../../constants/Dimen';
 import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
 import CustomRadioButton from '../../component/CustomRadioButton';
@@ -21,7 +21,7 @@ import CustomCheckBox from '../../component/CustomCheckBox';
 import session, { KEY, KEY1 } from '../../session/SessionManager';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 import Api from '../../component/Fetch';
-import { COUNTRY , STATE , DISTRICT , CITY , COST_CHECKLIST , CUSTOMER_DETAILS ,BRANCH_CUSTOMER_DETAILS  ,PACKAGE_CATEGORY, PACKAGE_SUB_CATEGORY ,SHIPMENT_BOX, ORDER, PRODUCT_BILL_UPLOAD, DELIVERY_CHARGE, ADD_COD ,PAYER_PAYMENT, PAYMENT_BY_CASH, ORDER_TRACKING} from '../../constants/Api';
+import { COUNTRY , STATE , DISTRICT , CITY , COST_CHECKLIST , CUSTOMER_DETAILS ,BRANCH_CUSTOMER_DETAILS  ,PACKAGE_CATEGORY, PACKAGE_SUB_CATEGORY ,SHIPMENT_BOX, ORDER, PRODUCT_BILL_UPLOAD, DELIVERY_CHARGE, ADD_COD ,PAYER_PAYMENT, PAYMENT_BY_CASH, ORDER_TRACKING, CUSTOMER_TYPE, USER_REGISTRATION, OTP, VERIFY_OTP , MOBILE_VALIDATION, ALL_USERS} from '../../constants/Api';
 import CustomSearchBox from '../../component/CustomSearchBox';
 import CustomSearchableDropdown from '../../component/CustomSearchableDropdown';
 
@@ -53,8 +53,11 @@ export default class OrderCreation extends React.Component {
     branchUserId:'',
     branchUserIdCode:'',
     parent_user_id:'',
-    customer_type:'',
+    customer_identity_type:'',
 
+    new_customer:true,
+    existing_customer:false,
+    
     same_selected:false,
     new_selected:true,
 
@@ -107,6 +110,7 @@ export default class OrderCreation extends React.Component {
     districts_reciever:[],
     city_reciever:[],
     payments:[],
+    users:[],
 
     rec_city:'',
     rec_country_code:'',
@@ -156,7 +160,7 @@ export default class OrderCreation extends React.Component {
    
    
     
-    
+
 
     package_subcategories:[],
     Shipment_weight:'',
@@ -273,6 +277,62 @@ export default class OrderCreation extends React.Component {
       errorTextshipment_total: '',
       cod_check:true,
 
+      fname:'',
+      lname:'',
+      customer_type:'',
+      mobile:'',
+      otp:'',
+      email:'',
+      country:'',
+      state:'',
+      city:'',
+      district:'',
+      district_id:'',
+      pincode:'',
+      gst:'',
+      address1:'',
+      address2:'',
+      localbody:'',
+      landmark:'',
+      gmaplink:'',
+      password:'',
+      conformpassword:'',
+  
+      customers:[],
+      countries:[],
+      countrycode:'',
+      country_id:'',
+      states:[],
+      districts:[],
+      cities:[],
+  
+  
+        hasError: false,
+        errorTextfname: '',
+        errorTextlname: '',
+        errorTextemail: '',
+        errorTextcustype: '',
+        errorTextcountry: '',
+        errorTextstate: '',
+        errorTextcity: '',
+        errorTextdistrict: '',
+        errorTextpincode: '',
+        errorTextgst: '',
+        errorTextmobile: '',
+        errorTextadrress1: '',
+        errorTextaddress2: '',
+        errorTextlocalbody: '',
+        errorTextlandmark: '',
+        errorTextgmap: '',
+        errorTextverify: '',
+        errorTextpass: '',
+        errorTextconformpass: '',
+        loader:false,
+        modalfirst:false,
+        modalsecond:false,
+        alert_visible:false,
+        otp_verified:false,
+
   };
 
 
@@ -354,9 +414,217 @@ make_two_digit(d) {
     this.fetch_country_list_reciever()
     this.fetch_package_category_list()
     this.date_time_setting_function()
+
+    this.fetch_customer_type();
+    this.fetch_country_list();
+    this.fetch_customers_list();
  
   }
 
+  //////////////////////////////// Fetching customer type function //////////////////////////////////////////////////////////////////////////////
+
+fetch_customer_type() {
+
+  Api.fetch_request(CUSTOMER_TYPE,'GET','')
+  .then(result => {
+   
+    if(result.error != true){
+
+      console.log('Success:', JSON.stringify(result));
+
+      var count = (result.payload).length;
+      let customers = [];
+
+      for(var i = 0; i < count; i++){
+        customers.push({ name: result.payload[i].customerTypeName ,  id: result.payload[i].customerTypeId});
+     }
+     this.setState({customers: customers });
+    }
+    else{
+      console.log('Failed');
+    }
+})
+ 
+}
+
+ //////////////////////////////// Fetching country function //////////////////////////////////////////////////////////////////////////////
+
+ fetch_country_list() {
+
+  Api.fetch_request(COUNTRY,'GET','')
+  .then(result => {
+   
+    if(result.error != true){
+
+      console.log('Success:', JSON.stringify(result));
+
+      var count = (result.payload).length;
+      let countries = [];
+
+      for(var i = 0; i < count; i++){
+       countries.push({ name: result.payload[i].countryName , id: result.payload[i].countryId ,  code: result.payload[i].countryCode  });
+     }
+     this.setState({ countries: countries });
+    }
+    else{
+      console.log('Failed');
+    }
+})
+ 
+}
+//////////////////////////////// Fetching sender state function //////////////////////////////////////////////////////////////////////////////
+
+fetch_state_list(country_id) {
+
+  this.setState({country_id:country_id})
+
+  Api.fetch_request(STATE + country_id,'GET','')
+  .then(result => {
+   
+    if(result.error != true){
+
+      console.log('Success:', JSON.stringify(result));
+
+      var count = (result.payload).length;
+      let states = [];
+
+      for(var i = 0; i < count; i++){
+        states.push({ name: result.payload[i].stateName ,  id: result.payload[i].stateId});
+     }
+     this.setState({states: states });
+    }
+    else{
+      console.log('Failed');
+    }
+})
+ 
+}
+
+//////////////////////////////// Fetching district city function //////////////////////////////////////////////////////////////////////////////
+
+fetch_district_list(state_id) {
+
+  Api.fetch_request(DISTRICT + state_id,'GET','')
+  .then(result => {
+   
+    if(result.error != true){
+
+      console.log('Success:', JSON.stringify(result));
+
+
+      var count = (result.payload).length;
+      let district = [];
+
+      for(var i = 0; i < count; i++){
+        district.push({ name: result.payload[i].districtName ,  id: result.payload[i].districtId});
+     }
+     this.setState({ districts : district });
+    }
+    else{
+      console.log('Failed');
+    }
+})
+ 
+}
+//////////////////////////////// Fetching sender city function //////////////////////////////////////////////////////////////////////////////
+
+fetch_city_list(state_id) {
+
+  Api.fetch_request(CITY + state_id,'GET','')
+  .then(result => {
+   
+    if(result.error != true){
+
+      console.log('Success:', JSON.stringify(result));
+
+
+      var count = (result.payload).length;
+      let city = [];
+
+      for(var i = 0; i < count; i++){
+        city.push({ name: result.payload[i].cityName });
+     }
+     this.setState({ cities : city });
+    }
+    else{
+      console.log('Failed');
+    }
+})
+ 
+}
+
+//////////////////////////////// customer mobile validating function //////////////////////////////////////////////////////////////////////////////
+
+mobileno_validation() {
+
+  Api.fetch_request(MOBILE_VALIDATION + this.state.countrycode+"/"+this.state.mobile,'GET','')
+  .then(result => {
+   
+    if(result.error != false){
+
+      console.log('Success:', JSON.stringify(result));
+      this.send_otp();
+ 
+    }
+    else{
+      console.log('Failed');
+      Toast.show({ text: "already exist this number", type: 'warning' });
+    }
+})
+ 
+}
+
+  
+///////////////////////////////// Sending OTP function /////////////////////////////////////////////////////////////////////////////////////
+ 
+send_otp(){
+  let body={
+    "countryCode": this.state.countrycode,
+    "mobileNumber": this.state.mobile,
+
+};
+  
+
+  Api.fetch_request(OTP,'POST','',JSON.stringify(body))
+  .then(result => {
+   
+    if(result.error != true){
+    console.log('Success:', JSON.stringify(result))
+    Toast.show({ text: result.message, type: 'success' });
+    }
+    else{
+      console.log('Failed');
+      Toast.show({ text: result.message, type: 'warning' });
+    }
+  })
+}
+
+///////////////////////////////// Verifying OTP function /////////////////////////////////////////////////////////////////////////////////////
+
+verify_otp(otp) {
+
+  let body={
+    "countryCode": this.state.countrycode,
+    "mobileNumber": this.state.mobile,
+
+};
+
+  Api.fetch_request(VERIFY_OTP + otp,'POST','',JSON.stringify(body))
+  .then(result => {
+   
+    if(result.error != true){
+
+      console.log('Success:', JSON.stringify(result));
+      this.setState({otp_verified:true,errorTextverify:''});
+      Toast.show({ text: result.message, type: 'success' });
+    }
+    else{
+      console.log('Failed');
+      Toast.show({ text: result.message, type: 'warning' });
+    }
+})
+ 
+}
 ////////////////////////////////// Verify string function //////////////////////////////////////////////////////////////////
 
 verifyString(text) {
@@ -381,6 +649,13 @@ verifyAlphanumeric(text) {
   var reg = /^[a-zA-Z0-9]*$/;
   return reg.test(text);
 }
+////////////////////////////////// Verify email function //////////////////////////////////////////////////////////////////
+
+verifyEmail(email) {
+  var reg = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return reg.test(email);
+}
+
 
 /////////////////////////////////// Pickup continue function //////////////////////////////////////////////////////////////
 
@@ -419,14 +694,16 @@ verifyAlphanumeric(text) {
       this.setState({hasError: true, errorTextsender_pincode: 'Minimum 6 digit !'});
       return;
     }
-    if(this.state.sender_gmap==="") {
-      this.setState({hasError: true, errorTextsender_gmap: 'Please fill !'});
-      return;
-    }
+    // if(this.state.sender_gmap==="") {
+    //   this.setState({hasError: true, errorTextsender_gmap: 'Please fill !'});
+    //   return;
+    // }
+    if(this.state.sender_gmap !="") {
     if(!this.verifyGmap((this.state.sender_gmap).trim())) {
       this.setState({hasError: true, errorTextsender_gmap: 'Please enter a valid link !'});
       return;
     }
+  }
     
     if(this.state.sender_address1==="") {
       this.setState({hasError: true, errorTextsender_address1: 'Please fill !'});
@@ -519,14 +796,16 @@ delivery_continue() {
     this.setState({hasError: true, errorTextrec_pincode: 'Must be 6 digit !'});
     return;
   }
-  if(this.state.rec_gmap==="") {
-    this.setState({hasError: true, errorTextrec_gmap: 'Please fill !'});
-    return;
-  }
+  // if(this.state.rec_gmap==="") {
+  //   this.setState({hasError: true, errorTextrec_gmap: 'Please fill !'});
+  //   return;
+  // }
+  if(this.state.rec_gmap !="") {
   if(!this.verifyGmap(this.state.rec_gmap)) {
     this.setState({hasError: true, errorTextrec_gmap: 'Please enter a valid link !'});
     return;
   }
+}
   if(this.state.rec_address1==="") {
     this.setState({hasError: true, errorTextrec_address1: 'Please fill !'});
     return;
@@ -746,6 +1025,16 @@ if(no == 12){
   this.setState({delivery_type:"BULLET"});
  
 }
+if(no == 13){
+  this.setState({new_customer:true})
+  this.setState({existing_customer:false})
+ 
+}
+if(no == 14){
+  this.setState({new_customer:false})
+  this.setState({existing_customer:true})
+ 
+}
 
 }
 
@@ -781,10 +1070,12 @@ if(no == 12){
 ////////////////////////////// Fetching customer details with id function //////////////////////////////////////////////////////////////////////////////
   verify_customer_id(customer_id) {
 
+    
     if(customer_id=="") {
       this.setState({hasError: true, errorTextcustomer_id: 'Provide customer id !'});
       return;
     }
+    this.setState({customer_id:customer_id});
 
     this.setState({loader:true});
     setTimeout(()=>{this.setState({loader:false})},1000);
@@ -813,7 +1104,7 @@ if(no == 12){
         this.setState({customer_landmark : result.payload.landMark})
         this.setState({customer_countrycode : result.payload.countryCode})
         this.setState({customer_countryid : result.payload.countryId})
-        this.setState({customer_type: 'COMMON_USER'})
+        this.setState({customer_identity_type: 'COMMON_USER'})
         this.setState({parent_user_id : '0' })
         
 
@@ -888,6 +1179,7 @@ if(no == 12){
     }
 
     var id= customer_id.replace('B', '');
+    this.setState({customer_id:id})
 
     this.setState({loader:true});
     setTimeout(()=>{this.setState({loader:false})},1000);
@@ -901,7 +1193,7 @@ if(no == 12){
         this.setState({sender_details : result.payload})
 
        this.setState({branchUserId : result.payload.branchUserId })
-       this.setState({customer_id : result.payload.branchUserId })
+      //  this.setState({customer_id : result.payload.branchUserId })
        this.setState({branchUserIdCode : result.payload.branchUserIdCode })
        this.setState({parent_user_id : result.payload.parent.userId })
         this.setState({customer_name : result.payload.firstName })
@@ -920,7 +1212,7 @@ if(no == 12){
         this.setState({customer_landmark : result.payload.landMark})
         this.setState({customer_countrycode : result.payload.countryCode})
         this.setState({customer_countryid : result.payload.countryId})
-        this.setState({customer_type: 'BRANCH_USER'})
+        this.setState({customer_identity_type: 'BRANCH_USER'})
 
       }
       else{
@@ -1209,7 +1501,31 @@ fetch_city_list_reciever(state_id) {
       }
   })
   }
+//////////////////////////////// Fetching all customers function //////////////////////////////////////////////////////////////////////////////
 
+fetch_customers_list() {
+
+  Api.fetch_request(ALL_USERS,'GET','')
+  .then(result => {
+   
+    if(result.error != true){
+
+      console.log('Success:', JSON.stringify(result));
+
+      var count = (result.payload).length;
+      let customers = [];
+
+      for(var i = 0; i < count; i++){
+       customers.push({name: result.payload[i].userId+' - '+ result.payload[i].firstName+' '+result.payload[i].lastName +' - '+result.payload[i].mobileNumber, id: result.payload[i].userId });
+     }
+     this.setState({ users: customers });
+    }
+    else{
+      console.log('Failed');
+    }
+})
+ 
+}
    ///////////////////////////////// Creating Order function //////////////////////////////////////////////////////////////////////////////////////// 
  
 create_order() {
@@ -1223,7 +1539,7 @@ create_order() {
       "creatorId": data.personId,
       "creatorUserType": "DELIVERY_AGENT",
       "customerId": this.state.customer_id,
-      "customerIdentityType": this.state.customer_type,
+      "customerIdentityType": this.state.customer_identity_type,
       "delivery": {
         "addressLine1": this.state.rec_address1,
         "addressLine2": this.state.rec_address2,
@@ -1701,12 +2017,220 @@ fetching_order_details() {
  
 }
 
+//////////////////////////////////  Signup function /////////////////////////////////////////////////////////////////////////////////////
+
+signup() {
+
+
+  if(this.state.fname==="") {
+    this.setState({hasError: true, errorTextfname: 'Please fill !'});
+    return;
+  }
+  if(!this.verifyString((this.state.fname).trim())) {
+    this.setState({hasError: true, errorTextfname: 'Please enter a valid name !'});
+    return;
+  }
+  if(this.state.lname==="") {
+    this.setState({hasError: true, errorTextlname: 'Please fill !'});
+    return;
+  }
+  if(!this.verifyString((this.state.lname).trim())) {
+    this.setState({hasError: true, errorTextlname: 'Please enter a valid name !'});
+    return;
+  }
+  if(this.state.customer_type==="") {
+    this.setState({hasError: true, errorTextcustype: 'Please select customer type !'});
+    return;
+  }
+  if(this.state.email==="") {
+    this.setState({hasError: true, errorTextemail: 'Please fill !'});
+    return;
+  }
+  if(!this.verifyEmail((this.state.email).trim())) {
+    this.setState({hasError: true, errorTextemail: 'Please enter a valid email address !'});
+    return;
+  }
+ 
+  if(this.state.country==="") {
+    this.setState({hasError: true, errorTextcountry: 'Please select country !'});
+    return;
+  }
+  if(this.state.state==="") {
+    this.setState({hasError: true, errorTextstate: 'Please select state !'});
+    return;
+  }
+  if(this.state.city==="") {
+    this.setState({hasError: true, errorTextcity: 'Please select city !'});
+    return;
+  }
+  if(this.state.district==="") {
+    this.setState({hasError: true, errorTextdistrict: 'Please fill !'});
+    return;
+  }
+  if(!this.verifyString((this.state.district).trim())) {
+    this.setState({hasError: true, errorTextdistrict: 'Please enter a valid data !'});
+    return;
+  }
+  if(this.state.pincode==="") {
+    this.setState({hasError: true, errorTextpincode: 'Please fill !'});
+    return;
+  }
+  if(this.state.pincode.length<6) {
+    this.setState({hasError: true, errorTextpincode: 'minimum 6 digit !'});
+    return;
+  }
+  // if(this.state.gst==="") {
+  //   this.setState({hasError: true, errorTextgst: 'Please fill !'});
+  //   return;
+  // }
+  if(this.state.gst !="") {
+  if(!this.verifyAlphanumeric((this.state.gst).trim())) {
+    this.setState({hasError: true, errorTextgs: 'Please enter a valid GST number!'});
+    return;
+  }
+}
+  if(this.state.address1==="") {
+    this.setState({hasError: true, errorTextaddress1: 'Please fill !'});
+    return;
+  }
+  if(this.state.address2==="") {
+    this.setState({hasError: true, errorTextaddress2: 'Please fill !'});
+    return;
+  }
+  // if(this.state.localbody==="") {
+  //   this.setState({hasError: true, errorTextlocalbody: 'Please fill !'});
+  //   return;
+  // }
+  if(this.state.localbody !="") {
+  if(!this.verifyString((this.state.localbody).trim())) {
+    this.setState({hasError: true, errorTextlocalbody: 'Please enter a valid data !'});
+    return;
+  }
+}
+  if(this.state.landmark==="") {
+    this.setState({hasError: true, errorTextlandmark: 'Please fill !'});
+    return;
+  }
+  // if(this.state.gmaplink==="") {
+  //   this.setState({hasError: true, errorTextgmap: 'Please fill !'});
+  //   return;
+  // }
+  if(this.state.gmaplink !="") {
+  if(!this.verifyGmap((this.state.gmaplink).trim())) {
+    this.setState({hasError: true, errorTextgmap: 'Please enter a valid link !'});
+    return;
+  }
+}
+  if(this.state.mobile==="") {
+    this.setState({hasError: true, errorTextmobile: 'Please fill !'});
+    return;
+  }
+  if(!this.verifyNumber((this.state.mobile).trim())) {
+    this.setState({hasError: true, errorTextmobile: 'Please enter a valid number!'});
+    return;
+  }
+  if(this.state.otp==="") {
+    this.setState({hasError: true, errorTextverify: 'Please fill !'});
+    return;
+  }
+  if(this.state.otp_verified != true) {
+    this.setState({hasError: true, errorTextverify: 'You have to verify OTP!'});
+    return;
+  }
+  if(this.state.password==="") {
+    this.setState({hasError: true, errorTextpass: 'Please fill !'});
+    return;
+  }
+  if(this.state.password.length < 6) {
+    this.setState({hasError: true, errorTextpass: 'Passwords must contains at least 6 characters !'});
+    return;
+  }
+  if(this.state.conformpassword==="") {
+    this.setState({hasError: true, errorTextconformpass: 'Please fill !'});
+    return;
+  }
+  if(this.state.password != this.state.conformpassword) {
+    this.setState({hasError: true, errorTextconformpass: 'Password mismatch'});
+    return;
+  }
+  
+  AsyncStorage.getItem(KEY).then((value => {
+    let data = JSON.parse(value);
+
+  let body={
+    
+      "addressLine1": this.state.address1,
+      "addressLine2": this.state.address2,
+      "city": this.state.city,
+      "country": this.state.country,
+      "countryCode": this.state.countrycode,
+      "countryId": this.state.country_id,
+      "createdBy": data.personId,
+      "creatorUserType": "DELIVERY_AGENT",
+      "customerType": this.state.customer_type,
+      "district": this.state.district,
+      "districtId": this.state.district_id,
+      "emailId": this.state.email,
+      "firstName": this.state.fname,
+      "gmapLink": this.state.gmaplink,
+      "gstNumber": this.state.gst,
+      "landMark": this.state.landmark,
+      "lastName": this.state.lname,
+      "localBodyType": this.state.localbody,
+      "mobileNumber": this.state.mobile,
+      "password": this.state.password,
+      "pincode": this.state.pincode,
+      "state": this.state.state,
+      "userId": 0
+};
+
+
+  Api.fetch_request(USER_REGISTRATION,'POST','',JSON.stringify(body))
+  .then(result => {
+   
+
+    if(result.error != true){
+
+    console.log('Success:', JSON.stringify(result));
+    Toast.show({ text: result.message, type: 'success' });
+
+    this.setState({customer_id:result.payload.userId,
+      customer_name:result.payload.firstName +" "+ result.payload.lastName,
+      customer_no:result.payload.mobileNumber,
+      customer_address1:result.payload.addressLine1,
+      customer_address2:result.payload.addressLine2,
+      customer_email:result.payload.emailId,
+      customer_countrycode:result.payload.countryCode,
+      customer_countryid:result.payload.countryId,
+      customer_country:result.payload.country,
+      customer_state:result.payload.state,
+      customer_district:result.payload.district,
+      customer_district_id :result.payload.districtId,
+      customer_city:result.payload.city,
+      customer_localbody:result.payload.localBodyType,
+      customer_landmark:result.payload.landMark,
+      customer_gmap:result.payload.gmapLink,
+      customer_pincode:result.payload.pincode,
+      customer_identity_type:'COMMON_USER',
+      parent_userId:result.payload.parentUserId,
+    });
+
+
+    }
+    else{
+      console.log('Failed');
+      Toast.show({ text: result.message, type: 'warning' });
+      
+    }
+  })
+ 
+}));
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 render(){
 
-  const today = new Date();
 
     var left = (
         <Left style={{ flex: 1 }}>
@@ -1747,21 +2271,137 @@ render(){
 
 <View style={{ backgroundColor:Colors.white,flexGrow:1,padding:MAIN_VIEW_PADDING}}>
 
+<View style={{marginBottom:SECTION_MARGIN_TOP,}}>
+          <CustomText  text={'Sender Details'} textType={Strings.subtitle} textDecorationLine={'underline'} />
+        </View>
+
+<View style={{flexDirection:'row',}}>
+         <CustomRadioButton title={'New Customer'} selectedColor={Colors.darkSkyBlue} selected={this.state.new_customer} onPress={()=>this.isSelected(13)}/>
+         <CustomRadioButton title={'Existing Customer'} selectedColor={Colors.darkSkyBlue} selected={this.state.existing_customer} onPress={()=>this.isSelected(14)}/>
+         </View>
+  {/*/////////////////////////////////////////// Registration Block //////////////////////////////////////////////// */}
+
+        {this.state.new_customer === true && ( <View style={{marginTop:SECTION_MARGIN_TOP}}>   
+
+        <View style={{marginTop:SECTION_MARGIN_TOP}}>
+          <CustomInput flex={1} placeholder={'First Name'}  borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) =>{ this.setState({fname: text , errorTextfname:""})}} value={this.state.fname} />
+          {!!this.state.errorTextfname && (<Text style={{color: 'red'}}>{this.state.errorTextfname}</Text>)}
+        </View>
+
+        <View style={{marginTop:SECTION_MARGIN_TOP}}>
+          <CustomInput flex={1} placeholder={'Second Name'} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({lname: text, errorTextlname:""})} value={this.state.lname} />
+          {!!this.state.errorTextlname && (<Text style={{color: 'red'}}>{this.state.errorTextlname}</Text>)}
+        </View>
+
+        <View style={{}}>
+        <CustomText text={'Customer Type'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+          {/* <CustomDropdown data={this.state.customers} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.setState({customer_type:value, errorTextcustype:""}) }, 500); }} /> */}
+          <CustomSearchBox onTextChange={(text)=>{setTimeout(()=>{this.setState({customer_type: text})},0)}} value={this.state.customer_type} placeholder={'Select customer type'} onItemSelect={(item) =>{ setTimeout(() => {this.setState({customer_type:item.name , errorTextcustype:""});}, 500); }} items={this.state.customers} />
+          {!!this.state.errorTextcustype && (<Text style={{color: 'red'}}>{this.state.errorTextcustype}</Text>)}
+        </View>
+
+       
+
+        <View style={{marginTop:SECTION_MARGIN_TOP}}>
+          <CustomInput flex={1} placeholder={'Email Id'} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({email: text , errorTextemail:""})} value={this.state.email} />
+          {!!this.state.errorTextemail && (<Text style={{color: 'red'}}>{this.state.errorTextemail}</Text>)}
+        </View>
+
+    <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+    <CustomSearchBox onTextChange={(text)=>{setTimeout(()=>{this.setState({country: text})},0)}} value={this.state.country} placeholder={'Select country'} onItemSelect={(item) =>{ setTimeout(() => { this.fetch_state_list(item.id) ; this.setState({country:item.name , errorTextcountry:""}) ; this.setState({countrycode:item.code}); }, 500); }} items={this.state.countries} />
+   {!!this.state.errorTextcountry && (<Text style={{color: 'red'}}>{this.state.errorTextcountry}</Text>)}
+
+   <CustomText text={'State'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+    <CustomSearchBox onTextChange={(text)=> this.setState({state: text})} value={this.state.state} placeholder={'Select state'} onItemSelect={(item) =>{ setTimeout(() => {this.fetch_district_list(item.id); this.fetch_city_list(item.id) ; this.setState({state:item.name , errorTextstate:""}) }, 500); }}  items={this.state.states} />
+    {!!this.state.errorTextstate && (<Text style={{color: 'red'}}>{this.state.errorTextstate}</Text>)}
+
+    <CustomText text={'District'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+      <CustomSearchBox onTextChange={(text)=> this.setState({district: text })} value={this.state.district} placeholder={'Select city'} onItemSelect={(item) =>{ setTimeout(() => { this.setState({district:item.name, district_id:item.id , errorTextdistrict:""}) }, 500); }} items={this.state.districts} />
+      {!!this.state.errorTextdistrict && (<Text style={{color: 'red'}}>{this.state.errorTextdistrict}</Text>)}
+
+    <CustomText text={'City'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+      <CustomSearchBox onTextChange={(text)=> this.setState({city: text})} value={this.state.city} placeholder={'Select city'} onItemSelect={(item) =>{ setTimeout(() => { this.setState({city:item.name , errorTextcity:""}) }, 500); }} items={this.state.cities} />
+    {!!this.state.errorTextcity && (<Text style={{color: 'red'}}>{this.state.errorTextcity}</Text>)}
+
+
+        <View style={{marginTop:SECTION_MARGIN_TOP}}>
+          <CustomInput flex={1} placeholder={'Pincode'}  maxLength={10} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({pincode: text, errorTextpincode:""})} value={this.state.pincode} />
+          {!!this.state.errorTextpincode && (<Text style={{color: 'red'}}>{this.state.errorTextpincode}</Text>)}
+        </View>
+
+        <View style={{marginTop:SECTION_MARGIN_TOP}}>
+          <CustomInput flex={1} placeholder={'GST No.'} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({gst: text, errorTextgst:""})} value={this.state.gst} />
+          {!!this.state.errorTextgst && (<Text style={{color: 'red'}}>{this.state.errorTextgst}</Text>)}
+        </View>
+
+        <View style={{marginTop:SECTION_MARGIN_TOP}}>
+          <CustomInput flex={1} placeholder={'Address Line1'} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({address1: text, errorTextaddress1:""})} value={this.state.address1} />
+          {!!this.state.errorTextaddress1 && (<Text style={{color: 'red'}}>{this.state.errorTextaddress1}</Text>)}
+        </View>
+
+        <View style={{marginTop:SECTION_MARGIN_TOP}}>
+          <CustomInput flex={1} placeholder={'Address Line2'} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({address2: text, errorTextaddress2:""})} value={this.state.address2} />
+          {!!this.state.errorTextaddress2 && (<Text style={{color: 'red'}}>{this.state.errorTextaddress2}</Text>)}
+        </View>
+
+        <View style={{marginTop:SECTION_MARGIN_TOP}}>
+          <CustomInput flex={1} placeholder={'Municipality/Panchayath/Corporation'} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({localbody: text, errorTextlocalbody:""})} value={this.state.localbody} />
+          {!!this.state.errorTextlocalbody && (<Text style={{color: 'red'}}>{this.state.errorTextlocalbody}</Text>)}
+        </View>
+
+        <View style={{marginTop:SECTION_MARGIN_TOP}}>
+          <CustomInput flex={1} placeholder={'Landmark'} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({landmark: text, errorTextlandmark:""})} value={this.state.landmark} />
+          {!!this.state.errorTextlandmark && (<Text style={{color: 'red'}}>{this.state.errorTextlandmark}</Text>)}
+        </View>
+
+        <View style={{marginTop:SECTION_MARGIN_TOP}}>
+          <CustomInput flex={1} placeholder={'Gmap Link'} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({gmaplink: text , errorTextgmap:""})} value={this.state.gmaplink} />
+          {!!this.state.errorTextgmap && (<Text style={{color: 'red'}}>{this.state.errorTextgmap}</Text>)}
+        </View>
+
+        <View style={styles.input}>
+        <View style={{flex:6}}><CustomInput backgroundColor={Colors.white} flex={1} maxLength={12} keyboardType={'phone-pad'} placeholder={'Mobile Number'} onChangeText={(text) => this.setState({mobile: text , errorTextmobile:""})} value={this.state.mobile}   /></View>
+        <View style={{flex:3}}><CustomButton title={'SEND OTP'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.mobileno_validation()}/></View>
+        </View>
+        {!!this.state.errorTextmobile && (<Text style={{color: 'red'}}>{this.state.errorTextmobile}</Text>)}
+
+        <View style={styles.input}>
+        <View style={{flex:5}}><CustomInput backgroundColor={Colors.white} flex={1} keyboardType={'number-pad'} placeholder={'Enter OTP'} onChangeText={(text) => this.setState({otp: text, errorTextverify:""})} value={this.state.otp}   /></View>
+       {this.state.otp_verified === false &&(<View style={{flex:3}}><CustomButton title={'VERIFY OTP'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.verify_otp(this.state.otp)}/></View>)}
+        </View>
+        {!!this.state.errorTextverify && (<Text style={{color: 'red'}}>{this.state.errorTextverify}</Text>)}
+
+        <View style={{marginTop:SECTION_MARGIN_TOP}}>
+          <CustomInput flex={1} placeholder={'Password'} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({password: text, errorTextpass:""})} value={this.state.password} />
+          {!!this.state.errorTextpass && (<Text style={{color: 'red'}}>{this.state.errorTextpass}</Text>)}
+        </View>
+
+        <View style={{marginTop:SECTION_MARGIN_TOP}}>
+          <CustomInput flex={1} placeholder={'Conform Password'} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({conformpassword: text, errorTextconformpass:""})} value={this.state.conformpassword} />
+          {!!this.state.errorTextconformpass && (<Text style={{color: 'red'}}>{this.state.errorTextconformpass}</Text>)}
+        </View>
+ 
+
+          <View >
+           <CustomButton  title={'Register'} fontSize={FOURTH_FONT} onPress={()=>this.signup()} borderRadius={SHORT_BLOCK_BORDER_RADIUS}/>
+          </View>
+    
+          </View>)}
+
   {/*/////////////////////////////////////////// Acivity indicator Block //////////////////////////////////////////////// */}
 
  { this.state.loader === true && (<View style={{justifyContent:'center'}}>
         <CustomActivityIndicator/>
         </View>)}
 
-<View style={{flexDirection:'row',marginBottom:SECTION_MARGIN_TOP,}}>
-          <CustomText  text={'Sender Details'} textType={Strings.subtitle} textDecorationLine={'underline'} />
-        </View>
 
+        {this.state.existing_customer === true && ( <View>
         <CustomText text={'Customer Id'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <View style={{flexDirection:'row',borderColor:Colors.borderColor,borderWidth:SHORT_BORDER_WIDTH,borderRadius:SHORT_BORDER_RADIUS,padding:1,alignItems:'center',justifyContent:'space-between'}}>
+    <CustomSearchBox  placeholder={'Select customers'} onTextChange={(text)=>this.setState({customer_id: text})}  value={this.state.customer_id}  onItemSelect={(item) =>{ if(item.id.charAt(0)=='B'){this.verify_branch_customer_id(item.id)}else{this.verify_customer_id(item.id)}}} items={this.state.users} />
+        {/* <View style={{flexDirection:'row',borderColor:Colors.borderColor,borderWidth:SHORT_BORDER_WIDTH,borderRadius:SHORT_BORDER_RADIUS,padding:1,alignItems:'center',justifyContent:'space-between'}}>
         <View style={{flex:6}}><CustomInput backgroundColor={Colors.white} onChangeText={(text) => this.setState({customer_id: text, errorTextcustomer_id:''})} value={this.state.customer_id}  flex={1} /></View>
         <View style={{flex:2}}><CustomButton title={'search'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>{if(this.state.customer_id.charAt(0)=='B'){this.verify_branch_customer_id(this.state.customer_id)}else{this.verify_customer_id(this.state.customer_id)}}}/></View>
-        </View>
+        </View> */}
         {!!this.state.errorTextcustomer_id && (<Text style={{color: 'red'}}>{this.state.errorTextcustomer_id}</Text>)}
        
         <CustomText text={'Full Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
@@ -1790,6 +2430,8 @@ render(){
         <CustomInput flex={1} value={this.state.customer_city} />
         <CustomText text={'Landmark'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} value={this.state.customer_landmark} />
+
+        </View>)}
 
 </View>
 
@@ -2417,4 +3059,32 @@ render(){
 
 }
 }
+
+const styles=StyleSheet.create({
+  input :{
+    flexDirection:'row',
+    borderColor:Colors.borderColor,
+    borderWidth:SHORT_BORDER_WIDTH,
+    borderRadius:SHORT_BORDER_RADIUS,
+    padding:1,alignItems:'center',
+    justifyContent:'space-between',
+    marginTop:SECTION_MARGIN_TOP,
+  },
+
+  mainOuterComponent: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#00000088'
+  },
+  mainContainer: {
+    flexDirection: 'column',
+    width: '80%',
+    backgroundColor: Colors.white,
+    borderRadius: 10,
+    padding: 10,
+  },
+  
+ 
+});
 
