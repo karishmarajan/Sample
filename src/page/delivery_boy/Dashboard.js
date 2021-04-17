@@ -439,7 +439,7 @@ pickup_assigned_rejectall() {
 
 <View style={{borderRadius:5,backgroundColor:Colors.gray,padding:6,width:280,marginTop:SECTION_MARGIN_TOP}}>
 <View style={{flexDirection:'row'}}>
-<Grid><Col style={styles.colstyle}><CustomCheckBox color={Colors.buttonBackgroundColor} onPress={()=>this.checkItem(item.deliveryId)} checked={this.state.checked.includes(item.deliveryId)}/></Col>
+<Grid><Col style={styles.colstyle}>{ item.deliveryStatus === "ASSIGNMENT_NOT_CONFIRMED" && (<View><CustomCheckBox color={Colors.buttonBackgroundColor} onPress={()=>this.checkItem(item.deliveryId)} checked={this.state.checked.includes(item.deliveryId)}/></View>)}</Col>
 <Col><Row style={styles.contents}><CustomText text={'Order ID'} color={Colors.black} textType={Strings.subtext}/></Row>
 <Row style={styles.contents}><CustomText text={'Cust. Name'} color={Colors.black} textType={Strings.subtext}/></Row></Col>
 <Col><Row style={styles.contents}><CustomText text={item.orderId ? item.orderId : Strings.na} color={Colors.black} textType={Strings.subtext}/></Row>

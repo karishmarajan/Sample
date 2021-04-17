@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, StyleSheet, AsyncStorage, FlatList ,Linking, Platform, TouchableOpacity, } from 'react-native';
+import { ScrollView, StyleSheet, AsyncStorage, FlatList ,Linking, Platform, BackHandler, } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 import { Container, Header, Button, Left, Icon, Right, Text, Input, TextInput, Grid, Col, Row, SearchBar, Item, View, Badge, Body } from 'native-base';
@@ -26,6 +26,8 @@ const myArray = [{ name: "ASSIGNED", value: "ASSIGNED" }, { name: "ALL", value: 
 
 
 export default class PickUp extends React.Component {
+
+
   state = {
     filterType: Strings.status,
     search: '',
@@ -39,10 +41,12 @@ export default class PickUp extends React.Component {
     searchText:'',
   };
 
+
   componentDidMount() {
     this.fetch_pickup_orders(Strings.assigned)
-    setTimeout(()=>{this.setState({loader:false})},3000);
+    
   }
+
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

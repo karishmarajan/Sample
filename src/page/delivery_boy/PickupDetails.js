@@ -119,7 +119,7 @@ balanceCalculate(text){
   var bal1=payment-myInt;
 
 if(myInt==payment){
-  this.setState({balance_amount:'0',amount_payed:this.state.amount_recieved,amount_to_pay:'0'});
+  this.setState({balance_amount:'0',amount_payed:''+myInt,amount_to_pay:'0'});
 }else if(myInt>payment){
   this.setState({balance_amount:''+bal,amount_payed:''+payment, amount_to_pay:'0'});
 }else{
@@ -348,7 +348,7 @@ render(){
     
       </View>)}
 
-      <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>Actions.pickup()} />
+      <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>Actions.reset('pickup')} />
       <View style={{alignItems:'flex-end',marginTop:SECTION_MARGIN_TOP}}><CustomText  text={Strings.version} textType={Strings.subtext} color={Colors.darkSkyBlue} /></View>
           </View>
         </ScrollView>
