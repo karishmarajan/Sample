@@ -2840,7 +2840,7 @@ render(){
         <CustomText text={'Shipment box'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
 
          <CustomText text={'Approx. Weight'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-         <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({Shipment_weight: text, errorTextshipment_weight:""})} value={this.state.Shipment_weight} placeholder={'kg'} />
+         <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({Shipment_weight: text, errorTextshipment_weight:""})} value={this.state.Shipment_weight} placeholder={'gm'} />
          {!!this.state.errorTextshipment_weight && (<Text style={{color: 'red'}}>{this.state.errorTextshipment_weight}</Text>)}
 
 <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:15}}>

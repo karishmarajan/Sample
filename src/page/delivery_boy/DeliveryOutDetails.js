@@ -272,7 +272,8 @@ update_receiver_name() {
         console.log('Success:', JSON.stringify(result));
         Toast.show({ text: result.message, type: 'success' });
 
-        Actions.deliveryfirst();
+        // Actions.deliveryfirst();
+        Actions.reset('deliveryfirst');
 
       }
       else {
