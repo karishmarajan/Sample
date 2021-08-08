@@ -9,7 +9,7 @@ import Colors from '../../constants/Colors';
 import Strings from '../../constants/Strings';
 import CustomText from '../../component/CustomText';
 import CustomInput from '../../component/CustomInput';
-import { SECTION_MARGIN_TOP, COLUMN_PADDING, SHORT_BUTTON_HEIGHT, LOGIN_FIELD_HEIGHT, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT } from '../../constants/Dimen';
+import { SECTION_MARGIN_TOP, COLUMN_PADDING, SHORT_BUTTON_HEIGHT, LOGIN_FIELD_HEIGHT, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,CLOSE_SIZE,CLOSE_WIDTH } from '../../constants/Dimen';
 import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
 import session, { KEY } from '../../session/SessionManager';
@@ -247,7 +247,7 @@ fetch_delivery_orders(status_type) {
       <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3 }}>
         <View style={styles.cell1}><Icon name='arrow-up' style={{ fontSize: 14 }} /></View>
         <View style={styles.cell}><CustomText text={item.serialId ? item.serialId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText text={item.orderId ? item.orderId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText text={item.preDefinedOrderId?item.preDefinedOrderId:item.orderId ? item.orderId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.contactPersonName ? item.contactPersonName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.addressLine1 ? item.addressLine1 : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.city ? item.city : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
@@ -282,8 +282,8 @@ fetch_delivery_orders(status_type) {
   render() {
     var left = (
       <Left style={{ flex: 1 }}>
-        <Button onPress={() => Actions.pop()} transparent>
-          <Icon style={{ color: Colors.navbarIconColor }} name='ios-close' />
+        <Button  width={CLOSE_WIDTH}  onPress={() => Actions.pop()} transparent>
+          <Icon style={{ color: Colors.navbarIconColor,fontSize:CLOSE_SIZE }} name='ios-close' />
         </Button>
       </Left>
     );

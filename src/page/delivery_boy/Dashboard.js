@@ -45,6 +45,7 @@ export default class Dashboard extends React.Component {
     reject_reason_delivery:'',
     reject_reason_pickup:'',
     selected_pickup_id:'',
+    
   }
 
   ///////////////////////////////////////// Component did mount function ///////////////////////////////////////////////////////////////////////////////
@@ -416,7 +417,7 @@ pickup_assigned_rejectall() {
 
     <Row style={styles.rowstyle1}>
     <Col style={styles.colstyle1}>
-    <Text style={{fontSize:12,}}>Order ID:      {item.orderId ? item.orderId : Strings.na}</Text>
+    <Text style={{fontSize:12,}}>Order ID: {item.preDefinedOrderId?item.preDefinedOrderId:item.orderId ? item.orderId : Strings.na}   </Text>
     {/* <Text style={{fontSize:12,}}>Cust. Name: {item.contactPersonName ? item.contactPersonName : Strings.na}</Text> */}
     <Text style={{fontSize:12,}}>After Pickup: {item.afterPickupStatus == 'TO_OFFICE' ? 'To Office' :'To Reciever'}</Text>
     <CustomText text={'Details'} color={Colors.darkSkyBlue} textType={Strings.subtext} onPress={()=>Actions.pickupdetailsview({pickup_id:item.pickupId})}/>
@@ -442,7 +443,7 @@ pickup_assigned_rejectall() {
 <Grid><Col style={styles.colstyle}>{ item.deliveryStatus === "ASSIGNMENT_NOT_CONFIRMED" && (<View><CustomCheckBox color={Colors.buttonBackgroundColor} onPress={()=>this.checkItem(item.deliveryId)} checked={this.state.checked.includes(item.deliveryId)}/></View>)}</Col>
 <Col><Row style={styles.contents}><CustomText text={'Order ID'} color={Colors.black} textType={Strings.subtext}/></Row>
 <Row style={styles.contents}><CustomText text={'Cust. Name'} color={Colors.black} textType={Strings.subtext}/></Row></Col>
-<Col><Row style={styles.contents}><CustomText text={item.orderId ? item.orderId : Strings.na} color={Colors.black} textType={Strings.subtext}/></Row>
+<Col><Row style={styles.contents}><CustomText text={item.preDefinedOrderId?item.preDefinedOrderId: item.orderId ? item.orderId : Strings.na} color={Colors.black} textType={Strings.subtext}/></Row>
 <Row style={styles.contents}><CustomText text={item.contactPersonName ? item.contactPersonName : Strings.na} color={Colors.black} textType={Strings.subtext}/></Row>
 <Row style={styles.contents}><CustomText text={'Details'} color={Colors.darkSkyBlue} textType={Strings.subtext} onPress={()=>Actions.taskassigneddetails({delivery_id:item.deliveryId})}/></Row>
 </Col></Grid>
@@ -474,7 +475,7 @@ _footer = () => {
     <Grid><Col style={styles.colstyle}><CustomCheckBox color={Colors.buttonBackgroundColor}/></Col>
     <Col><Row style={styles.contents}><CustomText text={'Order ID'} color={Colors.black} textType={Strings.subtext}/></Row>
     <Row style={styles.contents}><CustomText text={'Cust. Name'} color={Colors.black} textType={Strings.subtext}/></Row></Col>
-    <Col><Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>{item.orderId ? item.orderId : Strings.na}</Text></Row>
+    <Col><Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>{item.preDefinedOrderId?item.preDefinedOrderId:item.orderId ? item.orderId : Strings.na}</Text></Row>
     <Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>{item.contactPersonName ? item.contactPersonName : Strings.na}</Text></Row></Col></Grid>
 </View>
 </View>

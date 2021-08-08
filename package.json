@@ -17,7 +17,7 @@
     "react": "16.9.0",
     "react-native": "0.61.5",
     "react-native-autocomplete-input": "^4.2.0",
-    "react-native-camera": "^3.42.0",
+    "react-native-camera": "3.30.0",
     "react-native-drawer": "2.5.0",
     "react-native-dropdown-picker": "^3.7.0",
     "react-native-grid-component": "^2.0.1",

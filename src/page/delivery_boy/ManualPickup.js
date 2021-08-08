@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView,Picker,StyleSheet,BackHandler,Modal, AsyncStorage } from 'react-native';
+import {CheckBox, ScrollView,Picker,StyleSheet,BackHandler,Modal, AsyncStorage } from 'react-native';
 import { Container, View, Button, Left, Right,Icon,Text,Grid,Col,Input,Badge, Row} from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
@@ -20,7 +20,7 @@ import CustomCheckBox from '../../component/CustomCheckBox';
 import session, { KEY } from '../../session/SessionManager';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 import Api from '../../component/Fetch';
-import { COUNTRY , STATE , CITY , OTP , VERIFY_OTP , CUSTOMER_DETALS ,PACKAGE_CATEGORY, PACKAGE_SUB_CATEGORY ,SHIPMENT_BOX, ORDER, ROUTES, DELIVERY_CHARGE, ADD_COD ,PAYER_PAYMENT, PAYMENT_BY_CASH} from '../../constants/Api';
+import { COUNTRY , STATE , CITY , OTP , VERIFY_OTP , CUSTOMER_DETALS ,PACKAGE_CATEGORY, PACKAGE_SUB_CATEGORY ,SHIPMENT_BOX, ORDER, ROUTES, DELIVERY_CHARGE, ADD_COD ,PAYER_PAYMENT, PAYMENT_BY_CASH, PINCODE_SEARCH, PHONE_SEARCH} from '../../constants/Api';
 
 
 
@@ -157,7 +157,22 @@ export default class ManualPickup extends React.Component {
     amount_recieved:'',
     balance_amount:'',
     selectedPrinter: null,
-
+    checked:false,
+    picode_search:'',
+    sender_country_new:'',
+    sender_state_new:'',
+    sender_city_new:'',
+    sender_district_new:'',
+    pincode_new:'',
+    sender_country_new_WP:'',
+    sender_state_new_WP:'',
+    sender_district_new_WP:'',
+    pincode_new_wp:'',
+    selected_radio1:true,
+    selected_radio2:false,
+    phone_view:false,
+    phone_search:'',
+    country_code:'',
   };
 
   componentDidMount() {
@@ -220,6 +235,29 @@ if(no == 6){
   this.setState({difoffice_selected:true})
   this.setState({sameoffice_selected:false})
   this.setState({deliveryChargePaymentBySender:false})
+}
+if(no == 7){
+  this.setState({selected_radio1:true})
+  this.setState({selected_radio2:false})
+  this.setState({phone_view:false})
+  this.setState({rec_country:'',
+    rec_state:'',
+    rec_city:'',
+    rec_district:'',
+    rec_pincode:'',
+    rec_gmap:'',
+    rec_address1:'',
+    rec_address2:'',
+    rec_localbody:'',
+    rec_landmark:'',
+  
+  })
+
+}
+if(no == 8){
+  this.setState({selected_radio2:true})
+  this.setState({selected_radio1:false})
+  this.setState({phone_view:true})
 }
 }
 
@@ -573,6 +611,65 @@ send_otp(){
       }
   })
   }
+////////////////////////////////////////////////pin search//////////////////////////////////////////////////////////
+
+pin_search(pin_search){
+
+Api.fetch_request(PINCODE_SEARCH+pin_search,'GET','')
+.then(result=>{
+if (result.error != true)
+{
+  console.log('PINSEARCH SUCCESS:', JSON.stringify(result))
+  this.setState({sender_country_new:result.payload.country})
+  this.setState({sender_state_new:result.payload.state})
+  this.setState({sender_district_new:result.payload.district})
+  this.setState({pincode_new:result.payload.pincode})
+  console.log(this.state.sender_state_new,this.state.sender_state_new,this.state.sender_district_new)
+}
+else {
+  console.log('Failed');
+  alert(result.message)
+}
+
+
+})
+
+
+
+
+
+}
+//////////////////////////////////Phone number search//////////////////////////////////////////////////////////
+phonenumber_search(country_code,phone_search){
+  Api.fetch_request(PHONE_SEARCH+country_code+'/'+phone_search,'GET','')
+  .then(result=>{
+
+    if(result.error != true)
+    {
+      console.log('Success:', JSON.stringify(result))
+      console.log('kkkkkkkkkkkkkkkk',PHONE_SEARCH+country_code+phone_search)
+      
+          this.setState({rec_country:result.payload.country,
+            rec_state:result.payload.state,
+            rec_city:result.payload.city,
+            rec_district:result.payload.district,
+            rec_pincode:result.payload.pincode,
+            rec_gmap:result.payload.gmapLink,
+            rec_address1:result.payload.addressLine1,
+            rec_address2:result.payload.addressLine2,
+            rec_localbody:result.payload.localBodyType,
+            rec_landmark:result.payload.mobileNumber,
+          
+          })
+
+
+
+    }
+  })
+
+}
+
+
 
   //////////////////////////////////// fetching package sub category function /////////////////////////////////////////////////////////////////////////////////
 
@@ -601,6 +698,22 @@ send_otp(){
  
 create_order() {
  
+if(this.state.same_selected==true){
+
+  this.setState({sender_country_new_WP:this.state.sender_country,sender_state_new_WP:this.state.sender_state,sender_district_new_WP:this.state.sender_district,
+  
+    pincode_new_wp:this.state.sender_pincode })
+}
+else{
+
+  this.setState({sender_country_new_WP:this.state.sender_country_new,sender_state_new_WP:this.state. sender_state_new,sender_district_new_WP:this.state.sender_district_new,
+    pincode_new_wp:this.state.picode_search 
+  })
+
+}
+
+
+
   AsyncStorage.getItem(KEY).then((value => {
     let data = JSON.parse(value);
 
@@ -646,10 +759,10 @@ create_order() {
         "contactPersonCountryCode": this.state.sender_countrycode,
         "contactPersonName": this.state.sender_contact_person_name,
         "contactPersonNumber": this.state.sender_contact_person_no,
-        "country": this.state.sender_country,
+        "country": this.state.sender_country_new_WP,
         "customerId": this.state.customer_id,
         "deliveryType": "BULLET",
-        "district": this.state.sender_district,
+        "district": this.state.sender_district_new_WP,
         "gmapLink": this.state.sender_gmap,
         "localBodyType": this.state.sender_localbody,
         "notesToCourierBoy": this.state.sender_notes,
@@ -658,12 +771,12 @@ create_order() {
         "pickupDate": this.state.pickupdate,
         "pickupId": 0,
         "pickupTime":this.state.pickuptime,
-        "pincode": this.state.sender_pincode,
+        "pincode": this.state.pincode_new_wp,
         "routeId": this.state.route_id,
-        "state": this.state.sender_state,
+        "state": this.state.sender_state_new_WP,
       }
     }
-
+    console.log('BODYYYYYYYYYYY',body);
     Api.fetch_request(ORDER, 'POST', '', JSON.stringify(body))
       .then(result => {
 
@@ -877,6 +990,7 @@ render(){
             </Button>
         </Right>
       );
+     
     return(
   
         <Container>
@@ -908,7 +1022,7 @@ render(){
         </View>
         <CustomText text={'Customer Id'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <View style={{flexDirection:'row',flex:1,borderColor:Colors.borderColor,borderWidth:SHORT_BORDER_WIDTH,borderRadius:SHORT_BORDER_RADIUS,padding:1,alignItems:'center',justifyContent:'space-between'}}>
-        <CustomInput backgroundColor={Colors.white} onChangeText={(text) => this.setState({customer_id: text})} value={this.state.customer_id} keyboardType={'number-pad'}  />
+        <CustomInput backgroundColor={Colors.white} width={150} onChangeText={(text) => this.setState({customer_id: text})} value={this.state.customer_id} keyboardType={'number-pad'}  />
         <CustomButton title={'search'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.verify_customer_id(this.state.customer_id)}/>
         </View>
         <CustomText text={'Full Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
@@ -951,8 +1065,21 @@ render(){
         
          <CustomRadioButton title={'Same as contact address'} selectedColor={Colors.darkSkyBlue} selected={this.state.same_selected} onPress={()=>this.isSelected(3)}/>
          <CustomRadioButton title={'Enter new pickup address'} selectedColor={Colors.darkSkyBlue} selected={this.state.new_selected} onPress={()=>this.isSelected(4)}/>
-        
+         <View style={{marginLeft:4,flexDirection:'row',marginBottom:SECTION_MARGIN_TOP,}} >
+         <CheckBox
+         tintColors={{ true: '#185DD7' }}
+      value={this.state.checked}
+      onValueChange={() => this.setState({ checked: !this.state.checked })}
+    />
+     <Text style={{fontSize:14,marginTop:5}}>Continue with search by Pincode?</Text>
+     
+         </View>
 
+       {this.state.checked ?
+        ( <View style={{flexDirection:'row',flex:1,borderColor:Colors.borderColor,borderWidth:SHORT_BORDER_WIDTH,borderRadius:SHORT_BORDER_RADIUS,padding:1,alignItems:'center',justifyContent:'space-between'}}>
+        <CustomInput backgroundColor={Colors.white} width={150} onChangeText={(text) => this.setState({picode_search: text})} value={this.state.picode_search} keyboardType={'number-pad'}  />
+        <CustomButton title={'search'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.pin_search(this.state.picode_search)}/>
+        </View>)  : undefined}
  
  { this.state.same_selected === true && (<View>
 
@@ -982,19 +1109,27 @@ render(){
  { this.state.new_selected === true && (<View>
 
   <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomDropdown data={this.state.countries_sender} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_state_list_sender(data[index]['id']) ; this.setState({sender_country:value}) ; this.setState({sender_countrycode:data[index]['code']}); }, 500); }} />
+          <CustomDropdown data={this.state.countries_sender} value={this.state.sender_country_new} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_state_list_sender(data[index]['id']) ; this.setState({sender_country_new:value}) ; this.setState({sender_countrycode:data[index]['code']}); }, 500); }} />
 
           <CustomText text={'State'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomDropdown data={this.state.states_sender} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_city_list_sender(data[index]['id']) ; this.setState({sender_state:value}) }, 500); }} />
-
+          <CustomDropdown data={this.state.states_sender}  value={this.state.sender_state_new} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_city_list_sender(data[index]['id']) ; this.setState({sender_state_new:value}) }, 500); }} />
           <CustomText text={'City'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomDropdown data={this.state.cities_sender} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.setState({sender_city:value}) }, 500); }} />
- 
+
+
+              {this.state.checked?(<View>
+                <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_city: text})} value={this.state.sender_city} />
+
+          </View>):
+          (<View>
+                      <CustomDropdown data={this.state.cities_sender}  height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.setState({sender_city:value}) }, 500); }} />
+
+          </View>)}
+
           <CustomText text={'District'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_district: text})} value={this.state.sender_district} />
+          <CustomInput flex={1} borderColor={Colors.borderColor} value={this.state.sender_district_new} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_district_new: text})} value={this.state.sender_district_new} />
 
           <CustomText text={'Pincode'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_pincode: text})} value={this.state.sender_pincode} />
+          <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({pincode_new: text})} value={this.state.pincode_new} />
 
           <CustomText text={'Gmap Link'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_gmap: text})} value={this.state.sender_gmap} />
@@ -1026,10 +1161,13 @@ render(){
 <View style={{flexDirection:'row',marginBottom:SECTION_MARGIN_TOP,}}>
           <CustomText  text={'Pickup Details'} textType={Strings.subtitle} textDecorationLine={'underline'} />
         </View>
-      
+        <View style={{flexDirection:'row'}}>
         <CustomText text={'Contact Person Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+        <CustomMandatory/></View>
         <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({sender_contact_person_name: text})} value={this.state.sender_contact_person_name}/>
+        <View style={{flexDirection:'row'}}>
         <CustomText text={'Contact Person Number'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+        <CustomMandatory/></View>
         <CustomInput keyboardType={"phone-pad"} borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({sender_contact_person_no: text})} value={this.state.sender_contact_person_no}/>
         <CustomText text={'Notes to Courier Boy'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput borderRadius={SHORT_BLOCK_BORDER_RADIUS} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} backgroundColor={Colors.white} paddingTop={SHORT_BLOCK_BORDER_RADIUS} flex={1} onChangeText={(text) => this.setState({sender_notes: text})} value={this.state.sender_notes}/>
@@ -1051,18 +1189,40 @@ render(){
         </View>
     
           <View style={{flexDirection:'row',}}>
-         <CustomRadioButton title={'Local'} selectedColor={Colors.darkSkyBlue} selected={true}/>
+         <CustomRadioButton title={'Local'} selectedColor={Colors.darkSkyBlue} selected={this.state.selected_radio1}onPress ={()=>this.isSelected(7) }/>
          <CustomRadioButton title={'Global'} selectedColor={Colors.darkSkyBlue} selected={false}/>
+
          </View>
+         <View style={{flexDirection:'row',}}>
+         <CustomRadioButton title={'Search by contact number'} selectedColor={Colors.darkSkyBlue} selected={this.state.selected_radio2} onPress ={()=>this.isSelected(8) }/>
+           
+         </View>
+         {this.state.phone_view ?
+        ( 
+          <View>
+                      <CustomText text={'Country code'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+
+                <View style={{flexDirection:'row',flex:1,borderColor:Colors.borderColor,borderWidth:SHORT_BORDER_WIDTH,borderRadius:SHORT_BORDER_RADIUS,padding:1,alignItems:'center',justifyContent:'space-between'}}>
+        <CustomInput backgroundColor={Colors.white} width={150} onChangeText={(text) => this.setState({country_code: text})} value={this.state.country_code}  />
+        </View>
+        <CustomText text={'Phone number'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+
+        <View style={{flexDirection:'row',flex:1,borderColor:Colors.borderColor,borderWidth:SHORT_BORDER_WIDTH,borderRadius:SHORT_BORDER_RADIUS,padding:1,alignItems:'center',justifyContent:'space-between'}}>
+        <CustomInput backgroundColor={Colors.white} width={150} onChangeText={(text) => this.setState({phone_search: text})} value={this.state.phone_search} keyboardType={'number-pad'}  />
+        <CustomButton title={'search'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.phonenumber_search(this.state.country_code,this.state.phone_search)}/>
+        </View>
+        
+        </View>
+        )  : undefined}
 
           <CustomText text={'Country'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomDropdown data={this.state.countries_reciever} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_state_list_reciever(data[index]['id']) ; this.setState({rec_country:value}); this.setState({rec_country_code:data[index]['code']}); }, 500); }} />
+          <CustomDropdown data={this.state.countries_reciever} height={TEXT_FIELD_HIEGHT} value={this.state.rec_country} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_state_list_reciever(data[index]['id']) ; this.setState({rec_country:value}); this.setState({rec_country_code:data[index]['code']}); }, 500); }} />
 
           <CustomText text={'State'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomDropdown data={this.state.states_reciever} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_city_list_reciever(data[index]['id']) ; this.setState({rec_state:value}) }, 500); }} />
+          <CustomDropdown data={this.state.states_reciever} height={TEXT_FIELD_HIEGHT} value={this.state.rec_state} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.fetch_city_list_reciever(data[index]['id']) ; this.setState({rec_state:value}) }, 500); }} />
 
           <CustomText text={'City'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-          <CustomDropdown data={this.state.city_reciever} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.setState({rec_city:value}) }, 500); }} />
+          <CustomDropdown data={this.state.city_reciever} height={TEXT_FIELD_HIEGHT} value={this.state.rec_city} backgroundColor={Colors.white}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} marginTop={BORDER_WIDTH} onChangeValue={(value, index, data ) => { setTimeout(() => { this.setState({rec_city:value}) }, 500); }} />
  
           <CustomText text={'District'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_district: text})} value={this.state.rec_district} />
@@ -1101,11 +1261,14 @@ render(){
     
         <CustomText text={'Customer Id / Mobile Number'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({rec_id_or_no: text})} value={this.state.rec_id_or_no} />
-
+        <View style={{flexDirection:'row'}}>
         <CustomText text={'Reciever Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+        <CustomMandatory/></View>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({recievername: text})} value={this.state.recievername} />
-
+          <View style={{flexDirection:'row'}}>
           <CustomText text={'Receiver Phone Number'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+          <CustomMandatory/></View>
+
           <CustomInput flex={1} keyboardType={"phone-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({recieverno: text})} value={this.state.recieverno} />
 
           <CustomText text={'Proof to be produced'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>

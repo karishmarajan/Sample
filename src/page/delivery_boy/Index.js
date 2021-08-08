@@ -34,10 +34,16 @@ export default class Index extends Component{
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.pickup();  }}>Pickup </Text>
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.deliveryout();  }}>Delivery Out </Text>
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.deliveryvehicles()}}>View Vehicle </Text>
+<Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.manualpickuporders()}}>Manual Pickups </Text>
+{/* <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.bulkorderview()}}>Bulk Orders </Text> */}
+
 {/* <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.statusupdatefirst()}}>Status Update </Text>
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.selfassign()}}>Self Assign </Text>
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.ordertransfer1()}}>Order Transfer </Text> */}
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.requeststatus()}}>Request Status </Text>
+
+{/* <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.routefinder()}}>Route Finder </Text> */}
+
  <CustomButton title={'Log out'}  height={60} fontSize={18} marginTop={70} onPress={()=>{session.logout()}}/>
 
 </ScrollView>

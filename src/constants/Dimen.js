@@ -32,3 +32,5 @@ export const FOURTH_FONT= 18;
 export const SIXTH_FONT= 22;
 export const CAMERA_SIZE= 50;
 export const LOGIN_FIELD_HEIGHT= 60;
+export const CLOSE_SIZE= 40;
+export const CLOSE_WIDTH= 60;
