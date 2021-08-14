@@ -13,7 +13,8 @@
 
 <!-- Include this only if you are planning to use the microphone for video recording -->
 <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
 
     <application
       android:usesCleartextTraffic="true"
@@ -35,5 +36,4 @@
       </activity>
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
     </application>
-
 </manifest>

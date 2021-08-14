@@ -815,7 +815,7 @@ content: {
 
 contents: {
   minWidth: '30%',
-  maxWidth: '80%',
+  maxWidth: '100%',
   height: 30,
   
 },

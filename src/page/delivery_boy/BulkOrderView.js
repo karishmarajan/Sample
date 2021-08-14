@@ -1,3 +1,6 @@
+///////////////////////edited Nishanth/////////////////////////////////////////
+
+
 import React, { Component } from 'react';
 import { ScrollView, AsyncStorage , StyleSheet, FlatList} from 'react-native';
 import { Container, View, Button, Left, Right,Icon,Text,Badge} from 'native-base';
@@ -126,7 +129,7 @@ const styles = StyleSheet.create({
   
     },
     cell: {
-        width: 90,
+        width: 130,
         padding: 6,
         alignSelf: 'stretch',
         textAlign: 'center',

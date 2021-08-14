@@ -39,6 +39,8 @@ import ManualPickupOrders from './page/delivery_boy/ManualPickupOrders';
 import RouteFinder from './page/delivery_boy/RouteFinder';
 import RouteFinderView from './page/delivery_boy/RouteFinderView';
 import BulkOrderView from './page/delivery_boy/BulkOrderView';
+import orderwithpin from './page/delivery_boy/Orderwithpin';
+// import orderwithpin from './page/delivery_boy/orderwithpin';
 
 
 
@@ -86,6 +88,8 @@ export default class Main extends Component {
             <Scene  key="routefinder" component={RouteFinder} hideNavBar />
             <Scene  key="routefinderview" component={RouteFinderView} hideNavBar />
             <Scene  key="bulkorderview" component={BulkOrderView} hideNavBar />
+            {/* <Scene  key="orderwithpin" component={orderwithpin} hideNavBar /> */}
+            <Scene  key="orderwithpin" component={orderwithpin} hideNavBar />
           </Scene>
         </Router>
       </Root>

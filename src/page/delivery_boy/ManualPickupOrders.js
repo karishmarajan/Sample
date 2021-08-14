@@ -1,3 +1,5 @@
+//////////////////////////////////////////////////////////edited Nishanth///////////////////////////
+
 import React, { Component  } from 'react';
 import { TouchableOpacity,StyleSheet,ScrollView  ,AsyncStorage, FlatList, Alert} from 'react-native';
 import { Container, Text,View, Button, Left, Icon, Toast } from 'native-base';
@@ -102,7 +104,7 @@ export default class ManualPickupOrders extends React.Component {
 
                       <View style={{flex:3}}><CustomText text={'Order Id'} textType={Strings.subtext} color={Colors.black}/></View>
 
-                      <View style={{flex:2}}><CustomText text={item.orderId ? item.orderId : Strings.na} textType={Strings.maintext} color={Colors.darkSkyBlue}/></View>
+                      <View style={{flex:2}}><CustomText text={item.preDefinedOrderId?item.preDefinedOrderId:item.orderId ? item.orderId : Strings.na} textType={Strings.maintext} color={Colors.darkSkyBlue}/></View>
 </View>
 {/* <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:20}}>
 
@@ -196,10 +198,13 @@ export default class ManualPickupOrders extends React.Component {
                
                 keyExtractor={(x, i) => i}
                 renderItem={({ item })=> {
-           var tempIdentityType= item.customerIdentityType;
+
+                  if(item.customerIdentityType !==null)
+
+           {var tempIdentityType= item.customerIdentityType;
            item.customerIdentityType = tempIdentityType.replace("_", " ");
           var temporderstatus=item.orderStatus;
-          item.orderStatus=temporderstatus.replace("_"," ");
+          item.orderStatus=temporderstatus.replace("_"," ");}
                   return this._body(item)}}
               />
 

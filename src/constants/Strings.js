@@ -20,7 +20,7 @@ const Strings = {
     completed:'COMPLETED',
     offset:'offset',
     na:'N/A',
-    version:'V5'
+    version:'V7'
 
   };
   

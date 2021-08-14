@@ -1,3 +1,7 @@
+///////////////////////////////////////////edited Nishanth//////////////////////////////
+
+
+
 import React, { Component  } from 'react';
 import { TouchableOpacity,StyleSheet,ScrollView  ,AsyncStorage, FlatList, Alert} from 'react-native';
 import { Container, Text,View, Button, Left, Icon, Toast,Grid,Col } from 'native-base';
@@ -159,7 +163,7 @@ var datas=[];
      
       <View style={styles.cell}><CustomText text={'ROUTE ID'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell}><CustomText text={'ROUTE NAME'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-      <View style={styles.cell}><CustomText text={'NO. OF DESTINATION POINTS'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+      <View style={styles.cell}><CustomText text={'NO. OF       DESTINATION POINTS'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
      
     </View>
   )
@@ -202,7 +206,7 @@ render() {
  {/*/////////////////////////////////////// main view /////////////////////////////////////////////////////// */}
  <View style={{flex: 1, flexDirection: 'column',backgroundColor:Colors.textBackgroundColor,padding:MAIN_VIEW_PADDING}}>
        <CustomText text={'Enter Pincode'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-         <CustomInput flex={1} placeholder={'Pin Code'} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({pin: text , errorpin:""})} value={this.state.pin} />
+         <CustomInput flex={1} placeholder={'Pin Code'}  borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({pin: text , errorpin:""})} value={this.state.pin} />
            {!!this.state.errorpin && (<Text style={{color: 'red'}}>{this.state.errorpin}</Text>)}
           <CustomButton title={'search'} marginTop={5.0} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} onPress={()=>this.valid(this.state.pin)}/>
 

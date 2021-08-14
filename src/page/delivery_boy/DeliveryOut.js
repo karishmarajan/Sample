@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
 
   },
   cell: {
-    width: 100,
+    width: 130,
     padding: 6,
     alignSelf: 'stretch',
     textAlign: 'center',

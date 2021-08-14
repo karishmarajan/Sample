@@ -119,79 +119,80 @@ export default class PickUp extends React.Component {
 capitalizeName(name) {
   return name.replace(/\b(\w)/g, s => s.toUpperCase());
 }
-  /////////////////////////////////// Searching with order no //////////////////////////////////////////////////////////////
+  /////////////////////////////////// Searching with order no /////////////////////edited Nishanth/////////////////////////////////////////
 
   searchtext(text){
 
-    let res=_.filter(this.state.pickup_list, obj=>obj.orderId==text);
+  
+ /*  let res=_.filter(this.state.delivery_list, obj=>obj.orderId==text);
 
-    this.setState({pickup_list_search:res})
+  this.setState({pickup_list_search:res}) */
+  const textData = text.toUpperCase();
+  console.log('values from textbox:', textData.toUpperCase() )
+  if (textData  == '' || null) {
+     console.log("EMPTY")
+  }
+  else {
 
+      console.log('text data in else part are:',textData  )
+  
+      const MainData = this.state.pickup_list.filter((item)=> {
+        console.log("==>",item.orderId)
+        const itemData=`${item.preDefinedOrderId?item.preDefinedOrderId:item.orderId}`;
+          
+          return itemData.indexOf(textData) > -1;
+      }
+ 
+      );
+      console.log('maindata:', MainData)
+      if (MainData == '') {
+         console.log("NODART")
+      }
+      else {
+       /*    this.setState({ itemalert: false }) */
+          this.setState({
+            pickup_list_search : MainData,
+            
+          });
+          console.log("DATA FOUND")
+      }
+  }
 
   }
 
-   /////////////////////////////////// Searching with Customer name //////////////////////////////////////////////////////////////
+   /////////////////////////////////// Searching with Customer name ////////////////////////////edited Nishanth//////////////////////////////////
 
    searchtext_name(text){
-
-    var res1=text.trim();
-    let res=_.filter(this.state.pickup_list, obj=>obj.contactPersonName==res1.trim());
-
-    var lower= (text).toLowerCase();
-    let reslower=_.filter(this.state.pickup_list, obj=>obj.contactPersonName==lower.trim());
-
-    var upper= (text).toUpperCase();
-    let resupper=_.filter(this.state.pickup_list, obj=>obj.contactPersonName==upper.trim());
-
-    var capitalize= this.capitalizeName(text);
-    let rescapitalize=_.filter(this.state.pickup_list, obj=>obj.contactPersonName==capitalize.trim());
-
-    
-   let fullList=this.state.pickup_list;
-   let filteredList = fullList.filter((item) => { // search from a full list, and not from a previous search results list
-     if(item.contactPersonName.toLowerCase().match(text))
-       return item;
-   })
- 
-   let filteredList_upper = fullList.filter((item) => { // search from a full list, and not from a previous search results list
-     if(item.contactPersonName.toUpperCase().match(text))
-       return item;
-   })
- 
-   let filteredList_capitalize= fullList.filter((item) => { // search from a full list, and not from a previous search results list
-     if(this.capitalizeName(item.contactPersonName).match(text))
-       return item;
-   })
-
-    if (res!= ''){ 
-    this.setState({pickup_list_search:res})
+    const textData = text.toLowerCase();
+    const textData1 =text.toUpperCase()
+    console.log('values from textbox:', textData.toUpperCase() )
+    if (textData  == '' || null) {
+       console.log("EMPTY")
     }
-    else if (reslower != ''){ 
+    else {
+  
+        console.log('text data in else part are:',textData  )
     
-    this.setState({pickup_list_search:reslower})
-    }
-    else if (resupper != ''){ 
-    
-    this.setState({pickup_list_search:resupper})
-    }
-    else if (rescapitalize != ''){ 
-    
-      this.setState({pickup_list_search:rescapitalize})
-      }
-      else if (filteredList != '')
-      { 
-        this.setState({pickup_list_search:filteredList}) 
-      }
-      else if (filteredList_upper != '')
-      { 
-        this.setState({pickup_list_search:filteredList_upper}) 
-      }
-      else if (filteredList_capitalize != '')
-      { 
-        this.setState({pickup_list_search:filteredList_capitalize}) 
-      }
-    else{
-      this.setState({pickup_list_search:''})
+        const MainData = this.state.pickup_list.filter((item)=> {
+          console.log("==>",item.contactPersonName)
+            const itemData=`${item.contactPersonName}`;
+            
+            return itemData.indexOf(textData || textData1) > -1;
+        }
+   
+        );
+        console.log('maindata:', MainData)
+        if (MainData == '') {
+           console.log("NODART")
+        }
+        else {
+         /*    this.setState({ itemalert: false }) */
+            this.setState({
+              pickup_list_search : MainData,
+              
+            });
+            console.log("DATA FOUND")
+        }
     }
      
   }
@@ -341,7 +342,7 @@ render() {
 
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', textAlignVertical: 'center',marginTop:SECTION_MARGIN_TOP }}>
             <View style={{ flex: 2 }}><CustomDropdown data={myArray1} height={TEXT_FIELD_HIEGHT} backgroundColor={Colors.white} fontSize={14} paddingBottom={SECTION_MARGIN_TOP} onChangeValue={(value,index,data)=>{this.setState({search_critieria:value})}} value={this.state.search_critieria} /></View>
-           {(this.state.search_critieria === 'Order No.' && <View style={{ flex: 3, marginLeft: SECTION_MARGIN_TOP }}><CustomInput placeholder={'Search here with no'} keyboardType={'number-pad'} icon_name={'ios-search'} onChangeText={(text)=>{this.searchtext(text); this.setState({isSearch:true}); if(text==''){this.setState({isSearch:false})}}} icon_color={Colors.navbarIconColor} icon_fontsize={18} placeholderTextColor={Colors.navbarIconColor} fontSize={14} showIcon={true} backgroundColor={Colors.white} height={TEXT_FIELD_HIEGHT} marginTop={5} flex={1} /></View>)}
+           {(this.state.search_critieria === 'Order No.' && <View style={{ flex: 3, marginLeft: SECTION_MARGIN_TOP }}><CustomInput placeholder={'Search here with no'}  icon_name={'ios-search'} onChangeText={(text)=>{this.searchtext(text); this.setState({isSearch:true}); if(text==''){this.setState({isSearch:false})}}} icon_color={Colors.navbarIconColor} icon_fontsize={18} placeholderTextColor={Colors.navbarIconColor} fontSize={14} showIcon={true} backgroundColor={Colors.white} height={TEXT_FIELD_HIEGHT} marginTop={5} flex={1} /></View>)}
 
            {(this.state.search_critieria === 'CustomerName' && <View style={{ flex: 3, marginLeft: SECTION_MARGIN_TOP }}><CustomInput placeholder={'Search here with name'} icon_name={'ios-search'} onChangeText={(text)=>{this.searchtext_name(text); this.setState({isSearch:true}); if(text==''){this.setState({isSearch:false})}}} icon_color={Colors.navbarIconColor} icon_fontsize={18} placeholderTextColor={Colors.navbarIconColor} fontSize={14} showIcon={true} backgroundColor={Colors.white} height={TEXT_FIELD_HIEGHT} marginTop={5} flex={1} /></View>)}
           </View>
@@ -384,7 +385,7 @@ const styles = StyleSheet.create({
 
   },
   cell: {
-    width: 100,
+    width: 130,
     padding: 6,
     alignSelf: 'stretch',
     textAlign: 'center',

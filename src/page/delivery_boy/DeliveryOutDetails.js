@@ -76,7 +76,9 @@ export default class DeliveryOutDetails extends React.Component {
     countrycode:'+91',
     same:true,
     altno:false,
-    diffperson:false,
+    diffperson:true,
+    modalVisibleProof:false,
+    modalVisibleSignature:false,
   };
 
 
@@ -174,7 +176,7 @@ takePicture_sign = async function (camera) {
   }
 }
 
-///////////////////////////////////////////////////////////////
+//////////////////////////////////edited Nishanth/////////////////////////////
 send_otp(){
   let body={
     "countryCode": this.state.countrycode,
@@ -196,7 +198,7 @@ send_otp(){
     }
   })
 }
-////////////////////////////////////////////////
+////////////////////////////edited Nishanth////////////////////
 
 verify_otp(otp) {
 
@@ -226,7 +228,7 @@ verify_otp(otp) {
 
 
 
- ///////////////////////////////////////////////////////////////////
+ ////////////////////////////////////////edited Nishanth///////////////////////////
  send_otp(){
   let body={
     "countryCode": this.state.countrycode,
@@ -277,6 +279,15 @@ generate_invoice() {
 })
  
 }
+///////////////////////////////////////////////////////////////////////////////////////////
+
+modalvisible()
+{
+
+}
+
+
+
 
  ///////////////////////////////// Delivery order update function //////////////////////////////////////////////////////////////////////////////////////// 
  
@@ -369,14 +380,14 @@ delivery_cash_payment() {
 
 update_receiver_name() {
 
-  if(this.state.receiver_name==="") {
-    this.setState({hasError: true, errorTextreceiver_name: 'Please fill !'});
-    return;
-  }
-  if(this.state.otp_verified != true) {
-    this.setState({hasError: true, errorTextverify: 'You have to verify OTP!'});
-    return;
-  }
+  // if(this.state.receiver_name==="") {
+  //   this.setState({hasError: true, errorTextreceiver_name: 'Please fill !'});
+  //   return;
+  // }
+  // if(this.state.otp_verified != true) {
+  //   this.setState({hasError: true, errorTextverify: 'You have to verify OTP!'});
+  //   return;
+  // }
 
   let body = {
     "contactPersonName": this.state.receiver_name,
@@ -644,6 +655,70 @@ render(){
           </View>
 </View>
 
+{/* //////////////////////////////////////proof////////////////////////////////////////////////////// */}
+
+
+<View style={{justifyContent:"center",alignItems:"center"
+    }}>
+    <Modal
+       transparent={true}
+      
+  visible={this.state.modalVisibleProof}
+      backdropOpacity={0.1}
+     
+      style={styles.model}
+    //  animationIn={"fadeIn"}
+    //  animationOut={"fadeOut"}
+     >
+      <View style={{height:150,width:300,justifyContent:"center",alignItems:"center",
+    backgroundColor:"white",borderRadius:7}}>
+        <View>
+        <CustomText text={'Select type of orders'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+<View style={{flexDirection:"row"}}>
+<CustomButton title={'Camera'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={() => this.setState({modal_proof:true})}/>
+
+<CustomButton title={'Gallery'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.pin_search(this.state.picode_search)}/>
+
+          </View>
+        </View>
+      </View>
+    </Modal>
+    </View>
+
+{/* //////////////////////////////////////signature////////////////////////////////////////////////////// */}
+
+
+<View style={{justifyContent:"center",alignItems:"center"
+    }}>
+    <Modal
+       transparent={true}
+      
+  visible={this.state.modalVisibleSignature}
+      backdropOpacity={0.1}
+     
+      style={styles.model}
+    //  animationIn={"fadeIn"}
+    //  animationOut={"fadeOut"}
+     >
+      <View style={{height:150,width:300,justifyContent:"center",alignItems:"center",
+    backgroundColor:"white",borderRadius:7}}>
+        <View>
+        <CustomText text={'Select type of orders'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+<View style={{flexDirection:"row"}}>
+<CustomButton title={'Camera'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={() => this.modalvisible()}/>
+
+<CustomButton title={'Gallery'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.pin_search(this.state.picode_search)}/>
+
+          </View>
+        </View>
+      </View>
+    </Modal>
+    </View>
+
+
+
+
+
 
   {/*////////////////////// Proof Upload Block //////////////////////////////////////////////// */}
 
@@ -754,17 +829,16 @@ render(){
       <CustomButton title={'Update'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>this.delivery_status_update()} />
       </View>
       </View>)}
-      <View style={{flexDirection:'row',}}>
+      {/* <View style={{flexDirection:'row',}}>
          <CustomRadioButton title={'Same as delivery details'} selectedColor={Colors.darkSkyBlue} selected={this.state.same} onPress={()=>this.isSelected(1)}/>
          <CustomRadioButton title={'Alternative number'} padding={12} selectedColor={Colors.darkSkyBlue} selected={this.state.altno} onPress={()=>this.isSelected(2)}/>
          </View>
          <View style={{flexDirection:'row',}}>
          <CustomRadioButton title={'Different person'} selectedColor={Colors.darkSkyBlue} selected={this.state.diffperson} onPress={()=>this.isSelected(3)}/>
-         </View>
+         </View> */}
          {/* //////////////////////////////same person//////////////////////////// */}
-         {this.state.same===true && (<View>
+         {/* {this.state.same===true && (<View>
       <CustomText text={'Receiver Name'} textType={Strings.subtext} color={Colors.black}/>
-          {/* <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({receiver_name: text, errorTextreceiver_name:''})} value={this.state.receiver_name} /> */}
           <View style={styles.inputview1}><CustomText text={this.state.receiver_name ? this.state.receiver_name : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>
 
           {!!this.state.errorTextreceiver_name && (<Text style={{color: 'red'}}>{this.state.errorTextreceiver_name}</Text>)}
@@ -779,12 +853,11 @@ render(){
        {this.state.otp_verified === false &&(<View style={{flex:3}}><CustomButton title={'VERIFY OTP'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.verify_otp(this.state.otp)}/></View>)}
         </View>
         {!!this.state.errorTextverify && (<Text style={{color: 'red'}}>{this.state.errorTextverify}</Text>)}
-        </View>)}
+        </View>)} */}
         {/* /////////////////////////////////alternative no/////////////////////////////// */}
-        {this.state.altno===true && (<View>
+        {/* {this.state.altno===true && (<View>
       <CustomText text={'Receiver Name'} textType={Strings.subtext} color={Colors.black}/>
      
-          {/* <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({receiver_name: text, errorTextreceiver_name:''})} value={this.state.receiver_name} /> */}
           <View style={styles.inputview1}><CustomText text={this.state.receiver_name ? this.state.receiver_name : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>
 
           {!!this.state.errorTextreceiver_name && (<Text style={{color: 'red'}}>{this.state.errorTextreceiver_name}</Text>)}
@@ -799,14 +872,15 @@ render(){
        {this.state.otp_verified === false &&(<View style={{flex:3}}><CustomButton title={'VERIFY OTP'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.verify_otp(this.state.otp)}/></View>)}
         </View>
         {!!this.state.errorTextverify && (<Text style={{color: 'red'}}>{this.state.errorTextverify}</Text>)}
-        </View>)}
+        </View>)} */}
         {/* ////////////////////////////////different person//////////////////////////////// */}
 
         {this.state.diffperson===true && (<View>
-      <CustomText text={'Receiver Name'} textType={Strings.subtext} color={Colors.black}/>
-          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({receiver_name: text, errorTextreceiver_name:''})} value={''} />
+          <CustomText text={'Receiver Name'} textType={Strings.subtext} color={Colors.black}/>
+          <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({receiver_name: text, errorTextreceiver_name:''})} value={this.state.receiver_name} />
           {!!this.state.errorTextreceiver_name && (<Text style={{color: 'red'}}>{this.state.errorTextreceiver_name}</Text>)}
-          <View style={styles.input}>
+
+          {/* <View style={styles.input}>
           <View style={styles.inputview4} ><CustomText text={this.state.delivery_details.contactPersonNumber ? this.state.delivery_details.contactPersonNumber : Strings.na} textType={Strings.subtext} color={Colors.black} width={150}/></View>
         <View style={{flex:3}}><CustomButton title={'SEND OTP'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.send_otp()}/></View>
         </View>
@@ -816,7 +890,7 @@ render(){
         <View style={{flex:5}}><CustomInput backgroundColor={Colors.white} flex={1} keyboardType={'number-pad'} placeholder={'Enter OTP'} onChangeText={(text) => this.setState({otp: text, errorTextverify:""})} value={this.state.otp}   /></View>
        {this.state.otp_verified === false &&(<View style={{flex:3}}><CustomButton title={'VERIFY OTP'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.verify_otp(this.state.otp)}/></View>)}
         </View>
-        {!!this.state.errorTextverify && (<Text style={{color: 'red'}}>{this.state.errorTextverify}</Text>)}
+        {!!this.state.errorTextverify && (<Text style={{color: 'red'}}>{this.state.errorTextverify}</Text>)} */}
         </View>)}
 
 

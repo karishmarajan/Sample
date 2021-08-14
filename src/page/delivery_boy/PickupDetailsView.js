@@ -101,7 +101,7 @@ render(){
           <CustomText text={'Customer Name'} textType={Strings.subtext} color={Colors.black}/>
           <View style={styles.inputview}><CustomText text={this.state.pickup_details.contactPersonName ? this.state.pickup_details.contactPersonName : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Customer Id'} textType={Strings.subtext} color={Colors.black}/>
-          <View style={styles.inputview}><CustomText text={this.state.pickup_details.customerId ? this.state.pickup_details.customerId : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>
+          <View style={styles.inputview}><CustomText text={this.state.pickup_details.preDefinedOrderId?this.state.pickup_details.preDefinedOrderId:this.state.pickup_details.customerId ? this.state.pickup_details.customerId : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Mobile No.'} textType={Strings.subtext} color={Colors.black}/>
           <View style={styles.inputview}><CustomText text={this.state.pickup_details.contactPersonNumber ? this.state.pickup_details.contactPersonNumber : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Location'} textType={Strings.subtext} color={Colors.black}/>

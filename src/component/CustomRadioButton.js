@@ -15,7 +15,9 @@ export default class CustomRadioButton extends Component {
             <View style={{flex:1,flexDirection:'row',marginTop:3,marginBottom:3,marginLeft:10}}>
                 <Radio onPress={this.props.onPress} selectedColor={this.props.selectedColor} selected={this.props.selected} />
                 <Body style={{alignItems:'flex-start'}}>
+<View></View>
                     <Text style={{ padding:this.props.padding,marginLeft:6,fontSize: this.props.fontSize, padding: 0, fontWeight: this.props.fontWeight, }}>{this.props.title}</Text>
+                
                 </Body>
             </View>
 
