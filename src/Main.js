@@ -35,7 +35,12 @@ import OrderCreation from './page/delivery_boy/OrderCreation';
 import TaskAssignedDetails from './page/delivery_boy/TaskAssignedDetails';
 import DeliveryOut from './page/delivery_boy/DeliveryOut';
 import PickupDetailsView from './page/delivery_boy/PickupDetailsView';
-
+import ManualPickupOrders from './page/delivery_boy/ManualPickupOrders';
+import RouteFinder from './page/delivery_boy/RouteFinder';
+import RouteFinderView from './page/delivery_boy/RouteFinderView';
+import BulkOrderView from './page/delivery_boy/BulkOrderView';
+import orderwithpin from './page/delivery_boy/Orderwithpin';
+// import orderwithpin from './page/delivery_boy/orderwithpin';
 
 
 
@@ -63,7 +68,7 @@ export default class Main extends Component {
             <Scene  key="delivery" component={Delivery} hideNavBar />
             <Scene  key="deliveryfirst" component={DeliveryFirst} hideNavBar />
             <Scene  key="deliveryoutdetails" component={DeliveryOutDetails} hideNavBar />
-            <Scene  key="manualpickup" component={ManualPickup} hideNavBar />
+            <Scene   key="manualpickup" component={ManualPickup} hideNavBar />
             <Scene  key="statusupdatefirst" component={StatusUpdateFirst} hideNavBar />
             <Scene  initial key="splashscreen" component={SplashScreen} hideNavBar />
             <Scene  key="verifytasktransfer" component={VerifyTaskTransfer} hideNavBar />
@@ -79,7 +84,12 @@ export default class Main extends Component {
             <Scene  key="taskassigneddetails" component={TaskAssignedDetails} hideNavBar />
             <Scene  key="deliveryout" component={DeliveryOut} hideNavBar />
             <Scene  key="pickupdetailsview" component={PickupDetailsView} hideNavBar />
-            
+            <Scene  key="manualpickuporders" component={ManualPickupOrders} hideNavBar />
+            <Scene  key="routefinder" component={RouteFinder} hideNavBar />
+            <Scene  key="routefinderview" component={RouteFinderView} hideNavBar />
+            <Scene  key="bulkorderview" component={BulkOrderView} hideNavBar />
+            {/* <Scene  key="orderwithpin" component={orderwithpin} hideNavBar /> */}
+            <Scene  key="orderwithpin" component={orderwithpin} hideNavBar />
           </Scene>
         </Router>
       </Root>

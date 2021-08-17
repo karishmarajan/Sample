@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView,Picker,StyleSheet,BackHandler,Modal } from 'react-native';
+import { ScrollView,Picker,StyleSheet,BackHandler,Modal, Dimensions } from 'react-native';
 import { Container, View, Button, Left, Right,Icon,Text,Grid,Col,Input,Badge} from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
@@ -9,7 +9,7 @@ import Strings from '../../constants/Strings';
 import CustomInput from '../../component/CustomInput';
 import CustomSubButton from '../../component/CustomSubButton';
 import CustomText from '../../component/CustomText';
-import { SECTION_MARGIN_TOP,FIELD_MARGIN_TOP, MAIN_BLOCK_BORDER_RADIUS, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,ADDRESS_FIELD_HEIGHT, SIGNATURE_VIEW_HEIGHT,TOTAL_BLOCK, SHORT_TEXT_FIELD_HIEGHT,TEXT_MARGIN_TOP, ORDER_BLOCK } from '../../constants/Dimen';
+import { SECTION_MARGIN_TOP,FIELD_MARGIN_TOP, MAIN_BLOCK_BORDER_RADIUS, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,ADDRESS_FIELD_HEIGHT, SIGNATURE_VIEW_HEIGHT,TOTAL_BLOCK, SHORT_TEXT_FIELD_HIEGHT,TEXT_MARGIN_TOP, ORDER_BLOCK ,CLOSE_SIZE,CLOSE_WIDTH} from '../../constants/Dimen';
 import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
 
@@ -28,8 +28,8 @@ export default class Delivery extends React.Component {
 render(){
     var left = (
         <Left style={{ flex: 1 }}>
-          <Button onPress={() => Actions.pop()} transparent>
-            <Icon style={{ color:Colors.navbarIconColor}} name='ios-close' />
+          <Button  width={CLOSE_WIDTH}  onPress={() => Actions.pop()} transparent>
+            <Icon style={{ color:Colors.navbarIconColor,fontSize:CLOSE_SIZE}} name='ios-close' />
             </Button>
         </Left>
       );

@@ -8,14 +8,15 @@ import Colors from '../../constants/Colors';
 import Strings from '../../constants/Strings';
 import CustomInput from '../../component/CustomInput';
 import CustomText from '../../component/CustomText';
-import { SECTION_MARGIN_TOP,SHORT_BORDER_RADIUS, MAIN_BLOCK_BORDER_RADIUS, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,ADDRESS_FIELD_HEIGHT, SIGNATURE_VIEW_HEIGHT,TOTAL_BLOCK, CREDIT_FIELD_HEIGHT,TEXT_MARGIN_TOP, CAMERA_SIZE,FOURTH_FONT } from '../../constants/Dimen';
+import { TEXT_PADDING_LEFT,TEXT_PADDING_RIGHT,NORMAL_FONT,SHORT_BUTTON_HEIGHT,SECTION_MARGIN_TOP,SHORT_BORDER_RADIUS, MAIN_BLOCK_BORDER_RADIUS, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,ADDRESS_FIELD_HEIGHT, SIGNATURE_VIEW_HEIGHT,TOTAL_BLOCK, CREDIT_FIELD_HEIGHT,TEXT_MARGIN_TOP, CAMERA_SIZE,FOURTH_FONT } from '../../constants/Dimen';
 import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
 import session,{KEY} from '../../session/SessionManager';
 import Api from '../../component/Fetch';
-import { DELIVERY_OUT_DETAILS , DELIVERY_CHARGE ,DELIVERY_STATUS_UPDATE, DELIVERY_ORDER_PAYMENT, DELIVERY_PROOF_UPLOAD, UPDATE_RECEIVER_NAME} from '../../constants/Api';
+import { ORDER_RECIVER_PAYMENT,DELIVERY_OUT_DETAILS , DELIVERY_CHARGE ,DELIVERY_STATUS_UPDATE, DELIVERY_ORDER_PAYMENT, DELIVERY_PROOF_UPLOAD, UPDATE_RECEIVER_NAME, OTP,VERIFY_OTP} from '../../constants/Api';
 import { RNCamera } from 'react-native-camera';
 import RNFetchBlob from 'rn-fetch-blob';
+import CustomRadioButton from '../../component/CustomRadioButton';
 
 
 const myArray=[{name:"Select a Status" , value:"Select a Status"},{name:"DELIVERED" , value:"DELIVERED"},{name:"ATTEMPT_FAILED" , value:"ATTEMPT FAILED"},{name:"UNVISITED" , value:"UNVISITED"}];
@@ -66,6 +67,18 @@ export default class DeliveryOutDetails extends React.Component {
     receiver_name:'',
     errorTextreceiver_name:'',
 
+    code_otp:'',
+    phone_otp:'',
+    verify_otp:'',
+    otp_verified:false,
+    mobile:'',
+    otp:'',
+    countrycode:'+91',
+    same:true,
+    altno:false,
+    diffperson:true,
+    modalVisibleProof:false,
+    modalVisibleSignature:false,
   };
 
 
@@ -138,9 +151,113 @@ takePicture_sign = async function (camera) {
 })
 
  }
+ /////////////////////////////////////////////////////////
+ isSelected(no){
+  if(no == 1){
+    this.setState({same:true})
+    this.setState({altno:false})
+    this.setState({diffperson:false})
+
+
+  }
+  if(no == 2){
+    this.setState({same:false})
+    this.setState({altno:true})
+    this.setState({diffperson:false})
+
+
+  }
+  if(no == 3){
+    this.setState({same:false})
+    this.setState({altno:false})
+    this.setState({diffperson:true})
+
+
+  }
+}
+
+//////////////////////////////////edited Nishanth/////////////////////////////
+send_otp(){
+  let body={
+    "countryCode": this.state.countrycode,
+    "mobileNumber": this.state.mobile,
+
+};
+  
+
+  Api.fetch_request(OTP,'POST','',JSON.stringify(body))
+  .then(result => {
+   
+    if(result.error != true){
+    console.log('Success:', JSON.stringify(result))
+    Toast.show({ text: result.message, type: 'success' });
+    }
+    else{
+      console.log('Failed');
+      Toast.show({ text: result.message, type: 'warning' });
+    }
+  })
+}
+////////////////////////////edited Nishanth////////////////////
+
+verify_otp(otp) {
+
+  let body={
+    "countryCode": this.state.countrycode,
+    "mobileNumber": this.state.mobile,
+
+};
+
+  Api.fetch_request(VERIFY_OTP + otp,'POST','',JSON.stringify(body))
+  .then(result => {
+   
+    if(result.error != true){
+
+      console.log('Success:', JSON.stringify(result));
+      this.setState({otp_verified:true,errorTextverify:''});
+      Toast.show({ text: result.message, type: 'success' });
+    }
+    else{
+      console.log('Failed');
+      Toast.show({ text: result.message, type: 'warning' });
+    }
+})
+ 
+}
+
+
+
+
+ ////////////////////////////////////////edited Nishanth///////////////////////////
+ send_otp(){
+  let body={
+    "countryCode": this.state.countrycode,
+    "mobileNumber": this.state.mobile,
+
+};
+  
+
+  Api.fetch_request(OTP,'POST','',JSON.stringify(body))
+  .then(result => {
+   
+    if(result.error != true){
+    console.log('Success:', JSON.stringify(result))
+    Toast.show({ text: result.message, type: 'success' });
+    }
+    else{
+      console.log('Failed');
+      Toast.show({ text: result.message, type: 'warning' });
+    }
+  })
+}
 
  ////////////////////////////// Fetching delivery charge details function //////////////////////////////////////////////////////////////////////////////
 
+
+
+
+
+ 
 generate_invoice() {
 
   Api.fetch_request(DELIVERY_CHARGE + this.state.delivery_details.orderId ,'GET','')
@@ -162,6 +279,15 @@ generate_invoice() {
 })
  
 }
+///////////////////////////////////////////////////////////////////////////////////////////
+
+modalvisible()
+{
+
+}
+
+
+
 
  ///////////////////////////////// Delivery order update function //////////////////////////////////////////////////////////////////////////////////////// 
  
@@ -228,11 +354,11 @@ delivery_cash_payment() {
   let body = {
     "isAmountCollectedByDeliveryBoy": true,
     "orderId": this.state.delivery_details.orderId,
-    "payableByReceiver": 0,
-    "receiverPaymentStatus": "COMPLETED"
+    "amountReceived": this.state.amount_recieved
+   
   };
 
-  Api.fetch_request(DELIVERY_ORDER_PAYMENT, 'POST', '', JSON.stringify(body))
+  Api.fetch_request(ORDER_RECIVER_PAYMENT, 'POST', '', JSON.stringify(body))
     .then(result => {
 
       if (result.error != true) {
@@ -254,10 +380,14 @@ delivery_cash_payment() {
 
 update_receiver_name() {
 
-  if(this.state.receiver_name==="") {
-    this.setState({hasError: true, errorTextreceiver_name: 'Please fill !'});
-    return;
-  }
+  // if(this.state.receiver_name==="") {
+  //   this.setState({hasError: true, errorTextreceiver_name: 'Please fill !'});
+  //   return;
+  // }
+  // if(this.state.otp_verified != true) {
+  //   this.setState({hasError: true, errorTextverify: 'You have to verify OTP!'});
+  //   return;
+  // }
 
   let body = {
     "contactPersonName": this.state.receiver_name,
@@ -497,7 +627,7 @@ render(){
         <CustomText text={'Serial No.'} textType={Strings.subtext} color={Colors.black}/>
         <View style={styles.inputview2}><CustomText text={this.state.delivery_details.serialId ? this.state.delivery_details.serialId : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Order No.'} textType={Strings.subtext} color={Colors.black}/>
-          <View style={styles.inputview2}><CustomText text={this.state.delivery_details.orderId ? this.state.delivery_details.orderId : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
+          <View style={styles.inputview2}><CustomText text={this.state.delivery_details.preDefinedOrderId?this.state.delivery_details.preDefinedOrderId:this.state.delivery_details.orderId ? this.state.delivery_details.orderId : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Date And Time'} textType={Strings.subtext} color={Colors.black}/>
           <View style={styles.inputview2}><CustomText text={this.state.delivery_details.date ? this.state.delivery_details.date : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Seller ID'} textType={Strings.subtext} color={Colors.black}/>
@@ -524,6 +654,70 @@ render(){
 
           </View>
 </View>
+
+{/* //////////////////////////////////////proof////////////////////////////////////////////////////// */}
+
+
+<View style={{justifyContent:"center",alignItems:"center"
+    }}>
+    <Modal
+       transparent={true}
+      
+  visible={this.state.modalVisibleProof}
+      backdropOpacity={0.1}
+     
+      style={styles.model}
+    //  animationIn={"fadeIn"}
+    //  animationOut={"fadeOut"}
+     >
+      <View style={{height:150,width:300,justifyContent:"center",alignItems:"center",
+    backgroundColor:"white",borderRadius:7}}>
+        <View>
+        <CustomText text={'Select type of orders'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+<View style={{flexDirection:"row"}}>
+<CustomButton title={'Camera'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={() => this.setState({modal_proof:true})}/>
+
+<CustomButton title={'Gallery'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.pin_search(this.state.picode_search)}/>
+
+          </View>
+        </View>
+      </View>
+    </Modal>
+    </View>
+
+{/* //////////////////////////////////////signature////////////////////////////////////////////////////// */}
+
+
+<View style={{justifyContent:"center",alignItems:"center"
+    }}>
+    <Modal
+       transparent={true}
+      
+  visible={this.state.modalVisibleSignature}
+      backdropOpacity={0.1}
+     
+      style={styles.model}
+    //  animationIn={"fadeIn"}
+    //  animationOut={"fadeOut"}
+     >
+      <View style={{height:150,width:300,justifyContent:"center",alignItems:"center",
+    backgroundColor:"white",borderRadius:7}}>
+        <View>
+        <CustomText text={'Select type of orders'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+<View style={{flexDirection:"row"}}>
+<CustomButton title={'Camera'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={() => this.modalvisible()}/>
+
+<CustomButton title={'Gallery'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.pin_search(this.state.picode_search)}/>
+
+          </View>
+        </View>
+      </View>
+    </Modal>
+    </View>
+
+
+
+
 
 
   {/*////////////////////// Proof Upload Block //////////////////////////////////////////////// */}
@@ -635,10 +829,76 @@ render(){
       <CustomButton title={'Update'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>this.delivery_status_update()} />
       </View>
       </View>)}
-
+      {/* <View style={{flexDirection:'row',}}>
+         <CustomRadioButton title={'Same as delivery details'} selectedColor={Colors.darkSkyBlue} selected={this.state.same} onPress={()=>this.isSelected(1)}/>
+         <CustomRadioButton title={'Alternative number'} padding={12} selectedColor={Colors.darkSkyBlue} selected={this.state.altno} onPress={()=>this.isSelected(2)}/>
+         </View>
+         <View style={{flexDirection:'row',}}>
+         <CustomRadioButton title={'Different person'} selectedColor={Colors.darkSkyBlue} selected={this.state.diffperson} onPress={()=>this.isSelected(3)}/>
+         </View> */}
+         {/* //////////////////////////////same person//////////////////////////// */}
+         {/* {this.state.same===true && (<View>
       <CustomText text={'Receiver Name'} textType={Strings.subtext} color={Colors.black}/>
+          <View style={styles.inputview1}><CustomText text={this.state.receiver_name ? this.state.receiver_name : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>
+
+          {!!this.state.errorTextreceiver_name && (<Text style={{color: 'red'}}>{this.state.errorTextreceiver_name}</Text>)}
+          <View style={styles.input}>
+          <View style={styles.inputview4} ><CustomText text={this.state.delivery_details.contactPersonNumber ? this.state.delivery_details.contactPersonNumber : Strings.na} textType={Strings.subtext} color={Colors.black} width={150}/></View>
+        <View style={{flex:3}}><CustomButton title={'SEND OTP'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.send_otp()}/></View>
+        </View>
+        {!!this.state.errorTextmobile && (<Text style={{color: 'red'}}>{this.state.errorTextmobile}</Text>)}
+
+        <View style={styles.input}>
+        <View style={{flex:5}}><CustomInput backgroundColor={Colors.white} flex={1} keyboardType={'number-pad'} placeholder={'Enter OTP'} onChangeText={(text) => this.setState({otp: text, errorTextverify:""})} value={this.state.otp}   /></View>
+       {this.state.otp_verified === false &&(<View style={{flex:3}}><CustomButton title={'VERIFY OTP'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.verify_otp(this.state.otp)}/></View>)}
+        </View>
+        {!!this.state.errorTextverify && (<Text style={{color: 'red'}}>{this.state.errorTextverify}</Text>)}
+        </View>)} */}
+        {/* /////////////////////////////////alternative no/////////////////////////////// */}
+        {/* {this.state.altno===true && (<View>
+      <CustomText text={'Receiver Name'} textType={Strings.subtext} color={Colors.black}/>
+     
+          <View style={styles.inputview1}><CustomText text={this.state.receiver_name ? this.state.receiver_name : Strings.na} textType={Strings.subtext} color={Colors.black}/></View>
+
+          {!!this.state.errorTextreceiver_name && (<Text style={{color: 'red'}}>{this.state.errorTextreceiver_name}</Text>)}
+          <View style={styles.input}>
+        <View style={{flex:6}}><CustomInput backgroundColor={Colors.white} flex={1} maxLength={12} keyboardType={'phone-pad'} placeholder={'Mobile Number'} onChangeText={(text) => this.setState({mobile: text , errorTextmobile:""})} value={this.state.mobile}   /></View>
+        <View style={{flex:3}}><CustomButton title={'SEND OTP'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.send_otp()}/></View>
+        </View>
+        {!!this.state.errorTextmobile && (<Text style={{color: 'red'}}>{this.state.errorTextmobile}</Text>)}
+
+        <View style={styles.input}>
+        <View style={{flex:5}}><CustomInput backgroundColor={Colors.white} flex={1} keyboardType={'number-pad'} placeholder={'Enter OTP'} onChangeText={(text) => this.setState({otp: text, errorTextverify:""})} value={this.state.otp}   /></View>
+       {this.state.otp_verified === false &&(<View style={{flex:3}}><CustomButton title={'VERIFY OTP'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.verify_otp(this.state.otp)}/></View>)}
+        </View>
+        {!!this.state.errorTextverify && (<Text style={{color: 'red'}}>{this.state.errorTextverify}</Text>)}
+        </View>)} */}
+        {/* ////////////////////////////////different person//////////////////////////////// */}
+
+        {this.state.diffperson===true && (<View>
+          <CustomText text={'Receiver Name'} textType={Strings.subtext} color={Colors.black}/>
           <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({receiver_name: text, errorTextreceiver_name:''})} value={this.state.receiver_name} />
           {!!this.state.errorTextreceiver_name && (<Text style={{color: 'red'}}>{this.state.errorTextreceiver_name}</Text>)}
+
+          {/* <View style={styles.input}>
+          <View style={styles.inputview4} ><CustomText text={this.state.delivery_details.contactPersonNumber ? this.state.delivery_details.contactPersonNumber : Strings.na} textType={Strings.subtext} color={Colors.black} width={150}/></View>
+        <View style={{flex:3}}><CustomButton title={'SEND OTP'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.send_otp()}/></View>
+        </View>
+        {!!this.state.errorTextmobile && (<Text style={{color: 'red'}}>{this.state.errorTextmobile}</Text>)}
+
+        <View style={styles.input}>
+        <View style={{flex:5}}><CustomInput backgroundColor={Colors.white} flex={1} keyboardType={'number-pad'} placeholder={'Enter OTP'} onChangeText={(text) => this.setState({otp: text, errorTextverify:""})} value={this.state.otp}   /></View>
+       {this.state.otp_verified === false &&(<View style={{flex:3}}><CustomButton title={'VERIFY OTP'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={()=>this.verify_otp(this.state.otp)}/></View>)}
+        </View>
+        {!!this.state.errorTextverify && (<Text style={{color: 'red'}}>{this.state.errorTextverify}</Text>)} */}
+        </View>)}
+
+
+
+
+
+
+
 
       <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.update_receiver_name()} />
 
@@ -700,6 +960,19 @@ const styles=StyleSheet.create({
     alignItems:'flex-start',
     justifyContent:'center'
   },
+  inputview4 :{
+    backgroundColor:Colors.textBackgroundColor,
+    height:40,
+    width:200,
+    alignItems:'flex-start',
+    justifyContent:'center'
+  },
+  inputview1 :{
+    backgroundColor:Colors.white,
+    height:40,
+    alignItems:'flex-start',
+    justifyContent:'center'
+  },
   inputviewaddress :{
     backgroundColor:Colors.textBackgroundColor,
     height:120,
@@ -730,4 +1003,14 @@ const styles=StyleSheet.create({
     alignSelf: 'center',
     margin: 20,
   },
+  input :{
+    flexDirection:'row',
+    borderColor:Colors.borderColor,
+    borderWidth:SHORT_BORDER_WIDTH,
+    borderRadius:SHORT_BORDER_RADIUS,
+    padding:1,alignItems:'center',
+    justifyContent:'space-between',
+    marginTop:SECTION_MARGIN_TOP,
+  },
+
   });

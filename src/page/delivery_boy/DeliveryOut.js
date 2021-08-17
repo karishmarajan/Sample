@@ -9,7 +9,7 @@ import Colors from '../../constants/Colors';
 import Strings from '../../constants/Strings';
 import CustomText from '../../component/CustomText';
 import CustomInput from '../../component/CustomInput';
-import { SECTION_MARGIN_TOP, COLUMN_PADDING, SHORT_BUTTON_HEIGHT, LOGIN_FIELD_HEIGHT, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT } from '../../constants/Dimen';
+import { SECTION_MARGIN_TOP, COLUMN_PADDING, SHORT_BUTTON_HEIGHT, LOGIN_FIELD_HEIGHT, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,CLOSE_SIZE,CLOSE_WIDTH } from '../../constants/Dimen';
 import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
 import session, { KEY } from '../../session/SessionManager';
@@ -145,8 +145,8 @@ fetch_delivery_out() {
   render() {
     var left = (
       <Left style={{ flex: 1 }}>
-        <Button onPress={() => Actions.pop()} transparent>
-          <Icon style={{ color: Colors.navbarIconColor }} name='ios-close' />
+        <Button  width={CLOSE_WIDTH}  onPress={() => Actions.pop()} transparent>
+          <Icon style={{ color: Colors.navbarIconColor,fontSize:CLOSE_SIZE }} name='ios-close' />
         </Button>
       </Left>
     );
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
 
   },
   cell: {
-    width: 100,
+    width: 130,
     padding: 6,
     alignSelf: 'stretch',
     textAlign: 'center',
