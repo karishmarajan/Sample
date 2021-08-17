@@ -259,7 +259,9 @@ if(this.state.predefinedpin==="") {
 
 <Modal     animationType="slide"
         transparent={true}
-        visible={this.state.modalVisible}>
+        visible={this.state.modalVisible}
+        
+        >
 
 <View style={styles.container}>
    

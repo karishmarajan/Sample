@@ -1,5 +1,5 @@
 import React, { Component, } from 'react';
-import { TouchableOpacity,StyleSheet,ScrollView,BackHandler ,AsyncStorage , FlatList ,Modal} from 'react-native';
+import { TouchableOpacity,StyleSheet,ScrollView,BackHandler ,AsyncStorage , FlatList ,Modal, Alert} from 'react-native';
 import { Container, View, Button, Left, Right, Icon, Text,Grid,Col,Row,Badge ,Toast} from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
@@ -25,9 +25,6 @@ import { DELIVERY_COUNT , PICKUP_COUNT, DELIVERY_ASSIGNED_ACCEPT, DELIVERY_ASSIG
 
 
 export default class Dashboard extends React.Component {
-
-  ///////////////////////////////////////// Declaring state variables ///////////////////////////////////////////////////////////////////////////////////
-
   state ={
     mycart_count:'',
     count_list :[],
@@ -48,10 +45,26 @@ export default class Dashboard extends React.Component {
     
   }
 
-  ///////////////////////////////////////// Component did mount function ///////////////////////////////////////////////////////////////////////////////
+  backAction = () => {
+    if (Actions.currentScene == 'dashboard') {
+    Alert.alert("Wait!", "Do you want to exit From App?", [
+      {
+        text: "Cancel",
+        onPress: () => null,
+        style: "cancel"
+      },
+      { text: "YES", onPress: () => BackHandler.exitApp() }
+    ]);
+  }
+    return true;
+  };
 
-  componentDidMount(){
-   AsyncStorage.getItem(KEY).then((value => {
+  componentDidMount() {
+    this.backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      this.backAction
+    );
+    AsyncStorage.getItem(KEY).then((value => {
 
       let data = JSON.parse(value);
       this.setState({person_id:data.personId});
@@ -64,431 +77,430 @@ export default class Dashboard extends React.Component {
    
   }));
   }
-  //////////////////////////////////////////////////// Refresh function //////////////////////////////////////////////////////////////
 
-refresh(){
-  AsyncStorage.getItem(KEY).then((value => {
-
-    let data = JSON.parse(value);
-    this.setState({person_id:data.personId});
-   this.fetch_delivery_count(data.personId);
-   this.fetch_pickup_count(data.personId);
-    this.fetch_task_assigned_list(data.personId);
-   this.amount_collected_today(data.personId);
-   this.fetch_pickup_assigned_list(data.personId);
-
- 
-}));
-}
-
-  //////////////////////////////////////////// Amount collected fetching function  //////////////////////////////////////////////////////////////////////////////////  
- 
- amount_collected_today(val){
-
-  Api.fetch_request(AMOUNT_COLLECTED+val,'GET','')
-  .then(result => {
-   
-    if(result.error != true){
-
-      console.log('Success:', JSON.stringify(result));
-      this.setState({amount : result.payload})
-    
-    }
-    else{
-      console.log('Failed');
-    }
-})
-
- }
-
- //////////////////////////////////////////// Delivery count fetching function  //////////////////////////////////////////////////////////////////////////////////  
- 
- fetch_delivery_count(val){
-
-  Api.fetch_request(DELIVERY_COUNT+val,'GET','')
-  .then(result => {
-   
-    if(result.error != true){
-
-      console.log('Success:', JSON.stringify(result));
-      this.setState({count_list : result.payload})
-    
-    }
-    else{
-      console.log('Failed');
-    }
-})
-
- }
-
- //////////////////////////////// Pickup count fetching function /////////////////////////////////////////////////////////////////////////////////////
-
- fetch_pickup_count(val){
-
-  Api.fetch_request(PICKUP_COUNT+val,'GET','')
-  .then(result => {
-   
-    if(result.error != true){
-
-      console.log('Success:', JSON.stringify(result));
-      this.setState({pick_count_list : result.payload})
-    
-    }
-    else{
-      console.log('Failed');
-    }
-})
-
- }
-
- ////////////////////////////////////// Task assigned fetching function ////////////////////////////////////////////////////////////////////////////////////
-
- fetch_task_assigned_list(val){
-
-  let body = {
-    "filterType": "STATUS",
-    "status": "ASSIGNMENT_NOT_CONFIRMED",
-    "personId": val
-  };
-
-  Api.fetch_request(DELIVERY_ORDERS, 'POST', '', JSON.stringify(body))
-    .then(result => {
-
-      if (result.error != true) {
-
-        console.log('Success:', JSON.stringify(result));
-        this.setState({ task_assigned_list: result.payload })
-
-        this.setState({mycart_count:''+(this.state.task_assigned_list).length})
-
-      }
-      else {
-        console.log('Failed');
-        this.setState({ task_assigned_list: ''})
-      }
-    })
-
- }
-
- /////////////////////////////// Checkbox checking function ///////////////////////////////////////////////////////////////////////////////////
-
- checkItem = (item) => {
-  const { checked } = this.state;
-  console.log(item)
-  if (!checked.includes(item)) {
-
-    setTimeout(()=>{this.setState({ checked: [...this.state.checked, item] })},100);
-    // setTimeout(()=>{ alert(this.state.checked)},3000);
-   
-  } else {
-    setTimeout(()=>{this.setState({ checked: checked.filter(a => a !== item) })},100);
+  componentWillUnmount() {
+    this.backHandler.remove();
   }
-  console.log(checked)
-};
-////////////////////////////////////// Delivery assigned accepting function ////////////////////////////////////////////////////////////////////////////////////
-
-delivery_assigned_accept() {
-
-  let body = {
-    "deliveryId": this.state.checked,
-  };
-
-  Api.fetch_request(DELIVERY_ASSIGNED_ACCEPT, 'POST', '', JSON.stringify(body))
-    .then(result => {
-
-      if (result.error != true) {
-
-        console.log('Success:', JSON.stringify(result));
-        this.fetch_task_assigned_list(this.state.person_id);
-
-      }
-      else {
-        console.log('Failed');
-        
-      }
-    })
-}
-
-////////////////////////////////////// Delivery assigned rejecting function ////////////////////////////////////////////////////////////////////////////////////
-
-delivery_assigned_reject() {
-
-  if(this.state.reject_reason_delivery==="") {
-    Toast.show({ text:"You have to provide reason", type: 'warning' });
-    return;
+  refresh(){
+    AsyncStorage.getItem(KEY).then((value => {
+  
+      let data = JSON.parse(value);
+      this.setState({person_id:data.personId});
+     this.fetch_delivery_count(data.personId);
+     this.fetch_pickup_count(data.personId);
+      this.fetch_task_assigned_list(data.personId);
+     this.amount_collected_today(data.personId);
+     this.fetch_pickup_assigned_list(data.personId);
+  
+   
+  }));
   }
-
-  let body = {
-    "deliveryFailedReason": this.state.reject_reason_delivery ,
-    "deliveryId": this.state.checked,
-  };
-
-  Api.fetch_request(DELIVERY_ASSIGNED_REJECT, 'POST', '', JSON.stringify(body))
+  
+    //////////////////////////////////////////// Amount collected fetching function  //////////////////////////////////////////////////////////////////////////////////  
+   
+   amount_collected_today(val){
+  
+    Api.fetch_request(AMOUNT_COLLECTED+val,'GET','')
     .then(result => {
-
-      if (result.error != true) {
-
+     
+      if(result.error != true){
+  
         console.log('Success:', JSON.stringify(result));
-        this.fetch_task_assigned_list(this.state.person_id);
-        this.setState({reject_reason_delivery:''})
-
+        this.setState({amount : result.payload})
+      
       }
-      else {
+      else{
         console.log('Failed');
       }
-    })
-}
-
-////////////////////////////////////// Task assigned active fetching function ////////////////////////////////////////////////////////////////////////////////////
-
-fetch_task_assigned_active_list(val){
-
-  let body = {
-    "filterType": "STATUS",
-    "status": "ACTIVE",
-    "personId": val
-  };
-
-  Api.fetch_request(DELIVERY_ORDERS, 'POST', '', JSON.stringify(body))
+  })
+  
+   }
+  
+   //////////////////////////////////////////// Delivery count fetching function  //////////////////////////////////////////////////////////////////////////////////  
+   
+   fetch_delivery_count(val){
+  
+    Api.fetch_request(DELIVERY_COUNT+val,'GET','')
     .then(result => {
-
-      if (result.error != true) {
-
+     
+      if(result.error != true){
+  
         console.log('Success:', JSON.stringify(result));
-        this.setState({ task_assigned_active_list: result.payload })
-
+        this.setState({count_list : result.payload})
+      
       }
-      else {
+      else{
         console.log('Failed');
-        this.setState({ task_assigned_active_list:''})
       }
-    })
-
- }
-
- ////////////////////////////////////// Pickup assigned fetching function ////////////////////////////////////////////////////////////////////////////////////
-
-fetch_pickup_assigned_list(val) {
-
+  })
+  
+   }
+  
+   //////////////////////////////// Pickup count fetching function /////////////////////////////////////////////////////////////////////////////////////
+  
+   fetch_pickup_count(val){
+  
+    Api.fetch_request(PICKUP_COUNT+val,'GET','')
+    .then(result => {
+     
+      if(result.error != true){
+  
+        console.log('Success:', JSON.stringify(result));
+        this.setState({pick_count_list : result.payload})
+      
+      }
+      else{
+        console.log('Failed');
+      }
+  })
+  
+   }
+  
+   ////////////////////////////////////// Task assigned fetching function ////////////////////////////////////////////////////////////////////////////////////
+  
+   fetch_task_assigned_list(val){
+  
     let body = {
       "filterType": "STATUS",
       "status": "ASSIGNMENT_NOT_CONFIRMED",
       "personId": val
     };
-
-    Api.fetch_request(PICKUP_ORDERS, 'POST', '', JSON.stringify(body))
+  
+    Api.fetch_request(DELIVERY_ORDERS, 'POST', '', JSON.stringify(body))
       .then(result => {
-
-        let orders=[];
-
+  
         if (result.error != true) {
-
+  
           console.log('Success:', JSON.stringify(result));
-          this.setState({ pickup_assigned_list: result.payload })
-          
-          var count = (result.payload).length;
-
-          for(var i = 0; i < count; i++){
-           orders.push(result.payload[i].pickupId)
-          }
-          this.setState({ pickup_orders: orders })
-
-          console.log('###############################'+this.state.pickup_orders);
+          this.setState({ task_assigned_list: result.payload })
+  
+          this.setState({mycart_count:''+(this.state.task_assigned_list).length})
+  
         }
         else {
           console.log('Failed');
-          this.setState({ pickup_assigned_list:''})
+          this.setState({ task_assigned_list: ''})
         }
       })
-}
-
-////////////////////////////////////// Pickup assigned accepting function ////////////////////////////////////////////////////////////////////////////////////
-
-pickup_assigned_accept(val) {
-
-  let body = {
-    "pickupId": [val],
+  
+   }
+  
+   /////////////////////////////// Checkbox checking function ///////////////////////////////////////////////////////////////////////////////////
+  
+   checkItem = (item) => {
+    const { checked } = this.state;
+    console.log(item)
+    if (!checked.includes(item)) {
+  
+      setTimeout(()=>{this.setState({ checked: [...this.state.checked, item] })},100);
+      // setTimeout(()=>{ alert(this.state.checked)},3000);
+     
+    } else {
+      setTimeout(()=>{this.setState({ checked: checked.filter(a => a !== item) })},100);
+    }
+    console.log(checked)
   };
-
-  Api.fetch_request(PICKUP_ASSIGNED_ACCEPT, 'POST', '', JSON.stringify(body))
-    .then(result => {
-
-      if (result.error != true) {
-
-        console.log('Success:', JSON.stringify(result));
-        this.fetch_pickup_assigned_list(this.state.person_id);
-
-      }
-      else {
-        console.log('Failed');
-      }
-    })
-}
-
-
-////////////////////////////////////// Pickup accept all function ////////////////////////////////////////////////////////////////////////////////////
-
-pickup_assigned_acceptall() {
-
-  let body = {
-    "pickupId": this.state.pickup_orders,
-  };
-
-  Api.fetch_request(PICKUP_ASSIGNED_ACCEPT, 'POST', '', JSON.stringify(body))
-    .then(result => {
-
-      if (result.error != true) {
-
-        console.log('Success:', JSON.stringify(result));
-        this.fetch_pickup_assigned_list(this.state.person_id);
-
-      }
-      else {
-        console.log('Failed');
-      }
-    })
-}
-
-////////////////////////////////////// Pickup assigned rejecting function ////////////////////////////////////////////////////////////////////////////////////
-
-pickup_assigned_reject() {
- 
-
-  if(this.state.reject_reason_pickup==="") {
-    Toast.show({ text:"You have to provide reason", type: 'warning' });
-    return;
+  ////////////////////////////////////// Delivery assigned accepting function ////////////////////////////////////////////////////////////////////////////////////
+  
+  delivery_assigned_accept() {
+  
+    let body = {
+      "deliveryId": this.state.checked,
+    };
+  
+    Api.fetch_request(DELIVERY_ASSIGNED_ACCEPT, 'POST', '', JSON.stringify(body))
+      .then(result => {
+  
+        if (result.error != true) {
+  
+          console.log('Success:', JSON.stringify(result));
+          this.fetch_task_assigned_list(this.state.person_id);
+  
+        }
+        else {
+          console.log('Failed');
+          
+        }
+      })
   }
-
-  let body = {
-    "pickupFailedReason": this.state.reject_reason_pickup,
-    "pickupId": [this.state.selected_pickup_id],
-  };
-
-  Api.fetch_request(PICKUP_ASSIGNED_REJECT, 'POST', '', JSON.stringify(body))
-    .then(result => {
-
-      if (result.error != true) {
-
-        console.log('Success:', JSON.stringify(result));
-        this.fetch_pickup_assigned_list(this.state.person_id);
-        this.setState({reject_reason_pickup:''})
-
-      }
-      else {
-        console.log('Failed');
-      }
-    })
-}
-
-////////////////////////////////////// Pickup areject all function ////////////////////////////////////////////////////////////////////////////////////
-
-pickup_assigned_rejectall() {
-
-  if(this.state.reject_reason_pickup==="") {
-    Toast.show({ text:"You have to provide reason", type: 'warning' });
-    return;
+  
+  ////////////////////////////////////// Delivery assigned rejecting function ////////////////////////////////////////////////////////////////////////////////////
+  
+  delivery_assigned_reject() {
+  
+    if(this.state.reject_reason_delivery==="") {
+      Toast.show({ text:"You have to provide reason", type: 'warning' });
+      return;
+    }
+  
+    let body = {
+      "deliveryFailedReason": this.state.reject_reason_delivery ,
+      "deliveryId": this.state.checked,
+    };
+  
+    Api.fetch_request(DELIVERY_ASSIGNED_REJECT, 'POST', '', JSON.stringify(body))
+      .then(result => {
+  
+        if (result.error != true) {
+  
+          console.log('Success:', JSON.stringify(result));
+          this.fetch_task_assigned_list(this.state.person_id);
+          this.setState({reject_reason_delivery:''})
+  
+        }
+        else {
+          console.log('Failed');
+        }
+      })
   }
-
-  let body = {
-    "pickupFailedReason": this.state.reject_reason_pickup,
-    "pickupId": this.state.pickup_orders,
-  };
-
-  Api.fetch_request(PICKUP_ASSIGNED_REJECT, 'POST', '', JSON.stringify(body))
-    .then(result => {
-
-      if (result.error != true) {
-
-        console.log('Success:', JSON.stringify(result));
-        this.fetch_pickup_assigned_list(this.state.person_id);
-        this.setState({reject_reason_pickup:''})
-
-      }
-      else {
-        console.log('Failed');
-      }
-    })
-}
-
- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
- _bodypickup = (item) => {
-  return (
-
-    <Row style={styles.rowstyle1}>
-    <Col style={styles.colstyle1}>
-    <Text style={{fontSize:12,}}>Order ID: {item.preDefinedOrderId?item.preDefinedOrderId:item.orderId ? item.orderId : Strings.na}   </Text>
-    {/* <Text style={{fontSize:12,}}>Cust. Name: {item.contactPersonName ? item.contactPersonName : Strings.na}</Text> */}
-    <Text style={{fontSize:12,}}>After Pickup: {item.afterPickupStatus == 'TO_OFFICE' ? 'To Office' :'To Reciever'}</Text>
-    <CustomText text={'Details'} color={Colors.darkSkyBlue} textType={Strings.subtext} onPress={()=>Actions.pickupdetailsview({pickup_id:item.pickupId})}/>
-    </Col>
-    <Col ><CustomButton title={'Reject'} text_color={Colors.red} backgroundColor={Colors.white}   marginTop={1} fontSize={NORMAL_FONT} showIcon={true} icon_name={'ios-close'} icon_color={Colors.red} icon_fontsize={NORMAL_FONT} onPress={()=>{this.setState({pickup_reject_modal:true,selected_pickup_id:item.pickupId});}}/>
-   </Col>
-    <Col ><CustomButton title={'Accept'} text_color={Colors.green} backgroundColor={Colors.white}  marginTop={1}  fontSize={NORMAL_FONT} showIcon={true} icon_name={'md-checkmark'} icon_color={Colors.green} icon_fontsize={NORMAL_FONT} onPress={()=>this.pickup_assigned_accept(item.pickupId)}/></Col>
-  </Row>
-
-
-
-  )
-}
-
- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
- _body = (item) => {
-  return (
-
-
-<View style={{borderRadius:5,backgroundColor:Colors.gray,padding:6,width:280,marginTop:SECTION_MARGIN_TOP}}>
-<View style={{flexDirection:'row'}}>
-<Grid><Col style={styles.colstyle}>{ item.deliveryStatus === "ASSIGNMENT_NOT_CONFIRMED" && (<View><CustomCheckBox color={Colors.buttonBackgroundColor} onPress={()=>this.checkItem(item.deliveryId)} checked={this.state.checked.includes(item.deliveryId)}/></View>)}</Col>
-<Col><Row style={styles.contents}><CustomText text={'Order ID'} color={Colors.black} textType={Strings.subtext}/></Row>
-<Row style={styles.contents}><CustomText text={'Cust. Name'} color={Colors.black} textType={Strings.subtext}/></Row></Col>
-<Col><Row style={styles.contents}><CustomText text={item.preDefinedOrderId?item.preDefinedOrderId: item.orderId ? item.orderId : Strings.na} color={Colors.black} textType={Strings.subtext}/></Row>
-<Row style={styles.contents}><CustomText text={item.contactPersonName ? item.contactPersonName : Strings.na} color={Colors.black} textType={Strings.subtext}/></Row>
-<Row style={styles.contents}><CustomText text={'Details'} color={Colors.darkSkyBlue} textType={Strings.subtext} onPress={()=>Actions.taskassigneddetails({delivery_id:item.deliveryId})}/></Row>
-</Col></Grid>
-</View>
-</View>
-
-
-
-  )
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-_footer = () => {
-  return (
-    <View style={{flex:1,flexDirection:'row',marginLeft:10,flex:8}}>
-              <CustomButton title={'Accept Selected'} backgroundColor={Colors.green}  height={SHORT_BUTTON_HEIGHT}  flex={1} onPress={()=>this.delivery_assigned_accept()}/>
-              <CustomButton title={'Reject Selected'} backgroundColor={Colors.red}  height={SHORT_BUTTON_HEIGHT} marginLeft={SECTION_MARGIN_TOP}  flex={1} onPress={()=>{this.setState({delivery_reject_modal:true});}}/>
-            </View>
-  )
-}
-
- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
- _body_activetask = (item) => {
-  return (
-    <View style={{height:90,borderRadius:5,backgroundColor:Colors.lightgreen,marginTop:SECTION_MARGIN_TOP,marginLeft:10,width:280}}>
-    <View style={{flexDirection:'row',marginTop:SECTION_MARGIN_TOP}}>
-    <Grid><Col style={styles.colstyle}><CustomCheckBox color={Colors.buttonBackgroundColor}/></Col>
-    <Col><Row style={styles.contents}><CustomText text={'Order ID'} color={Colors.black} textType={Strings.subtext}/></Row>
-    <Row style={styles.contents}><CustomText text={'Cust. Name'} color={Colors.black} textType={Strings.subtext}/></Row></Col>
-    <Col><Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>{item.preDefinedOrderId?item.preDefinedOrderId:item.orderId ? item.orderId : Strings.na}</Text></Row>
-    <Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>{item.contactPersonName ? item.contactPersonName : Strings.na}</Text></Row></Col></Grid>
-</View>
-</View>
-
-
-  )
-}
-
-
-/////////////////////////////////////////// Render method //////////////////////////////////////////////////////////////////////////////////
+  
+  ////////////////////////////////////// Task assigned active fetching function ////////////////////////////////////////////////////////////////////////////////////
+  
+  fetch_task_assigned_active_list(val){
+  
+    let body = {
+      "filterType": "STATUS",
+      "status": "ACTIVE",
+      "personId": val
+    };
+  
+    Api.fetch_request(DELIVERY_ORDERS, 'POST', '', JSON.stringify(body))
+      .then(result => {
+  
+        if (result.error != true) {
+  
+          console.log('Success:', JSON.stringify(result));
+          this.setState({ task_assigned_active_list: result.payload })
+  
+        }
+        else {
+          console.log('Failed');
+          this.setState({ task_assigned_active_list:''})
+        }
+      })
+  
+   }
+  
+   ////////////////////////////////////// Pickup assigned fetching function ////////////////////////////////////////////////////////////////////////////////////
+  
+  fetch_pickup_assigned_list(val) {
+  
+      let body = {
+        "filterType": "STATUS",
+        "status": "ASSIGNMENT_NOT_CONFIRMED",
+        "personId": val
+      };
+  
+      Api.fetch_request(PICKUP_ORDERS, 'POST', '', JSON.stringify(body))
+        .then(result => {
+  
+          let orders=[];
+  
+          if (result.error != true) {
+  
+            console.log('Success:', JSON.stringify(result));
+            this.setState({ pickup_assigned_list: result.payload })
+            
+            var count = (result.payload).length;
+  
+            for(var i = 0; i < count; i++){
+             orders.push(result.payload[i].pickupId)
+            }
+            this.setState({ pickup_orders: orders })
+  
+            console.log('###############################'+this.state.pickup_orders);
+          }
+          else {
+            console.log('Failed');
+            this.setState({ pickup_assigned_list:''})
+          }
+        })
+  }
+  
+  ////////////////////////////////////// Pickup assigned accepting function ////////////////////////////////////////////////////////////////////////////////////
+  
+  pickup_assigned_accept(val) {
+  
+    let body = {
+      "pickupId": [val],
+    };
+  
+    Api.fetch_request(PICKUP_ASSIGNED_ACCEPT, 'POST', '', JSON.stringify(body))
+      .then(result => {
+  
+        if (result.error != true) {
+  
+          console.log('Success:', JSON.stringify(result));
+          this.fetch_pickup_assigned_list(this.state.person_id);
+  
+        }
+        else {
+          console.log('Failed');
+        }
+      })
+  }
+  
+  
+  ////////////////////////////////////// Pickup accept all function ////////////////////////////////////////////////////////////////////////////////////
+  
+  pickup_assigned_acceptall() {
+  
+    let body = {
+      "pickupId": this.state.pickup_orders,
+    };
+  
+    Api.fetch_request(PICKUP_ASSIGNED_ACCEPT, 'POST', '', JSON.stringify(body))
+      .then(result => {
+  
+        if (result.error != true) {
+  
+          console.log('Success:', JSON.stringify(result));
+          this.fetch_pickup_assigned_list(this.state.person_id);
+  
+        }
+        else {
+          console.log('Failed');
+        }
+      })
+  }
+  
+  ////////////////////////////////////// Pickup assigned rejecting function ////////////////////////////////////////////////////////////////////////////////////
+  
+  pickup_assigned_reject() {
+   
+  
+    if(this.state.reject_reason_pickup==="") {
+      Toast.show({ text:"You have to provide reason", type: 'warning' });
+      return;
+    }
+  
+    let body = {
+      "pickupFailedReason": this.state.reject_reason_pickup,
+      "pickupId": [this.state.selected_pickup_id],
+    };
+  
+    Api.fetch_request(PICKUP_ASSIGNED_REJECT, 'POST', '', JSON.stringify(body))
+      .then(result => {
+  
+        if (result.error != true) {
+  
+          console.log('Success:', JSON.stringify(result));
+          this.fetch_pickup_assigned_list(this.state.person_id);
+          this.setState({reject_reason_pickup:''})
+  
+        }
+        else {
+          console.log('Failed');
+        }
+      })
+  }
+  
+  ////////////////////////////////////// Pickup areject all function ////////////////////////////////////////////////////////////////////////////////////
+  
+  pickup_assigned_rejectall() {
+  
+    if(this.state.reject_reason_pickup==="") {
+      Toast.show({ text:"You have to provide reason", type: 'warning' });
+      return;
+    }
+  
+    let body = {
+      "pickupFailedReason": this.state.reject_reason_pickup,
+      "pickupId": this.state.pickup_orders,
+    };
+  
+    Api.fetch_request(PICKUP_ASSIGNED_REJECT, 'POST', '', JSON.stringify(body))
+      .then(result => {
+  
+        if (result.error != true) {
+  
+          console.log('Success:', JSON.stringify(result));
+          this.fetch_pickup_assigned_list(this.state.person_id);
+          this.setState({reject_reason_pickup:''})
+  
+        }
+        else {
+          console.log('Failed');
+        }
+      })
+  }
+  
+   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+   _bodypickup = (item) => {
+    return (
+  
+      <Row style={styles.rowstyle1}>
+      <Col style={styles.colstyle1}>
+      <Text style={{fontSize:12,}}>Order ID: {item.preDefinedOrderId?item.preDefinedOrderId:item.orderId ? item.orderId : Strings.na}   </Text>
+      {/* <Text style={{fontSize:12,}}>Cust. Name: {item.contactPersonName ? item.contactPersonName : Strings.na}</Text> */}
+      <Text style={{fontSize:12,}}>After Pickup: {item.afterPickupStatus == 'TO_OFFICE' ? 'To Office' :'To Reciever'}</Text>
+      <CustomText text={'Details'} color={Colors.darkSkyBlue} textType={Strings.subtext} onPress={()=>Actions.pickupdetailsview({pickup_id:item.pickupId})}/>
+      </Col>
+      <Col ><CustomButton title={'Reject'} text_color={Colors.red} backgroundColor={Colors.white}   marginTop={1} fontSize={NORMAL_FONT} showIcon={true} icon_name={'ios-close'} icon_color={Colors.red} icon_fontsize={NORMAL_FONT} onPress={()=>{this.setState({pickup_reject_modal:true,selected_pickup_id:item.pickupId});}}/>
+     </Col>
+      <Col ><CustomButton title={'Accept'} text_color={Colors.green} backgroundColor={Colors.white}  marginTop={1}  fontSize={NORMAL_FONT} showIcon={true} icon_name={'md-checkmark'} icon_color={Colors.green} icon_fontsize={NORMAL_FONT} onPress={()=>this.pickup_assigned_accept(item.pickupId)}/></Col>
+    </Row>
+  
+  
+  
+    )
+  }
+  
+   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+   _body = (item) => {
+    return (
+  
+  
+  <View style={{borderRadius:5,backgroundColor:Colors.gray,padding:6,width:280,marginTop:SECTION_MARGIN_TOP}}>
+  <View style={{flexDirection:'row'}}>
+  <Grid><Col style={styles.colstyle}>{ item.deliveryStatus === "ASSIGNMENT_NOT_CONFIRMED" && (<View><CustomCheckBox color={Colors.buttonBackgroundColor} onPress={()=>this.checkItem(item.deliveryId)} checked={this.state.checked.includes(item.deliveryId)}/></View>)}</Col>
+  <Col><Row style={styles.contents}><CustomText text={'Order ID'} color={Colors.black} textType={Strings.subtext}/></Row>
+  <Row style={styles.contents}><CustomText text={'Cust. Name'} color={Colors.black} textType={Strings.subtext}/></Row></Col>
+  <Col><Row style={styles.contents}><CustomText text={item.preDefinedOrderId?item.preDefinedOrderId: item.orderId ? item.orderId : Strings.na} color={Colors.black} textType={Strings.subtext}/></Row>
+  <Row style={styles.contents}><CustomText text={item.contactPersonName ? item.contactPersonName : Strings.na} color={Colors.black} textType={Strings.subtext}/></Row>
+  <Row style={styles.contents}><CustomText text={'Details'} color={Colors.darkSkyBlue} textType={Strings.subtext} onPress={()=>Actions.taskassigneddetails({delivery_id:item.deliveryId})}/></Row>
+  </Col></Grid>
+  </View>
+  </View>
+  
+  
+  
+    )
+  }
+  
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  _footer = () => {
+    return (
+      <View style={{flex:1,flexDirection:'row',marginLeft:10,flex:8}}>
+                <CustomButton title={'Accept Selected'} backgroundColor={Colors.green}  height={SHORT_BUTTON_HEIGHT}  flex={1} onPress={()=>this.delivery_assigned_accept()}/>
+                <CustomButton title={'Reject Selected'} backgroundColor={Colors.red}  height={SHORT_BUTTON_HEIGHT} marginLeft={SECTION_MARGIN_TOP}  flex={1} onPress={()=>{this.setState({delivery_reject_modal:true});}}/>
+              </View>
+    )
+  }
+  
+   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+   _body_activetask = (item) => {
+    return (
+      <View style={{height:90,borderRadius:5,backgroundColor:Colors.lightgreen,marginTop:SECTION_MARGIN_TOP,marginLeft:10,width:280}}>
+      <View style={{flexDirection:'row',marginTop:SECTION_MARGIN_TOP}}>
+      <Grid><Col style={styles.colstyle}><CustomCheckBox color={Colors.buttonBackgroundColor}/></Col>
+      <Col><Row style={styles.contents}><CustomText text={'Order ID'} color={Colors.black} textType={Strings.subtext}/></Row>
+      <Row style={styles.contents}><CustomText text={'Cust. Name'} color={Colors.black} textType={Strings.subtext}/></Row></Col>
+      <Col><Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>{item.preDefinedOrderId?item.preDefinedOrderId:item.orderId ? item.orderId : Strings.na}</Text></Row>
+      <Row style={styles.contents}><Text style={{fontSize:SECOND_FONT,marginTop:5}}>{item.contactPersonName ? item.contactPersonName : Strings.na}</Text></Row></Col></Grid>
+  </View>
+  </View>
+  
+  
+    )
+  }
+  
 
   render() {
-  
     var left = (
       <Left  style={{ flex: 1 }}>
         <Button onPress={() => this._sideMenuDrawer.open()} transparent>
@@ -786,7 +798,18 @@ _footer = () => {
 
 }
 
-const styles=StyleSheet.create({
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  text: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color : "cadetblue"
+  },
   textinput :{
     fontSize:SECOND_FONT,
     color:Colors.subTextColor,
