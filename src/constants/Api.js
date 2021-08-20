@@ -1,5 +1,5 @@
-///export const BASE_URL= 'http://172.105.252.58:8080/';         //production
- export const BASE_URL= 'http://109.237.25.79:8080/';                     //qa
+//export const BASE_URL= 'http://172.105.252.58:8080/';         //production
+export const BASE_URL= 'http://109.237.25.79:8080/';                     //qa
 export const SUB_URL='epex/delivery/';
 export const LOGIN= BASE_URL + SUB_URL + 'login';
 export const DELIVERY_COUNT= BASE_URL + SUB_URL + 'ordersToday/';
@@ -49,7 +49,7 @@ export const SELF_ASSIGN = BASE_URL + SUB_URL + 'deliveryOrder/selfassign';
 export const PACKAGE_CATEGORY= BASE_URL_MASTER + SUB_URL_MASTER + 'package-category/active';
 export const PACKAGE_SUB_CATEGORY= BASE_URL_MASTER + SUB_URL_MASTER + 'package-category/';
 //export const BASE_URL_ORDER= 'http://172.105.252.58:9080/';               //production
- export const BASE_URL_ORDER= 'http://109.237.25.79:9080/';                   //qa
+export const BASE_URL_ORDER= 'http://109.237.25.79:9080/';                   //qa
 
 export const SUB_URL_ORDER='epex/order/';
 export const SHIPMENT_BOX= BASE_URL_ORDER + SUB_URL_ORDER + 'shipment-box';

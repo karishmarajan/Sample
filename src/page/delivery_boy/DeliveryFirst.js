@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { ScrollView, StyleSheet, AsyncStorage, TouchableOpacity, Linking, Platform, FlatList } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 // import Icon from 'react-native-vector-icons/FontAwesome';
-import { Container, Header, Button, Left, Icon, Right, View, Badge, Body } from 'native-base';
+import { Container, Header, Button, Left, Icon, Right, View, Badge, Body, Toast } from 'native-base';
 
 import Navbar from '../../component/Navbar';
 import Colors from '../../constants/Colors';
@@ -39,6 +39,7 @@ export default class DeliveryFirst extends React.Component {
   };
 
   componentDidMount() {
+    console.log("PAGE===================================>")
     this.fetch_delivery_orders(Strings.assigned)
     setTimeout(()=>{this.setState({loader:false})},1000);
   }
@@ -74,6 +75,11 @@ silentPrint = async () => {
   if (textData  == '' || null) {
      console.log("EMPTY")
   }
+  else if(this.state.delivery_list=='')
+  {
+    console.log("mmmm")
+    Toast.show({text:'No data Found',type:'warning'})
+  }
   else {
 
       console.log('text data in else part are:',textData  )
@@ -89,6 +95,7 @@ silentPrint = async () => {
       console.log('maindata:', MainData)
       if (MainData == '') {
          console.log("NODART")
+         Toast.show({text:'Not Found',type:'warning'});
       }
       else {
        /*    this.setState({ itemalert: false }) */
