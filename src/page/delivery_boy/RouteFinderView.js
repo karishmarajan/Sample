@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, StyleSheet, ScrollView, AsyncStorage, FlatList, Alert, Dimensions, TextInput, BackHandler, Vibration } from 'react-native';
-import { Container, Text, View, Button, Icon, Left, Toast, Grid, Col, Right, Body, Card, CardItem, } from 'native-base';
+import { TouchableOpacity, StyleSheet, ScrollView, AsyncStorage, FlatList, Alert, Dimensions, TextInput, BackHandler, Vibration, ActivityIndicator } from 'react-native';
+import { Container, Text, View, Button, Icon, Left, Toast, Grid, Col, Row, Right, Body, Card, CardItem, } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
-
+import Tts from 'react-native-tts';
 
 import CustomInput from '../../component/CustomInput';
 
@@ -38,35 +38,41 @@ export default class RouteFinderView extends React.Component {
     this.state = {
       camera: {
         type: RNCamera.Constants.Type.back,
-	flashMode: RNCamera.Constants.FlashMode.auto,
+        flashMode: RNCamera.Constants.FlashMode.auto,
       },
-    loader: false,
-    pinc: '',
-    pincode: '',
-    pin: '',
-    orderid: '',
-    locpickup: true,
-    locdes: false,
-    selectedoption: '',
-    routeid: '',
-    novalue: false,
-    routename: [],
-    datafound: false,
-    orderstatus: '',
-    cammodal: false,
-    pickupPincode: '',
-    deliveryPincode: '',
-    destinations: [],
-    officeinfo: [],
-    route: [],
-    hasError: false,
-    errorTextuser: '',
-    errorTextpass: '',
-    modalvisible: true,
-    alert_visible: false,
-    
+      loader: false,
+      pinc: '',
+      pincode: '',
+      pin: '',
+      orderid: '',
+      orderid2: '',
+      officename: '',
+      loading: false,
+      locpickup: true,
+      locdes: false,
+      locpickup2: true,
+      locdes2: false,
+      selectedoption: '',
+      routeid: '',
+      novalue: false,
+      routename: [],
+      datafound: false,
+      orderstatus: '',
+      cammodal: false,
+      pickupPincode: '',
+      deliveryPincode: '',
+      destinations: [],
+      officeinfo: [],
+      route: [],
+      hasError: false,
+      errorTextuser: '',
+      errorTextpass: '',
+      modalvisible: true,
+      alert_visible: false,
 
-  }}
+
+    }
+  }
   pendingView() {
     return (
       <View
@@ -81,65 +87,179 @@ export default class RouteFinderView extends React.Component {
       </View>
     );
   }
+  /* componentDidMount=()=>{
+    Tts.speak('Hello, Is This Dijal Tom?', {
+      androidParams: {
+        KEY_PARAM_PAN: -1,
+        KEY_PARAM_VOLUME: 1,
+        KEY_PARAM_STREAM: 'STREAM_MUSIC',
+      },
+    });
+  } */
+  _result = (item) => {
 
-  _header = () => {
-    const {locdes}=this.state;
+    /*     var a=this.state.orderid; */
+
     return (
 
-      <View style={{ flexDirection: 'row', borderBottomWidth: 0.3, borderTopWidth: 0.3, borderLeftWidth: 0.3, marginTop: 6 }}>
 
-        <View style={styles.cell}><CustomText text={'ROUTE ID'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText text={locdes==true?"Destination Location":"Pickup Location"} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText text={'NO. OF DESTINATION POINTS'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} /></View>
+      <ScrollView horizontal={true}>
+        <View style={{ borderBottomWidth: 0.3, width: width - 10, marginLeft: 5, borderLeftWidth: 0.3, borderTopWidth: 0.3, borderRightWidth: 0.3, }} >
 
-      </View>
+
+
+
+
+
+
+          <View style={{ flexDirection: 'row', padding: 5 }}>
+            <Left><Text>
+              {"ORDER ID :"}</Text></Left>
+            {/*  <Body>
+              <Text>{"    :"}</Text>
+            </Body> */}
+            <Right><Text>
+              {(this.state.orderid2 ? this.state.orderid2 : Strings.na)}
+            </Text></Right>
+
+          </View>
+
+
+          <View style={{ flexDirection: 'row', padding: 5 }}>
+            <Left><Text>
+              {"ORDER STATUS :"}</Text></Left>
+
+            {/*   <Body>
+              <Text>{':'}</Text>
+            </Body> */}
+
+            <Text>
+              {(this.state.orderstatus ? this.state.orderstatus : Strings.na)}
+            </Text>
+
+          </View>
+
+          {/*  <CardItem ><Left><Text style={{ fontWeight: 'bold' }}>
+              {"Pincode "} </Text></Left><Body><Text>
+                {': ' + (item.pincode ? item.pincode : Strings.na)}</Text></Body>
+            </CardItem>
+            <CardItem ><Left><Text style={{ fontWeight: 'bold' }}>
+              {"Office ID"} </Text></Left><Body><Text>
+                {': ' + (item.officeid ? item.officeid : Strings.na)}</Text></Body>
+            </CardItem>
+            <CardItem><Left><Text style={{ fontWeight: 'bold' }}>
+              {"Office Name"} </Text></Left><Body><Text>
+                {': ' + (item.officename ? item.officename : Strings.na)}</Text></Body>
+            </CardItem><CardItem><Left><Text style={{ fontWeight: 'bold' }}>
+              {"Address"} </Text></Left><Body><Text>
+                {': ' + (item.officeaddress1 ? item.officeaddress1 : Strings.na) +
+                  (item.officeaddress2 ? "," + item.officeaddress2 : Strings.na)}</Text></Body>
+            </CardItem>
+            <CardItem><Left><Text style={{ fontWeight: 'bold' }}>
+              {"Location"}</Text></Left><Body><Text>
+                {': ' + (item.officecity ? item.officecity : Strings.na) + (item.officedistrict ?  " , "  + item.officedistrict : Strings.na)}</Text></Body>
+            </CardItem><CardItem><Left><Text style={{ fontWeight: 'bold' }}>
+              {"Mobile number"} </Text></Left><Body><Text>
+                {': ' + (item.mobileNumber ? item.mobileNumber : Strings.na)}</Text></Body>
+            </CardItem>
+*/}
+
+
+          <FlatList
+            horizontal={false}
+            // ListHeaderComponent={this._header}
+            data={item.routeResponse}
+            keyExtractor={(item,index)=>index.toString()}
+            renderItem={({ item, index }) => this._body(item)}
+          />
+        </View>
+      </ScrollView>
+
+
     )
   }
 
 
 
   _body = (item) => {
-  
+    const { locdes2, locpickup, locpickup2 } = this.state;
+    //this.setState({orderid:''})
+    Tts.setDefaultPitch(1.12);
+    Tts.speak(` ${locpickup2 ? 'PICK UP LOCATION!' : 'DESTINATION LOCATION!'} ROUTE NAME is ${item.routeName ? item.routeName : Strings.na} and OFFICE NAME IS ${this.state.officename ? this.state.officename : Strings.na}`, {
+      androidParams: {
+        KEY_PARAM_PAN: 1,
+        KEY_PARAM_VOLUME: 1,
+
+        KEY_PARAM_STREAM: 'STREAM_MUSIC',
+      },
+
+    });
+
+
     return (
+      /*   PICK UP LOCATION FOR THIS ORDER IS */
+
+      <CardItem style={{ flexDirection: 'column', borderBottomWidth: 0.3, borderTopWidth: .3, borderLeftWidth: 0.3 }}>
 
 
-      <View style={{ flexDirection: 'row', borderBottomWidth: 0.3, borderLeftWidth: 0.3 }}>
 
-        <View style={styles.cell}><CustomText text={item.routeId ? item.routeId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+        <Text style={{ fontWeight: 'bold', textTransform: 'capitalize', textDecorationLine: 'underline', textAlign: 'center', marginBottom: 5, fontSize: 16 }}>
+          {locpickup2 ? 'PICK UP LOCATION' : 'DESTINATION LOCATION'}</Text>
+        <Text style={{ fontWeight: 'bold', fontSize: 17, textTransform: 'uppercase', textAlign: 'center', width: '100%' }}>
+          {item.routeName ? item.routeName : Strings.na} - {this.state.officename ? this.state.officename : Strings.na}
+        </Text>
+
+
+
+        {/*  <View style={styles.cell}><CustomText text={item.routeId ? item.routeId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.routeName ? item.routeName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText text={item.noOfDestinations ? item.noOfDestinations : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-      </View>
+        <View style={styles.cell}><CustomText text={item.noOfDestinations ? item.noOfDestinations : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View> */}
+      </CardItem>
 
     )
   }
 
   onBarCodeRead(scanResult) {
-  /*   console.warn(scanResult.type);
-    console.warn(scanResult.data); */
-    if (scanResult.data != null) {
-      if (!this.barcodeCodes.includes(scanResult.data)) {
-        this.barcodeCodes.push(scanResult.data);
-        Vibration.vibrate(100);
-        this.setState({ cammodal: false,
-          // predefinedpin: scanResult.data 
-          })
-        console.log("Barcode Details=========>")
-        this.setState({orderid:scanResult.data})
-       // console.warn( scanResult.data);
-       /*  Toast.show({text:scanResult.data,type:'success'}) */
-      }
-      else{
-        Vibration.vibrate(100);
-        this.setState({ cammodal: false,
-          // predefinedpin: scanResult.data 
-          })
-        console.log("Barcode Details=========>")
-        this.setState({orderid:scanResult.data})
-       // console.warn( scanResult.data);
-       /*  Toast.show({text:scanResult.data,type:'warning'}) */
-      }
+    const { orderid, locpickup } = this.state;
+    
+    this.setState({cammodal:false})
+    if (locpickup) {
+      this.setState({ locpickup2: true, locdes2: false })
+
     }
-    return;
+    else {
+      this.setState({ locdes2: true, locpickup2: false })
+    }
+    /*   console.warn(scanResult.type);
+      console.warn(scanResult.data); */
+    if (scanResult.data != '') {
+      // if (!this.barcodeCodes.includes(scanResult.data)) {
+        // this.barcodeCodes.push(scanResult.data);
+    
+        Vibration.vibrate(100);
+   
+        setTimeout(()=>{
+          this.setState({ orderid: scanResult.data,officeinfo:'',loading:true, novalue: false, orderid2: scanResult.data, })
+          this.Find();
+        },1000)
+        console.log("Barcode Details==   1 =======>", scanResult.data)
+    
+          
+         
+ 
+ 
+       
+        
+
+     
+        // console.warn( scanResult.data);
+        /*  Toast.show({text:scanResult.data,type:'success'}) */
+      }
+      else {
+         this.setState({loading:false,})
+        Toast.show({text:'Order id not found ,please choose anotherone',type:'warning'}) 
+      }
+    
   }
 
   async takePicture() {
@@ -155,7 +275,7 @@ export default class RouteFinderView extends React.Component {
       .then(result => {
 
         if (result.error != true) {
-          this.setState({ route: result.payload, datafound: true })
+          this.setState({ route: result.payload })
           console.log('ROUTE :', this.state.route);
           // console.log('Success:', JSON.stringify(result));
           var count = (result.payload.routeResponse).length;
@@ -164,8 +284,9 @@ export default class RouteFinderView extends React.Component {
           let routeid = [];
           let routename = [];
           let destinations = [];
+
           console.log('Success55555555:', JSON.stringify(this.state.route.routeResponse[0].routeId));
-          
+
           let officeinfo = [];
 
 
@@ -191,23 +312,33 @@ export default class RouteFinderView extends React.Component {
             officedistrict: result.payload.officeResponse.district.districtName,
             officecity: result.payload.officeResponse.city.cityName,
             mobileNumber: result.payload.officeResponse.mobileNumber,
-            pincode:result.payload.officeResponse.pincode,
+            pincode: result.payload.officeResponse.pincode,
             routeResponse: datas,
           }
           officeinfo.push(offiinfo);
-          this.setState({
-            officeinfo: officeinfo
-          });
+          this.setState({ officename: result.payload.officeResponse.officeName })
+          setTimeout(() => {
+            this.setState({
+              officeinfo: officeinfo
+            });
+          }, 1000)
           //  this.setState({ routename:routename });
           //  this.setState({ destinations:destinations });
-
+       
           console.log('Success:', (routeid[1] + routename[1] + destinations[1]));
-
+          this.setState({
+            cammodal: false, loading: false, orderid: '', datafound: true
+            // predefinedpin: scanResult.data 
+          })
         }
         else {
+          this.setState({
+            cammodal: false, loading: false
+            // predefinedpin: scanResult.data 
+          })
           this.setState({ datafound: false, orderid: '', pin: '', officeinfo: '', route: '', })
           console.log('Failed');
-          Toast.show({ text: "Enter a valid pincode!", type: 'warning' });
+          Toast.show({ text: 'Invalid Pincode Found!', type: 'warning' });
           return;
         }
       })
@@ -215,14 +346,23 @@ export default class RouteFinderView extends React.Component {
 
   Find = () => {
 
-    const { orderid, locdes, locpickup, } = this.state;
+    const { orderid, orderid2, locdes, locpickup, } = this.state;
     if (orderid == '') {
-      this.setState({ novalue: true, orderid: '' });
+      this.setState({ novalue: true, orderid: '', officeinfo: '', loading: false, });
       Toast.show({ text: "Please enter Order ID", type: 'warning' })
     }
     else if (isNaN(orderid) == false) {
+
+      if (locpickup) {
+        this.setState({ locpickup2: true, locdes2: false })
+
+      }
+      else {
+        this.setState({ locdes2: true, locpickup2: false })
+      }
       Api.fetch_request(ORDER + "/" + orderid, 'GET', '')
         .then((responce) => {
+          this.setState({ orderid2: orderid, orderid: '', novalue: false })
           if (responce.error == false) {
             if (locpickup == true) {
 
@@ -230,6 +370,7 @@ export default class RouteFinderView extends React.Component {
               this.setState({
                 pickupPincode: responce.payload.pickupPincode,
                 orderstatus: responce.payload.orderStatus,
+                loading: true,
 
 
               })
@@ -242,6 +383,7 @@ export default class RouteFinderView extends React.Component {
               this.setState({
                 deliveryPincode: responce.payload.deliveryPincode,
                 orderstatus: responce.payload.orderStatus,
+                loading: true,
 
               })
               this.fetch_route(responce.payload.deliveryPincode)
@@ -249,6 +391,7 @@ export default class RouteFinderView extends React.Component {
 
           }
           else {
+            this.setState({ loading: false, officeinfo: '', datafound: false, novalue: false })
             Toast.show({ text: 'Sorry No Order Found!', type: 'warning' })
           }
 
@@ -262,12 +405,21 @@ export default class RouteFinderView extends React.Component {
 
     }
     else {
+      if (locpickup) {
+        this.setState({ locpickup2: true, locdes2: false })
+
+      }
+      else {
+        this.setState({ locdes2: true, locpickup2: false })
+      }
       Api.fetch_request(PREORDER_PIN + orderid, 'GET', '')
         .then((responce) => {
           if (responce.error == false) {
+            this.setState({ orderid2: orderid, orderid: '', novalue: false })
             console.log("res==>", responce)
             if (responce.payload.orderId == null) {
               Toast.show({ text: 'Sorry No Order Found!', type: 'warning' })
+              this.setState({ loading: false })
             }
             else {
               Api.fetch_request(ORDER + "/" + responce.payload.orderId, 'GET', '')
@@ -278,7 +430,8 @@ export default class RouteFinderView extends React.Component {
                       console.log(responce.payload.pickupPincode);
                       this.setState({
                         pickupPincode: responce.payload.pickupPincode,
-                        orderstatus: responce.payload.orderStatus
+                        orderstatus: responce.payload.orderStatus,
+                        loading: true,
 
                       })
                       this.fetch_route(responce.payload.pickupPincode)
@@ -290,13 +443,14 @@ export default class RouteFinderView extends React.Component {
                       this.setState({
                         deliveryPincode: responce.payload.deliveryPincode,
                         orderstatus: responce.payload.orderStatus,
-
+                        loading: true
                       })
                       this.fetch_route(responce.payload.deliveryPincode)
                     }
 
                   }
                   else {
+                    this.setState({ loading: false, officeinfo: '', datafound: false, novalue: false })
                     Toast.show({ text: 'Sorry No Order Found!', type: 'warning' })
                   }
 
@@ -304,6 +458,7 @@ export default class RouteFinderView extends React.Component {
             }
           }
           else {
+            this.setState({ loading: false, officeinfo: '', datafound: false, novalue: false })
             Toast.show({ text: 'Sorry No Order Found!', type: 'warning' })
           }
         })
@@ -329,7 +484,7 @@ export default class RouteFinderView extends React.Component {
     var left2 = (
       <Left style={{ flex: 1 }}>
         <Button width={CLOSE_WIDTH} onPress={() => {
-           this.setState({ datafound: "", orderid: "", pin: '', officeinfo: '', route: '',cammodal:false })
+          this.setState({ datafound: "", orderid: "", pin: '', officeinfo: '', route: '', cammodal: false })
         }} transparent>
           <Icon style={{ color: Colors.navbarIconColor, fontSize: CLOSE_SIZE }} name='ios-close' />
         </Button>
@@ -345,180 +500,64 @@ export default class RouteFinderView extends React.Component {
         </Button>
       </Left>
     );
+    /*  var right = (
+       <Left style={{ flex: 1 ,marginLeft:'20%''}}>
+         <Button width={CLOSE_WIDTH} onPress={() => {
+           console.log("hello")
+          this.setState({cammodal:true})
+         }} transparent>
+           <Icon style={{ color: Colors.navbarIconColor, fontSize: CLOSE_SIZE }}  type={'MaterialCommunityIcons'}name={'barcode-scan'} />
+         </Button>
+       </Left>
+     ); */
     return (
       <View style={styles.container}>
-        {this.state.cammodal==true?
-        <View style={styles.container} >
-           <Navbar title="Scanner" left={left2} />
-          <RNCamera
-        ref={cam => {
-          this.camera = cam;
-        }}
-        defaultTouchToFocus
-        onFocusChanged={() => {}}
-        flashMode={this.state.camera.flashMode}
-        mirrorImage={false}
-        onBarCodeRead={this.onBarCodeRead.bind(this)}
-        style={styles.cameraView}
-       /*  aspect={RNCamera.constants.Aspect.fill} */
-        playSoundOnCapture
-      >
-        <View style={styles.maskOutter}>
-          <View style={[{ flex: maskRowHeight  }, styles.maskRow, styles.maskFrame]} />
-           <View style={[{ flex: 30 }, styles.maskCenter]}>
-           <View style={[{ width: maskColWidth }, styles.maskFrame]} />
-           <View style={styles.maskInner} />
-          <View style={[{ width: maskColWidth }, styles.maskFrame]} />
-        </View>
-      <View style={[{ flex: maskRowHeight }, styles.maskRow, styles.maskFrame]} />
-    </View>
-      </RNCamera>
+        {this.state.cammodal == true ?
+          <View style={styles.container} >
+            <Navbar title="Scanner" left={left2} />
+            <RNCamera
+              ref={cam => {
+                this.camera = cam;
+              }}
+              defaultTouchToFocus
+              onFocusChanged={() => { }}
+              flashMode={this.state.camera.flashMode}
+              mirrorImage={false}
+              onBarCodeRead={this.onBarCodeRead.bind(this)}
+              style={styles.cameraView}
+              /*  aspect={RNCamera.constants.Aspect.fill} */
+              playSoundOnCapture
+            >
+              <View style={styles.maskOutter}>
+                <View style={[{ flex: maskRowHeight }, styles.maskRow, styles.maskFrame]} />
+                <View style={[{ flex: 30 }, styles.maskCenter]}>
+                  <View style={[{ width: maskColWidth }, styles.maskFrame]} />
+                  <View style={styles.maskInner} />
+                  <View style={[{ width: maskColWidth }, styles.maskFrame]} />
+                </View>
+                <View style={[{ flex: maskRowHeight }, styles.maskRow, styles.maskFrame]} />
+              </View>
+            </RNCamera>
           </View>
 
-
-        :
-        this.state.datafound == true ?
-
-          <View style={{ width: width, height: height }}>
-            <Navbar title="Result" left={left1} />
-            <View style={{
-              flex: 1,
-              backgroundColor: Colors.white,
-              justifyContent: 'center',
-              width: width,
-              // alignItems:'center',
-              alignSelf: 'center',
-              alignContent: 'center',
-              marginTop: 20
-            }}>
-
-
-
-              <ScrollView>
-                <FlatList
-
-                  data={this.state.officeinfo}
-                  style={{marginBottom:'15%'}}
-                  {...console.log('FLAT INFO :', this.state.officeinfo)}
-                  horizontal={false}
-                  
-                  renderItem={({ item, index }) => (
-                    <ScrollView horizontal={true}>
-                      <View style={{ borderBottomWidth: 0.3, width: width - 10, marginLeft: 5, borderLeftWidth: 0.3, borderTopWidth: 0.3, borderRightWidth: 0.3, }} >
-
-                        <View style={{ borderBottomWidth: 0.3 }} ><CustomText text={'Office Details'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-
-
-                        <CardItem style={{padding:2}}><Left><Text style={{ fontWeight: 'bold' }}>
-                          {"Order ID"}</Text></Left><Body><Text>
-                            {': ' + (this.state.orderid ? this.state.orderid : Strings.na)}</Text></Body>
-                        </CardItem>
-                        <CardItem><Left><Text style={{ fontWeight: 'bold' }}>
-                          {"Order Status"}</Text></Left><Body><Text>
-                            {': ' + (this.state.orderstatus ? this.state.orderstatus : Strings.na)}</Text></Body>
-                        </CardItem>
-                       
-                        <CardItem ><Left><Text style={{ fontWeight: 'bold' }}>
-                          {"Pincode "} </Text></Left><Body><Text>
-                            {': ' + (item.pincode ? item.pincode : Strings.na)}</Text></Body>
-                        </CardItem>
-                        <CardItem ><Left><Text style={{ fontWeight: 'bold' }}>
-                          {"Office ID"} </Text></Left><Body><Text>
-                            {': ' + (item.officeid ? item.officeid : Strings.na)}</Text></Body>
-                        </CardItem>
-                        <CardItem><Left><Text style={{ fontWeight: 'bold' }}>
-                          {"Office Name"} </Text></Left><Body><Text>
-                            {': ' + (item.officename ? item.officename : Strings.na)}</Text></Body>
-                        </CardItem><CardItem><Left><Text style={{ fontWeight: 'bold' }}>
-                          {"Address"} </Text></Left><Body><Text>
-                            {': ' + (item.officeaddress1 ? item.officeaddress1 : Strings.na) +
-                              (item.officeaddress2 ? "," + item.officeaddress2 : Strings.na)}</Text></Body>
-                        </CardItem>
-                        <CardItem><Left><Text style={{ fontWeight: 'bold' }}>
-                          {"Location"}</Text></Left><Body><Text>
-                            {': ' + (item.officecity ? item.officecity : Strings.na) + (item.officedistrict ? "," + item.officedistrict : Strings.na)}</Text></Body>
-                        </CardItem><CardItem><Left><Text style={{ fontWeight: 'bold' }}>
-                          {"Mobile number"} </Text></Left><Body><Text>
-                            {': ' + (item.mobileNumber ? item.mobileNumber : Strings.na)}</Text></Body>
-                        </CardItem>
-
-
-
-                        <FlatList
-                        horizontal={false}
-                          ListHeaderComponent={this._header}
-                          data={item.routeResponse}
-                        
-                          renderItem={({ item, index }) => this._body(item)}
-                        />
-                      </View>
-                    </ScrollView>
-                  )}
-                />
-              </ScrollView>
-
-            </View>
-          </View>
 
           :
-          <View>
+
+          <View style={{ backgroundColor: 'white', width: width, height: height }}>
             <Navbar title="Route finder" left={left} />
             <View style={{
-              backgroundColor: Colors.lightBackgroundColor,
+              backgroundColor: 'white',
               width: width,
               height: height
             }}>
-              <Text style={{
-                fontWeight: 'bold',
-                padding: 10,
-                marginTop: height / 3.5,
-                color: Colors.subTextColor
-              }}>
-                Enter Order ID:
-              </Text>
-              <View style={{
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignContent: 'center',
-                alignSelf: 'center',
-                alignItems: 'center',
-                borderRadius: 6,
-                borderColor: this.state.novalue ? 'red' : Colors.borderColor,
-                borderWidth: 1
-
-              }}>
-                <TextInput
-                  onChangeText={(text) => this.setState({ orderid: text.trimLeft(), novalue: false })}
-                  value={this.state.orderid}
-                  placeholder={'Order Id'}
-                  style={{
-                    padding: 10,
-                    borderRadius: 6,
-                    width: '80%',
-                    color: Colors.subTextColor,
-                    alignSelf: 'center',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-
-                  }}
-                />
-                <TouchableOpacity 
-                onPress={()=>this.setState({cammodal:true})}
-                >
-                  <Icon name={'barcode-scan'}
-                    type={'MaterialCommunityIcons'}
-                    style={{ marginRight: 10 }}
-                  />
-                </TouchableOpacity>
-              </View>
               <View style={{
                 width: width,
                 flexDirection: 'row',
                 justifyContent: 'center',
-                marginTop: 20,
+                marginTop: 15,
               }}>
                 <TouchableOpacity
-                  onPress={() => this.setState({ locdes: false, locpickup: true })}
+                  onPress={() => {this.setState({ locdes: false, locpickup: true, datafound: false, orderid: '',officeinfo:'' }),Tts.stop();}}
                 >
                   <View style={{
                     flexDirection: 'row',
@@ -544,7 +583,7 @@ export default class RouteFinderView extends React.Component {
                   </View>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => this.setState({ locdes: true, locpickup: false })}
+                  onPress={() =>{ this.setState({ locdes: true, locpickup: false, datafound: false, orderid: '',officeinfo:'' }),Tts.stop();}}
                 >
                   <View style={{
                     flexDirection: 'row'
@@ -566,20 +605,73 @@ export default class RouteFinderView extends React.Component {
                   </View>
                 </TouchableOpacity>
               </View>
-              <TouchableOpacity style={{
-                width: '50%',
+              <Text style={{
+                fontWeight: 'bold',
+                padding: 10,
+                marginTop: 20,
+                color: Colors.subTextColor
+              }}>
+                Enter Order ID:
+              </Text>
+              <View style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignContent: 'center',
+                alignSelf: 'center',
+                alignItems: 'center',
+                borderRadius: 6,
+                borderColor: this.state.novalue ? 'red' : Colors.borderColor,
+                borderWidth: 1
+
+              }}>
+                <TextInput
+                  onChangeText={(text) => {
+                    this.setState({ orderid: text.trimLeft(), novalue: false, datafound: false, officeinfo: '' });
+                    Tts.stop();
+                  }
+
+                  }
+                  onSubmitEditing={() => { this.setState({ loading: true }), this.Find() }}
+                  value={this.state.orderid}
+                  placeholder={'Order Id'}
+                  style={{
+                    padding: 10,
+                    borderRadius: 6,
+                    width: '80%',
+                    color: Colors.subTextColor,
+                    alignSelf: 'center',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+
+                  }}
+                />
+                {this.state.loading == true && <ActivityIndicator color={'gray'} style={{ marginLeft: -25 }} size={'small'} />}
+                <TouchableOpacity
+                  onPress={() => this.setState({ cammodal: true, orderid: '', orderid2: '', officeinfo: '' })}
+                >
+                  <Icon name={'barcode-scan'}
+                    type={'MaterialCommunityIcons'}
+                    style={{ marginRight: 10 }}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              {/* <TouchableOpacity style={{
+                width: '40%',
                 justifyContent: 'center',
                 alignItems: 'center',
-                marginTop: height / 16,
+                marginTop: height / 32,
+                marginBottom:20,
                 alignSelf: 'center',
                 borderRadius: 10,
-                padding: 5,
+                padding: 2.5,
                 backgroundColor: Colors.buttonBackgroundColor
               }}
-                onPress={() => this.Find()}
+                onPress={() => {this.setState({loading:true}),this.Find()}}
               >
-                <Text style={{
-                  width: '100%',
+              <View style={{flexDirection:'row'}}>
+              <Text style={{
+                  width: '80%',
                   textAlign: 'center',
                   marginTop: '2.5%',
                   fontSize: 20,
@@ -588,12 +680,43 @@ export default class RouteFinderView extends React.Component {
                 }}>
                   Find
                 </Text>
-              </TouchableOpacity>
+               {this.state.loading==true&& <ActivityIndicator color={'white'} style={{
+                 marginLeft:"-20%"
+               }} size={'small'}/>}
+              </View>
+              </TouchableOpacity> */}
+              {this.state.datafound == true ?
+
+                <ScrollView>
+                  <FlatList
+
+                    data={this.state.officeinfo}
+                    style={{ marginTop: '5%' }}
+                    {...console.log('FLAT INFO :', this.state.officeinfo)}
+                    horizontal={false}
+
+                    renderItem={({ item, index }) => this._result(item)}
+                    keyExtractor={(item, index) => index.toString()}
+                  />
+                  <View style={{ alignItems: 'flex-end', marginTop: SECTION_MARGIN_TOP, marginBottom: 20, marginRight: 10 }}><CustomText text={Strings.version} textType={Strings.subtext} color={Colors.darkSkyBlue} /></View>
+                </ScrollView>
+
+                :
+                undefined}
+              {this.state.datafound == false ? <View style={{ alignItems: 'flex-end', marginRight: 10, marginTop: SECTION_MARGIN_TOP }}><CustomText text={Strings.version} textType={Strings.subtext} color={Colors.darkSkyBlue} />
+              </View>
+                :
+                undefined
+              }
             </View>
-   </View>
+
+
+          </View>
 
         }
+
       </View>
+
     )
   }
 }
@@ -632,7 +755,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   maskFrame: {
-    backgroundColor:'rgba(0,0,0,0.9)',
+    backgroundColor: 'rgba(0,0,0,0.9)',
   },
   maskRow: {
     width: '100%',
@@ -640,6 +763,7 @@ const styles = StyleSheet.create({
   maskCenter: { flexDirection: 'row' },
   container: {
     flex: 1,
+    backgroundColor: 'white'
   },
   maskOutter: {
     position: 'absolute',
@@ -692,6 +816,6 @@ const styles = StyleSheet.create({
     borderColor: Colors.textBackgroundColor1,
 
   },
-  
+
 
 });

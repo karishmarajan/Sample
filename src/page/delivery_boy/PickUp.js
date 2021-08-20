@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { ScrollView, StyleSheet, AsyncStorage, FlatList ,Linking, Platform, BackHandler, } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 // import Icon from 'react-native-vector-icons/FontAwesome';
-import { Container, Header, Button, Left, Icon, Right, Text, Input, TextInput, Grid, Col, Row, SearchBar, Item, View, Badge, Body } from 'native-base';
+import { Container, Header, Button, Left, Icon, Right, Text, Input, TextInput, Grid, Col, Row, SearchBar, Item, View, Badge, Body, Toast } from 'native-base';
 
 import Navbar from '../../component/Navbar';
 import Colors from '../../constants/Colors';
@@ -147,6 +147,7 @@ capitalizeName(name) {
       console.log('maindata:', MainData)
       if (MainData == '') {
          console.log("NODART")
+         Toast.show({text:'Not Found',type:'warning'})
       }
       else {
        /*    this.setState({ itemalert: false }) */

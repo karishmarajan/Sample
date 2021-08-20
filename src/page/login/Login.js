@@ -129,7 +129,7 @@ componentWillUnmount() {
   };
     
   this.setState({loader:true});
-  setTimeout(()=>{this.setState({loader:false})},3000);
+  setTimeout(()=>{this.setState({loader:false})},2000);
 
     Api.fetch_request(LOGIN,'POST','',JSON.stringify(body))
     .then(result => {
@@ -140,7 +140,7 @@ componentWillUnmount() {
 
 
       this.setState({alert_visible:true})
-      setTimeout(()=>{this.setState({alert_visible:false})},3000);
+      setTimeout(()=>{this.setState({alert_visible:false})},2000);
 
       user_id=result.payload.personId;
       office_id=result.payload.officeId;

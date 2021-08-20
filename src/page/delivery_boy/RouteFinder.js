@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import { TouchableOpacity, StyleSheet, ScrollView, AsyncStorage, FlatList, Alert, Dimensions, TextInput, SafeAreaView } from 'react-native';
 import { Container, Text, View, Button, Left, Icon, Toast, Grid, Col, Right, Body ,CardItem} from 'native-base';
 import { Actions } from 'react-native-router-flux';
-
+import SpeechToText from 'react-native-google-speech-to-text';
 
 
 import CustomInput from '../../component/CustomInput';
@@ -27,6 +27,7 @@ import Api from '../../component/Fetch';
 import { ROUTE_FINDER, ORDER, PREORDER_PIN } from '../../constants/Api';
 import { Color } from 'chalk';
 
+import Tts from 'react-native-tts';
 const { width, height } = Dimensions.get('window')
 
 
@@ -52,7 +53,7 @@ export default class RouteFinder extends React.Component {
       routename: [],
       datafound: false,
       orderstatus: '',
-
+      officename:'',
       pickupPincode: '',
       deliveryPincode: '',
       destinations: [],
@@ -92,7 +93,7 @@ gotorder=()=>{
       return;
     }
     if (isNaN(pin)) {
-      Toast.show({ text: "Enter a valid pincode!", type: 'warning' });
+      Toast.show({ text: "Enter or say a valid pincode!", type: 'warning' });
       this.setState({ datafound: false,orderid:'',pin:'',officeinfo:''})
       return;
     }
@@ -102,7 +103,32 @@ gotorder=()=>{
 
   }
 
-
+   speechToTextHandler = async () => {
+    /* this.setState({ pin: text, errorpin: "",datafound:false,officeinfo:'' }),Tts.stop()} */
+   // console.log('speechToTextData: ', v);
+   const validpincode =RegExp("^[1-9]{1}[0-9]{2}\\s{0,1}[0-9]{3}$")
+   this.setState({datafound:false,officeinfo:'',pin:''});
+    let v=null;
+    var b=null
+        try {
+          
+            v= await SpeechToText.startSpeech('Try to say your pincode', 'en_IN');
+           b=v.trim();
+            console.log('speechToTextData: ',b);
+            if( validpincode.test(b) == true)
+            {
+              console.log("good pincode ")
+              this.setState({pin:b})
+              this.fetch_route(b);
+            }
+           else{
+            console.log("INVALID pincode ")
+             Toast.show({text:'Please try to  say a valid pincode',type:'warning'})
+           }
+        } catch (error) {
+            console.log('error: ', error);
+        }
+}
   ////////////////////////////// Fetching customer packages with id function //////////////////////////////////////////////////////////////////////////////
   fetch_route(pincode) {
 
@@ -145,11 +171,12 @@ gotorder=()=>{
             officedistrict: result.payload.officeResponse.district.districtName,
             officecity: result.payload.officeResponse.city.cityName,
             mobileNumber: result.payload.officeResponse.mobileNumber,
+            pincode: result.payload.officeResponse.pincode,
             routeResponse: datas
           }
           officeinfo.push(offiinfo);
           this.setState({
-            officeinfo: officeinfo
+            officeinfo: officeinfo,officename:result.payload.officeResponse.officeName,pin:''
           });
           //  this.setState({ routename:routename });
           //  this.setState({ destinations:destinations });
@@ -158,9 +185,9 @@ gotorder=()=>{
 
         }
         else {
-          this.setState({ datafound: false,orderid:'',pin:'',officeinfo:''})
+          this.setState({ datafound: false,pin:'',officeinfo:''})
           console.log('Failed');
-          Toast.show({ text: "Enter a valid pincode!", type: 'warning' });
+          Toast.show({ text: "Enter or say a valid pincode!", type: 'warning' });
           return;
         }
       })
@@ -184,7 +211,7 @@ gotorder=()=>{
 
         <View style={styles.cell}><CustomText text={'ROUTE ID'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={'ROUTE NAME'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText text={'NO. OF       DESTINATION POINTS'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText text={'NO. OF DESTINATION POINTS'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
 
       </View>
     )
@@ -193,15 +220,29 @@ gotorder=()=>{
 
 
   _body = (item) => {
+    Tts.speak(`ROUTE NAME is ${item.routeName ? item.routeName : Strings.na} and OFFICE NAME IS ${this.state.officename ? this.state.officename : Strings.na}` ,{
+      androidParams: {
+        KEY_PARAM_PAN: 0,
+        KEY_PARAM_VOLUME: 1,
+        KEY_PARAM_STREAM: 'STREAM_MUSIC',
+      },
+    });
     return (
 
 
-      <View style={{ flexDirection: 'row', borderBottomWidth: 0.3, borderLeftWidth: 0.3 }}>
+      <CardItem style={{ flexDirection: 'column', borderBottomWidth: 0.3, borderTopWidth: .3, borderLeftWidth: 0.3 }}>
 
-        <View style={styles.cell}><CustomText text={item.routeId ? item.routeId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText text={item.routeName ? item.routeName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText text={item.noOfDestinations ? item.noOfDestinations : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-      </View>
+
+      <Text style={{ fontWeight: 'bold', fontSize: 17,textTransform:'uppercase', textAlign: 'center', width: '100%' }}>
+        {item.routeName ? item.routeName : Strings.na} - {this.state.officename ? this.state.officename : Strings.na}
+      </Text>
+ 
+
+
+    {/*  <View style={styles.cell}><CustomText text={item.routeId ? item.routeId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+    <View style={styles.cell}><CustomText text={item.routeName ? item.routeName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+    <View style={styles.cell}><CustomText text={item.noOfDestinations ? item.noOfDestinations : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View> */}
+  </CardItem>
 
     )
   }
@@ -227,8 +268,8 @@ gotorder=()=>{
           backdropOpacity={1}
           animationIn={'zoomInDown'}
           animationOut={'zoomOutUp'}
-          animationInTiming={500}
-          animationOutTiming={500}
+         // animationInTiming={500}
+         /// animationOutTiming={500}
           onBackButtonPress={() => this.modalcancel()}
         >
 
@@ -343,11 +384,34 @@ gotorder=()=>{
               <ScrollView>
                 <View style={{ flex: 1, flexDirection: 'column', backgroundColor: Colors.textBackgroundColor, padding: MAIN_VIEW_PADDING }}>
                   <CustomText text={'Enter Pincode'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'} />
-                  <CustomInput flex={1} placeholder={'Pin Code'} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({ pin: text, errorpin: "" })} value={this.state.pin} />
+                 <View style={{width:'100%',flexDirection:'row'}}>
+                 <CustomInput flex={1} placeholder={'Pin Code'}width={'85%'} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white}
+                  onChangeText={(text) => {this.setState({ pin: text, errorpin: "",datafound:false,officeinfo:'' }),Tts.stop()}} value={this.state.pin} onSubmitEditing={() =>{this.setState({ errorpin: "",datafound:false,officeinfo:'' });Tts.stop(); this.valid(this.state.pin)}} />
+                 <TouchableOpacity style={{
+                   justifyContent:'center',
+                   alignContent:'center',
+                   alignItems:'center',
+                   alignSelf:'center',
+                    marginLeft:15,
+                  
+                 }}
+                 onLongPress={()=>{    this.setState({pin:'', errorpin: "",datafound:false,officeinfo:'' });Tts.stop();this.speechToTextHandler()}}
+                 onPress={()=>{   this.setState({pin:'', errorpin: "",datafound:false,officeinfo:'' });Tts.stop();this.speechToTextHandler()}}
+                 >
+                   <Icon
+                   name={'mic'}
+                   type={'Ionicons'}
+                 
+                   />
+                 </TouchableOpacity>
+
+                 </View>
+                 
                   {!!this.state.errorpin && (<Text style={{ color: 'red' }}>{this.state.errorpin}</Text>)}
-                  <CustomButton title={'search'} marginTop={5.0} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} onPress={() => this.valid(this.state.pin)} />
+{/*                   <CustomButton title={'search'} marginTop={5.0} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} onPress={() =>{this.setState({ errorpin: "",datafound:false,officeinfo:'' });Tts.stop(); this.valid(this.state.pin)}} /> */}
 
                 </View>
+                
                 <View style={{
               flex: 1,
               backgroundColor: Colors.white,
@@ -365,61 +429,70 @@ gotorder=()=>{
                 <FlatList
 
                   data={this.state.officeinfo}
+                  style={{marginBottom:'15%'}}
                   {...console.log('FLAT INFO :', this.state.officeinfo)}
+                  horizontal={false}
+                  
                   renderItem={({ item, index }) => (
                     <ScrollView horizontal={true}>
                       <View style={{ borderBottomWidth: 0.3, width: width - 10, marginLeft: 5, borderLeftWidth: 0.3, borderTopWidth: 0.3, borderRightWidth: 0.3, }} >
 
-                        <View style={{ borderBottomWidth: 0.3 }} ><CustomText text={'Office Details'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-                      
-                       
-                        <CardItem><Left><Text style={{fontWeight:'bold'}}>
-                          {"Order ID"}</Text></Left><Body><Text>
-                          {': '+(this.state.orderid ? "#"+this.state.orderid : Strings.na)}</Text></Body>
-                            </CardItem>
-                            <CardItem ><Left><Text style={{fontWeight:'bold'}}>
+                     
+
+
+                        <CardItem ><Left><Text style={{fontSize:13}}>
+                          {"OFFICE PINCODE "} </Text></Left>
+                          <Body>
+                            <Text>
+                              :
+                            </Text>
+                          </Body>
+                          <Right><Text>
+                            { (item.pincode ? item.pincode : Strings.na)}</Text></Right>
+                        </CardItem>
+                       {/*  <CardItem ><Left><Text style={{ fontWeight: 'bold' }}>
                           {"Office ID"} </Text></Left><Body><Text>
-                            {': '+(item.officeid ? item.officeid : Strings.na)}</Text></Body>
+                            {': ' + (item.officeid ? item.officeid : Strings.na)}</Text></Body>
                         </CardItem>
-                            <CardItem><Left><Text style={{fontWeight:'bold'}}>
-                          {"Order Status"}</Text></Left><Body><Text>
-                          {': '+(this.state.orderstatus ? this.state.orderstatus : Strings.na)}</Text></Body>
-                            </CardItem>
-                        <CardItem><Left><Text style={{fontWeight:'bold'}}>
+                        <CardItem><Left><Text style={{ fontWeight: 'bold' }}>
                           {"Office Name"} </Text></Left><Body><Text>
-                          {': '+(item.officename ? item.officename : Strings.na)}</Text></Body>
-                        </CardItem><CardItem><Left><Text style={{fontWeight:'bold'}}>
+                            {': ' + (item.officename ? item.officename : Strings.na)}</Text></Body>
+                        </CardItem><CardItem><Left><Text style={{ fontWeight: 'bold' }}>
                           {"Address"} </Text></Left><Body><Text>
-                          {': '+(item.officeaddress1 ? item.officeaddress1 : Strings.na)+
-                          (item.officeaddress2 ?","+item.officeaddress2:Strings.na)}</Text></Body>
-                            </CardItem>
-                            <CardItem><Left><Text style={{fontWeight:'bold'}}>
-                          {"Location"}</Text></Left><Body><Text>
-                          {': '+(item.officecity ?item.officecity: Strings.na)+(item.officedistrict ?","+item.officedistrict : Strings.na)}</Text></Body>
-                            </CardItem><CardItem><Left><Text style={{fontWeight:'bold'}}>
-                          {"Mobile number"} </Text></Left><Body><Text>
-                          {': '+(item.mobileNumber ? item.mobileNumber : Strings.na)}</Text></Body>
+                            {': ' + (item.officeaddress1 ? item.officeaddress1 : Strings.na) +
+                              (item.officeaddress2 ? "," + item.officeaddress2 : Strings.na)}</Text></Body>
                         </CardItem>
+                        <CardItem><Left><Text style={{ fontWeight: 'bold' }}>
+                          {"Location"}</Text></Left><Body><Text>
+                            {': ' + (item.officecity ? item.officecity : Strings.na) + (item.officedistrict ? " , " + item.officedistrict : Strings.na)}</Text></Body>
+                        </CardItem><CardItem><Left><Text style={{ fontWeight: 'bold' }}>
+                          {"Mobile number"} </Text></Left><Body><Text>
+                            {': ' + (item.mobileNumber ? item.mobileNumber : Strings.na)}</Text></Body>
+                        </CardItem>
+ */}
 
 
-                            <FlatList
-                              ListHeaderComponent={this._header}
-                              data={item.routeResponse}
-
-                              renderItem={({ item, index }) => this._body(item)}
-                            />
-                          </View>
-                        </ScrollView>
-                      )}
-                    />
-                  </ScrollView>
-
-                </View>
+                        <FlatList
+                        horizontal={false}
+                        //  ListHeaderComponent={this._header}
+                          data={item.routeResponse}
+                        
+                          renderItem={({ item, index }) => this._body(item)}
+                        />
+                      </View>
+                    </ScrollView>
+                  )}
+                />
               </ScrollView>
+
+            </View>
+            <View style={{alignItems:'flex-end',marginTop:SECTION_MARGIN_TOP}}><CustomText  text={Strings.version} textType={Strings.subtext} color={Colors.darkSkyBlue} /></View>
+              </ScrollView>
+             
             </View>
 
   }
-        </Container>
+   </Container>
     )}}
 
 
