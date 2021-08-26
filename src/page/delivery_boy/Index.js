@@ -45,6 +45,7 @@ export default class Index extends Component{
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.requeststatus()}}>Request Status </Text>
 
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.routefinder()}}>Route Finder </Text>
+<Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.report()}}>Report </Text>
 
  <CustomButton title={'Log out'}  height={60} fontSize={18} marginTop={70} onPress={()=>{session.logout()}}/>
 

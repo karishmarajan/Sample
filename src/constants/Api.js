@@ -73,3 +73,5 @@ export const PINCODE_SEARCH=BASE_URL_MASTER+SUB_URL_MASTER+'pincode/';
 export const PHONE_SEARCH=BASE_URL+SUB_URL+'address/';
 export const PREORDER_PIN=BASE_URL_ORDER+SUB_URL_ORDER+'predefined-order/';
 export const PREORDER_WITH_PIN=BASE_URL_ORDER+SUB_URL_ORDER+'predefined-order/preOrder/pin';
+export const DELIVERY_REPORT=BASE_URL+SUB_URL+'delivery/deliverdItems';
+export const DELIVERY_REPORT_CUSTOMER=BASE_URL+SUB_URL+'delivery/deliveryResponse/deliveryId/';

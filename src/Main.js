@@ -41,6 +41,7 @@ import RouteFinderView from './page/delivery_boy/RouteFinderView';
 import BulkOrderView from './page/delivery_boy/BulkOrderView';
 import orderwithpin from './page/delivery_boy/Orderwithpin';
 // import orderwithpin from './page/delivery_boy/orderwithpin';
+import Report from './page/delivery_boy/Report';
 
 
 
@@ -90,6 +91,7 @@ export default class Main extends Component {
             <Scene  key="bulkorderview" component={BulkOrderView} hideNavBar />
             {/* <Scene  key="orderwithpin" component={orderwithpin} hideNavBar /> */}
             <Scene  key="orderwithpin" component={orderwithpin} hideNavBar />
+            <Scene  key="report" component={Report} hideNavBar />
           </Scene>
         </Router>
       </Root>
