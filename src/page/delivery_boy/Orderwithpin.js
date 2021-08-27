@@ -2,7 +2,7 @@
 
 
 import React from 'react';
-import {Modal, ScrollView,AsyncStorage, TouchableOpacity, DatePickerAndroid, TimePickerAndroid, Keyboard } from 'react-native';
+import {Modal, ScrollView,AsyncStorage, TouchableOpacity, DatePickerAndroid, TimePickerAndroid, Keyboard ,Switch} from 'react-native';
 import { Container, View, Button, Left, Icon,Text,Toast,StyleSheet} from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import CustomMandatory from '../../component/CustomMandatory';
@@ -47,6 +47,14 @@ export default class orderwithpin extends React.Component {
       customertype:'',
       customerId:'',
       modalVisible:false,
+      toggle:true,
+      bullet:false,
+      additional_charge_toggle:false,
+      cod_toggle:false,
+      quick_order:'',
+      additional_charge:'',
+      cod:'',
+      collected_toggle:false,
       camera: {
         type: RNCamera.Constants.Type.back,
 	flashMode: RNCamera.Constants.FlashMode.auto,
@@ -302,7 +310,30 @@ if(this.state.predefinedpin==="") {
   
              {/*////////////////////// main view //////////////////////////////////////////////// */}
   
-         <View padding={50}>
+         <View padding={30}>
+
+         <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:1}}>
+           <CustomText text={'Collected'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+           <Switch
+          trackColor={{false: 'gray', true: 'teal'}}
+          thumbColor="white"
+          ios_backgroundColor="gray"
+          onValueChange={(value) =>{ this.setState({collected_toggle: value})}}
+          value={this.state.collected_toggle}
+        />
+           </View>
+
+         <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:1}}>
+           <CustomText text={'Quick Order'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+           <Switch
+          trackColor={{false: 'gray', true: 'teal'}}
+          thumbColor="white"
+          ios_backgroundColor="gray"
+          onValueChange={(value) =>{ this.setState({toggle: value});if(value==false){this.setState({additional_charge_toggle:false,cod_toggle:false,bullet:false})}}}
+          value={this.state.toggle}
+        />
+           </View>
+
        
         <View style={{flexDirection:'row'}}>
         <CustomText text={'Preorder Id'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
@@ -322,7 +353,51 @@ if(this.state.predefinedpin==="") {
         <CustomMandatory/></View>
         <CustomInput flex={1} keyboardType={"number-pad"} maxLength={6} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({reciever_pincode: text , errorTextreciever_pincode:""})} value={this.state.reciever_pincode} />
         {!!this.state.errorTextreciever_pincode && (<Text style={{color: 'red'}}>{this.state.errorTextreciever_pincode}</Text>)}
+      
+      
+        {this.state.toggle === false && (<View>
+<View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:1}}>
+           <CustomText text={'Bullet'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+           <Switch
+          trackColor={{false: 'gray', true: 'teal'}}
+          thumbColor="white"
+          ios_backgroundColor="gray"
+          onValueChange={(value) => this.setState({bullet: value,additional_charge_toggle:value})}
+          value={this.state.bullet}
+        />
+           </View>
 
+          {this.state.bullet === true &&(<View>  
+            <CustomText text={'Additional Charges may apply'} textType={Strings.subtext} color={Colors.black} />
+          </View>)}
+           <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:1}}>
+           <CustomText text={'Additional Charge'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+           <Switch
+          trackColor={{false: 'gray', true: 'teal'}}
+          thumbColor="white"
+          ios_backgroundColor="gray"
+          onValueChange={(value) => this.setState({additional_charge_toggle: value})}
+          value={this.state.additional_charge_toggle}
+        />
+           </View>
+          {this.state.additional_charge_toggle == true &&(<View>
+            <CustomInput flex={1} value={this.state.aditional_charge} place_holder={'Additional charge'}  />
+          </View>)} 
+           <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:1}}>
+           <CustomText text={'COD'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+           <Switch
+          trackColor={{false: 'gray', true: 'teal'}}
+          thumbColor="white"
+          ios_backgroundColor="gray"
+          onValueChange={(value) => this.setState({cod_toggle: value})}
+          value={this.state.cod_toggle}
+        />
+           </View>
+           {this.state.cod_toggle == true &&(<View>
+            <CustomInput flex={1} value={this.state.cod} place_holder={'COD'}  />
+           </View>)}
+
+</View>)}
         <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.submit()} />
         </View>
                 </ScrollView>
