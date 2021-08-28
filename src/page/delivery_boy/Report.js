@@ -16,7 +16,7 @@ import CustomText from '../../component/CustomText';
 import SideMenuDrawer from '../../component/SideMenuDrawer';
 import session,{KEY} from '../../session/SessionManager';
 import Api from '../../component/Fetch';
-import { DELIVERY_REPORT , DELIVERY_REPORT_CUSTOMER } from '../../constants/Api';
+import { DELIVERY_REPORT , DELIVERY_REPORT_CUSTOMER , CUSTOMER_PROOF, CUSTOMER_SIGN} from '../../constants/Api';
 import DatePickerAndroidCustom from '../../component/DatePickerAndroidCustom';
 import moment from 'moment';
 import RNPrint from 'react-native-print';
@@ -107,7 +107,7 @@ export default class ShippingHistory extends React.Component {
   
         console.log('Success:', JSON.stringify(result));
         this.setState({report_details : result.payload})
-        this.printHTML();
+        this.printHTML(id);
       
       }
       else{
@@ -119,13 +119,7 @@ export default class ShippingHistory extends React.Component {
  
   
    }
- /////////////////////////////////// Searching with order no //////////////////////////////////////////////////////////
 
- searchtext(text){
-
-  let res=_.filter(this.state.report_details_list, obj=>obj.deliveryPincode==text);
-   this.setState({details_list_search:res})  
- }
 
  ///////////////////////// Date Picker Function  /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -294,7 +288,7 @@ _header = () => {
   }
 ////////////////////////////// Printing function //////////////////////////////////////////////////////////////////////////////////////
 
-async printHTML(){
+async printHTML(id){
     await RNPrint.print({
      html: `<div style="width:${"100%"}; height:${"100%"}">
      <div style="display: block; margin-left: auto;margin-right: auto;width: 50%;">
@@ -302,13 +296,9 @@ async printHTML(){
      </div> 
      <div style="margin:${30};padding:${30}">
          
-            <table>
+            <table >
             <th style="font-size:${30};width:${"100%"};text-align:${'center'}">Delivery Report</th>
            <tbody>
-               <tr>
-                 <td style="width:${40};font-size:${22};" >Photo(Receiver): </td>
-                 <td style="width:${60};"><img src="data:image/png;base64, ${this.state.image_code}" width="100" height="100"> </td>
-                 </tr>
                  <tr>
                  <td style="width:${40};padding:${5};font-size:${22};" >Delivery ID:</td>
                  <td style="width:${60};width:${50};font-size:${22};">${this.state.report_details.deliveryId} </td>
@@ -347,11 +337,11 @@ async printHTML(){
                  </tr>
                  <tr>
                  <td style="padding:${5};font-size:${22};width:${40};">Signature:</td>
-                 <td ><img src="data:image/png;base64, ${this.state.image_code}" width="100" height="100"> </td>
+                 <td ><img src="${CUSTOMER_SIGN}${id}" width="100" height="100"> </td>
                  </tr>
                  <tr>
-                 <td style="padding:${5};font-size:${22};width:${40};">ID Card(Receiver):</td>
-                 <td ><img src="data:image/png;base64, ${this.state.image_code}" width="100" height="100"> </td>
+                 <td style="padding:${5};font-size:${22};width:${40};">Proof(Receiver):</td>
+                 <td ><img src="${CUSTOMER_PROOF}${id}" width="100" height="100"> </td>
                  </tr>
            </tbody>
             </table>
