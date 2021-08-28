@@ -74,4 +74,6 @@ export const PHONE_SEARCH=BASE_URL+SUB_URL+'address/';
 export const PREORDER_PIN=BASE_URL_ORDER+SUB_URL_ORDER+'predefined-order/';
 export const PREORDER_WITH_PIN=BASE_URL_ORDER+SUB_URL_ORDER+'predefined-order/preOrder/pin';
 export const DELIVERY_REPORT=BASE_URL+SUB_URL+'delivery/deliverdItems';
-export const DELIVERY_REPORT_CUSTOMER=BASE_URL+SUB_URL+'delivery/deliveryResponse/deliveryId/';
+export const DELIVERY_REPORT_CUSTOMER=BASE_URL+SUB_URL+'delivery/delivery-report/deliveryId/';
+export const CUSTOMER_PROOF=BASE_URL+SUB_URL+'delivery/customer-proof/';
+export const CUSTOMER_SIGN=BASE_URL+SUB_URL+'delivery/customer-signature/';
