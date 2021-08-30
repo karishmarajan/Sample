@@ -299,6 +299,10 @@ async printHTML(id){
             <table >
             <th style="font-size:${30};width:${"100%"};text-align:${'center'}">Delivery Report</th>
            <tbody>
+           <tr>
+                 <td style="width:${40};padding:${5};font-size:${22};" >Order ID:</td>
+                 <td style="width:${60};width:${50};font-size:${22};">${this.state.report_details.preDefinedOrderId?this.state.report_details.preDefinedOrderId : this.state.report_details.orderId} </td>
+                 </tr>
                  <tr>
                  <td style="width:${40};padding:${5};font-size:${22};" >Delivery ID:</td>
                  <td style="width:${60};width:${50};font-size:${22};">${this.state.report_details.deliveryId} </td>
@@ -309,11 +313,11 @@ async printHTML(id){
                  </tr>
                  <tr>
                  <td style="padding:${5};font-size:${22};width:${40};" >Receiver Name:</td>
-                 <td style="font-size:${22};width:${60};">${this.state.report_details.receiverName} </td>
+                 <td style="font-size:${22};width:${60};">${this.state.report_details.contactPersonName } </td>
                  </tr>
                  <tr>
                  <td style="padding:${5};font-size:${22};width:${40};" >Actual Receiver Name:</td>
-                 <td style="font-size:${22};width:${60};">${this.state.report_details.receiverName}</td>
+                 <td style="font-size:${22};width:${60};">${this.state.report_details.receiverName ? this.state.report_details.receiverName : this.state.report_details.contactPersonName}</td>
                  </tr>
                  <tr>
                  <td style="padding:${5};font-size:${22};width:${40};" >Receiver Number:</td>
@@ -361,7 +365,7 @@ async printHTML(id){
        
         <View style={styles.cell}><CustomText text={item.preDefinedOrderId?item.preDefinedOrderId:item.orderId ? item.orderId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.senderName ? item.senderName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText text={item.receiverName ? item.receiverName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText text={item.receiverName ? item.receiverName : item.contactPersonName} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.deliveryAgentName ? item.deliveryAgentName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.senderNumber ? item.senderNumber : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.updatedDate ? item.updatedDate : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>

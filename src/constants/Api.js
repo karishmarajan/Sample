@@ -1,4 +1,4 @@
-//export const BASE_URL= 'http://172.105.252.58:8080/';         //production
+// export const BASE_URL= 'http://172.105.252.58:8080/';         //production
 export const BASE_URL= 'http://109.237.25.79:8080/';                     //qa
 export const SUB_URL='epex/delivery/';
 export const LOGIN= BASE_URL + SUB_URL + 'login';
@@ -25,7 +25,7 @@ export const AMOUNT_COLLECTED= BASE_URL + SUB_URL + 'amount-collected-today/';
 export const VEHICLE_DETAILS= BASE_URL + SUB_URL + 'vehicle/';
 export const VEHICLE_REQUEST= BASE_URL + SUB_URL + 'request/vehicleRequest';
 export const REQUEST_STATUS= BASE_URL + SUB_URL + 'request/';
-//export const BASE_URL_MASTER= 'http://45.79.124.220:6080/';              //production
+// export const BASE_URL_MASTER= 'http://45.79.124.220:6080/';              //production
 export const BASE_URL_MASTER= 'http://109.237.25.79:6080/';                   //qa
 
 export const SUB_URL_MASTER='epex/master/';
@@ -36,7 +36,7 @@ export const CITY= BASE_URL_MASTER + SUB_URL_MASTER + 'city/state/';
 export const OTP= BASE_URL_MASTER + SUB_URL_MASTER + 'otp/sms';
 export const VERIFY_OTP= BASE_URL_MASTER + SUB_URL_MASTER + 'otp/sms/';
 export const COST_CHECKLIST= BASE_URL_MASTER + SUB_URL_MASTER + 'cost-checklist';
-//export const BASE_URL_USER= 'http://45.79.124.220:7080/';                   //production
+// export const BASE_URL_USER= 'http://45.79.124.220:7080/';                   //production
 export const BASE_URL_USER= 'http://109.237.25.79:7080/';                      //qa
 
 export const SUB_URL_USER='epex/user/';
@@ -48,7 +48,7 @@ export const SELF_UNASSIGN = BASE_URL + SUB_URL + 'deliveryOrder/selfunassign';
 export const SELF_ASSIGN = BASE_URL + SUB_URL + 'deliveryOrder/selfassign';
 export const PACKAGE_CATEGORY= BASE_URL_MASTER + SUB_URL_MASTER + 'package-category/active';
 export const PACKAGE_SUB_CATEGORY= BASE_URL_MASTER + SUB_URL_MASTER + 'package-category/';
-//export const BASE_URL_ORDER= 'http://172.105.252.58:9080/';               //production
+// export const BASE_URL_ORDER= 'http://172.105.252.58:9080/';               //production
 export const BASE_URL_ORDER= 'http://109.237.25.79:9080/';                   //qa
 
 export const SUB_URL_ORDER='epex/order/';
