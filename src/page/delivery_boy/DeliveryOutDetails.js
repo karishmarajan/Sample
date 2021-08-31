@@ -284,10 +284,6 @@ export default class DeliveryOutDetails extends React.Component {
   ////////////////////////////// Fetching delivery charge details function //////////////////////////////////////////////////////////////////////////////
 
 
-
-
-
-
   generate_invoice() {
 
     Api.fetch_request(DELIVERY_CHARGE + this.state.delivery_details.orderId, 'GET', '')
@@ -947,11 +943,6 @@ undefined}
                   </View>
                   {!!this.state.errorTextverify && (<Text style={{ color: 'red' }}>{this.state.errorTextverify}</Text>)}
                 </View>)}
-
-
-
-            
-
 
 
 
