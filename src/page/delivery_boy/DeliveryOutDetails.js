@@ -661,8 +661,8 @@ if(this.state.otp_verified==true)
                   <CustomText text={'Order Details'} textType={Strings.subtitle} fontWeight={'bold'} />
                 </View>
 
-                <CustomText text={'Serial No.'} textType={Strings.subtext} color={Colors.black} />
-                <View style={styles.inputview2}><CustomText text={this.state.delivery_details.serialId ? this.state.delivery_details.serialId : Strings.na} textType={Strings.subtext} color={Colors.black} /></View>
+                {/* <CustomText text={'Serial No.'} textType={Strings.subtext} color={Colors.black} />
+                <View style={styles.inputview2}><CustomText text={this.state.delivery_details.serialId ? this.state.delivery_details.serialId : Strings.na} textType={Strings.subtext} color={Colors.black} /></View> */}
                 <CustomText text={'Order No.'} textType={Strings.subtext} color={Colors.black} />
                 <View style={styles.inputview2}><CustomText text={this.state.delivery_details.preDefinedOrderId ? this.state.delivery_details.preDefinedOrderId : this.state.delivery_details.orderId ? this.state.delivery_details.orderId : Strings.na} textType={Strings.subtext} color={Colors.black} /></View>
                 <CustomText text={'Date And Time'} textType={Strings.subtext} color={Colors.black} />

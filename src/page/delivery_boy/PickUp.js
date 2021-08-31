@@ -12,6 +12,7 @@ import CustomInput from '../../component/CustomInput';
 import { SECTION_MARGIN_TOP, COLUMN_PADDING, SHORT_BUTTON_HEIGHT, LOGIN_FIELD_HEIGHT, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,CLOSE_SIZE,CLOSE_WIDTH } from '../../constants/Dimen';
 import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
+import CustomCheckBox from '../../component/CustomCheckBox';
 import session, { KEY } from '../../session/SessionManager';
 import Api from '../../component/Fetch';
 import { PICKUP_ORDERS, PICKUP_ORDER_UPDATE } from '../../constants/Api';
@@ -32,6 +33,7 @@ export default class PickUp extends React.Component {
     filterType: Strings.status,
     search: '',
     pickup_list: [],
+    checked: [],
     offset: 0,
     status_type: Strings.assigned,
     selectedPrinter: null,
@@ -46,7 +48,21 @@ export default class PickUp extends React.Component {
     this.fetch_pickup_orders(Strings.assigned)
     
   }
+/////////////////////////////// Checkbox checking function ///////////////////////////////////////////////////////////////////////////////////
+  
+checkItem = (item) => {
+  const { checked } = this.state;
+  console.log(item)
+  if (!checked.includes(item)) {
 
+    setTimeout(()=>{this.setState({ checked: [...this.state.checked, item] })},100);
+    // setTimeout(()=>{ alert(this.state.checked)},3000);
+   
+  } else {
+    setTimeout(()=>{this.setState({ checked: checked.filter(a => a !== item) })},100);
+  }
+  console.log(checked)
+};
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -237,7 +253,7 @@ capitalizeName(name) {
 
       <View style={{ flexDirection: 'row', borderBottomWidth: 0.3,borderTopWidth:0.3 , borderLeftWidth:0.3 ,marginTop:6}}>
         <View style={styles.cell1}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText text={'SERIAL NO.'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+        {/* <View style={styles.cell}><CustomText text={'SERIAL NO.'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View> */}
         <View style={styles.cell}><CustomText text={'ORDER ID'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={'CUSTOMER NAME'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={'ADDRESS'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
@@ -261,8 +277,9 @@ capitalizeName(name) {
     return (
 
       <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3 }}>
-        <View style={styles.cell1}><Icon name='arrow-up' style={{ fontSize: 14 }} /></View>
-        <View style={styles.cell}><CustomText text={item.serialId ? item.serialId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+        {/* <View style={styles.cell1}><Icon name='arrow-up' style={{ fontSize: 14 }} /></View> */}
+        <View style={styles.cell1}>{item.pickupStatus == 'COLLECTED' && (<View><CustomCheckBox color={Colors.buttonBackgroundColor} onPress={()=>this.checkItem(item.pickupId)} checked={this.state.checked.includes(item.pickupId)}/></View>)}</View>
+        {/* <View style={styles.cell}><CustomText text={item.serialId ? item.serialId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View> */}
         <View style={styles.cell}><CustomText text={item.preDefinedOrderId?item.preDefinedOrderId:item.orderId ? item.orderId :Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.contactPersonName} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.addressLine1 ? item.addressLine1 : Strings.na} textType={Strings.subtext}  color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} />
@@ -347,6 +364,8 @@ render() {
 
            {(this.state.search_critieria === 'CustomerName' && <View style={{ flex: 3, marginLeft: SECTION_MARGIN_TOP }}><CustomInput placeholder={'Search here with name'} icon_name={'ios-search'} onChangeText={(text)=>{this.searchtext_name(text); this.setState({isSearch:true}); if(text==''){this.setState({isSearch:false})}}} icon_color={Colors.navbarIconColor} icon_fontsize={18} placeholderTextColor={Colors.navbarIconColor} fontSize={14} showIcon={true} backgroundColor={Colors.white} height={TEXT_FIELD_HIEGHT} marginTop={5} flex={1} /></View>)}
           </View>
+
+          <View style={{ justifyContent:'flex-end' }}><CustomButton title={'Close All '} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10}  /></View>
 
           {/*////////////////////// Print Button Block //////////////////////////////////////////////// */}
 

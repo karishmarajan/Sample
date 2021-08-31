@@ -254,10 +254,10 @@ render(){
           <CustomText  text={'Order Details'} textType={Strings.subtitle} fontWeight={'bold'} />
         </View>
 
-        <CustomText text={'Serial No.'} textType={Strings.subtext} color={Colors.black}/>
-        <View style={styles.inputview2}><CustomText text={this.state.pickup_details.serialId ? this.state.pickup_details.serialId : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
+        {/* <CustomText text={'Serial No.'} textType={Strings.subtext} color={Colors.black}/>
+        <View style={styles.inputview2}><CustomText text={this.state.pickup_details.serialId ? this.state.pickup_details.serialId : Strings.na } textType={Strings.subtext} color={Colors.black}/></View> */}
           <CustomText text={'Order No.'} textType={Strings.subtext} color={Colors.black}/>
-          <View style={styles.inputview2}><CustomText text={this.state.pickup_details.orderId ? this.state.pickup_details.orderId : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
+          <View style={styles.inputview2}><CustomText text={this.state.pickup_details.preDefinedOrderId ? this.state.pickup_details.preDefinedOrderId : this.state.pickup_details.orderId } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Date And Time'} textType={Strings.subtext} color={Colors.black}/>
           <View style={styles.inputview2}><CustomText text={this.state.pickup_details.pickupDate ? this.state.pickup_details.pickupDate + ' '+ this.state.pickup_details.pickupTime  : Strings.na } textType={Strings.subtext} color={Colors.black}/></View>
           <CustomText text={'Seller ID'} textType={Strings.subtext} color={Colors.black}/>

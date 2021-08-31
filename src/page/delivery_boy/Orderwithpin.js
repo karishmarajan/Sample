@@ -281,6 +281,7 @@ if(this.state.predefinedpin==="") {
             }}
             defaultTouchToFocus
             flashMode={this.state.camera.flashMode}
+            // flashMode={RNCamera.Constants.FlashMode.on}
             mirrorImage={false}
             onBarCodeRead={this.onBarCodeRead.bind(this)}
             onFocusChanged={() => {}}
@@ -312,7 +313,7 @@ if(this.state.predefinedpin==="") {
   
          <View padding={30}>
 
-         <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:1}}>
+         {/* <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:1}}>
            <CustomText text={'Collected'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
            <Switch
           trackColor={{false: 'gray', true: 'teal'}}
@@ -332,7 +333,7 @@ if(this.state.predefinedpin==="") {
           onValueChange={(value) =>{ this.setState({toggle: value});if(value==false){this.setState({additional_charge_toggle:false,cod_toggle:false,bullet:false})}}}
           value={this.state.toggle}
         />
-           </View>
+           </View> */}
 
        
         <View style={{flexDirection:'row'}}>

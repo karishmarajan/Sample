@@ -9,6 +9,7 @@ import Colors from '../../constants/Colors';
 import Strings from '../../constants/Strings';
 import CustomText from '../../component/CustomText';
 import CustomInput from '../../component/CustomInput';
+import CustomCheckBox from '../../component/CustomCheckBox';
 import { SECTION_MARGIN_TOP, COLUMN_PADDING, SHORT_BUTTON_HEIGHT, LOGIN_FIELD_HEIGHT, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,CLOSE_SIZE,CLOSE_WIDTH } from '../../constants/Dimen';
 import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
@@ -29,6 +30,7 @@ export default class DeliveryFirst extends React.Component {
     filterType: Strings.status,
     search: '',
     delivery_list: [],
+    checked: [],
     status_type: Strings.assigned,
     loader:true,
     selectedPrinter: null,
@@ -43,6 +45,22 @@ export default class DeliveryFirst extends React.Component {
     this.fetch_delivery_orders(Strings.assigned)
     setTimeout(()=>{this.setState({loader:false})},1000);
   }
+
+/////////////////////////////// Checkbox checking function ///////////////////////////////////////////////////////////////////////////////////
+  
+checkItem = (item) => {
+  const { checked } = this.state;
+  console.log(item)
+  if (!checked.includes(item)) {
+
+    setTimeout(()=>{this.setState({ checked: [...this.state.checked, item] })},100);
+    // setTimeout(()=>{ alert(this.state.checked)},3000);
+   
+  } else {
+    setTimeout(()=>{this.setState({ checked: checked.filter(a => a !== item) })},100);
+  }
+  console.log(checked)
+};
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -293,7 +311,7 @@ fetch_delivery_orders(status_type) {
 
       <View style={{ flexDirection: 'row', borderBottomWidth: 0.3,borderTopWidth:0.3 , borderLeftWidth:0.3 ,marginTop:6}}>
         <View style={styles.cell1}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText text={'SERIAL NO.'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+        {/* <View style={styles.cell}><CustomText text={'SERIAL NO.'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View> */}
         <View style={styles.cell}><CustomText text={'ORDER ID'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={'CUSTOMER NAME'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={'ADDRESS'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
@@ -318,8 +336,8 @@ fetch_delivery_orders(status_type) {
     return (
 
       <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3 }}>
-        <View style={styles.cell1}><Icon name='arrow-up' style={{ fontSize: 14 }} /></View>
-        <View style={styles.cell}><CustomText text={item.serialId ? item.serialId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell1}>{item.deliveryStatus == 'DELIVERED' && (<View><CustomCheckBox color={Colors.buttonBackgroundColor} onPress={()=>this.checkItem(item.deliveryId)} checked={this.state.checked.includes(item.deliveryId)}/></View>)}</View>
+        {/* <View style={styles.cell}><CustomText text={item.serialId ? item.serialId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View> */}
         <View style={styles.cell}><CustomText text={item.preDefinedOrderId?item.preDefinedOrderId:item.orderId ? item.orderId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.contactPersonName ? item.contactPersonName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.addressLine1 ? item.addressLine1 : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
@@ -396,6 +414,9 @@ fetch_delivery_orders(status_type) {
            {(this.state.search_critieria === 'Prdeifined order ID' && <View style={{ flex: 3, marginLeft: SECTION_MARGIN_TOP }}><CustomInput placeholder={'Search here with Predeifined ID'} icon_name={'ios-search'} onChangeText={(text)=>{this.searchtext_name(text); this.setState({isSearch:true}); if(text==''){this.setState({isSearch:false})}}} icon_color={Colors.navbarIconColor} icon_fontsize={18} placeholderTextColor={Colors.navbarIconColor} fontSize={14} showIcon={true} backgroundColor={Colors.white} height={TEXT_FIELD_HIEGHT} marginTop={5} flex={1} /></View>)}
 
           </View>
+
+
+          <View style={{ justifyContent:'flex-end' }}><CustomButton title={'Close All '} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10}  /></View>
 
           {/*////////////////////// Print Button Block //////////////////////////////////////////////// */}
 
