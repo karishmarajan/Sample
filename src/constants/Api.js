@@ -77,3 +77,5 @@ export const DELIVERY_REPORT=BASE_URL+SUB_URL+'delivery/deliverdItems';
 export const DELIVERY_REPORT_CUSTOMER=BASE_URL+SUB_URL+'delivery/delivery-report/deliveryId/';
 export const CUSTOMER_PROOF=BASE_URL+SUB_URL+'delivery/customer-proof/';
 export const CUSTOMER_SIGN=BASE_URL+SUB_URL+'delivery/customer-signature/';
+export const PICKUP_STATUS_CLOSE= BASE_URL + SUB_URL + 'pickup/pickup-statuses';
+export const DELIVERY_STATUS_CLOSE= BASE_URL + SUB_URL + 'delivery/delivery-statuses';

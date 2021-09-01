@@ -99,7 +99,7 @@ export default class PickupDetails extends React.Component {
             console.log('Success:', JSON.stringify(result));
             Toast.show({ text: result.message, type: 'success' });
 
-           
+            this.fetch_pickup_details(this.props.pickup_id);
   
           }
           else {

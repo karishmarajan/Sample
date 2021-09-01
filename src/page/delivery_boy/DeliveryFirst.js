@@ -16,7 +16,7 @@ import CustomDropdown from '../../component/CustomDropdown';
 import session, { KEY } from '../../session/SessionManager';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 import Api from '../../component/Fetch';
-import { DELIVERY_ORDERS, DELIVERY_STATUS_UPDATE } from '../../constants/Api';
+import { DELIVERY_ORDERS, DELIVERY_STATUS_UPDATE , DELIVERY_STATUS_CLOSE} from '../../constants/Api';
 import RNPrint from 'react-native-print';
 import _ from "lodash"
 
@@ -62,6 +62,31 @@ checkItem = (item) => {
   console.log(checked)
 };
 
+
+////////////////////////////////////// Pickup CloseAll function ////////////////////////////////////////////////////////////////////////////////////
+  
+delivery_close_all() {
+  
+  let body = {
+    "orderIds": this.state.checked,
+    "status": "CLOSED"
+  };
+
+  Api.fetch_request(DELIVERY_STATUS_CLOSE, 'PUT', '', JSON.stringify(body))
+    .then(result => {
+
+      if (result.error != true) {
+
+        console.log('Success:', JSON.stringify(result));
+        this.fetch_delivery_orders(this.state.status_type);
+
+      }
+      else {
+        console.log('Failed');
+        
+      }
+    })
+}
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 silentPrint = async () => {
@@ -336,7 +361,7 @@ fetch_delivery_orders(status_type) {
     return (
 
       <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3 }}>
-        <View style={styles.cell1}>{item.deliveryStatus == 'DELIVERED' && (<View><CustomCheckBox color={Colors.buttonBackgroundColor} onPress={()=>this.checkItem(item.deliveryId)} checked={this.state.checked.includes(item.deliveryId)}/></View>)}</View>
+        <View style={styles.cell1}>{item.deliveryStatus == 'DELIVERED' && (<View><CustomCheckBox color={Colors.buttonBackgroundColor} onPress={()=>this.checkItem(item.orderId)} checked={this.state.checked.includes(item.orderId)}/></View>)}</View>
         {/* <View style={styles.cell}><CustomText text={item.serialId ? item.serialId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View> */}
         <View style={styles.cell}><CustomText text={item.preDefinedOrderId?item.preDefinedOrderId:item.orderId ? item.orderId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.contactPersonName ? item.contactPersonName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
@@ -416,7 +441,7 @@ fetch_delivery_orders(status_type) {
           </View>
 
 
-          <View style={{ justifyContent:'flex-end' }}><CustomButton title={'Close All '} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10}  /></View>
+          <View style={{ justifyContent:'flex-end' }}><CustomButton title={'Close All '} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={()=>this.delivery_close_all()}  /></View>
 
           {/*////////////////////// Print Button Block //////////////////////////////////////////////// */}
 

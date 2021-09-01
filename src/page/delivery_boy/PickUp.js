@@ -15,7 +15,7 @@ import CustomDropdown from '../../component/CustomDropdown';
 import CustomCheckBox from '../../component/CustomCheckBox';
 import session, { KEY } from '../../session/SessionManager';
 import Api from '../../component/Fetch';
-import { PICKUP_ORDERS, PICKUP_ORDER_UPDATE } from '../../constants/Api';
+import { PICKUP_ORDERS, PICKUP_ORDER_UPDATE , PICKUP_STATUS_CLOSE} from '../../constants/Api';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 import RNPrint from 'react-native-print';
 import _ from "lodash"
@@ -64,6 +64,30 @@ checkItem = (item) => {
   console.log(checked)
 };
 
+////////////////////////////////////// Pickup CloseAll function ////////////////////////////////////////////////////////////////////////////////////
+  
+pickup_close_all() {
+  
+  let body = {
+    "orderIds": this.state.checked,
+    "status": "CLOSED"
+  };
+
+  Api.fetch_request(PICKUP_STATUS_CLOSE, 'PUT', '', JSON.stringify(body))
+    .then(result => {
+
+      if (result.error != true) {
+
+        console.log('Success:', JSON.stringify(result));
+        this.fetch_pickup_orders(this.state.status_type)
+
+      }
+      else {
+        console.log('Failed');
+        
+      }
+    })
+}
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   silentPrint = async () => {
@@ -278,7 +302,7 @@ capitalizeName(name) {
 
       <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3 }}>
         {/* <View style={styles.cell1}><Icon name='arrow-up' style={{ fontSize: 14 }} /></View> */}
-        <View style={styles.cell1}>{item.pickupStatus == 'COLLECTED' && (<View><CustomCheckBox color={Colors.buttonBackgroundColor} onPress={()=>this.checkItem(item.pickupId)} checked={this.state.checked.includes(item.pickupId)}/></View>)}</View>
+        <View style={styles.cell1}>{item.pickupStatus == 'COLLECTED' && (<View><CustomCheckBox color={Colors.buttonBackgroundColor} onPress={()=>this.checkItem(item.orderId)} checked={this.state.checked.includes(item.orderId)}/></View>)}</View>
         {/* <View style={styles.cell}><CustomText text={item.serialId ? item.serialId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View> */}
         <View style={styles.cell}><CustomText text={item.preDefinedOrderId?item.preDefinedOrderId:item.orderId ? item.orderId :Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.contactPersonName} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
@@ -365,7 +389,7 @@ render() {
            {(this.state.search_critieria === 'CustomerName' && <View style={{ flex: 3, marginLeft: SECTION_MARGIN_TOP }}><CustomInput placeholder={'Search here with name'} icon_name={'ios-search'} onChangeText={(text)=>{this.searchtext_name(text); this.setState({isSearch:true}); if(text==''){this.setState({isSearch:false})}}} icon_color={Colors.navbarIconColor} icon_fontsize={18} placeholderTextColor={Colors.navbarIconColor} fontSize={14} showIcon={true} backgroundColor={Colors.white} height={TEXT_FIELD_HIEGHT} marginTop={5} flex={1} /></View>)}
           </View>
 
-          <View style={{ justifyContent:'flex-end' }}><CustomButton title={'Close All '} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10}  /></View>
+          <View style={{ justifyContent:'flex-end' }}><CustomButton title={'Close All '} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={()=>this.pickup_close_all()} /></View>
 
           {/*////////////////////// Print Button Block //////////////////////////////////////////////// */}
 
