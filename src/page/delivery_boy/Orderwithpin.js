@@ -3,7 +3,7 @@
 
 import React from 'react';
 import {Modal, ScrollView,AsyncStorage, TouchableOpacity, DatePickerAndroid, TimePickerAndroid, Keyboard ,Switch} from 'react-native';
-import { Container, View, Button, Left, Icon,Text,Toast,StyleSheet} from 'native-base';
+import { Container, View, Button, Left, Icon,Text,Toast,StyleSheet, Right} from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import CustomMandatory from '../../component/CustomMandatory';
 import Navbar from '../../component/Navbar';
@@ -13,11 +13,13 @@ import CustomInput from '../../component/CustomInput';
 import CustomText from '../../component/CustomText';
 import { SECTION_MARGIN_TOP, SHORT_BUTTON_HEIGHT, TEXT_PADDING_RIGHT, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING, BORDER_WIDTH, SHORT_BORDER_WIDTH, SHORT_BORDER_RADIUS, NORMAL_FONT,CLOSE_SIZE,CLOSE_WIDTH } from '../../constants/Dimen';
 import CustomButton from '../../component/CustomButton';
+import CustomCheckBox from '../../component/CustomCheckBox';
+import CustomSearchBox from '../../component/CustomSearchBox';
 import { RNCamera } from 'react-native-camera';
 import { KEY, KEY1 } from '../../session/SessionManager';
 import Api from '../../component/Fetch';
-import {PREORDER_WITH_PIN,PHONE_SEARCH,PINCODE_SEARCH, COUNTRY , STATE , DISTRICT , CITY , CUSTOMER_DETALS ,PACKAGE_CATEGORY, PACKAGE_SUB_CATEGORY ,SHIPMENT_BOX, ORDER, COST_CHECKLIST, DELIVERY_CHARGE, ADD_COD ,PAYER_PAYMENT, PAYMENT_BY_CASH ,ORDER_TRACKING, PRODUCT_BILL_UPLOAD} from '../../constants/Api';
-
+import {PREORDER_WITH_PIN,ALL_USERS,PINCODE_SEARCH, COUNTRY , STATE , DISTRICT , CITY , CUSTOMER_DETALS ,PACKAGE_CATEGORY, PACKAGE_SUB_CATEGORY ,SHIPMENT_BOX, ORDER, COST_CHECKLIST, DELIVERY_CHARGE, ADD_COD ,PAYER_PAYMENT, PAYMENT_BY_CASH ,ORDER_TRACKING, PRODUCT_BILL_UPLOAD} from '../../constants/Api';
+import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import SideMenuDrawer from '../../component/SideMenuDrawer';
 
 export default class orderwithpin extends React.Component {
@@ -33,6 +35,7 @@ export default class orderwithpin extends React.Component {
   
    this.state ={
     
+      personId:'',
       customer_id:'',
       customer_type:'',
       order_details_list:[],
@@ -45,7 +48,6 @@ export default class orderwithpin extends React.Component {
       sender_pincode:'',
       reciever_pincode:'',
       customertype:'',
-      customerId:'',
       modalVisible:false,
       toggle:true,
       bullet:false,
@@ -55,6 +57,10 @@ export default class orderwithpin extends React.Component {
       additional_charge:'',
       cod:'',
       collected_toggle:false,
+      users:[],
+      checked_customer:false,
+      torch_enable:RNCamera.Constants.FlashMode.off,
+      customerIdentityType:'',
       camera: {
         type: RNCamera.Constants.Type.back,
 	flashMode: RNCamera.Constants.FlashMode.auto,
@@ -66,69 +72,55 @@ export default class orderwithpin extends React.Component {
     componentDidMount() {
         AsyncStorage.getItem(KEY).then((value => {
           let data = JSON.parse(value);
-// if(data.customerType=='INDIVIDUAL')
 
+           this.setState({personId:data.personId})
 
-//     this.setState({customertype:'COMMON_USER'})
-// else
-// {
-// this.setState({customertype:'BRANCH_USER'})
-// }
-    this.setState({customerId:data.personId})
-    this.setState({sender_pincode:data.pincode})
-
-         console.log('KKKKKKKKKKKKKK',data)
-        
+         console.log('KKKKKKKKKKKKKK',data) 
       }));
+            this.fetch_customers_list();
+
       }
+
+///////////////////////////////////////////////////////////////////////////////////////////
+      toggleTorch()
+{
+    let tstate = this.state.torch_enable;
+    if (tstate == RNCamera.Constants.FlashMode.off){
+       tstate = RNCamera.Constants.FlashMode.torch;
+    } else {
+       tstate = RNCamera.Constants.FlashMode.off;
+    }
+    this.setState({torch_enable:tstate})
+}
      
    
-     //////////////////////////////////////////// Delivery count fetching function  //////////////////////////////////////////////////////////////////////////////////  
+//////////////////////////////// Fetching all customers function //////////////////////////////////////////////////////////////////////////////
+
+fetch_customers_list() {
+
+  Api.fetch_request(ALL_USERS,'GET','')
+  .then(result => {
    
-//    fetch_customer_orders(){
-  
-//     AsyncStorage.getItem(KEY).then((value => {
-  
-//       let data = JSON.parse(value);
-  
-//       if((data.userId).charAt(0)==='B')
-//       {
-//         this.setState({customer_type:'BRANCH_USER', customer_id: data.userId.replace('B', '')})
-//       }else
-//       {
-//         this.setState({customer_type:'COMMON_USER',customer_id :data.userId })
-//       }
-  
-  
-//       let body = {
-//         "customerId": parseInt(this.state.customer_id),
-//         "customerIdentityType": this.state.customer_type,
-//         "status": this.state.active
-  
-//       };
-  
-//     Api.fetch_request(ORDER_HISTORY,'POST','', JSON.stringify(body))
-//     .then(result => {
-     
-//       if(result.error != true){
-  
-//         console.log('Success:', JSON.stringify(result));
-//         this.setState({order_details_list : result.payload})
-      
-//       }
-//       else{
-//         console.log('Failed');
-//         this.setState({order_details_list : ""})
-//         Toast.show({ text: result.message, type: 'warning' });
-//       }
-//   })
-//   }));
-  
-//    }
-  ///////////////////////////////////////////////////////////////////
+    if(result.error != true){
 
+      console.log('Success:', JSON.stringify(result));
 
+      var count = (result.payload).length;
+      let customers = [];
 
+      for(var i = 0; i < count; i++){
+       customers.push({name: result.payload[i].userId+' - '+ result.payload[i].firstName+' '+result.payload[i].lastName +' - '+result.payload[i].mobileNumber, id: result.payload[i].userId });
+     }
+     this.setState({ users: customers });
+    }
+    else{
+      console.log('Failed');
+    }
+})
+ 
+}
+
+ //////////////////////////////// Scanning Barcode function ///////////////////////////////////////////////////////////////////
 
   onBarCodeRead(scanResult) {
     console.warn(scanResult.type);
@@ -142,29 +134,6 @@ export default class orderwithpin extends React.Component {
 	}
     }
     return;
-  }
-
-  async takePicture() {
-    if (this.camera) {
-      const options = { quality: 0.5, base64: true };
-      const data = await this.camera.takePictureAsync(options);
-      console.log(data.uri);
-    }
-  }
-
-  pendingView() {
-    return (
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: 'lightgreen',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <Text>Waiting</Text>
-      </View>
-    );
   }
 
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -185,32 +154,20 @@ if(this.state.predefinedpin==="") {
   }
 
   let body = {
-    // "predefinedOrederId": this.state.predefinedpin,
-    // "pickupPincode": this.state.reciever_pincode,
-    // "customerId": this.state.customerId,
-    // "customerIdentityType": this.state.customertype,
-    // "createdAtOfficeId":0,
-    // "creatorId": this.state.customerId,
-    // "isManualPickup": 'false',
-    // "creatorUserType": 'ADMIN',
-    // "deliveryPincode":this.state.reciever_pincode,
+      "additionalCharges": this.state.additional_charge,
+      "createdAtOfficeId": 0,
+      "creatorId": parseInt(this.state.personId),
+      "creatorUserType": "DELIVERY_AGENT",
+      "customerId": this.state.customer_id,
+      "customerIdentityType": this.state.customerIdentityType,
+      "deliveryPincode": this.state.reciever_pincode,
+      "deliveryType": this.state.bullet == true ? "BULLET" : "NORMAL",
+      "finalCodCharge": this.state.cod,
+      "isManualPickup": true,
+      "pickupPincode": this.state.sender_pincode,
+      "preDefinedOrderId": this.state.predefinedpin,
+    }
 
-
-
-
-
-
-
-    "createdAtOfficeId": 0,
-    "creatorId": this.state.customerId,
-    "creatorUserType": "DELIVERY_AGENT",
-    // "customerId": this.state.customerId,
-    // "customerIdentityType": this.state.customertype,
-    "deliveryPincode":this.state.reciever_pincode,
-    "isManualPickup": true,
-    "pickupPincode": this.state.sender_pincode,
-    "preDefinedOrderId": this.state.predefinedpin,
-  };
   console.log('BODY ORDERWITH PIN:',body);
 
   Api.fetch_request(PREORDER_WITH_PIN, 'PUT', '', JSON.stringify(body))
@@ -254,14 +211,20 @@ if(this.state.predefinedpin==="") {
               </Button>
           </Left>
         );
-
+        var torch = (
+          <Right style={{ flex: 1 }}>
+            <Button width={CLOSE_WIDTH} onPress={() => this.toggleTorch()} transparent>
+              <Icon style={{ color:Colors.navbarIconColor,fontSize:22}} name='ios-flash' />
+              </Button>
+          </Right>
+        );
 
       return (
        
         <SideMenuDrawer ref={(ref) => this._sideMenuDrawer = ref}>
           <Container>
             <Navbar  title="Order with pin" left={left}/>
-            <ScrollView contentContainerStyle={{flexGrow:1}}>
+            <KeyboardAvoidingScrollView contentContainerStyle={{flexGrow:1}} keyboardShouldPersistTaps = 'always'>
   
   {/* ///////////////////////////////////////////////////////////////////////// */}
 
@@ -273,15 +236,14 @@ if(this.state.predefinedpin==="") {
 
 <View style={styles.container}>
    
-<Navbar  title="Scanning" left={right}/>
+<Navbar  title="Scanning" left={right} right={torch}/>
        
         <RNCamera
             ref={ref => {
               this.camera = ref;
             }}
             defaultTouchToFocus
-            flashMode={this.state.camera.flashMode}
-            // flashMode={RNCamera.Constants.FlashMode.on}
+            flashMode={this.state.torch_enable}
             mirrorImage={false}
             onBarCodeRead={this.onBarCodeRead.bind(this)}
             onFocusChanged={() => {}}
@@ -322,7 +284,7 @@ if(this.state.predefinedpin==="") {
           onValueChange={(value) =>{ this.setState({collected_toggle: value})}}
           value={this.state.collected_toggle}
         />
-           </View>
+           </View> */}
 
          <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:1}}>
            <CustomText text={'Quick Order'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
@@ -333,7 +295,7 @@ if(this.state.predefinedpin==="") {
           onValueChange={(value) =>{ this.setState({toggle: value});if(value==false){this.setState({additional_charge_toggle:false,cod_toggle:false,bullet:false})}}}
           value={this.state.toggle}
         />
-           </View> */}
+           </View>
 
        
         <View style={{flexDirection:'row'}}>
@@ -355,7 +317,15 @@ if(this.state.predefinedpin==="") {
         <CustomInput flex={1} keyboardType={"number-pad"} maxLength={6} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({reciever_pincode: text , errorTextreciever_pincode:""})} value={this.state.reciever_pincode} />
         {!!this.state.errorTextreciever_pincode && (<Text style={{color: 'red'}}>{this.state.errorTextreciever_pincode}</Text>)}
       
-      
+        <View style={{marginTop:SECTION_MARGIN_TOP, flexDirection:'row'}}>
+          <CustomCheckBox color={Colors.buttonBackgroundColor} onPress={()=>{if(this.state.checked_customer==true){this.setState({checked_customer:false})}else{this.setState({checked_customer:true})}}} checked={this.state.checked_customer}/>
+          <CustomText text={'Assign Customer'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'} paddingLeft={1} mTop={5} />
+        </View>
+
+        {this.state.checked_customer === true && ( <View>
+        <CustomText text={'Customer Id'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+    <CustomSearchBox  placeholder={'Select customer'} onTextChange={(text)=>this.setState({customer_id: text})}  value={this.state.customer_id}  onItemSelect={(item) =>{ if(item.id.charAt(0)=='B'){this.setState({customer_id:item.id.replace('B', ''),customerIdentityType:"BRANCH_USER"})}else{this.setState({customer_id:item.id , customerIdentityType:"COMMON_USER"})}}} items={this.state.users} />
+      </View>)}
         {this.state.toggle === false && (<View>
 <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:1}}>
            <CustomText text={'Bullet'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
@@ -363,7 +333,7 @@ if(this.state.predefinedpin==="") {
           trackColor={{false: 'gray', true: 'teal'}}
           thumbColor="white"
           ios_backgroundColor="gray"
-          onValueChange={(value) => this.setState({bullet: value,additional_charge_toggle:value})}
+          onValueChange={(value) => {this.setState({bullet: value,additional_charge_toggle:value});}}
           value={this.state.bullet}
         />
            </View>
@@ -372,7 +342,7 @@ if(this.state.predefinedpin==="") {
             <CustomText text={'Additional Charges may apply'} textType={Strings.subtext} color={Colors.black} />
           </View>)}
            <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:1}}>
-           <CustomText text={'Additional Charge'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+           <CustomText text={'Additional Charge'} keyboardType={"number-pad"} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
            <Switch
           trackColor={{false: 'gray', true: 'teal'}}
           thumbColor="white"
@@ -382,10 +352,10 @@ if(this.state.predefinedpin==="") {
         />
            </View>
           {this.state.additional_charge_toggle == true &&(<View>
-            <CustomInput flex={1} value={this.state.aditional_charge} place_holder={'Additional charge'}  />
+            <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({additional_charge: text , })} value={this.state.additional_charge} />
           </View>)} 
            <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:1}}>
-           <CustomText text={'COD'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+           <CustomText text={'COD'} keyboardType={"number-pad"} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
            <Switch
           trackColor={{false: 'gray', true: 'teal'}}
           thumbColor="white"
@@ -395,13 +365,13 @@ if(this.state.predefinedpin==="") {
         />
            </View>
            {this.state.cod_toggle == true &&(<View>
-            <CustomInput flex={1} value={this.state.cod} place_holder={'COD'}  />
+            <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({cod: text , })} value={this.state.cod} />
            </View>)}
 
 </View>)}
         <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.submit()} />
         </View>
-                </ScrollView>
+                </KeyboardAvoidingScrollView>
           </Container>
           </SideMenuDrawer>
       );
