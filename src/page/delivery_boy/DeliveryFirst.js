@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, StyleSheet, AsyncStorage, TouchableOpacity, Linking, Platform, FlatList } from 'react-native';
+import { ScrollView, StyleSheet, AsyncStorage, TouchableOpacity, Linking, Platform, FlatList, Modal } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 import { Container, Header, Button, Left, Icon, Right, View, Badge, Body, Toast } from 'native-base';
@@ -16,9 +16,10 @@ import CustomDropdown from '../../component/CustomDropdown';
 import session, { KEY } from '../../session/SessionManager';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 import Api from '../../component/Fetch';
-import { DELIVERY_ORDERS, DELIVERY_STATUS_UPDATE , DELIVERY_STATUS_CLOSE} from '../../constants/Api';
+import { DELIVERY_ORDERS, DELIVERY_STATUS_UPDATE , DELIVERY_STATUS_CLOSE, GET_DELIVERY_BY_SCAN} from '../../constants/Api';
 import RNPrint from 'react-native-print';
-import _ from "lodash"
+import _ from "lodash";
+import { RNCamera } from 'react-native-camera';
 
 const myArray1 = [{ name: "Order No.", value: "Order No." }, { name: "CustomerName", value: "CustomerName" },];
 const myArray = [{ name: "ASSIGNED", value: "ASSIGNED" }, { name: "ALL", value: "ALL" }, { name: "ATTEMPT_FAILED", value: "ATTEMPT FAILED" }, { name: "DELIVERED", value: "DELIVERED" }];
@@ -26,7 +27,11 @@ const myArray = [{ name: "ASSIGNED", value: "ASSIGNED" }, { name: "ALL", value: 
 
 
 export default class DeliveryFirst extends React.Component {
-  state = {
+  constructor(props) {
+    super(props);
+    this.camera = null;
+    this.barcodeCodes = [];
+ this.state = {
     filterType: Strings.status,
     search: '',
     delivery_list: [],
@@ -38,12 +43,96 @@ export default class DeliveryFirst extends React.Component {
     pickup_list_search:[],
     isSearch:false,
     searchText:'',
+    modalVisible:false,
+    delivery_details:[],
+    orderId_type:'',
+    torch_enable:RNCamera.Constants.FlashMode.off,
+    predefinedpin:'',
+    camera: {
+      type: RNCamera.Constants.Type.back,
+flashMode: RNCamera.Constants.FlashMode.auto,
+    }
   };
+}
 
   componentDidMount() {
     console.log("PAGE===================================>")
     this.fetch_delivery_orders(Strings.assigned)
     setTimeout(()=>{this.setState({loader:false})},1000);
+  }
+
+  //////////////////////////////  Toggle torch function   ////////////////////////////////////////////////////////////////////
+
+toggleTorch()
+{
+    let tstate = this.state.torch_enable;
+    if (tstate == RNCamera.Constants.FlashMode.off){
+       tstate = RNCamera.Constants.FlashMode.torch;
+    } else {
+       tstate = RNCamera.Constants.FlashMode.off;
+    }
+    this.setState({torch_enable:tstate})
+}
+
+ ////////////////////////////////////// Scanning barcode function ////////////////////////////////////////
+
+ onBarCodeRead(scanResult) {
+  console.warn(scanResult.type);
+  console.warn(scanResult.data);
+  if (scanResult.data != null) {
+if (!this.barcodeCodes.includes(scanResult.data)) {
+  this.barcodeCodes.push(scanResult.data);
+  setTimeout(()=>{this.setState({predefinedpin:scanResult.data,modalVisible:false})},100);
+    
+    console.log("SCANNEDDDDDDDDDD",this.state.predefinedpin)
+  console.warn('onBarCodeRead call');
+  if(scanResult.data != null){
+    if((scanResult.data).charAt(0)==='E' || (scanResult.data).charAt(0)==='B' )
+    {
+      this.setState({orderId_type:'PREDEFINED_ORDER_ID'})
+      setTimeout(()=>{ this.fetch_delivery_orders_by_scan('PREDEFINED_ORDER_ID');},1000);
+
+    }else
+    {
+      this.setState({orderId_type:'ORDER_ID'})
+      setTimeout(()=>{ this.fetch_delivery_orders_by_scan('ORDER_ID');;},1000);
+    }
+  }
+}
+  }
+  return;
+}
+
+  ////////////////////////////////////// Delivery order by scanning fetching function ///////////////////////////////////////////////////////////////////////////////////
+
+  fetch_delivery_orders_by_scan(type) {
+
+    AsyncStorage.getItem(KEY).then((value => {
+      let data = JSON.parse(value);
+
+      Api.fetch_request(GET_DELIVERY_BY_SCAN + this.state.predefinedpin +'/orderIdType/' + type, 'GET', '')
+        .then(result => {
+
+          if (result.error != true) {
+
+            console.log('Success:', JSON.stringify(result));
+            this.setState({ delivery_details: result.payload })
+
+            if(this.state.delivery_details.deliveryBoy.personId == data.personId)
+{
+  Actions.deliveryoutdetails({delivery_id:this.state.delivery_details.deliveryId});
+}else{
+  Toast.show({text:'This is not your order',type:'warning'})
+}
+          }
+          else {
+            console.log('Failed');
+            this.setState({ delivery_details: ''})
+            Toast.show({text:result.message,type:'warning'})
+   
+          }
+        })
+      }));
   }
 
 /////////////////////////////// Checkbox checking function ///////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +152,7 @@ checkItem = (item) => {
 };
 
 
-////////////////////////////////////// Pickup CloseAll function ////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////// Delivery CloseAll function ////////////////////////////////////////////////////////////////////////////////////
   
 delivery_close_all() {
   
@@ -416,7 +505,20 @@ fetch_delivery_orders(status_type) {
         </Button>
       </Right>
     );
-
+    var torch = (
+      <Right style={{ flex: 1 }}>
+        <Button width={CLOSE_WIDTH} onPress={() => this.toggleTorch()} transparent>
+          <Icon style={{ color:Colors.navbarIconColor,fontSize:22}} name='ios-flash' />
+          </Button>
+      </Right>
+    );
+    var modal_view = (
+      <Left style={{ flex: 1 }}>
+        <Button width={CLOSE_WIDTH} onPress={() => this.setState({modalVisible:false})} transparent>
+          <Icon style={{ color:Colors.navbarIconColor,fontSize:CLOSE_SIZE}} name='md-close' />
+          </Button>
+      </Left>
+    );
     return (
 
       <Container>
@@ -426,6 +528,49 @@ fetch_delivery_orders(status_type) {
         {/* { this.state.loader === true && (<View style={{alignItems:'center'}}>
         <CustomActivityIndicator/>
         </View>)} */}
+
+{/* //////////////////////////  Scan Modal ///////////////////////////////////////////////////////////////////////////////////////// */}
+       
+<Modal     animationType="slide"
+        transparent={true}
+        visible={this.state.modalVisible}
+        >
+
+<View style={styles.container}>
+   
+<Navbar  title="Scanning" left={modal_view} right={torch}/>
+       
+        <RNCamera
+            ref={ref => {
+              this.camera = ref;
+            }}
+            defaultTouchToFocus
+            flashMode={this.state.torch_enable}
+            mirrorImage={false}
+            onBarCodeRead={this.onBarCodeRead.bind(this)}
+            onFocusChanged={() => {}}
+            onZoomChanged={() => {}}
+            permissionDialogTitle={'Permission to use camera'}
+            permissionDialogMessage={'We need your permission to use your camera phone'}
+            style={styles.preview}
+            type={this.state.camera.type}
+        />
+        <View style={[styles.overlay, styles.topOverlay]}>
+	  {/* <Text style={styles.scanScreenMessage}>Please scan the barcode.</Text> */}
+	</View>
+	{/* <View style={[styles.overlay, styles.bottomOverlay]}>
+          <Button
+            onPress={() => { console.log('scan clicked'); }}
+            style={styles.enterBarcodeManualButton}
+            title="Enter Barcode"
+           />
+	</View> */}
+      </View>
+
+
+
+</Modal>
+
 
           {/*////////////////////// Order and Searchbar Block //////////////////////////////////////////////// */}
 
@@ -447,7 +592,7 @@ fetch_delivery_orders(status_type) {
 
           <View style={{ flexDirection: 'row', marginTop: SECTION_MARGIN_TOP, backgroundColor: Colors.aash, }}>
             <View style={{ flex: 4 }}><CustomDropdown data={myArray} height={SHORT_BUTTON_HEIGHT} backgroundColor={Colors.aash} onChangeValue={(value, index, data) => { this.setState({ offset: 0 }); setTimeout(() => { this.fetch_delivery_orders(data[index]['name']) }, 100); }} /></View>
-            <View style={{ flex: 2, }}><CustomButton title={'Print'} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={this.silentPrint} /></View>
+            <View style={{ flex: 2, }}><CustomButton title={'Scan'} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={()=>this.setState({modalVisible:true})} /></View>
           </View>
 
           {/*//////////////////////// Horizontal Order Details Block //////////////////////////////////////////////// */}
@@ -477,6 +622,9 @@ fetch_delivery_orders(status_type) {
 
 const styles = StyleSheet.create({
 
+  container: {
+    flex: 1
+  },
   header: {
     backgroundColor: Colors.aash,
 
@@ -508,6 +656,44 @@ const styles = StyleSheet.create({
     borderBottomWidth: 5,
     borderColor: Colors.textBackgroundColor1,
 
+  },
+  preview: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center'
+  },
+  overlay: {
+    position: 'absolute',
+    padding: 16,
+    right: 0,
+    left: 0,
+    alignItems: 'center'
+  },
+  topOverlay: {
+    top: 0,
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  bottomOverlay: {
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  enterBarcodeManualButton: {
+    padding: 15,
+    backgroundColor: 'white',
+    borderRadius: 40
+  },
+  scanScreenMessage: {
+    fontSize: 14,
+    color: 'white',
+    textAlign: 'center',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
 
 });
