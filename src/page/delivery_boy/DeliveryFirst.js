@@ -73,7 +73,10 @@ toggleTorch()
     }
     this.setState({torch_enable:tstate})
 }
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+isCharacterALetter(char) {
+  return (/[a-zA-Z]/).test(char)
+}
  ////////////////////////////////////// Scanning barcode function ////////////////////////////////////////
 
  onBarCodeRead(scanResult) {
@@ -87,7 +90,7 @@ if (!this.barcodeCodes.includes(scanResult.data)) {
     console.log("SCANNEDDDDDDDDDD",this.state.predefinedpin)
   console.warn('onBarCodeRead call');
   if(scanResult.data != null){
-    if((scanResult.data).charAt(0)==='E' || (scanResult.data).charAt(0)==='B' )
+    if(this.isCharacterALetter((scanResult.data).charAt(0)) === true )
     {
       this.setState({orderId_type:'PREDEFINED_ORDER_ID'})
       setTimeout(()=>{ this.fetch_delivery_orders_by_scan('PREDEFINED_ORDER_ID');},1000);

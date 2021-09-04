@@ -18,7 +18,7 @@ import CustomSearchBox from '../../component/CustomSearchBox';
 import { RNCamera } from 'react-native-camera';
 import { KEY, KEY1 } from '../../session/SessionManager';
 import Api from '../../component/Fetch';
-import {PREORDER_WITH_PIN,ALL_USERS,PINCODE_SEARCH, COUNTRY , STATE , DISTRICT , CITY , CUSTOMER_DETALS ,PACKAGE_CATEGORY, PACKAGE_SUB_CATEGORY ,SHIPMENT_BOX, ORDER, COST_CHECKLIST, DELIVERY_CHARGE, ADD_COD ,PAYER_PAYMENT, PAYMENT_BY_CASH ,ORDER_TRACKING, PRODUCT_BILL_UPLOAD} from '../../constants/Api';
+import {PREORDER_WITH_PIN,ALL_USERS,PAYER_PAYMENT, } from '../../constants/Api';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import SideMenuDrawer from '../../component/SideMenuDrawer';
 
@@ -158,8 +158,8 @@ if(this.state.predefinedpin==="") {
       "createdAtOfficeId": 0,
       "creatorId": parseInt(this.state.personId),
       "creatorUserType": "DELIVERY_AGENT",
-      "customerId": this.state.customer_id,
-      "customerIdentityType": this.state.customerIdentityType,
+      "customerId": this.state.customer_id ? this.state.customer_id :null,
+      "customerIdentityType": this.state.customerIdentityType ? this.state.customerIdentityType : null,
       "deliveryPincode": this.state.reciever_pincode,
       "deliveryType": this.state.bullet == true ? "BULLET" : "NORMAL",
       "finalCodCharge": this.state.cod,
@@ -174,23 +174,50 @@ if(this.state.predefinedpin==="") {
     .then(result => {
 
       if (result.error != true) {
+        this.payer_payment(result.payload.orderId);
         Toast.show({ text: 'Order Created', type: 'success' });
         // Actions.pop()
     //    this.setState({final_cod_charge:result.payload.finalCodCharge})
         console.log('Success:', JSON.stringify(result));
         
         this.setState({reciever_pincode:''})
-        this.setState({predefinedpin:''})
+        this.setState({predefinedpin:'',cod:''})
 
       }
       else {
         console.log(result.message,'Failed');
         Toast.show({ text:result.message , type: 'warning' });
 
-         
-       
 
+      }
+    })
+}
 
+///////////////////////////////////////// Payer payment function  //////////////////////////////////////////////////////////////////////////////////
+
+payer_payment(id) {
+
+  let body = {
+    "deliveryChargePaymentBySender": true,
+    "orderId": id,
+    "payerComment": "",
+    "payerContactNumber": "",
+   "payerCountryCode":"",
+   "payerLocation": "",
+   "payerName": ""
+
+  };
+
+  Api.fetch_request(PAYER_PAYMENT, 'POST', '', JSON.stringify(body))
+    .then(result => {
+
+      if (result.error != true) {
+
+        console.log('Success:', JSON.stringify(result));
+      }
+      else {
+        console.log('Failed');
+        
       }
     })
 }
