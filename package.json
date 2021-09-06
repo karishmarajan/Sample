@@ -20,6 +20,7 @@
     "react-native-autocomplete-input": "^4.2.0",
     "react-native-barcode-mask": "^1.2.4",
     "react-native-camera": "3.30.0",
+    "react-native-device-info": "^8.3.1",
     "react-native-drawer": "2.5.0",
     "react-native-dropdown-picker": "^3.7.0",
     "react-native-google-speech-to-text": "^1.0.4",

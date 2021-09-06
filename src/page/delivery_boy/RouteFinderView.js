@@ -69,6 +69,7 @@ export default class RouteFinderView extends React.Component {
       errorTextpass: '',
       modalvisible: true,
       alert_visible: false,
+      torch_enable:RNCamera.Constants.FlashMode.off,
 
 
     }
@@ -96,6 +97,20 @@ export default class RouteFinderView extends React.Component {
       },
     });
   } */
+
+//////////////////////////////  Toggle torch function   ////////////////////////////////////////////////////////////////////
+
+toggleTorch()
+{
+    let tstate = this.state.torch_enable;
+    if (tstate == RNCamera.Constants.FlashMode.off){
+       tstate = RNCamera.Constants.FlashMode.torch;
+    } else {
+       tstate = RNCamera.Constants.FlashMode.off;
+    }
+    this.setState({torch_enable:tstate})
+}
+
   _result = (item) => {
 
     /*     var a=this.state.orderid; */
@@ -500,6 +515,13 @@ export default class RouteFinderView extends React.Component {
         </Button>
       </Left>
     );
+    var torch = (
+      <Right style={{ flex: 1 }}>
+        <Button width={CLOSE_WIDTH} onPress={() => this.toggleTorch()} transparent>
+          <Icon style={{ color:Colors.navbarIconColor,fontSize:22}} name='ios-flash' />
+          </Button>
+      </Right>
+    );
     /*  var right = (
        <Left style={{ flex: 1 ,marginLeft:'20%''}}>
          <Button width={CLOSE_WIDTH} onPress={() => {
@@ -514,14 +536,14 @@ export default class RouteFinderView extends React.Component {
       <View style={styles.container}>
         {this.state.cammodal == true ?
           <View style={styles.container} >
-            <Navbar title="Scanner" left={left2} />
+            <Navbar title="Scanner" left={left2} right={torch} />
             <RNCamera
               ref={cam => {
                 this.camera = cam;
               }}
               defaultTouchToFocus
               onFocusChanged={() => { }}
-              flashMode={this.state.camera.flashMode}
+              flashMode={this.state.torch_enable}
               mirrorImage={false}
               onBarCodeRead={this.onBarCodeRead.bind(this)}
               style={styles.cameraView}
