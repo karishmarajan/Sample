@@ -35,6 +35,7 @@ export default class DeliveryFirst extends React.Component {
     filterType: Strings.status,
     search: '',
     delivery_list: [],
+    delivery_ids:[],
     checked: [],
     status_type: Strings.assigned,
     loader:true,
@@ -153,6 +154,15 @@ checkItem = (item) => {
   }
   console.log(checked)
 };
+
+/////////////////////////////// All Checkbox checking function ///////////////////////////////////////////////////////////////////////////////////
+selectAllItem(){
+  var i ;
+  for(i=0;i<this.state.delivery_ids.length;i++){
+   var item=this.state.delivery_ids[i];
+   this.checkItem(item);
+  }
+}
 
 
 ////////////////////////////////////// Delivery CloseAll function ////////////////////////////////////////////////////////////////////////////////////
@@ -440,7 +450,7 @@ fetch_delivery_orders(status_type) {
         <View style={styles.cell}><CustomText text={'DELIVERY TYPE'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={'TOTAL'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+        {/* <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View> */}
        
       </View>
     )
@@ -450,6 +460,12 @@ fetch_delivery_orders(status_type) {
   //////////////////////////////////// Delivery orders body part ///////////////////////////////////////////////////////////////////////////////////
 
   _body = (item) => {
+
+    if(item.deliveryStatus == 'DELIVERED'){
+      this.state.delivery_ids.push(item.orderId);
+      // alert(this.state.delivery_ids)
+    }
+
     return (
 
       <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3 }}>
@@ -473,11 +489,11 @@ fetch_delivery_orders(status_type) {
             <CustomButton title={'Details'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5} text_color={Colors.darkSkyBlue} onPress={() => Actions.deliveryoutdetails({delivery_id:item.deliveryId})} />
           </View>
         </View>
-        <View style={styles.cell}>
+        {/* <View style={styles.cell}>
           {item.deliveryStatus == 'DELIVERED' && (<View>
             <CustomButton title={'Close'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={30} marginBottom={5}  text_color={Colors.darkSkyBlue} onPress={()=>this.delivery_status_update(item.orderId)} />
             </View>)}
-         </View>
+         </View> */}
 
       </View>
 
@@ -589,7 +605,10 @@ fetch_delivery_orders(status_type) {
           </View>
 
 
-          <View style={{ justifyContent:'flex-end' }}><CustomButton title={'Close All '} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={()=>this.delivery_close_all()}  /></View>
+          {this.state.status_type == 'DELIVERED' &&(  <View style={{ flexDirection: 'row', marginTop: SECTION_MARGIN_TOP, }}>
+            <View style={{ flex: 2 }}><CustomButton title={'Select All '} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={()=>this.selectAllItem()} /></View>
+            <View style={{ flex: 2, }}><CustomButton title={'Close All '} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={()=>this.delivery_close_all()} /></View>
+          </View>)}
 
           {/*////////////////////// Print Button Block //////////////////////////////////////////////// */}
 

@@ -37,6 +37,7 @@ export default class PickUp extends React.Component {
     filterType: Strings.status,
     search: '',
     pickup_list: [],
+    pickup_ids:[],
     checked: [],
     offset: 0,
     status_type: Strings.assigned,
@@ -50,6 +51,7 @@ export default class PickUp extends React.Component {
     orderId_type:'',
     torch_enable:RNCamera.Constants.FlashMode.off,
     predefinedpin:'',
+    allChecked: false,
     camera: {
       type: RNCamera.Constants.Type.back,
 flashMode: RNCamera.Constants.FlashMode.auto,
@@ -124,6 +126,16 @@ checkItem = (item) => {
   }
   console.log(checked)
 };
+
+/////////////////////////////// All Checkbox checking function ///////////////////////////////////////////////////////////////////////////////////
+  selectAllItem(){
+    var i ;
+    for(i=0;i<this.state.pickup_ids.length;i++){
+     var item=this.state.pickup_ids[i];
+     this.checkItem(item);
+    }
+  }
+
 
 ////////////////////////////////////// Pickup CloseAll function ////////////////////////////////////////////////////////////////////////////////////
   
@@ -381,7 +393,7 @@ capitalizeName(name) {
         <View style={styles.cell}><CustomText text={'DELIVERY TYPE'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={'TOTAL'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+        {/* <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View> */}
        
       </View>
     )
@@ -390,6 +402,11 @@ capitalizeName(name) {
   ///////////////////////////////////// Pickup order body part ///////////////////////////////////////////////////////////////////////////////////////////
 
   _body = (item) => {
+    if(item.pickupStatus == 'COLLECTED'){
+      this.state.pickup_ids.push(item.orderId);
+      // alert(this.state.pickup_ids)
+    }
+   
     return (
 
       <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3 }}>
@@ -419,11 +436,11 @@ capitalizeName(name) {
             <CustomButton title={'Details'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5}  text_color={Colors.darkSkyBlue} onPress={() => Actions.pickupdetails({pickup_id:item.pickupId})} />
           </View>
         </View>
-        <View style={styles.cell}>
+        {/* <View style={styles.cell}>
           {item.pickupStatus == 'COLLECTED' && (<View>
             <CustomButton title={'Close'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={30} marginBottom={5}  text_color={Colors.darkSkyBlue} onPress={()=>this.pickup_update(item.orderId)} />
             </View>)}
-         </View>
+         </View> */}
 
       </View>
 
@@ -537,7 +554,12 @@ render() {
            {(this.state.search_critieria === 'CustomerName' && <View style={{ flex: 3, marginLeft: SECTION_MARGIN_TOP }}><CustomInput placeholder={'Search here with name'} icon_name={'ios-search'} onChangeText={(text)=>{this.searchtext_name(text); this.setState({isSearch:true}); if(text==''){this.setState({isSearch:false})}}} icon_color={Colors.navbarIconColor} icon_fontsize={18} placeholderTextColor={Colors.navbarIconColor} fontSize={14} showIcon={true} backgroundColor={Colors.white} height={TEXT_FIELD_HIEGHT} marginTop={5} flex={1} /></View>)}
           </View>
 
-          <View style={{ justifyContent:'flex-end' }}><CustomButton title={'Close All '} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={()=>this.pickup_close_all()} /></View>
+         
+
+        {this.state.status_type == 'COLLECTED' &&(  <View style={{ flexDirection: 'row', marginTop: SECTION_MARGIN_TOP, }}>
+            <View style={{ flex: 2 }}><CustomButton title={'Select All '} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={()=>this.selectAllItem()} /></View>
+            <View style={{ flex: 2, }}><CustomButton title={'Close All '} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={()=>this.pickup_close_all()} /></View>
+          </View>)}
 
           {/*////////////////////// Print Button Block //////////////////////////////////////////////// */}
 
