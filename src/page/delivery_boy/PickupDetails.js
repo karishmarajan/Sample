@@ -33,6 +33,9 @@ export default class PickupDetails extends React.Component {
     balance_amount:'',
     amount_payed:'',
     amount_to_pay:'',
+    additional_charge:'',
+    pay_by_sender_withAdditinal:'',
+    sender_payment:'0',
   };
 
 
@@ -68,7 +71,7 @@ export default class PickupDetails extends React.Component {
     if(result.error != true){
 
       console.log('Success:', JSON.stringify(result));
-      this.setState({pickup_details : result.payload})
+      this.setState({pickup_details : result.payload, sender_payment: result.payload.payableBySender})
     
     }
     else{
@@ -109,12 +112,22 @@ export default class PickupDetails extends React.Component {
         })
   
   }
+ ////////////////////////////////// Additional charge calculating function /////////////////////////////////////////////////////////////////////////////////////
 
+ additional_Calculate(text){
+  var myInt = parseInt(text);
+  var payment=parseInt(this.state.pickup_details.payableBySender)
+  var total=myInt+payment;
+  
+  this.setState({sender_payment:''+total});
+  // if(this.state.amount_recieved != null){ this.balanceCalculate(this.state.amount_recieved);}
+
+ }
   ////////////////////////////////// Balance calculating fuction /////////////////////////////////////////////////////////////////////////////////////
 
 balanceCalculate(text){
   var myInt = parseInt(text);
-  var payment=parseInt(this.state.pickup_details.payableBySender)
+  var payment=parseInt(this.state.sender_payment)
   var bal=myInt-payment;
   var bal1=payment-myInt;
 
@@ -137,9 +150,11 @@ cash_payment() {
 
 
   let body = {
+    "additionalCharges":this.state.additional_charge,
     "amountPayed": this.state.amount_payed,
     "isAmountCollectedByDeliveryBoy": true,
     "orderId": this.state.pickup_details.orderId,
+
 
   };
 
@@ -319,7 +334,7 @@ render(){
               </View>
 <View style={{ backgroundColor:Colors.white,flexGrow:1,paddingLeft:MAIN_VIEW_PADDING,paddingRight:MAIN_VIEW_PADDING,paddingBottom:MAIN_VIEW_PADDING}}>
 
-<View style={{height:250}}>
+<View style={{height:300}}>
 <Grid ><Col><CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
         <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.originalDeliveryCharge  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
  <Grid ><Col><CustomText text={'Package Allowed'} textType={Strings.subtext} color={Colors.black}/></Col>
@@ -328,8 +343,10 @@ render(){
        <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.deliveryChargeCreditDeduction } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
   <Grid><Col><CustomText text={'Total'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.deliveryChargeAfterDeductions  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+       <Grid><Col><CustomText text={'Additional Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
+       <Col><View style={styles.inputview}><CustomInput flex={1} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} onChangeText={(text) =>{this.additional_Calculate(text); this.setState({amount_recieved:'',balance_amount:'',amount_to_pay:''})}} value={this.state.pickup_details.additionalCharges ? this.state.pickup_details.additionalCharges : 0 } /></View></Col></Grid> 
        <Grid><Col><CustomText text={'Sender Payment'} textType={Strings.subtext} color={Colors.black}/></Col>
-       <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.payableBySender } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+       <Col><View style={styles.inputview}><CustomText text={this.state.sender_payment } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
       </View>
 
       <CustomText  text={'Payment Method'} textType={Strings.subtitle} flex={9} />
