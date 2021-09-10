@@ -154,15 +154,15 @@ if(this.state.predefinedpin==="") {
   }
 
   let body = {
-      "additionalCharges": this.state.additional_charge,
+      "additionalCharges": this.state.additional_charge ? this.state.additional_charge : 0 ,
       "createdAtOfficeId": 0,
       "creatorId": parseInt(this.state.personId),
       "creatorUserType": "DELIVERY_AGENT",
-      "customerId": this.state.customer_id ? this.state.customer_id :null,
+      "customerId": this.state.customer_id ? this.state.customer_id : null,
       "customerIdentityType": this.state.customerIdentityType ? this.state.customerIdentityType : null,
       "deliveryPincode": this.state.reciever_pincode,
       "deliveryType": this.state.bullet == true ? "BULLET" : "NORMAL",
-      "finalCodCharge": this.state.cod,
+      "finalCodCharge": this.state.cod ? this.state.cod :0,
       "isManualPickup": true,
       "pickupPincode": this.state.sender_pincode,
       "preDefinedOrderId": this.state.predefinedpin,

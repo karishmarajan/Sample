@@ -158,12 +158,21 @@ checkItem = (item) => {
 /////////////////////////////// All Checkbox checking function ///////////////////////////////////////////////////////////////////////////////////
 selectAllItem(){
   var i ;
+  const { checked } = this.state;
   for(i=0;i<this.state.delivery_ids.length;i++){
    var item=this.state.delivery_ids[i];
-   this.checkItem(item);
+   if(!checked.includes(item)){
+    this.checkItem(item);
+   }
   }
 }
-
+ 
+deselectAllItem(){
+  var i ;
+  for(i=0;i<this.state.checked.length;i++){
+  this.setState({checked:[]});
+  }
+}
 
 ////////////////////////////////////// Delivery CloseAll function ////////////////////////////////////////////////////////////////////////////////////
   
@@ -393,7 +402,16 @@ fetch_delivery_orders(status_type) {
           if (result.error != true) {
 
             console.log('Success:', JSON.stringify(result));
-            this.setState({ delivery_list: result.payload })
+
+            const newArray = [];
+            result.payload.forEach(obj => {
+              if (!newArray.some(o => o.orderId === obj.orderId)) {
+                newArray.push({ ...obj })
+                this.state.delivery_ids.push(obj.orderId);
+              }
+        
+            });
+            this.setState({ delivery_list: newArray })
 
           }
           else {
@@ -461,10 +479,9 @@ fetch_delivery_orders(status_type) {
 
   _body = (item) => {
 
-    if(item.deliveryStatus == 'DELIVERED'){
-      this.state.delivery_ids.push(item.orderId);
-      // alert(this.state.delivery_ids)
-    }
+    // if(item.deliveryStatus == 'DELIVERED'){
+    //       this.state.delivery_ids.push(item.orderId);
+    // }
 
     return (
 
@@ -607,7 +624,8 @@ fetch_delivery_orders(status_type) {
 
           {this.state.status_type == 'DELIVERED' &&(  <View style={{ flexDirection: 'row', marginTop: SECTION_MARGIN_TOP, }}>
             <View style={{ flex: 2 }}><CustomButton title={'Select All '} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={()=>this.selectAllItem()} /></View>
-            <View style={{ flex: 2, }}><CustomButton title={'Close All '} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={()=>this.delivery_close_all()} /></View>
+            <View style={{ flex: 2 }}><CustomButton title={'Deselect All '} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={()=>this.deselectAllItem()} /></View>
+            <View style={{ flex: 2 }}><CustomButton title={'Close All '} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={()=>this.delivery_close_all()} /></View>
           </View>)}
 
           {/*////////////////////// Print Button Block //////////////////////////////////////////////// */}

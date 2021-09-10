@@ -79,6 +79,7 @@ export default class DeliveryOutDetails extends React.Component {
     diffperson: false,
     modalVisibleProof: false,
     modalVisibleSignature: false,
+    flag:0,
   };
 
 
@@ -232,7 +233,7 @@ export default class DeliveryOutDetails extends React.Component {
      console.log("otp entered",this.state.otp)
     let body = {
       "countryCode": this.state.countrycode,
-      "mobileNumber":`${this.state.altno ? this.state.mobile : this.state.delivery_details.contactPersonNumber}`,
+      "mobileNumber":`${this.state.altno ? this.state.mobile : this.state.diffperson ? this.state.mobile : this.state.delivery_details.contactPersonNumber}`,
 
     };
 
@@ -262,7 +263,7 @@ export default class DeliveryOutDetails extends React.Component {
     //this.state.delivery_details.contactPersonNumber
     let body = {
       "countryCode": this.state.countrycode,
-      "mobileNumber": `${this.state.altno ? this.state.mobile : this.state.delivery_details.contactPersonNumber?this.state.delivery_details.contactPersonNumber:this.state.mobile}`,
+      "mobileNumber": `${this.state.altno ? this.state.mobile : this.state.diffperson? this.state.mobile :this.state.delivery_details.contactPersonNumber}`,
 
     };
 
@@ -327,8 +328,8 @@ export default class DeliveryOutDetails extends React.Component {
     };
 
 
-    if (this.state.status == 'DELIVERED' && this.state.delivery_details.payableByReceiver > 0) {
-      Toast.show({ text: "Complete the payment first", type: 'warning' });
+    if (this.state.status == 'DELIVERED' && this.state.delivery_details.payableByReceiver > 0 && this.state.otp_verified === true) {
+      Toast.show({ text: "Complete the payment and verification first", type: 'warning' });
     } else {
 
       Api.fetch_request(DELIVERY_STATUS_UPDATE, 'PUT', '', JSON.stringify(body))
@@ -440,7 +441,7 @@ if(this.state.otp_verified==true)
       })
     }
     else{
-      Toast.show({text:'Please Fill in the blanks',type:'warning'})
+      Toast.show({text:'Please verify',type:'warning'})
     }
   }
 
@@ -826,6 +827,8 @@ if(this.state.otp_verified==true)
                       <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.deliveryChargePackageDeduction} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>
                     <Grid><Col><CustomText text={'Credit Allowed'} textType={Strings.subtext} color={Colors.black} /></Col>
                       <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.deliveryChargeCreditDeduction} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>
+                      <Grid><Col><CustomText text={'Final COD'} textType={Strings.subtext} color={Colors.black} /></Col>
+                      <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.finalCodCharge} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>      
                     <Grid><Col><CustomText text={'Total Amount'} textType={Strings.subtext} color={Colors.black} /></Col>
                       <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.deliveryChargeAfterDeductions} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>
                     <Grid><Col><CustomText text={'Reciever Payment'} textType={Strings.subtext} color={Colors.black} /></Col>
@@ -850,24 +853,7 @@ if(this.state.otp_verified==true)
               </View>)}
             </View>)}
 
-            {/*////////////////////// Order Status Block //////////////////////////////////////////////// */}
-
-
-            {this.state.delivery_details.deliveryStatus == 'ASSIGNED' && (<View>
-              <View style={{ backgroundColor: Colors.white, flex: 10, flexDirection: 'row', marginTop: SECTION_MARGIN_TOP, padding: MAIN_VIEW_PADDING, alignItems: 'center', }}>
-                <CustomText text={'Status Update'} textType={Strings.subtitle} flex={9} fontWeight={'bold'} />
-              </View>
-              <View style={{ backgroundColor: Colors.white, flexGrow: 1, paddingLeft: MAIN_VIEW_PADDING, paddingRight: MAIN_VIEW_PADDING, paddingBottom: MAIN_VIEW_PADDING }}>
-
-                <CustomText text={'Status'} textType={Strings.maintext} />
-                <CustomDropdown data={myArray} height={TEXT_FIELD_HIEGHT} borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} onChangeValue={(value, index, data) => { this.setState({ status: data[index]['name'] }) }} value={this.state.status} />
-
-                {this.state.status == 'ATTEMPT_FAILED' && (<View><CustomText text={'Reason/Remark'} textType={Strings.maintext} />
-                  <CustomDropdown data={myArray1} height={TEXT_FIELD_HIEGHT} borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} onChangeValue={(value, index, data) => { if (index == (data.length) - 1) { this.setState({ modal_visible: true }); } else { this.setState({ reason_val: value }) } }} value={this.state.reason_val} />
-                </View>)}
-                <CustomButton title={'Update'} backgroundColor={Colors.darkSkyBlue} onPress={() => this.delivery_status_update()} />
-              </View>
-            </View>)}
+        
             {/* /////////////////////////////////////////////////////////   change with isPreDefinedOrderWithPin true case ///////////////////////////// */}
           
               
@@ -931,7 +917,7 @@ undefined}
                   <View style={styles.input}>
                     <View style={styles.inputview4} >
                       {/* <CustomText text={this.state.delivery_details.contactPersonNumber ? this.state.delivery_details.contactPersonNumber : Strings.na} textType={Strings.subtext} color={Colors.black} width={150} /> */}
-                      <CustomInput backgroundColor={Colors.white} flex={1} maxLength={12} keyboardType={'phone-pad'} placeholder={'Mobile Number'} onChangeText={(text) => this.setState({ mobile: text, errorTextmobile: "" })} value={this.state.delivery_details.contactPersonNumber ? this.state.delivery_details.contactPersonNumber :this.state.mobile} />
+                      <CustomInput backgroundColor={Colors.white} flex={1} maxLength={12} keyboardType={'phone-pad'} placeholder={'Mobile Number'} onChangeText={(text) => this.setState({ mobile: text, errorTextmobile: "" })} value={this.state.mobile} />
                     </View>
                     <View style={{ flex: 3 }}><CustomButton title={'SEND OTP'} marginTop={BORDER_WIDTH} height={SHORT_BUTTON_HEIGHT} borderRadius={SHORT_BORDER_RADIUS} fontSize={NORMAL_FONT} marginRight={TEXT_PADDING_RIGHT} onPress={() => this.send_otp()} /></View>
                   </View>
@@ -944,7 +930,24 @@ undefined}
                   {!!this.state.errorTextverify && (<Text style={{ color: 'red' }}>{this.state.errorTextverify}</Text>)}
                 </View>)}
 
+    {/*////////////////////// Order Status Block //////////////////////////////////////////////// */}
 
+
+    {this.state.delivery_details.deliveryStatus == 'ASSIGNED' && (<View>
+              <View style={{ backgroundColor: Colors.white, flex: 10, flexDirection: 'row', marginTop: SECTION_MARGIN_TOP, padding: MAIN_VIEW_PADDING, alignItems: 'center', }}>
+                <CustomText text={'Status Update'} textType={Strings.subtitle} flex={9} fontWeight={'bold'} />
+              </View>
+              <View style={{ backgroundColor: Colors.white, flexGrow: 1, paddingLeft: MAIN_VIEW_PADDING, paddingRight: MAIN_VIEW_PADDING, paddingBottom: MAIN_VIEW_PADDING }}>
+
+                <CustomText text={'Status'} textType={Strings.maintext} />
+                <CustomDropdown data={myArray} height={TEXT_FIELD_HIEGHT} borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} onChangeValue={(value, index, data) => { this.setState({ status: data[index]['name'] }) }} value={this.state.status} />
+
+                {this.state.status == 'ATTEMPT_FAILED' && (<View><CustomText text={'Reason/Remark'} textType={Strings.maintext} />
+                  <CustomDropdown data={myArray1} height={TEXT_FIELD_HIEGHT} borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} onChangeValue={(value, index, data) => { if (index == (data.length) - 1) { this.setState({ modal_visible: true }); } else { this.setState({ reason_val: value }) } }} value={this.state.reason_val} />
+                </View>)}
+                <CustomButton title={'Update'} backgroundColor={Colors.darkSkyBlue} onPress={() => this.delivery_status_update()} />
+              </View>
+            </View>)}
 
 
             <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue} onPress={() => this.update_receiver_name()} />

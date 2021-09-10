@@ -118,8 +118,10 @@ export default class PickupDetails extends React.Component {
   var myInt = parseInt(text);
   var payment=parseInt(this.state.pickup_details.payableBySender)
   var total=myInt+payment;
-  
-  this.setState({sender_payment:''+total});
+
+  var new_additional = parseInt(this.state.pickup_details.payableBySender) + myInt ;
+ 
+    this.setState({sender_payment:''+total , additional_charge :new_additional });
   // if(this.state.amount_recieved != null){ this.balanceCalculate(this.state.amount_recieved);}
 
  }
@@ -344,7 +346,7 @@ render(){
   <Grid><Col><CustomText text={'Total'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.deliveryChargeAfterDeductions  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
        <Grid><Col><CustomText text={'Additional Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
-       <Col><View style={styles.inputview}><CustomInput flex={1} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} onChangeText={(text) =>{this.additional_Calculate(text); this.setState({amount_recieved:'',balance_amount:'',amount_to_pay:''})}} value={this.state.pickup_details.additionalCharges ? this.state.pickup_details.additionalCharges : 0 } /></View></Col></Grid> 
+       <Col><View style={styles.inputview}><CustomInput flex={1} placeholder={`${this.state.pickup_details.additionalCharges}`} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} onChangeText={(text) =>{this.additional_Calculate(text); this.setState({amount_recieved:'',balance_amount:'',amount_to_pay:''})}} value={this.state.pickup_details.additionalCharges ? this.state.pickup_details.additionalCharges : 0 } /></View></Col></Grid> 
        <Grid><Col><CustomText text={'Sender Payment'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><View style={styles.inputview}><CustomText text={this.state.sender_payment } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
       </View>
