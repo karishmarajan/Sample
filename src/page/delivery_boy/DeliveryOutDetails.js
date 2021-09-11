@@ -328,9 +328,12 @@ export default class DeliveryOutDetails extends React.Component {
     };
 
 
-    if (this.state.status == 'DELIVERED' && this.state.delivery_details.payableByReceiver > 0 && this.state.otp_verified === true) {
-      Toast.show({ text: "Complete the payment and verification first", type: 'warning' });
-    } else {
+    if (this.state.status == 'DELIVERED' && this.state.delivery_details.payableByReceiver > 0) {
+      Toast.show({ text: "Complete the payment first", type: 'warning' });
+    } else if(this.state.otp_verified === false){
+      Toast.show({ text: "Need OTP verification", type: 'warning' });
+    }
+    else {
 
       Api.fetch_request(DELIVERY_STATUS_UPDATE, 'PUT', '', JSON.stringify(body))
         .then(result => {
@@ -855,7 +858,7 @@ if(this.state.otp_verified==true)
 
         
             {/* /////////////////////////////////////////////////////////   change with isPreDefinedOrderWithPin true case ///////////////////////////// */}
-          
+          {this.state.otp_verified === false &&(<View>
               
                 <View style={{ flexDirection: 'row', }}>
                  {ispredefined==false&& <CustomRadioButton title={'Same as delivery details'} selectedColor={Colors.darkSkyBlue} selected={this.state.same} onPress={() => this.isSelected(1)} />}
@@ -929,7 +932,7 @@ undefined}
                   </View>
                   {!!this.state.errorTextverify && (<Text style={{ color: 'red' }}>{this.state.errorTextverify}</Text>)}
                 </View>)}
-
+                </View>)}
     {/*////////////////////// Order Status Block //////////////////////////////////////////////// */}
 
 
