@@ -128,14 +128,23 @@ checkItem = (item) => {
 };
 
 /////////////////////////////// All Checkbox checking function ///////////////////////////////////////////////////////////////////////////////////
-  selectAllItem(){
-    var i ;
-    for(i=0;i<this.state.pickup_ids.length;i++){
-     var item=this.state.pickup_ids[i];
-     this.checkItem(item);
-    }
+selectAllItem(){
+  var i ;
+  const { checked } = this.state;
+  for(i=0;i<this.state.pickup_ids.length;i++){
+   var item=this.state.pickup_ids[i];
+   if(!checked.includes(item)){
+    this.checkItem(item);
+   }
   }
-
+}
+ 
+deselectAllItem(){
+  var i ;
+  for(i=0;i<this.state.checked.length;i++){
+  this.setState({checked:[]});
+  }
+}
 
 ////////////////////////////////////// Pickup CloseAll function ////////////////////////////////////////////////////////////////////////////////////
   
@@ -214,7 +223,16 @@ pickup_close_all() {
           if (result.error != true) {
 
             console.log('Success:', JSON.stringify(result));
-            this.setState({ pickup_list: result.payload })
+            const newArray = [];
+            result.payload.forEach(obj => {
+              if (!newArray.some(o => o.orderId === obj.orderId)) {
+                newArray.push({ ...obj })
+                this.state.pickup_ids.push(obj.orderId);
+              }
+        
+            });
+
+            this.setState({ pickup_list: newArray })
 
           }
           else {
@@ -402,10 +420,10 @@ capitalizeName(name) {
   ///////////////////////////////////// Pickup order body part ///////////////////////////////////////////////////////////////////////////////////////////
 
   _body = (item) => {
-    if(item.pickupStatus == 'COLLECTED'){
-      this.state.pickup_ids.push(item.orderId);
-      // alert(this.state.pickup_ids)
-    }
+    // if(item.pickupStatus == 'COLLECTED'){
+    //   this.state.pickup_ids.push(item.orderId);
+    //   // alert(this.state.pickup_ids)
+    // }
    
     return (
 
@@ -558,6 +576,7 @@ render() {
 
         {this.state.status_type == 'COLLECTED' &&(  <View style={{ flexDirection: 'row', marginTop: SECTION_MARGIN_TOP, }}>
             <View style={{ flex: 2 }}><CustomButton title={'Select All '} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={()=>this.selectAllItem()} /></View>
+            <View style={{ flex: 2 }}><CustomButton title={'Deselect All '} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={()=>this.deselectAllItem()} /></View>
             <View style={{ flex: 2, }}><CustomButton title={'Close All '} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={()=>this.pickup_close_all()} /></View>
           </View>)}
 
