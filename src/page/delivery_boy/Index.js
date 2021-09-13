@@ -39,7 +39,7 @@ export default class Index extends Component{
 
 {/* <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.bulkorderview()}}>Bulk Orders </Text> */}
 
-<Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.statusupdatefirst()}}>Status Update </Text>
+{/* <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.statusupdatefirst()}}>Status Update </Text> */}
 {/* <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.selfassign()}}>Self Assign </Text>
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.ordertransfer1()}}>Order Transfer </Text> */}
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.requeststatus()}}>Request Status </Text>
