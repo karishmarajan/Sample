@@ -163,7 +163,9 @@ if(this.state.predefinedpin==="") {
       "deliveryPincode": this.state.reciever_pincode,
       "deliveryType": this.state.bullet == true ? "BULLET" : "NORMAL",
       "finalCodCharge": this.state.cod ? this.state.cod :0,
-      "isManualPickup": true,
+      "isAtDeliveryAgent": false,
+      "isAtOffice": false,
+      "isManualPickup": false,
       "pickupPincode": this.state.sender_pincode,
       "preDefinedOrderId": this.state.predefinedpin,
     }

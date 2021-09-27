@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ScrollView,StyleSheet,Modal,Linking } from 'react-native';
-import { Container, View, Button, Left, Right,Icon,Grid,Col, Toast} from 'native-base';
+import { Container, View, Button, Left, Right,Icon,Grid,Col, Toast, Text} from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
 import Navbar from '../../component/Navbar';
@@ -36,6 +36,8 @@ export default class PickupDetails extends React.Component {
     additional_charge:'',
     pay_by_sender_withAdditinal:'',
     sender_payment:'0',
+    errorTextamount_recieved:'',
+    hasError:false,
   };
 
 
@@ -149,6 +151,15 @@ if(myInt==payment){
 ///////////////////////////////////////// Payment by cash function  //////////////////////////////////////////////////////////////////////////////////
 
 cash_payment() {
+
+  if (this.state.amount_recieved === "" && this.state.pickup_details.payableBySender > 0) {
+    this.setState({ hasError: true, errorTextamount_recieved: 'Please fill !' });
+    return;
+  }
+  if (parseInt(this.state.amount_recieved) < parseInt(this.state.pickup_details.payableBySender)) {
+    this.setState({ hasError: true, errorTextamount_recieved: 'Please collect full amount' });
+    return;
+  }
 
 
   let body = {
@@ -356,7 +367,8 @@ render(){
 
       <View style={{marginTop:SECTION_MARGIN_TOP,height:150}}>
       <Grid><Col><CustomText text={'Amount Recieved'} textType={Strings.subtext} color={Colors.black}/></Col>
-       <Col><CustomInput flex={1} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} onChangeText={(text) =>{this.balanceCalculate(text); this.setState({amount_recieved: text})}} value={this.state.amount_recieved} /></Col></Grid>
+       <Col><CustomInput flex={1} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} onChangeText={(text) =>{this.balanceCalculate(text); this.setState({amount_recieved: text, errorTextamount_recieved:''})}} value={this.state.amount_recieved} /></Col></Grid>
+       {!!this.state.errorTextamount_recieved && (<Text style={{ color: 'red' }}>{this.state.errorTextamount_recieved}</Text>)}
       <Grid><Col><CustomText text={'Balance Amount'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><CustomInput flex={1} value={this.state.balance_amount} /></Col></Grid>
        <Grid><Col><CustomText text={'Balance To Pay'} textType={Strings.subtext} color={Colors.black}/></Col>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, StyleSheet, AsyncStorage, FlatList ,Linking, Platform, BackHandler, Modal } from 'react-native';
+import { ScrollView, StyleSheet, AsyncStorage, FlatList ,Linking, Platform, BackHandler, Modal , Switch} from 'react-native';
 import { Actions } from 'react-native-router-flux';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 import { Container, Header, Button, Left, Icon, Right, Text, Input, TextInput, Grid, Col, Row, SearchBar, Item, View, Badge, Body, Toast } from 'native-base';
@@ -52,6 +52,8 @@ export default class PickUp extends React.Component {
     torch_enable:RNCamera.Constants.FlashMode.off,
     predefinedpin:'',
     allChecked: false,
+    quick_scan:false,
+    scan_title:'',
     camera: {
       type: RNCamera.Constants.Type.back,
 flashMode: RNCamera.Constants.FlashMode.auto,
@@ -62,9 +64,19 @@ flashMode: RNCamera.Constants.FlashMode.auto,
 
 
   componentDidMount() {
-    this.fetch_pickup_orders(Strings.assigned) 
+    this.fetch_pickup_orders(Strings.assigned) ;
+    this.toggleScan();
   }
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  toggleScan(val){
+    if(val === true){
+      setTimeout(()=>{this.setState({scan_title:"Quick Scan"})},1000)
+    }else{
+      setTimeout(()=>{this.setState({scan_title:"Normal Scan"})},1000)
+    }
+  }
 //////////////////////////////  Toggle torch function   ////////////////////////////////////////////////////////////////////
 
 toggleTorch()
@@ -260,8 +272,17 @@ pickup_close_all() {
             this.setState({ pickup_details: result.payload })
 
             if(this.state.pickup_details.deliveryBoy.personId == data.personId)
+            ///////////////////////// Editted for quick scan ////////////////////////////////////////////////////////////////////
 {
+  if(this.state.scan_title ==='Quick Scan' && parseInt(this.state.pickup_details.payableBySender) > 0 ){
   Actions.pickupdetails({pickup_id:this.state.pickup_details.pickupId});
+}else if(this.state.scan_title ==='Normal Scan'){
+  Actions.pickupdetails({pickup_id:this.state.pickup_details.pickupId});
+}else{
+this.pickup_update(this.state.pickup_details.orderId);
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ 
 }else{
   Toast.show({text:'This is not your order',type:'warning'})
 }
@@ -275,6 +296,38 @@ pickup_close_all() {
         })
       }));
   }
+
+  ///////////////////////////////// Pickup order update function //////////////////////////////////////////////////////////////////////////////////////// 
+ 
+  pickup_update(order_id) {
+
+    let body = {
+
+  "orderId": order_id,
+  "pickupFailedReason": '',
+  "pickupStatus": 'COLLECTED'
+
+    };
+
+    Api.fetch_request(PICKUP_ORDER_UPDATE, 'PUT', '', JSON.stringify(body))
+      .then(result => {
+
+        if (result.error != true) {
+
+         this.setState({final_cod_charge:result.payload.finalCodCharge})
+          console.log('Success:', JSON.stringify(result));
+          Toast.show({ text: result.message, type: 'success' });
+
+          this.fetch_pickup_details(this.props.pickup_id);
+
+        }
+        else {
+          console.log('Failed');
+          Toast.show({ text: result.message, type: 'warning' });
+        }
+      })
+
+}
 
 //////////////////////////////// Word capitalizing function /////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -522,7 +575,7 @@ render() {
 
 <View style={styles.container}>
    
-<Navbar  title="Scanning" left={modal_view} right={torch}/>
+<Navbar  title={this.state.scan_title} left={modal_view} right={torch}/>
        
         <RNCamera
             ref={ref => {
@@ -579,6 +632,18 @@ render() {
             <View style={{ flex: 2 }}><CustomButton title={'Deselect All '} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={()=>this.deselectAllItem()} /></View>
             <View style={{ flex: 2, }}><CustomButton title={'Close All '} backgroundColor={Colors.darkSkyBlue} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={()=>this.pickup_close_all()} /></View>
           </View>)}
+
+          
+          <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:1, marginTop:SECTION_MARGIN_TOP}}>
+           <CustomText text={'Quick Scan'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+           <Switch
+          trackColor={{false: 'gray', true: 'teal'}}
+          thumbColor="white"
+          ios_backgroundColor="gray"
+          onValueChange={(value) => {this.setState({quick_scan: value,});this.toggleScan(value);}}
+          value={this.state.quick_scan}
+        />
+           </View>
 
           {/*////////////////////// Print Button Block //////////////////////////////////////////////// */}
 
