@@ -42,6 +42,9 @@ import BulkOrderView from './page/delivery_boy/BulkOrderView';
 import orderwithpin from './page/delivery_boy/Orderwithpin';
 // import orderwithpin from './page/delivery_boy/orderwithpin';
 import Report from './page/delivery_boy/Report';
+import PredefinedOrder from './page/delivery_boy/PredefinedOrder';
+import AssignPredefined from './page/delivery_boy/AssignPredefined';
+import TrackOrder from './page/delivery_boy/TrackOrder';
 
 
 
@@ -92,6 +95,9 @@ export default class Main extends Component {
             {/* <Scene  key="orderwithpin" component={orderwithpin} hideNavBar /> */}
             <Scene  key="orderwithpin" component={orderwithpin} hideNavBar />
             <Scene  key="report" component={Report} hideNavBar />
+            <Scene  key="predefinedorder" component={PredefinedOrder} hideNavBar />
+            <Scene  key="assignpredefined" component={AssignPredefined} hideNavBar />
+            <Scene  key="trackorder" component={TrackOrder} hideNavBar />
           </Scene>
         </Router>
       </Root>

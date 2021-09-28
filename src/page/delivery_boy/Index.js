@@ -35,6 +35,7 @@ export default class Index extends Component{
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.deliveryout();  }}>Delivery Out </Text>
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.deliveryvehicles()}}>View Vehicle </Text>
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.manualpickuporders()}}>Manual Pickups </Text>
+<Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.predefinedorder()}}>Predefined Order </Text>
 <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.orderwithpin()}}> Order creation with pincode </Text>
 
 {/* <Text style={styles.index} onPress={()=>{this.props.onClose(); Actions.bulkorderview()}}>Bulk Orders </Text> */}
