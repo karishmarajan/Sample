@@ -16,13 +16,13 @@ import CustomDropdown from '../../component/CustomDropdown';
 import session, { KEY } from '../../session/SessionManager';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 import Api from '../../component/Fetch';
-import { DELIVERY_ORDERS, DELIVERY_STATUS_UPDATE , DELIVERY_STATUS_CLOSE, GET_DELIVERY_BY_SCAN} from '../../constants/Api';
+import { PREDEFINED_ID_STATUS, DELIVERY_STATUS_UPDATE , DELIVERY_STATUS_CLOSE, GET_DELIVERY_BY_SCAN} from '../../constants/Api';
 import RNPrint from 'react-native-print';
 import _ from "lodash";
 import { RNCamera } from 'react-native-camera';
 
 
-const myArray = [{ name: "Assign Pending", value: "Assign Pending" }, { name: "Assigned", value: "Assigned" } , { name: "Reassign", value: "Reassign" } , { name: "Reassign Pending", value: "Reassign Pending" } , { name: "Payment Pending", value: "Payment Pending" }, { name: "Re-assign Accepted", value: "Re-assign Accepted" }, { name: "Used", value: "Used" }, { name: "Unused", value: "Unused" }];
+const myArray = [{ name: "PENDING", value: "Assign Pending" }, { name: "ASSIGNED", value: "Assigned" } , { name: "Reassign", value: "Reassign" } , { name: "Reassign Pending", value: "Reassign Pending" } , { name: "Payment Pending", value: "Payment Pending" }, { name: "Re-assign Accepted", value: "Re-assign Accepted" }, { name: "Used", value: "Used" }, { name: "Unused", value: "Unused" }];
 
 
 
@@ -34,7 +34,7 @@ export default class PredefinedOrder extends React.Component {
  this.state = {
     filterType: Strings.status,
     search: '',
-    delivery_list: [],
+    predefined_status_list: [],
     delivery_ids:[],
     checked: [],
     status_type: Strings.assigned,
@@ -58,7 +58,7 @@ flashMode: RNCamera.Constants.FlashMode.auto,
 
   componentDidMount() {
     console.log("PAGE===================================>")
-    this.fetch_delivery_orders(Strings.assigned)
+    this.fetch_predefined_orders("PENDING")
     setTimeout(()=>{this.setState({loader:false})},1000);
   }
 
@@ -155,24 +155,7 @@ checkItem = (item) => {
   console.log(checked)
 };
 
-/////////////////////////////// All Checkbox checking function ///////////////////////////////////////////////////////////////////////////////////
-selectAllItem(){
-  var i ;
-  const { checked } = this.state;
-  for(i=0;i<this.state.delivery_ids.length;i++){
-   var item=this.state.delivery_ids[i];
-   if(!checked.includes(item)){
-    this.checkItem(item);
-   }
-  }
-}
- 
-deselectAllItem(){
-  var i ;
-  for(i=0;i<this.state.checked.length;i++){
-  this.setState({checked:[]});
-  }
-}
+
 
 ////////////////////////////////////// Delivery CloseAll function ////////////////////////////////////////////////////////////////////////////////////
   
@@ -198,193 +181,19 @@ delivery_close_all() {
       }
     })
 }
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-silentPrint = async () => {
-  if (!this.state.selectedPrinter) {
-    alert('Must Select Printer First')
-  }
-
-  const jobName = await RNPrint.print({
-    printerURL: this.state.selectedPrinter.url,
-    html: '<h1>Silent Print</h1>'
-  })
-
-}
 //////////////////////////////// Word capitalizing function /////////////////////////////////////////////////////////////////////////////////////////////
 
  capitalizeName(name) {
   return name.replace(/\b(\w)/g, s => s.toUpperCase());
 }
 
- /////////////////////////////////// Searching with order no ////////////////////////////edited Nishanth//////////////////////////////////
-
- searchtext=(text)=>{
-
- /*  let res=_.filter(this.state.delivery_list, obj=>obj.orderId==text);
-
-  this.setState({pickup_list_search:res}) */
-  const textData = text.toUpperCase();
-  console.log('values from textbox:', textData.toUpperCase() )
-  if (textData  == '' || null) {
-     console.log("EMPTY")
-  }
-  else if(this.state.delivery_list=='')
-  {
-    console.log("mmmm")
-    Toast.show({text:'No data Found',type:'warning'})
-  }
-  else {
-
-      console.log('text data in else part are:',textData  )
-  
-      const MainData = this.state.delivery_list.filter((item)=> {
-        console.log("==>",item.orderId)
-        const itemData=`${item.preDefinedOrderId?item.preDefinedOrderId:item.orderId}`;
-          
-          return itemData.indexOf(textData) > -1;
-      }
- 
-      );
-      console.log('maindata:', MainData)
-      if (MainData == '') {
-         console.log("NODART")
-         Toast.show({text:'Not Found',type:'warning'});
-      }
-      else {
-       /*    this.setState({ itemalert: false }) */
-          this.setState({
-            pickup_list_search : MainData,
-            
-          });
-          console.log("DATA FOUND")
-      }
-  }
-
-}
-
- /////////////////////////////////// Searching with Customer name //////////////////////////////////////////////////////////////
-
-//  searchtext_name(text){
-
-//   var res1=text.trim();
-//   let res=_.filter(this.state.delivery_list, obj=>obj.contactPersonName==res1.trim());
-
-//   var lower= (text).toLowerCase();
-//   let reslower=_.filter(this.state.delivery_list, obj=>obj.contactPersonName==lower.trim());
-
-//   var upper= (text).toUpperCase();
-//   let resupper=_.filter(this.state.delivery_list, obj=>obj.contactPersonName==upper.trim());
-
-//   var capitalize= this.capitalizeName(text);
-//   let rescapitalize=_.filter(this.state.delivery_list, obj=>obj.contactPersonName==capitalize.trim());
-
-//    let fullList=this.state.delivery_list;
-//   // let filteredList = 
-//   // fullList.filter((item) => { // search from a full list, and not from a previous search results list
-//   //   if(item.contactPersonName.toLowerCase().match(text))
-//   //     return item;
-//   // })
-
-//   // let filteredList_upper = fullList.filter((item) => { // search from a full list, and not from a previous search results list
-//   //   if(item.contactPersonName.toUpperCase().match(text))
-//   //     return item;
-//   // })
-
-//   // let filteredList_capitalize= fullList.filter((item) => { // search from a full list, and not from a previous search results list
-//   //   if(this.capitalizeName(item.contactPersonName).match(text))
-//   //     return item;
-//   // })
-
-//   if (res!= ''){ 
-//   this.setState({pickup_list_search:res})
-//   }
-//   else if (reslower != ''){ 
-  
-//   this.setState({pickup_list_search:reslower})
-//   }
-//   else if (resupper != ''){ 
-  
-//   this.setState({pickup_list_search:resupper})
-//   }
-//   else if (rescapitalize != ''){ 
-  
-//     this.setState({pickup_list_search:rescapitalize})
-//     }
-//    else if (filteredList != '')
-// { 
-//   this.setState({pickup_list_search:filteredList}) 
-// }
-// else if (filteredList_upper != '')
-// { 
-//   this.setState({pickup_list_search:filteredList_upper}) 
-// }
-// else if (filteredList_capitalize != '')
-// { 
-//   this.setState({pickup_list_search:filteredList_capitalize}) 
-// }
-//   else{
-//     this.setState({pickup_list_search:''})
-//   }
-
-// }
-////////////////////////////edited Nishanth/////////////////////////////////////////////
-
-
-searchtext_name =(text)=> {
-  const textData = text.toLowerCase();
-  const textData1 =text.toUpperCase()
-  console.log('values from textbox:', textData.toUpperCase() )
-  if (textData  == '' || null) {
-     console.log("EMPTY")
-  }
-  else {
-
-      console.log('text data in else part are:',textData  )
-  
-      const MainData = this.state.delivery_list.filter((item)=> {
-        console.log("==>",item.contactPersonName)
-          const itemData=`${item.contactPersonName}`;
-          
-          return itemData.indexOf(textData || textData1) > -1;
-      }
- 
-      );
-      console.log('maindata:', MainData)
-      if (MainData == '') {
-         console.log("NODART")
-      }
-      else {
-       /*    this.setState({ itemalert: false }) */
-          this.setState({
-            pickup_list_search : MainData,
-            
-          });
-          console.log("DATA FOUND")
-      }
-  }
-};
 
 
   
- /////////////////////////////////////// Call function ////////////////////////////////////////////////////////////////////////////
-
-dialCall = (no) => {
-
-  let phoneNumber = '';
-  if (Platform.OS === 'android') {
-    phoneNumber = 'tel:${'+no+'}';
-  }
-  else {
-    phoneNumber = 'telprompt:${'+no+'}';
-  }
-
-  Linking.openURL(phoneNumber);
-};
-
 ////////////////////////////////////// Delivery order fetching function ///////////////////////////////////////////////////////////////////////////////////
  
-fetch_delivery_orders(status_type) {
+fetch_predefined_orders(status_type) {
 
     this.setState({ status_type: status_type })
 
@@ -392,13 +201,14 @@ fetch_delivery_orders(status_type) {
       let data = JSON.parse(value);
 
       let body = {
-        "filterType": status_type != Strings.all ? this.state.filterType : Strings.all,
-        "status": status_type == Strings.all ? '0' : status_type,
-        "personId": data.personId
-
+        
+          "assigneeId": data.personId,
+          "assigneeUserType": "DELIVERY_BOY",
+          "assignmentStatus": status_type
+     
       };
 
-      Api.fetch_request(DELIVERY_ORDERS, 'POST', '', JSON.stringify(body))
+      Api.fetch_request(PREDEFINED_ID_STATUS, 'POST', '', JSON.stringify(body))
         .then(result => {
 
           if (result.error != true) {
@@ -413,7 +223,7 @@ fetch_delivery_orders(status_type) {
               }
         
             });
-            this.setState({ delivery_list: newArray })
+            this.setState({ predefined_status_list: newArray })
 
           }
           else {
@@ -455,7 +265,7 @@ fetch_delivery_orders(status_type) {
 
   _header = () => {
 
-    if(this.state.status_type == 'Reassign Pending' || this.state.status_type == 'Payment Pending'){
+    if(this.state.status_type == 'Reassign Pending' ){
       return (
 
         <View style={{ flexDirection: 'row', borderBottomWidth: 0.3,borderTopWidth:0.3 , borderLeftWidth:0.3 ,marginTop:6}}>
@@ -466,14 +276,9 @@ fetch_delivery_orders(status_type) {
           <View style={styles.cell}><CustomText text={'User Type'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
           <View style={styles.cell}><CustomText text={'User ID'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
           <View style={styles.cell}><CustomText text={'User Name'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
-         <View style={styles.cell}><CustomText text={'Used Date'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View> 
-          <View style={styles.cell}><CustomText text={'Status'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
           <View style={styles.cell}><CustomText text={'Range'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
-         
-          <View style={styles.cell}><CustomText text={'Office Name'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
-         
           <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
-          {/* <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View> */}
+          <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
          
         </View>
       )
@@ -489,8 +294,61 @@ fetch_delivery_orders(status_type) {
        <View style={styles.cell}><CustomText text={'Address'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
        <View style={styles.cell}><CustomText text={'Status'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
        <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
-        {/* <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View> */}
+      </View>
+        )
+    }
+    else if(this.state.status_type == 'Unused'){
+      return(
+        <View style={{ flexDirection: 'row', borderBottomWidth: 0.3,borderTopWidth:0.3 , borderLeftWidth:0.3 ,marginTop:6}}>
+        <View style={styles.cell}><CustomText text={'Order ID'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText text={'Assigned By'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText text={'Assigned Date'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+       <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+      </View>
+        )
+    }
+    else if(this.state.status_type == 'Payment Pending'){
+      return(
+        <View style={{ flexDirection: 'row', borderBottomWidth: 0.3,borderTopWidth:0.3 , borderLeftWidth:0.3 ,marginTop:6}}>
+       <View style={styles.cell}><CustomText text={'SLNO'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+          <View style={styles.cell}><CustomText text={'Re-Assigned By'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+          <View style={styles.cell}><CustomText text={'Re-Assigned Date'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+          <View style={styles.cell}><CustomText text={'No of Order ID '} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+          <View style={styles.cell}><CustomText text={'User Type'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+          <View style={styles.cell}><CustomText text={'User ID'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+          <View style={styles.cell}><CustomText text={'User Name'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+          <View style={styles.cell}><CustomText text={'Range'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+          <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+          <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+          <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+         
+      </View>
+        )
+    }
+    else if(this.state.status_type == 'Assign Pending'){
+      return(
+        <View style={{ flexDirection: 'row', borderBottomWidth: 0.3,borderTopWidth:0.3 , borderLeftWidth:0.3 ,marginTop:6}}>
+        <View style={styles.cell}><CustomText text={'Order ID'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText text={'Assigned By'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText text={'Assigned Date'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText text={'No of Order ID '} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+          <View style={styles.cell}><CustomText text={'Range'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
        
+      </View>
+        )
+    }
+    else if(this.state.status_type == 'ASSIGNED'){
+      return(
+        <View style={{ flexDirection: 'row', borderBottomWidth: 0.3,borderTopWidth:0.3 , borderLeftWidth:0.3 ,marginTop:6}}>
+        <View style={styles.cell}><CustomText text={'Order ID'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText text={'Assigned By'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText text={'Assigned Date'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText text={'No of Order ID '} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+          <View style={styles.cell}><CustomText text={'Range'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       </View>
         )
     }
@@ -506,6 +364,7 @@ fetch_delivery_orders(status_type) {
       </View>
         )
     }
+    
     else{
       return(
       <View style={{ flexDirection: 'row', borderBottomWidth: 0.3,borderTopWidth:0.3 , borderLeftWidth:0.3 ,marginTop:6}}>
@@ -513,11 +372,11 @@ fetch_delivery_orders(status_type) {
       <View style={styles.cell}><CustomText text={'Assigned By'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell}><CustomText text={'Assigned Date'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell}><CustomText text={'No of Order ID '} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
-    {this.state.status_type == 'Used' &&( <View style={styles.cell}><CustomText text={'Used Date'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>)} 
-    {this.state.status_type == 'Used' &&( <View style={styles.cell}><CustomText text={'Status'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>)}
+     <View style={styles.cell}><CustomText text={'Used Date'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View> 
+     <View style={styles.cell}><CustomText text={'Status'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
      <View style={styles.cell}><CustomText text={'Range'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
-    {this.state.status_type == 'Reassign Pending' &&( <View style={styles.cell}><CustomText text={'Office Name'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>)}
-    {this.state.status_type == 'Reassign Pending' &&( <View style={styles.cell}><CustomText text={'User Name'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>)}
+     <View style={styles.cell}><CustomText text={'Office Name'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+      <View style={styles.cell}><CustomText text={'User Name'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
       {/* <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View> */}
      
@@ -531,43 +390,42 @@ fetch_delivery_orders(status_type) {
 
   _body = (item) => {
 
-    // if(item.deliveryStatus == 'DELIVERED'){
-    //       this.state.delivery_ids.push(item.orderId);
-    // }
-
+    if(this.state.status_type == 'Reassign Pending' || this.state.status_type == 'Payment Pending'){
     return (
 
       <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3 }}>
-        <View style={styles.cell1}>{item.deliveryStatus == 'DELIVERED' && (<View><CustomCheckBox color={Colors.buttonBackgroundColor} onPress={()=>this.checkItem(item.orderId)} checked={this.state.checked.includes(item.orderId)}/></View>)}</View>
-        {/* <View style={styles.cell}><CustomText text={item.serialId ? item.serialId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View> */}
-        <View style={styles.cell}><CustomText text={item.preDefinedOrderId?item.preDefinedOrderId:item.orderId ? item.orderId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText text={item.contactPersonName ? item.contactPersonName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+       
+       
+        <View style={styles.cell}><CustomText text={item.assignerName ? item.assignerName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.addressLine1 ? item.addressLine1 : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText text={item.city ? item.city : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText text={item.contactPersonNumber ? item.contactPersonNumber : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText text={item.date ? item.date : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText text={item.deliveryStatus ? item.deliveryStatus : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText text={ item.attempt} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText text={item.deliveryType ? item.deliveryType : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText text={item.payableByReceiver } textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-
-        <View style={styles.cell}>
-          <View>
-            <CustomButton title={'Notify'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5} text_color={Colors.darkSkyBlue} />
-            <CustomButton title={'Call'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5}  text_color={Colors.darkSkyBlue} onPress={()=>this.dialCall(item.contactPersonNumber)} />
-            <CustomButton title={'Details'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={1} marginBottom={5} text_color={Colors.darkSkyBlue} onPress={() => Actions.deliveryoutdetails({delivery_id:item.deliveryId})} />
-          </View>
-        </View>
-        {/* <View style={styles.cell}>
-          {item.deliveryStatus == 'DELIVERED' && (<View>
-            <CustomButton title={'Close'} backgroundColor={Colors.white} height={20} fontSize={14} marginTop={30} marginBottom={5}  text_color={Colors.darkSkyBlue} onPress={()=>this.delivery_status_update(item.orderId)} />
-            </View>)}
-         </View> */}
+        <View style={styles.cell}><CustomText text={item.availableFromId ? item.availableFromId +"-"+ item.availableToId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText text={item.assignerUserType ? item.assignerUserType : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+       
 
       </View>
 
-
     )
+  }
+  else if(this.state.status_type == 'Used'){
+    return(
+      <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3 }}>
+      <View style={styles.cell}><CustomText text={item.assignerName ? item.assignerName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+      <View style={styles.cell}><CustomText text={item.addressLine1 ? item.addressLine1 : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+      <View style={styles.cell}><CustomText text={item.availableFromId ? item.availableFromId +"-"+ item.availableToId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+      <View style={styles.cell}><CustomText text={item.assignerUserType ? item.assignerUserType : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+      </View>
+      )
+  }
+    else{
+      return(
+        <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3 }}>
+        <View style={styles.cell}><CustomText text={item.assignerName ? item.assignerName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText text={item.addressLine1 ? item.addressLine1 : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText text={item.availableFromId ? item.availableFromId +"-"+ item.availableToId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText text={item.assignerUserType ? item.assignerUserType : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+        </View>
+      )
+    }
   }
 
 ////////////////////////////////////// Render function //////////////////////////////////////////////////////////////////////////////////////
@@ -665,7 +523,7 @@ fetch_delivery_orders(status_type) {
           {/*////////////////////// Print Button Block //////////////////////////////////////////////// */}
 
           <View style={{ flexDirection: 'row', marginTop: SECTION_MARGIN_TOP, backgroundColor: Colors.aash, }}>
-            <View style={{ flex: 4 }}><CustomDropdown data={myArray} height={SHORT_BUTTON_HEIGHT} backgroundColor={Colors.aash} onChangeValue={(value, index, data) => { this.setState({ offset: 0 }); setTimeout(() => { this.fetch_delivery_orders(data[index]['name']) }, 100); }} /></View>
+            <View style={{ flex: 4 }}><CustomDropdown data={myArray} height={SHORT_BUTTON_HEIGHT} backgroundColor={Colors.aash} onChangeValue={(value, index, data) => { this.setState({ offset: 0 }); setTimeout(() => { this.fetch_predefined_orders(data[index]['name']) }, 100); }} /></View>
             <View style={{ flex: 3 }}><CustomButton title={'Track Order ID'} text_color={Colors.darkSkyBlue} backgroundColor={Colors.white} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={()=>this.setState({modalVisible:true})} /></View>
           </View>
 
@@ -674,7 +532,7 @@ fetch_delivery_orders(status_type) {
           <View>
             <ScrollView horizontal={true} contentContainerStyle={{ flexGrow: 1 }} style={{ backgroundColor: Colors.white }}>
               <FlatList
-                data={this.state.isSearch ? this.state.pickup_list_search : this.state.delivery_list}
+                data={this.state.predefined_status_list}
                 keyExtractor={(x, i) => i}
                 ListHeaderComponent={this._header}
                 renderItem={({ item }) => this._body(item)}
