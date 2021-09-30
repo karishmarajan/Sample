@@ -21,7 +21,7 @@ import { VEHICLE_DETAILS, VEHICLE_REQUEST } from '../../constants/Api';
 import CustomInput from '../../component/CustomInput';
 import CustomAlert from '../../component/CustomAlert';
 
-
+const myArray = [{ name: "DELIVERY BOY", value: "DELIVERY BOY" }, { name: "OFFICE STAFF", value: "OFFICE STAFF" } , { name: "CUSTOMER", value: "OFFICE STAFF" } , { name: "Reassign Pending", value: "Reassign Pending" } , { name: "Payment Pending", value: "Payment Pending" }, { name: "Re-assign Accepted", value: "Re-assign Accepted" }, { name: "Used", value: "Used" }, { name: "Unused", value: "Unused" }];
 
 
 
@@ -30,7 +30,7 @@ export default class AssignPredefined extends React.Component {
   ///////////////////////////////////////// Declaring state variables ///////////////////////////////////////////////////////////////////////////////////
 
   state ={
-    vehicle_details :[],
+    user_type:'',
    
   }
 
@@ -44,59 +44,9 @@ export default class AssignPredefined extends React.Component {
    
   }));
   }
-  //////////////////////////////////////////// Vehicle details fetching function  //////////////////////////////////////////////////////////////////////////////////  
  
-  fetch_vehicle_details(val){
-
-  Api.fetch_request(VEHICLE_DETAILS+val,'GET','')
-  .then(result => {
-   
-    if(result.error != true){
-
-      console.log('Success:', JSON.stringify(result));
-      this.setState({vehicle_details : result.payload})
-    
-    }
-    else{
-      console.log('Failed');
-    }
-})
-
- }
-
- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
- vehicle_change_request() {
-
-    AsyncStorage.getItem(KEY).then((value => {
-      let data = JSON.parse(value);
-
-  let body={
-    "requestedBy" :data.personId,
-    "requestedFrom" : "DELIVERY_AGENT",
-    "requestedTo" : "ADMIN"
-
-};
-
-  Api.fetch_request(VEHICLE_REQUEST ,'POST','',JSON.stringify(body))
-  .then(result => {
-   
-    if(result.error != true){
-    console.log('Success:', JSON.stringify(result));
-
-    this.setState({alert_visible:true})
-    setTimeout(()=>{this.setState({alert_visible:false})},3000);
 
 
-    }
-    else{
-      console.log('Failed');
-      alert(" Failed ! ")
-    }
-  })
-}));
- 
-}
 
 
 /////////////////////////////////////////// Render method //////////////////////////////////////////////////////////////////////////////////
@@ -125,7 +75,7 @@ export default class AssignPredefined extends React.Component {
 
           <View style={{flex: 1, flexDirection: 'column',backgroundColor:Colors.mainBackgroundColor,padding:MAIN_VIEW_PADDING}}>
 
-
+          <CustomDropdown data={myArray} height={SHORT_BUTTON_HEIGHT} backgroundColor={Colors.aash} onChangeValue={(value, index, data) => { this.setState({ offset: 0 }); setTimeout(() => { {this.fetch_predefined_orders(data[index]['name']); this.setState({pdoid_status:data[index]['name']})} }, 100); }} />
               </View>
               </ScrollView>
         </Container>
