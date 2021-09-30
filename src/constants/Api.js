@@ -86,3 +86,4 @@ export const DELIVERY_STATUS_CLOSE= BASE_URL + SUB_URL + 'delivery/delivery-stat
 export const GET_PICKUP_BY_SCAN= BASE_URL + SUB_URL + 'pickup/orderId/';
 export const GET_DELIVERY_BY_SCAN= BASE_URL + SUB_URL + 'delivery/orderId/';
 export const PREDEFINED_ID_STATUS= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-assign/assignee/status';
+export const UPDATE_PDOID_STATUS= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-assign/';
