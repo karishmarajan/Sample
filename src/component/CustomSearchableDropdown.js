@@ -65,18 +65,18 @@ export default class CustomDropdown extends Component {
 
 
 
-                    {/* // style={{ justifyContent: 'center',height:this.props.height,width:this.props.width,paddingBottom:10 }}
-                    // baseColor={'white'}
-                    // fontSize={this.props.fontSize}
-                    // selectedItemColor={Colors.primaryColor}
-                    // itemColor={Colors.secondaryColor}
-                    // inputContainerStyle={{ borderBottomWidth: 0, }}
-                    // data={data}
-                    // dropdownPosition={this.props.position ? this.props.position : 0}
-                    // value={this.props.value ? this.props.value : data.length != 0 ? data[0]['value'] : ''}
-                    // onChangeText={this.props.onChangeValue}
+                //     {/* // style={{ justifyContent: 'center',height:this.props.height,width:this.props.width,paddingBottom:10 }}
+                //     // baseColor={'white'}
+                //     // fontSize={this.props.fontSize}
+                //     // selectedItemColor={Colors.primaryColor}
+                //     // itemColor={Colors.secondaryColor}
+                //     // inputContainerStyle={{ borderBottomWidth: 0, }}
+                //     // data={data}
+                //     // dropdownPosition={this.props.position ? this.props.position : 0}
+                //     // value={this.props.value ? this.props.value : data.length != 0 ? data[0]['value'] : ''}
+                //     // onChangeText={this.props.onChangeValue}
    
-                > */}
+                // > */}
 
             // </View>
 
@@ -116,7 +116,7 @@ export default class CustomDropdown extends Component {
                             }
                         />
                 
-              
+              </View>
 
 
         );

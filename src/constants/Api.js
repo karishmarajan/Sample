@@ -87,3 +87,11 @@ export const GET_PICKUP_BY_SCAN= BASE_URL + SUB_URL + 'pickup/orderId/';
 export const GET_DELIVERY_BY_SCAN= BASE_URL + SUB_URL + 'delivery/orderId/';
 export const PREDEFINED_ID_STATUS= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-assign/assignee/status';
 export const UPDATE_PDOID_STATUS= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-assign/';
+export const DELIVERY_AGENT_BY_OFFICE_ID= BASE_URL + SUB_URL + 'deliveryBoy/';
+export const GET_OFFICE_STAFFS= BASE_URL_MASTER + SUB_URL_MASTER + 'office-staff/';
+export const ASSIGN_PDOID= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-assign/';
+export const PDOID_LIST_BY_STATUS= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-assign/assigner/assignment-status';
+export const UPDATE_PDOID_PAYMENT_STATUS= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-assign/';
+
+
+
