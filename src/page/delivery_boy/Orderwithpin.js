@@ -18,7 +18,7 @@ import CustomSearchBox from '../../component/CustomSearchBox';
 import { RNCamera } from 'react-native-camera';
 import { KEY, KEY1 } from '../../session/SessionManager';
 import Api from '../../component/Fetch';
-import {PREORDER_WITH_PIN,ALL_USERS,PAYER_PAYMENT, } from '../../constants/Api';
+import {PREORDER_WITH_PIN,ALL_USERS,PAYER_PAYMENT, VALIDATE_PDOID, UPDATE_PDOID_PAYMENT_STATUS, ASSIGN_SINGLE_ORDER} from '../../constants/Api';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import SideMenuDrawer from '../../component/SideMenuDrawer';
 
@@ -61,6 +61,13 @@ export default class orderwithpin extends React.Component {
       checked_customer:false,
       torch_enable:RNCamera.Constants.FlashMode.off,
       customerIdentityType:'',
+      assign:false,
+      customer:false,
+      btn_assign:false,
+      btn_pay:false,
+      sender_name:'',
+      pdoid_assign_id:'',
+      payment:'',
       camera: {
         type: RNCamera.Constants.Type.back,
 	flashMode: RNCamera.Constants.FlashMode.auto,
@@ -109,7 +116,9 @@ fetch_customers_list() {
       let customers = [];
 
       for(var i = 0; i < count; i++){
-       customers.push({name: result.payload[i].userId+' - '+ result.payload[i].firstName+' '+result.payload[i].lastName +' - '+result.payload[i].mobileNumber, id: result.payload[i].userId });
+        customers.push({name:result.payload[i].firstName+' '+result.payload[i].lastName, id: result.payload[i].userId });
+
+      //  customers.push({name: result.payload[i].userId+' - '+ result.payload[i].firstName+' '+result.payload[i].lastName +' - '+result.payload[i].mobileNumber, id: result.payload[i].userId });
      }
      this.setState({ users: customers });
     }
@@ -136,6 +145,116 @@ fetch_customers_list() {
     return;
   }
 
+///////////////////////////////////// PDOID payment status update function ////////////////////////////////////////////////////////////////////////////////////
+  
+pdoid_payment_status_update() {
+  
+ 
+  Api.fetch_request(UPDATE_PDOID_PAYMENT_STATUS+this.state.pdoid_assign_id+'/COMPLETED', 'PUT', '')
+    .then(result => {
+
+      if (result.error != true) {
+
+        console.log('Success:', JSON.stringify(result));
+        Toast.show({ text: result.message, type: 'success' });
+
+        this.setState({btn_pay:false})
+
+      }
+      else {
+        console.log('Failed');
+        Toast.show({ text: result.message, type: 'warning' });
+
+      }
+    })
+}
+
+ ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+ assign_customer(){
+
+if(this.state.sender_name === ''){
+  Toast.show({ text:"select sender" , type: 'warning' });
+return;
+}
+
+  AsyncStorage.getItem(KEY).then((value => {
+    let data = JSON.parse(value);
+
+    let body = {
+      "assigneeId": this.state.customer_id,
+      "assigneeName": this.state.sender_name,
+      "assigneeUserType": "CUSTOMER",
+      "assignerId": data.personId,
+      "assignerName": data.firstName+''+data.lastName,
+      "assignerUserType": "DELIVERY_BOY",
+      "customerIdentityType": this.state.customerIdentityType,
+      "preorderId": this.state.predefinedpin
+    }
+  
+  
+    Api.fetch_request(ASSIGN_SINGLE_ORDER, 'PUT', '', JSON.stringify(body))
+      .then(result => {
+  
+        if (result.error != true) {
+          console.log('Success:', JSON.stringify(result));
+          this.setState({btn_assign:false})
+          Toast.show({ text:result.message , type: 'success' });
+
+        }
+        else {
+          console.log(result.message,'Failed');
+          Toast.show({ text:result.message , type: 'warning' });
+  
+  
+        }
+      })
+    }));
+  }
+ 
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+ validate_pdoid(text){
+  AsyncStorage.getItem(KEY).then((value => {
+    let data = JSON.parse(value);
+
+    let body = {
+      "assigneeId": data.personId,
+      "assigneeUserType": "DELIVERY_BOY",
+      "preorderId": this.state.predefinedpin
+    }
+  
+    console.log('BODY ORDERWITH PIN:',body);
+  
+    Api.fetch_request(VALIDATE_PDOID, 'POST', '', JSON.stringify(body))
+      .then(result => {
+  
+        if (result.error != true) {
+          console.log('Success:', JSON.stringify(result));
+          this.setState({pdoid_assign_id:result.payload.preorderAssignId,payment:result.payload.rate})
+          if(result.payload.assigneeUserType == 'DELIVERY_BOY' && result.payload.paymentStatus =='PENDING'){
+            Toast.show({ text:'Assign customer first' , type: 'success' });
+            this.setState({assign:true,customer:false,btn_assign:true,btn_pay:true})
+         
+          }else if(result.payload.assigneeUserType == 'CUSTOMER' && result.payload.paymentStatus =='PENDING'){
+            this.setState({assign:true,customer:true,sender_name:result.payload.assigneeName,customer_id:result.payload.assigneeId,btn_assign:false,btn_pay:true})
+
+            }else{
+            this.setState({assign:true,customer:true,sender_name:result.payload.assigneeName,customer_id:result.payload.assigneeId,btn_assign:false,btn_pay:false})
+          }
+        }
+        else {
+          console.log(result.message,'Failed');
+          Toast.show({ text:result.message , type: 'warning' });
+  
+  
+        }
+      })
+    }));
+  }
+  
+
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
  submit(){
@@ -152,6 +271,14 @@ if(this.state.predefinedpin==="") {
     this.setState({hasError: true, errorTextreciever_pincode: 'Please enter pincode !'});
     return;
   }
+  if(this.state.btn_assign===true){
+    Toast.show({ text: 'Assignment not completed', type: 'warning' });
+return;
+  }
+  if(this.state.btn_pay===true){
+    Toast.show({ text: 'Payment not completed', type: 'success' });
+return;
+  }
 
   let body = {
       "additionalCharges": this.state.additional_charge ? this.state.additional_charge : 0 ,
@@ -160,6 +287,8 @@ if(this.state.predefinedpin==="") {
       "creatorUserType": "DELIVERY_AGENT",
       "customerId": this.state.customer_id ? this.state.customer_id : null,
       "customerIdentityType": this.state.customerIdentityType ? this.state.customerIdentityType : null,
+      "deliveryAgentId": 0,
+      "deliveryCharge": this.state.payment,
       "deliveryPincode": this.state.reciever_pincode,
       "deliveryType": this.state.bullet == true ? "BULLET" : "NORMAL",
       "finalCodCharge": this.state.cod ? this.state.cod :0,
@@ -170,21 +299,17 @@ if(this.state.predefinedpin==="") {
       "preDefinedOrderId": this.state.predefinedpin,
     }
 
-  console.log('BODY ORDERWITH PIN:',body);
 
   Api.fetch_request(PREORDER_WITH_PIN, 'PUT', '', JSON.stringify(body))
     .then(result => {
 
       if (result.error != true) {
-        this.payer_payment(result.payload.orderId);
         Toast.show({ text: 'Order Created', type: 'success' });
-        // Actions.pop()
-    //    this.setState({final_cod_charge:result.payload.finalCodCharge})
         console.log('Success:', JSON.stringify(result));
         
         this.setState({reciever_pincode:''})
         this.setState({predefinedpin:'',cod:''})
-
+Actions.dashboard();
       }
       else {
         console.log(result.message,'Failed');
@@ -195,34 +320,7 @@ if(this.state.predefinedpin==="") {
     })
 }
 
-///////////////////////////////////////// Payer payment function  //////////////////////////////////////////////////////////////////////////////////
 
-payer_payment(id) {
-
-  let body = {
-    "deliveryChargePaymentBySender": true,
-    "orderId": id,
-    "payerComment": "",
-    "payerContactNumber": "",
-   "payerCountryCode":"",
-   "payerLocation": "",
-   "payerName": ""
-
-  };
-
-  Api.fetch_request(PAYER_PAYMENT, 'POST', '', JSON.stringify(body))
-    .then(result => {
-
-      if (result.error != true) {
-
-        console.log('Success:', JSON.stringify(result));
-      }
-      else {
-        console.log('Failed');
-        
-      }
-    })
-}
   /////////////////////////////////////////// Render method //////////////////////////////////////////////////////////////////////////////////
   
     render() {
@@ -330,10 +428,34 @@ payer_payment(id) {
         <View style={{flexDirection:'row'}}>
         <CustomText text={'Preorder Id'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomMandatory/></View>
-        <CustomInput flex={1}   borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({predefinedpin: text , errorTextpreid:""})} value={this.state.predefinedpin} />
+        <CustomInput flex={1}   borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) =>{this.setState({predefinedpin: text , errorTextpreid:""});this.validate_pdoid(text)}} value={this.state.predefinedpin} />
         {!!this.state.errorTextpreid && (<Text style={{color: 'red'}}>{this.state.errorTextpreid}</Text>)}
         <CustomButton title={'Scan code'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.setState({modalVisible:true})} />
        
+        {/* <View style={{marginTop:SECTION_MARGIN_TOP, flexDirection:'row'}}>
+          <CustomCheckBox color={Colors.buttonBackgroundColor} onPress={()=>{if(this.state.checked_customer==true){this.setState({checked_customer:false})}else{this.setState({checked_customer:true})}}} checked={this.state.checked_customer}/>
+          <CustomText text={'Assign Customer'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'} paddingLeft={1} mTop={5} />
+        </View>
+
+        {this.state.checked_customer === true && ( <View>
+        <CustomText text={'Sender Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+    <CustomSearchBox  placeholder={'Select'} onTextChange={(text)=>this.setState({customer_id: text})}  value={this.state.customer_id}  onItemSelect={(item) =>{ if(item.id.charAt(0)=='B'){this.setState({customer_id:item.id.replace('B', ''),customerIdentityType:"BRANCH_USER"})}else{this.setState({customer_id:item.id , customerIdentityType:"COMMON_USER"})}}} items={this.state.users} />
+      </View>)} */}
+{this.state.assign == true && (<View>
+  {this.state.customer == false && (<View>
+        <CustomText text={'Sender Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+    <CustomSearchBox  placeholder={'Select'} onTextChange={(text)=>this.setState({sender_name: text})}  value={this.state.sender_name}  onItemSelect={(item) =>{ if(item.id.charAt(0)=='B'){this.setState({customer_id:item.id.replace('B', ''),customerIdentityType:"BRANCH_USER", sender_name:item.name})}else{this.setState({customer_id:item.id , customerIdentityType:"COMMON_USER", sender_name:item.name})}}} items={this.state.users} />
+      </View>)}
+
+      {this.state.customer == true && (<View>
+        <CustomText text={'Sender Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+        <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} value={this.state.sender_name} />
+      </View>)}
+
+      <View style={{flexDirection:'row',justifyContent:'space-evenly',paddingHorizontal:10}}>
+      {this.state.btn_assign === true && (<View style={{flex:2,marginRight:10}}><CustomButton title={'Assign'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.assign_customer()} /></View>)}
+      {this.state.btn_pay === true && (<View style={{flex:2}}><CustomButton title={'Pay  Rs'+this.state.payment} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.pdoid_payment_status_update()} /></View>)}
+     </View>
         <View style={{flexDirection:'row'}}>
         <CustomText text={'Source Pincode'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomMandatory/></View>
@@ -346,15 +468,7 @@ payer_payment(id) {
         <CustomInput flex={1} keyboardType={"number-pad"} maxLength={6} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({reciever_pincode: text , errorTextreciever_pincode:""})} value={this.state.reciever_pincode} />
         {!!this.state.errorTextreciever_pincode && (<Text style={{color: 'red'}}>{this.state.errorTextreciever_pincode}</Text>)}
       
-        <View style={{marginTop:SECTION_MARGIN_TOP, flexDirection:'row'}}>
-          <CustomCheckBox color={Colors.buttonBackgroundColor} onPress={()=>{if(this.state.checked_customer==true){this.setState({checked_customer:false})}else{this.setState({checked_customer:true})}}} checked={this.state.checked_customer}/>
-          <CustomText text={'Assign Customer'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'} paddingLeft={1} mTop={5} />
-        </View>
-
-        {this.state.checked_customer === true && ( <View>
-        <CustomText text={'Customer Id'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-    <CustomSearchBox  placeholder={'Select customer'} onTextChange={(text)=>this.setState({customer_id: text})}  value={this.state.customer_id}  onItemSelect={(item) =>{ if(item.id.charAt(0)=='B'){this.setState({customer_id:item.id.replace('B', ''),customerIdentityType:"BRANCH_USER"})}else{this.setState({customer_id:item.id , customerIdentityType:"COMMON_USER"})}}} items={this.state.users} />
-      </View>)}
+       
         {this.state.toggle === false && (<View>
 <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:1}}>
            <CustomText text={'Bullet'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
@@ -399,6 +513,7 @@ payer_payment(id) {
 
 </View>)}
         <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.submit()} />
+       </View>)}
         </View>
                 </KeyboardAvoidingScrollView>
           </Container>

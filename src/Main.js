@@ -45,6 +45,8 @@ import Report from './page/delivery_boy/Report';
 import PredefinedOrder from './page/delivery_boy/PredefinedOrder';
 import AssignPredefined from './page/delivery_boy/AssignPredefined';
 import TrackOrder from './page/delivery_boy/TrackOrder';
+import UsedUnusedPDOID from './page/delivery_boy/UsedUnusedPDOID';
+import BarcodePrint from './page/delivery_boy/BarcodePrint';
 
 
 
@@ -98,6 +100,9 @@ export default class Main extends Component {
             <Scene  key="predefinedorder" component={PredefinedOrder} hideNavBar />
             <Scene  key="assignpredefined" component={AssignPredefined} hideNavBar />
             <Scene  key="trackorder" component={TrackOrder} hideNavBar />
+            <Scene  key="usedunusedpdoid" component={UsedUnusedPDOID} hideNavBar />
+            <Scene  key="barcodeprint" component={BarcodePrint} hideNavBar />
+
           </Scene>
         </Router>
       </Root>

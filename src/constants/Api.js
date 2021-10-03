@@ -92,6 +92,11 @@ export const GET_OFFICE_STAFFS= BASE_URL_MASTER + SUB_URL_MASTER + 'office-staff
 export const ASSIGN_PDOID= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-assign/';
 export const PDOID_LIST_BY_STATUS= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-assign/assigner/assignment-status';
 export const UPDATE_PDOID_PAYMENT_STATUS= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-assign/';
+export const USED_UNUSED_PDOID= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-assign/preorder/';
+export const AVAILABLE_PDOID_DETAILS= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-assign/preorder/';
+export const VALIDATE_PDOID= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-assign/assignee';
+export const ASSIGN_SINGLE_ORDER= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-assign/single-order';
+
 
 
 
