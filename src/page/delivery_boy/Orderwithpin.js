@@ -295,6 +295,7 @@ return;
       "isAtDeliveryAgent": false,
       "isAtOffice": false,
       "isManualPickup": false,
+      "isPickupRequired": false,
       "pickupPincode": this.state.sender_pincode,
       "preDefinedOrderId": this.state.predefinedpin,
     }

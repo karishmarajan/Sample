@@ -390,7 +390,7 @@ if(this.state.pdoid_details.length != null){
       </View>
         )
     }
-    else if(this.state.status_type == 'ASSIGNED' && this.state.pdoid_status =='Reassign'){
+    else if(this.state.status_type == 'RE_ASSIGN' && this.state.pdoid_status =='Reassign'){
       return(
         <View style={{ flexDirection: 'row', borderBottomWidth: 0.3,borderTopWidth:0.3 , borderLeftWidth:0.3 ,marginTop:6}}>
                <View style={styles.cell}><CustomText text={'Sl No'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
@@ -506,7 +506,7 @@ if(this.state.pdoid_details.length != null){
 
       <View style={styles.cell2}><CustomText text={parseInt(item.availableToId)-parseInt(item.availableFromId)+1} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell2}><CustomText text={item.availableFromId ? item.prefix+item.availableFromId +"-"+ item.prefix+item.availableToId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-      <View style={styles.cell2}><CustomButton title={'Assign'} showIcon={true} icon_name={'ios-person'} icon_color={Colors.white} icon_fontsize={FOURTH_FONT} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={20} marginLeft={20} marginRight={20} marginBottom={20}  text_color={Colors.white} onPress={()=>Actions.assignpredefined({assigned_id:item.preorderAssignId, PDOID:parseInt(item.availableToId)-parseInt(item.availableFromId), available_from:item.availableFromId})} /></View>
+      <View style={styles.cell2}><CustomButton title={'Assign'} showIcon={true} icon_name={'ios-person'} icon_color={Colors.white} icon_fontsize={FOURTH_FONT} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={20} marginLeft={20} marginRight={20} marginBottom={20}  text_color={Colors.white} onPress={()=>Actions.assignpredefined({assigned_id:item.preorderAssignId, PDOID:parseInt(item.availableToId)-parseInt(item.availableFromId)+1, available_from:item.availableFromId})} /></View>
       <View style={styles.cell2}><Button  transparent onPress={()=>Actions.usedunusedpdoid({pre_assign_id:item.preorderAssignId})}><Icon style={{ color: Colors.black,fontSize:30,paddingLeft:30 }} name='ios-eye' /></Button></View>
     <View style={styles.cell2}><Button  transparent onPress={()=>this.fetch_predefined_details(item.preorderAssignId)}><Icon style={{ color: Colors.black ,fontSize:26,paddingLeft:30}} name='ios-barcode' /></Button></View>
       </View>

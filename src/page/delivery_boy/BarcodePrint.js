@@ -8,7 +8,6 @@ export default class PredefinedOrder extends React.Component {
     render(){
         return(
          <Barcode value="Hello World" format="CODE128" />
-
         );
     }
 }

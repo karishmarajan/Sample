@@ -1,139 +1,263 @@
-import React, { Component, } from 'react';
-import { TouchableOpacity,StyleSheet,ScrollView,BackHandler ,AsyncStorage , } from 'react-native';
-import { Container, View, Button, Left, Right, Icon, Text,Grid,Col,Row,Badge, Segment } from 'native-base';
+import React, { Component } from 'react';
+import { ScrollView, StyleSheet, AsyncStorage, TouchableOpacity, Linking, Platform, FlatList, Modal } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-
-
-
+// import Icon from 'react-native-vector-icons/FontAwesome';
+import { Container, Header, Button, Left, Icon, Right, View, Badge, Body, Toast } from 'native-base';
 
 import Navbar from '../../component/Navbar';
 import Colors from '../../constants/Colors';
 import Strings from '../../constants/Strings';
-import CustomButton from '../../component/CustomButton';
-import CustomCheckBox from '../../component/CustomCheckBox';
-import CustomSubButton from '../../component/CustomSubButton';
-import { SECTION_MARGIN_TOP,FIELD_MARGIN_TOP, MAIN_BLOCK_BORDER_RADIUS, SHORT_BLOCK_BORDER_RADIUS, ORDER_BLOCK_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,ADDRESS_FIELD_HEIGHT, SHORT_BUTTON_HEIGHT,TOTAL_BLOCK, SHORT_TEXT_FIELD_HIEGHT,TEXT_MARGIN_TOP, NORMAL_FONT,COLUMN_PADDING ,AMOUNT_BLOCK_HIEGHT,SECOND_FONT,LOGIN_FIELD_HEIGHT,FOURTH_FONT} from '../../constants/Dimen';
 import CustomText from '../../component/CustomText';
-import SideMenuDrawer from '../../component/SideMenuDrawer';
-import session,{KEY} from '../../session/SessionManager';
-import Api from '../../component/Fetch';
-import { VEHICLE_DETAILS, VEHICLE_REQUEST } from '../../constants/Api';
 import CustomInput from '../../component/CustomInput';
-import CustomAlert from '../../component/CustomAlert';
+import CustomCheckBox from '../../component/CustomCheckBox';
+import { SECTION_MARGIN_TOP, COLUMN_PADDING, SHORT_BORDER_WIDTH, SHORT_BORDER_RADIUS, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,CLOSE_SIZE,CLOSE_WIDTH } from '../../constants/Dimen';
+import CustomButton from '../../component/CustomButton';
+import CustomDropdown from '../../component/CustomDropdown';
+import session, { KEY } from '../../session/SessionManager';
+import CustomActivityIndicator from '../../component/CustomActivityIndicator';
+import Api from '../../component/Fetch';
+import { PREDEFINED_ID_STATUS, UPDATE_PDOID_STATUS , PDOID_LIST_BY_STATUS, UPDATE_PDOID_PAYMENT_STATUS} from '../../constants/Api';
+import RNPrint from 'react-native-print';
+import _ from "lodash";
+import { RNCamera } from 'react-native-camera';
+
+
+const myArray = [{ name: "PENDING", value: "Assign Pending" }, { name: "ASSIGNED", value: "Assigned" } , { name: "ASSIGNED", value: "Reassign" } , { name: "PENDING", value: "Reassign Pending" } , { name: "PAYMENT_PENDING", value: "Payment Pending" }, { name: "ACCEPTED", value: "Re-assign Accepted" },];
 
 
 
-
-
-export default class TrackOrder extends React.Component {
-
-  ///////////////////////////////////////// Declaring state variables ///////////////////////////////////////////////////////////////////////////////////
-
-  state ={
-    vehicle_details :[],
-   
-  }
-
-  ///////////////////////////////////////// Component did mount function ///////////////////////////////////////////////////////////////////////////////
-
-  componentDidMount(){
-   AsyncStorage.getItem(KEY).then((value => {
-
-      let data = JSON.parse(value);
-      this.fetch_vehicle_details(data.personId);
-   
-  }));
-  }
-  //////////////////////////////////////////// Vehicle details fetching function  //////////////////////////////////////////////////////////////////////////////////  
- 
-  fetch_vehicle_details(val){
-
-  Api.fetch_request(VEHICLE_DETAILS+val,'GET','')
-  .then(result => {
-   
-    if(result.error != true){
-
-      console.log('Success:', JSON.stringify(result));
-      this.setState({vehicle_details : result.payload})
+export default class TrackOrderId extends React.Component {
+  constructor(props) {
+    super(props);
+ this.state = {
+    predefined_details: [],
+    predefinedpin:'',
+    customer_id:'',
+    customer_identity_type:'',
     
-    }
-    else{
-      console.log('Failed');
-    }
-})
+  };
+}
 
- }
-
- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
- vehicle_change_request() {
-
+  componentDidMount() {
     AsyncStorage.getItem(KEY).then((value => {
       let data = JSON.parse(value);
-
-  let body={
-    "requestedBy" :data.personId,
-    "requestedFrom" : "DELIVERY_AGENT",
-    "requestedTo" : "ADMIN"
-
-};
-
-  Api.fetch_request(VEHICLE_REQUEST ,'POST','',JSON.stringify(body))
-  .then(result => {
    
-    if(result.error != true){
-    console.log('Success:', JSON.stringify(result));
 
-    this.setState({alert_visible:true})
-    setTimeout(()=>{this.setState({alert_visible:false})},3000);
-
-
+    if((data.userId).charAt(0)==='B')
+    {
+      this.setState({customer_identity_type:'BRANCH_USER', customer_id: data.userId.replace('B', '')})
+    }else
+    {
+      this.setState({customer_identity_type:'COMMON_USER',customer_id :data.userId })
     }
-    else{
-      console.log('Failed');
-      alert(" Failed ! ")
-    }
-  })
-}));
+
+
+    this.fetch_predefined_orders();
+  }));
+  }
+
+  
+////////////////////////////////////// PDOID fetching function ///////////////////////////////////////////////////////////////////////////////////
  
-}
+fetch_predefined_orders() {
 
 
-/////////////////////////////////////////// Render method //////////////////////////////////////////////////////////////////////////////////
+      let body = {
+        
+          "assigneeId": this.state.customer_id,
+          "assigneeUserType": "CUSTOMER",
+          "assignmentStatus": "ASSIGNED",
+          "customerIdentityType": this.state.customer_identity_type
+
+      };
+
+      Api.fetch_request(PREDEFINED_ID_STATUS, 'POST', '', JSON.stringify(body))
+        .then(result => {
+
+          if (result.error != true) {
+
+            console.log('Success:', JSON.stringify(result))
+            this.setState({ predefined_details: result.payload })
+
+          }
+          else {
+            console.log('Failed');
+            this.setState({ predefined_details: ''})
+            Toast.show({ text: result.message, type: 'warning' });
+          }
+        })
+    
+  }
+
+
+
+
+
+//////////////////////////////////// Delivery orders header part ///////////////////////////////////////////////////////////////////////////////////
+
+  _header = () => {
+
+      return(
+        <View style={{ flexDirection: 'row', borderBottomWidth: 0.3,borderTopWidth:0.3 , borderLeftWidth:0.3 ,marginTop:6}}>
+         <View style={styles.cell}><CustomText text={'Status'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText text={'Date'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText text={'Time'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
+       
+      </View>
+        )
+  }
+
+
+  ///////`///////////////////////////// Delivery orders body part ///////////////////////////////////////////////////////////////////////////////////
+
+  _body = (item, index) => {
+    return(
+      <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3 ,borderTopWidth:0.3}}>
+      
+      <View style={styles.cell2}><CustomText text={item.availableFromId ? item.prefix+item.availableFromId +"-"+ item.prefix+item.availableToId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+      <View style={styles.cell2}><CustomText text={item.updatedDate ? item.updatedDate : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+      <View style={styles.cell2}><CustomText text={item.totalRate ? item.totalRate : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+</View>
+      )
+  }
+ 
+////////////////////////////////////// Render function //////////////////////////////////////////////////////////////////////////////////////
 
   render() {
-  
     var left = (
-      <Left  style={{ flex: 1 }}>
-        <Button onPress={() => Actions.pop()} transparent>
-          <Icon style={{ color:Colors.navbarIconColor }} name='md-arrow-round-back' />
-          </Button>
+      <Left style={{ flex: 1 }}>
+        <Button  width={CLOSE_WIDTH}  onPress={() => Actions.pop()} transparent>
+          <Icon style={{ color: Colors.navbarIconColor,fontSize:22 }} name='md-arrow-round-back' />
+        </Button>
       </Left>
     );
-   
 
+  
     return (
-     
-      <SideMenuDrawer ref={(ref) => this._sideMenuDrawer = ref}>
-        <Container>
-          <Navbar left={left} title="Track Order"/>
-          <ScrollView contentContainerStyle={{flexGrow:1}}>
+
+      <Container>
+        <Navbar left={left} title="Track Order" />
+        <ScrollView contentContainerStyle={{flexGrow:1}} style={{ flexDirection: 'column', padding: 10, backgroundColor: Colors.textBackgroundColor }}>
+        
+
+          {/*////////////////////// Print Button Block //////////////////////////////////////////////// */}
+
+            <CustomText text={'Order ID'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+            <CustomInput flex={1}   borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) =>{ this.setState({predefinedpin: text , errorTextpreid:""});}} value={this.state.predefinedpin} />
+          
+
+          {/*//////////////////////// Horizontal Order Details Block //////////////////////////////////////////////// */}
+ 
+          <View>
+            <ScrollView horizontal={true} contentContainerStyle={{ flexGrow: 1 }} style={{ backgroundColor: Colors.white }}>
+              <FlatList
+                data={this.state.predefined_status_list}
+                keyExtractor={(x, i) => i}
+                ListHeaderComponent={this._header}
+                renderItem={({ item ,index}) => this._body(item,index)}
+                ListHeaderComponentStyle={styles.header}
+              />
+
+            </ScrollView>
+            <View style={{alignItems:'flex-end',marginTop:SECTION_MARGIN_TOP ,marginBottom:SECTION_MARGIN_TOP}}><CustomText  text={Strings.version} textType={Strings.subtext} color={Colors.darkSkyBlue} /></View>
+          </View>
+        </ScrollView>
+      </Container>
 
 
-
-        {/*////////////////////// main view //////////////////////////////////////////////// */}
-
-          <View style={{flex: 1, flexDirection: 'column',backgroundColor:Colors.mainBackgroundColor,padding:MAIN_VIEW_PADDING}}>
-
-
-              </View>
-              </ScrollView>
-        </Container>
-        </SideMenuDrawer>
     );
   }
 
 
 }
 
+const styles = StyleSheet.create({
 
+  container: {
+    flex: 1
+  },
+  header: {
+    backgroundColor: Colors.aash,
+
+  },
+  cell: {
+    width: 130,
+    padding: 6,
+    alignSelf: 'stretch',
+    textAlign: 'center',
+    borderRightWidth: 0.3,
+    backgroundColor:Colors.buttonBackgroundColor
+
+
+  },
+  cell2: {
+    flex:1,
+    width: 130,
+    padding: 6,
+    alignSelf: 'stretch',
+    textAlign: 'center',
+    borderRightWidth: 0.3,
+    backgroundColor:Colors.white,
+    justifyContent:'center'
+
+
+  },
+  cell1: {
+    width: 50,
+    padding: 6,
+    alignSelf: 'stretch',
+    textAlign: 'center',
+    borderRightWidth: 0.3,
+
+
+  },
+
+  body: {
+    flex: 1,
+    backgroundColor: Colors.white,
+    paddingLeft: COLUMN_PADDING,
+    paddingRight: COLUMN_PADDING,
+    borderBottomWidth: 5,
+    borderColor: Colors.textBackgroundColor1,
+
+  },
+  preview: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center'
+  },
+  overlay: {
+    position: 'absolute',
+    padding: 16,
+    right: 0,
+    left: 0,
+    alignItems: 'center'
+  },
+  topOverlay: {
+    top: 0,
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  bottomOverlay: {
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  enterBarcodeManualButton: {
+    padding: 15,
+    backgroundColor: 'white',
+    borderRadius: 40
+  },
+  scanScreenMessage: {
+    fontSize: 14,
+    color: 'white',
+    textAlign: 'center',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+
+});

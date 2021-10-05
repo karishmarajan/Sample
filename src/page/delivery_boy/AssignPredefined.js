@@ -26,7 +26,7 @@ import CustomSearchBox from '../../component/CustomSearchBox';
 
 
 
-const myArray = [{ name: "DELIVERY BOY", value: "DELIVERY BOY" }, { name: "OFFICE STAFF", value: "OFFICE STAFF" } , { name: "CUSTOMER", value: "CUSTOMER" }];
+const myArray = [{ name: "----Select----", value: "----Select----" },{ name: "DELIVERY BOY", value: "DELIVERY BOY" }, { name: "OFFICE STAFF", value: "OFFICE STAFF" } , { name: "CUSTOMER", value: "CUSTOMER" }];
 
 
 
@@ -86,7 +86,7 @@ this.setState({user_type:'CUSTOMER'})
 //////////////////////////////// Fetching all agents by office id function //////////////////////////////////////////////////////////////////////////////
 
 fetch_delivery_agent_list() {
-  this.setState({user_type:'DELIVERY BOY'})
+  this.setState({user_type:'DELIVERY_BOY'})
 
    AsyncStorage.getItem(KEY).then((value => {
       let data = JSON.parse(value);
@@ -169,7 +169,7 @@ if(this.state.user_type==="") {
 
   let body = {
     "assignerId": data.personId,
-    "assignerName": data.firstName + data.lastName,
+    "assignerName": data.firstName +''+ data.lastName,
     "assignerUserType": "DELIVERY_BOY",
     "preorderAssignId": this.props.assigned_id,
     "preorderRangeAssignRequest": [
@@ -233,7 +233,7 @@ if(this.state.user_type==="") {
           <View style={{flex: 1, flexDirection: 'column',backgroundColor:Colors.mainBackgroundColor,padding:MAIN_VIEW_PADDING}}>
         
         <CustomText text={'User Type'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <CustomDropdown data={myArray} height={SHORT_BUTTON_HEIGHT} backgroundColor={Colors.aash} onChangeValue={(value, index, data) => {setTimeout(() => {this.setState({errorTextuser_type:''}) ;{if(value=='DELIVERY BOY'){this.fetch_delivery_agent_list()}else if(value=='CUSTOMER'){this.fetch_customers_list()}else{this.fetch_office_staffs_list()}}}, 100); }} />
+        <CustomDropdown data={myArray} height={SHORT_BUTTON_HEIGHT} backgroundColor={Colors.aash} onChangeValue={(value, index, data) => {setTimeout(() => {this.setState({errorTextuser_type:''}) ;{if(value=='DELIVERY BOY'){this.fetch_delivery_agent_list()}else if(value=='CUSTOMER'){this.fetch_customers_list()}else if(value=='----Select----'){this.setState({user_type:''})}else {this.fetch_office_staffs_list()}}}, 100); }} />
         {!!this.state.errorTextuser_type && (<Text style={{color: 'red'}}>{this.state.errorTextuser_type}</Text>)}
 
        <CustomText text={'PDOID'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
