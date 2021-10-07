@@ -37,12 +37,22 @@ export default class UsedUnusedPDOID extends React.Component {
       orderId_type:'',
       torch_enable:RNCamera.Constants.FlashMode.off,
       predefinedpin:'',
-      pdoid_status:'',
-      status_type:'',
+      pdoid_status:'USED',
+      status_type:'USED',
       bool:true,
    };
   }
 
+   ///////////////////////////////////////// Component did mount function ///////////////////////////////////////////////////////////////////////////////
+   componentDidMount() {
+    AsyncStorage.getItem(KEY).then((value => {
+      let data = JSON.parse(value);
+
+       
+  }));
+        this.fetch_predefined_orders('USED');
+
+  }
    
 ////////////////////////////////////// PDOID fetching function ///////////////////////////////////////////////////////////////////////////////////
  
@@ -85,10 +95,10 @@ fetch_predefined_orders(status_type) {
         <View style={styles.cell}><CustomText text={'Assignee'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={'Assigned Date'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={'Used Date '} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText text={'Address'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={'Status'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-       
+        <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+
       </View>
     )
    
@@ -100,6 +110,8 @@ fetch_predefined_orders(status_type) {
         <View style={styles.cell}><CustomText text={'Assignee'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={'Assigned Date'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>      
+        <View style={styles.cell}><CustomText textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>      
+
   </View>
     )
   }
@@ -109,12 +121,16 @@ _body = (item) => {
   if(this.state.status_type == 'USED' && this.state.pdoid_status =='USED' ){
     return (
 
-    <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3 }}>
+    <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3 , borderTopWidth:0.3}}>
      
      <View style={styles.cell2}><CustomText text={item.preDefinedOrderId ? item.preDefinedOrderId: Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell2}><CustomText text={item.assigneeName ? item.assigneeName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell2}><CustomText text={item.assignedDate ? item.assignedDate :Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+      <View style={styles.cell2}><CustomText text={item.orderCreatedDate ? item.orderCreatedDate :Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+      <View style={styles.cell2}><CustomText text={item.preDefinedOrderStatus ? item.preDefinedOrderStatus :Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell2}><Button  transparent onPress={()=>Actions.usedunusedpdoid({pre_assign_id:item.preorderAssignId})}><Icon style={{ color: Colors.black,fontSize:30,paddingLeft:30 }} name='ios-eye' /></Button></View>
+
+      <View style={styles.cell2}><Button  transparent onPress={()=>Actions.customeraddress({cus_id:item.assigneeId, cus_type:item.customerIdentityType})}><Icon style={{ color: Colors.black,fontSize:30,paddingLeft:30 }} name='ios-person' /></Button></View>
      
 
     </View>
@@ -124,11 +140,12 @@ _body = (item) => {
 
   else{
     return(
-      <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3 }}>
+      <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3 ,borderTopWidth:0.3}}>
 
 <View style={styles.cell2}><CustomText text={item.preDefinedOrderId ? item.preDefinedOrderId: Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell2}><CustomText text={item.assigneeName ? item.assigneeName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell2}><CustomText text={item.assignedDate ? item.assignedDate :Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+      <View style={styles.cell2}><CustomButton title={'CreateOrder'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={10} marginLeft={10} marginRight={10} marginBottom={10}  text_color={Colors.white} onPress={()=>Actions.orderwithpin({pre_id:item.preDefinedOrderId, rate:item.bulkPredefinedOrderResponse.rate})} /></View>
       <View style={styles.cell2}><Button  transparent onPress={()=>Actions.usedunusedpdoid({pre_assign_id:item.preorderAssignId})}><Icon style={{ color: Colors.black,fontSize:30,paddingLeft:30 }} name='ios-eye' /></Button></View>
       </View>
     )
@@ -168,7 +185,7 @@ _body = (item) => {
           <View>
             <ScrollView horizontal={true} contentContainerStyle={{ flexGrow: 1 }} style={{ backgroundColor: Colors.white }}>
               <FlatList
-                data={this.state.isSearch ? this.state.pickup_list_search : this.state.predefined_status_list}
+                data={this.state.predefined_status_list}
                 keyExtractor={(x, i) => i}
                 ListHeaderComponent={this._header}
                 renderItem={({ item }) => this._body(item)}

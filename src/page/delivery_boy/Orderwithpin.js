@@ -3,7 +3,7 @@
 
 import React from 'react';
 import {Modal, ScrollView,AsyncStorage, TouchableOpacity, DatePickerAndroid, TimePickerAndroid, Keyboard ,Switch} from 'react-native';
-import { Container, View, Button, Left, Icon,Text,Toast,StyleSheet, Right} from 'native-base';
+import { Container, View, Button, Left, Icon,Text,Toast,StyleSheet, Right, Row} from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import CustomMandatory from '../../component/CustomMandatory';
 import Navbar from '../../component/Navbar';
@@ -68,6 +68,7 @@ export default class orderwithpin extends React.Component {
       sender_name:'',
       pdoid_assign_id:'',
       payment:'',
+      del_color:Colors.red,
       camera: {
         type: RNCamera.Constants.Type.back,
 	flashMode: RNCamera.Constants.FlashMode.auto,
@@ -138,6 +139,7 @@ fetch_customers_list() {
 	if (!this.barcodeCodes.includes(scanResult.data)) {
 	  this.barcodeCodes.push(scanResult.data);
       this.setState({modalVisible:false,predefinedpin:scanResult.data})
+      this.validate_pdoid(scanResult.data)
       console.log("SCANNEDDDDDDDDDD",this.state.predefinedpin)
 	  console.warn('onBarCodeRead call');
 	}
@@ -149,8 +151,28 @@ fetch_customers_list() {
   
 pdoid_payment_status_update() {
   
- 
-  Api.fetch_request(UPDATE_PDOID_PAYMENT_STATUS+this.state.pdoid_assign_id+'/COMPLETED', 'PUT', '')
+  AsyncStorage.getItem(KEY).then((value => {
+    let data = JSON.parse(value);
+
+
+//   if(this.state.customer===false){
+//     Toast.show({ text: 'Assignment not completed', type: 'warning' });
+// return;
+//   }
+
+let body = {
+  
+    "officeId": data.officeId,
+    "officeStaffId": data.personId,
+    "officeStaffType": "DELIVERY_AGENT",
+    "paymentStatus": "COMPLETED",
+    "paymentType": "DELIVERY_CHARGE",
+    "preorderAssignId": this.state.pdoid_assign_id
+  
+}
+
+
+  Api.fetch_request(UPDATE_PDOID_PAYMENT_STATUS, 'PUT', '', JSON.stringify(body))
     .then(result => {
 
       if (result.error != true) {
@@ -158,7 +180,7 @@ pdoid_payment_status_update() {
         console.log('Success:', JSON.stringify(result));
         Toast.show({ text: result.message, type: 'success' });
 
-        this.setState({btn_pay:false})
+        this.setState({btn_pay:false,del_color:Colors.green})
 
       }
       else {
@@ -167,6 +189,8 @@ pdoid_payment_status_update() {
 
       }
     })
+  }));
+
 }
 
  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -238,10 +262,13 @@ return;
             this.setState({assign:true,customer:false,btn_assign:true,btn_pay:true})
          
           }else if(result.payload.assigneeUserType == 'CUSTOMER' && result.payload.paymentStatus =='PENDING'){
-            this.setState({assign:true,customer:true,sender_name:result.payload.assigneeName,customer_id:result.payload.assigneeId,btn_assign:false,btn_pay:true})
+            this.setState({assign:true,customer:true,sender_name:result.payload.assigneeName,customer_id:result.payload.assigneeId,customerIdentityType:result.payload.customerIdentityType ,btn_assign:false,btn_pay:true})
 
             }else{
-            this.setState({assign:true,customer:true,sender_name:result.payload.assigneeName,customer_id:result.payload.assigneeId,btn_assign:false,btn_pay:false})
+            this.setState({assign:true,customer:true,sender_name:result.payload.assigneeName,customer_id:result.payload.assigneeId,customerIdentityType:result.payload.customerIdentityType ,btn_assign:false,btn_pay:false})
+          }
+          if(result.payload.paymentStatus === 'COMPLETED'){
+            this.setState({del_color:Colors.green})
           }
         }
         else {
@@ -276,7 +303,7 @@ if(this.state.predefinedpin==="") {
 return;
   }
   if(this.state.btn_pay===true){
-    Toast.show({ text: 'Payment not completed', type: 'success' });
+    Toast.show({ text: 'Payment not completed', type: 'warning' });
 return;
   }
 
@@ -295,7 +322,7 @@ return;
       "isAtDeliveryAgent": false,
       "isAtOffice": false,
       "isManualPickup": false,
-      "isPickupRequired": false,
+      "isPickupRequired": true,
       "pickupPincode": this.state.sender_pincode,
       "preDefinedOrderId": this.state.predefinedpin,
     }
@@ -445,7 +472,11 @@ Actions.dashboard();
 {this.state.assign == true && (<View>
   {this.state.customer == false && (<View>
         <CustomText text={'Sender Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-    <CustomSearchBox  placeholder={'Select'} onTextChange={(text)=>this.setState({sender_name: text})}  value={this.state.sender_name}  onItemSelect={(item) =>{ if(item.id.charAt(0)=='B'){this.setState({customer_id:item.id.replace('B', ''),customerIdentityType:"BRANCH_USER", sender_name:item.name})}else{this.setState({customer_id:item.id , customerIdentityType:"COMMON_USER", sender_name:item.name})}}} items={this.state.users} />
+   <View style={{flexDirection:'row', justifyContent:'space-between',paddingHorizontal:10}}>  
+     <View style={{flex:4}}><CustomSearchBox  placeholder={'Select'} onTextChange={(text)=>this.setState({sender_name: text})}  value={this.state.sender_name}  onItemSelect={(item) =>{ if(item.id.charAt(0)=='B'){this.setState({customer_id:item.id.replace('B', ''),customerIdentityType:"BRANCH_USER", sender_name:item.name})}else{this.setState({customer_id:item.id , customerIdentityType:"COMMON_USER", sender_name:item.name})}}} items={this.state.users} /></View>
+     {this.state.btn_assign === true && (<View style={{flex:2}}><CustomButton title={'Assign'} marginTop={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.assign_customer()} /></View>)}
+
+     </View>
       </View>)}
 
       {this.state.customer == true && (<View>
@@ -453,10 +484,22 @@ Actions.dashboard();
         <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} value={this.state.sender_name} />
       </View>)}
 
-      <View style={{flexDirection:'row',justifyContent:'space-evenly',paddingHorizontal:10}}>
+      <View>
+      <CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+<View style={{flexDirection:'row', justifyContent:'space-between',paddingHorizontal:10}}>
+<View style={{flexDirection:'row',flex:4,borderColor:Colors.borderColor,borderWidth:SHORT_BORDER_WIDTH,borderRadius:SHORT_BORDER_RADIUS,padding:1,justifyContent:'space-between'}}>
+       <View style={{flex:3}}><CustomInput flex={1} value={''+this.state.payment} backgroundColor={Colors.white} /></View>
+       <View style={{flex:2,justifyContent:'center'}}><Icon style={{ color: this.state.del_color ,fontSize:26,paddingLeft:30}} name='md-cash' /></View>     
+        </View>
+  {this.state.btn_pay === true && (<View style={{flex:2,marginLeft:5}}><CustomButton title={'Pay'} marginTop={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.pdoid_payment_status_update()} /></View>)}
+
+</View>
+      </View>
+
+      {/* <View style={{flexDirection:'row',justifyContent:'space-evenly',paddingHorizontal:10}}>
       {this.state.btn_assign === true && (<View style={{flex:2,marginRight:10}}><CustomButton title={'Assign'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.assign_customer()} /></View>)}
       {this.state.btn_pay === true && (<View style={{flex:2}}><CustomButton title={'Pay  Rs'+this.state.payment} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.pdoid_payment_status_update()} /></View>)}
-     </View>
+     </View> */}
         <View style={{flexDirection:'row'}}>
         <CustomText text={'Source Pincode'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomMandatory/></View>

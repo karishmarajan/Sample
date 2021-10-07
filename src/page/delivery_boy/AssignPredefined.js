@@ -40,11 +40,13 @@ export default class AssignPredefined extends React.Component {
     users:[],
     user_name:'',
     user_id:'',
+    cus_type:'',
     errorTextuser:'',
     no_pdoid:'',
     errorTextno_pdoid:'',
     pdoid_from:'',
     hasError:false,
+
   }
 
   ///////////////////////////////////////// Component did mount function ///////////////////////////////////////////////////////////////////////////////
@@ -72,7 +74,7 @@ this.setState({user_type:'CUSTOMER'})
       let customers = [];
 
       for(var i = 0; i < count; i++){
-       customers.push({name:result.payload[i].firstName+' '+result.payload[i].lastName , id: result.payload[i].userId });
+       customers.push({name:result.payload[i].firstName+' '+result.payload[i].lastName , id: result.payload[i].userId , type:result.payload[i].customerIdentityType});
      }
      this.setState({ users: customers });
     }
@@ -177,6 +179,8 @@ if(this.state.user_type==="") {
         "assigneeId": this.state.user_id,
         "assigneeName": this.state.user_name,
         "assigneeUserType":this.state.user_type,
+        "customerIdentityType": this.state.cus_type,
+        "officeId": data.officeId,
         "preorderFrom": this.props.available_from,
         "preorderTo": parseInt(this.props.available_from)+parseInt(this.state.no_pdoid)
       }
@@ -189,7 +193,13 @@ if(this.state.user_type==="") {
       if (result.error != true) {
         Toast.show({ text: result.message, type: 'success' });
         console.log('Success:', JSON.stringify(result));
-        Actions.predefinedorder();
+        // Actions.predefinedorder();
+        // Actions.refresh({title: "whatever"});
+        // Actions.reset('predefinedorder');
+        Actions.pop()
+        Actions.refresh({key: Math.random()})
+
+
 
       }
       else {
@@ -240,7 +250,7 @@ if(this.state.user_type==="") {
          <CustomInput flex={1} keyboardType={"number-pad"} maxLength={6} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => {this.setState({no_pdoid: text , errorTextno_pdoid:""})}} value={this.state.no_pdoid} />
         {!!this.state.errorTextno_pdoid && (<Text style={{color: 'red'}}>{this.state.errorTextno_pdoid}</Text>)}
         <CustomText text={'User Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-       <CustomSearchBox onTextChange={(text)=>{setTimeout(()=>{this.setState({user_name: text})},0)}} value={this.state.user_name} placeholder={'Select'} onItemSelect={(item) =>{ setTimeout(() => {this.setState({user_name:item.name ,user_id:item.id, errorTextuser:""});}, 500); }} items={this.state.users} />
+       <CustomSearchBox onTextChange={(text)=>{setTimeout(()=>{this.setState({user_name: text})},0)}} value={this.state.user_name} placeholder={'Select'} onItemSelect={(item) =>{ setTimeout(() => {this.setState({user_name:item.name ,user_id:item.id, cus_type:item.type, errorTextuser:""});}, 500); }} items={this.state.users} />
        {!!this.state.errorTextuser && (<Text style={{color: 'red'}}>{this.state.errorTextuser}</Text>)}
 
         <CustomButton title={'ADD'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.assign_pdoid()} />
