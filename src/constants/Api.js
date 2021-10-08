@@ -96,6 +96,8 @@ export const USED_UNUSED_PDOID= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-assig
 export const AVAILABLE_PDOID_DETAILS= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-assign/preorder/';
 export const VALIDATE_PDOID= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-assign/assignee';
 export const ASSIGN_SINGLE_ORDER= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-assign/single-order';
+export const PREORDER_TRACKING= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-assign/tracking-preorder';
+export const UPDATE_DELIVERY_TYPE= BASE_URL_ORDER + SUB_URL_ORDER + 'order/orderId/';
 
 
 

@@ -68,12 +68,12 @@ export default class Main extends Component {
             <Scene  key="index" component={Index} hideNavBar />
             <Scene  key="dashboard" component={Dashboard} hideNavBar />
             <Scene   key="vehiclescan" component={VehicleScan} hideNavBar />
-            <Scene  key="pickup" component={PickUp} hideNavBar />
+            <Scene  key="pickup" component={PickUp} hideNavBar title={"b"}/>
             <Scene  key="statusupdate" component={StatusUpdate} hideNavBar />
             <Scene  key="ordertransfer1" component={OrderTransfer1} hideNavBar />
             <Scene  key="selfassign" component={SelfAssign} hideNavBar />
             <Scene  key="delivery" component={Delivery} hideNavBar />
-            <Scene  key="deliveryfirst" component={DeliveryFirst} hideNavBar />
+            <Scene  key="deliveryfirst" component={DeliveryFirst} hideNavBar title={"c"}/>
             <Scene  key="deliveryoutdetails" component={DeliveryOutDetails} hideNavBar />
             <Scene   key="manualpickup" component={ManualPickup} hideNavBar />
             <Scene  key="statusupdatefirst" component={StatusUpdateFirst} hideNavBar />

@@ -16,13 +16,11 @@ import CustomDropdown from '../../component/CustomDropdown';
 import session, { KEY } from '../../session/SessionManager';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 import Api from '../../component/Fetch';
-import { PREDEFINED_ID_STATUS, UPDATE_PDOID_STATUS , PDOID_LIST_BY_STATUS, UPDATE_PDOID_PAYMENT_STATUS} from '../../constants/Api';
+import { PREORDER_TRACKING, UPDATE_PDOID_STATUS , PDOID_LIST_BY_STATUS, UPDATE_PDOID_PAYMENT_STATUS} from '../../constants/Api';
 import RNPrint from 'react-native-print';
 import _ from "lodash";
 import { RNCamera } from 'react-native-camera';
 
-
-const myArray = [{ name: "PENDING", value: "Assign Pending" }, { name: "ASSIGNED", value: "Assigned" } , { name: "ASSIGNED", value: "Reassign" } , { name: "PENDING", value: "Reassign Pending" } , { name: "PAYMENT_PENDING", value: "Payment Pending" }, { name: "ACCEPTED", value: "Re-assign Accepted" },];
 
 
 
@@ -31,63 +29,58 @@ export default class TrackOrderId extends React.Component {
     super(props);
  this.state = {
     predefined_details: [],
-    predefinedpin:'',
+    predefinedpin:this.props.pre_order_id ? this.props.pre_order_id :'',
     customer_id:'',
     customer_identity_type:'',
-    
+    errorTextpreid:'',
+
   };
 }
 
   componentDidMount() {
     AsyncStorage.getItem(KEY).then((value => {
       let data = JSON.parse(value);
-   
-
-    if((data.userId).charAt(0)==='B')
-    {
-      this.setState({customer_identity_type:'BRANCH_USER', customer_id: data.userId.replace('B', '')})
-    }else
-    {
-      this.setState({customer_identity_type:'COMMON_USER',customer_id :data.userId })
-    }
-
-
-    this.fetch_predefined_orders();
+  
+    this.track_preorder();
   }));
   }
 
   
-////////////////////////////////////// PDOID fetching function ///////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////// PDOID fetching function ///////////////////////////////////////////////////////////////////////////////////
  
-fetch_predefined_orders() {
+track_preorder(text) {
 
+  AsyncStorage.getItem(KEY).then((value => {
+    let data = JSON.parse(value);
 
-      let body = {
-        
-          "assigneeId": this.state.customer_id,
-          "assigneeUserType": "CUSTOMER",
-          "assignmentStatus": "ASSIGNED",
-          "customerIdentityType": this.state.customer_identity_type
-
-      };
-
-      Api.fetch_request(PREDEFINED_ID_STATUS, 'POST', '', JSON.stringify(body))
-        .then(result => {
-
-          if (result.error != true) {
-
-            console.log('Success:', JSON.stringify(result))
-            this.setState({ predefined_details: result.payload })
-
-          }
-          else {
-            console.log('Failed');
-            this.setState({ predefined_details: ''})
-            Toast.show({ text: result.message, type: 'warning' });
-          }
-        })
+  let body = {
     
-  }
+    // "customerIdentityType": this.state.customer_identity_type,
+    "preDefinedOrderId": this.props.pre_order_id ?this.props.pre_order_id : text,
+    "preorderUserType": "DELIVERY_AGENT",
+    "userId": data.personId
+
+  };
+
+  Api.fetch_request(PREORDER_TRACKING, 'POST', '', JSON.stringify(body))
+    .then(result => {
+
+      if (result.error != true) {
+
+        console.log('Success:', JSON.stringify(result))
+        this.setState({ predefined_details: result.payload })
+
+      }
+      else {
+        console.log('Failed');
+        this.setState({ predefined_details: ''})
+        Toast.show({ text: result.message, type: 'warning' });
+      }
+    })
+  }));
+}
+
+
 
 
 
@@ -114,9 +107,9 @@ fetch_predefined_orders() {
     return(
       <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3 ,borderTopWidth:0.3}}>
       
-      <View style={styles.cell2}><CustomText text={item.availableFromId ? item.prefix+item.availableFromId +"-"+ item.prefix+item.availableToId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-      <View style={styles.cell2}><CustomText text={item.updatedDate ? item.updatedDate : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-      <View style={styles.cell2}><CustomText text={item.totalRate ? item.totalRate : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+      <View style={styles.cell2}><CustomText text={item.status ? item.status : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+      <View style={styles.cell2}><CustomText text={item.createdDate ? item.createdDate : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+      <View style={styles.cell2}><CustomText text={item.createdTime ? item.createdTime : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
 </View>
       )
   }
@@ -143,15 +136,15 @@ fetch_predefined_orders() {
           {/*////////////////////// Print Button Block //////////////////////////////////////////////// */}
 
             <CustomText text={'Order ID'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-            <CustomInput flex={1}   borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) =>{ this.setState({predefinedpin: text , errorTextpreid:""});}} value={this.state.predefinedpin} />
+            <CustomInput flex={1}   borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) =>{ this.setState({predefinedpin: text , errorTextpreid:""}); this.track_preorder(text);}} value={this.state.predefinedpin} />
           
 
           {/*//////////////////////// Horizontal Order Details Block //////////////////////////////////////////////// */}
  
-          <View>
+          <View style={{marginTop:SECTION_MARGIN_TOP}}>
             <ScrollView horizontal={true} contentContainerStyle={{ flexGrow: 1 }} style={{ backgroundColor: Colors.white }}>
               <FlatList
-                data={this.state.predefined_status_list}
+                data={this.state.predefined_details}
                 keyExtractor={(x, i) => i}
                 ListHeaderComponent={this._header}
                 renderItem={({ item ,index}) => this._body(item,index)}

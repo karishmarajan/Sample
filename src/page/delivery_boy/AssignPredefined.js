@@ -169,6 +169,16 @@ if(this.state.user_type==="") {
     return;
   }
 
+  if(this.state.user_id===data.personId) {
+    Toast.show({ text:"Can't assign himself" , type: 'warning' });
+    return;
+  }
+
+  if(parseInt (this.state.no_pdoid)===0) {
+    Toast.show({ text:"Cannot be zero" , type: 'warning' });
+    return;
+  }
+
   let body = {
     "assignerId": data.personId,
     "assignerName": data.firstName +''+ data.lastName,
@@ -182,7 +192,7 @@ if(this.state.user_type==="") {
         "customerIdentityType": this.state.cus_type,
         "officeId": data.officeId,
         "preorderFrom": this.props.available_from,
-        "preorderTo": parseInt(this.props.available_from)+parseInt(this.state.no_pdoid)
+        "preorderTo": parseInt(this.props.available_from)+parseInt(this.state.no_pdoid)-1
       }
     ]
     }

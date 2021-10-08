@@ -434,8 +434,9 @@ if(this.state.otp_verified==true)
           Toast.show({ text: result.message, type: 'success' });
 
           // Actions.deliveryfirst();
-          Actions.reset('deliveryfirst');
-
+          // Actions.reset('deliveryfirst');
+          Actions.pop()
+          Actions.refresh({key: Math.random()})
         }
         else {
           console.log('Failed');

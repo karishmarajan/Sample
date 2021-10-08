@@ -11,8 +11,10 @@ import CustomText from '../../component/CustomText';
 import { SECTION_MARGIN_TOP,LOGIN_FIELD_HEIGHT, MAIN_BLOCK_BORDER_RADIUS, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,ADDRESS_FIELD_HEIGHT, SIGNATURE_VIEW_HEIGHT,TOTAL_BLOCK, CREDIT_FIELD_HEIGHT,TEXT_MARGIN_TOP, CAMERA_SIZE,FOURTH_FONT } from '../../constants/Dimen';
 import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
+import CustomRadioButton from '../../component/CustomRadioButton';
+
 import Api from '../../component/Fetch';
-import { PICKUP_DETAILS , PICKUP_ORDER_UPDATE , PAYMENT_BY_CASH} from '../../constants/Api';
+import { PICKUP_DETAILS , PICKUP_ORDER_UPDATE , PAYMENT_BY_CASH, UPDATE_DELIVERY_TYPE} from '../../constants/Api';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 
 
@@ -33,11 +35,15 @@ export default class PickupDetails extends React.Component {
     balance_amount:'',
     amount_payed:'',
     amount_to_pay:'',
-    additional_charge:'',
+    additional_charge:'0',
     pay_by_sender_withAdditinal:'',
     sender_payment:'0',
     errorTextamount_recieved:'',
     hasError:false,
+    delivery_type:'',
+    normal_selected:true,
+    bullet_selected:false,
+    
   };
 
 
@@ -45,7 +51,26 @@ export default class PickupDetails extends React.Component {
     
     this.fetch_pickup_details(this.props.pickup_id);
   }
+//////////////////////////////////////////////////////////////////////////////
 
+isSelected(no){
+
+if(no == 11){
+  this.setState({normal_selected:true})
+  this.setState({bullet_selected:false})
+
+  this.setState({delivery_type:"NORMAL"});
+ 
+
+}
+if(no == 12){
+  this.setState({normal_selected:false})
+  this.setState({bullet_selected:true})
+  
+  this.setState({delivery_type:"BULLET"});
+ 
+}
+}
    /////////////////////////////////////// Call function ////////////////////////////////////////////////////////////////////////////
 
  dialCall = (no) => {
@@ -61,6 +86,7 @@ export default class PickupDetails extends React.Component {
   Linking.openURL(phoneNumber);
 };
 
+
   //////////////////////////////////////////// Pickup details fetching function  //////////////////////////////////////////////////////////////////////////////////  
  
  fetch_pickup_details(id){
@@ -74,7 +100,12 @@ export default class PickupDetails extends React.Component {
 
       console.log('Success:', JSON.stringify(result));
       this.setState({pickup_details : result.payload, sender_payment: result.payload.payableBySender})
-    
+    if(result.payload.deliveryType === 'NORMAL'){
+      this.isSelected(11)
+    }else{
+      this.isSelected(12)
+
+    }
     }
     else{
       console.log('Failed');
@@ -82,6 +113,30 @@ export default class PickupDetails extends React.Component {
 })
 
  }
+
+///////////////////////////////// Delivery type update function //////////////////////////////////////////////////////////////////////////////////////// 
+ 
+update_delivery_type() {
+  
+  Api.fetch_request(UPDATE_DELIVERY_TYPE+this.state.pickup_details.orderId+'/deliveryType'+this.state.delivery_type, 'PUT', '')
+    .then(result => {
+
+      if (result.error != true) {
+
+       this.setState({final_cod_charge:result.payload.finalCodCharge})
+        console.log('Success:', JSON.stringify(result));
+        Toast.show({ text: result.message, type: 'success' });
+
+        Actions.pop()
+        Actions.refresh({key: Math.random()})
+      }
+      else {
+        console.log('Failed');
+        Toast.show({ text: result.message, type: 'warning' });
+      }
+    })
+
+}
 
   ///////////////////////////////// Pickup order update function //////////////////////////////////////////////////////////////////////////////////////// 
  
@@ -117,6 +172,16 @@ export default class PickupDetails extends React.Component {
  ////////////////////////////////// Additional charge calculating function /////////////////////////////////////////////////////////////////////////////////////
 
  additional_Calculate(text){
+ if(text==''){
+  var myInt = 0;
+  var payment=parseInt(this.state.pickup_details.payableBySender)
+  var total=myInt+payment;
+
+  var new_additional = parseInt(this.state.pickup_details.payableBySender) + myInt ;
+ 
+    this.setState({sender_payment:''+total , additional_charge :new_additional });
+  
+}else{
   var myInt = parseInt(text);
   var payment=parseInt(this.state.pickup_details.payableBySender)
   var total=myInt+payment;
@@ -126,10 +191,28 @@ export default class PickupDetails extends React.Component {
     this.setState({sender_payment:''+total , additional_charge :new_additional });
   // if(this.state.amount_recieved != null){ this.balanceCalculate(this.state.amount_recieved);}
 
+}
  }
   ////////////////////////////////// Balance calculating fuction /////////////////////////////////////////////////////////////////////////////////////
 
 balanceCalculate(text){
+
+if(text===''){
+  var myInt = 0;
+  var payment=parseInt(this.state.sender_payment)
+  var bal=myInt-payment;
+  var bal1=payment-myInt;
+
+if(myInt==payment){
+  this.setState({balance_amount:'0',amount_payed:''+myInt,amount_to_pay:'0'});
+}else if(myInt>payment){
+  this.setState({balance_amount:''+bal,amount_payed:''+payment, amount_to_pay:'0'});
+}else{
+  this.setState({balance_amount:'0',amount_payed:''+myInt, amount_to_pay:''+bal1});
+}
+
+}else{
+
   var myInt = parseInt(text);
   var payment=parseInt(this.state.sender_payment)
   var bal=myInt-payment;
@@ -143,7 +226,7 @@ if(myInt==payment){
   this.setState({balance_amount:'0',amount_payed:''+myInt, amount_to_pay:''+bal1});
 }
 
-
+}
   
 
 }
@@ -310,6 +393,14 @@ render(){
           </View>
 </View>
 
+{/* ////////////////////////////////////////////////////////////////////////// */}
+{this.state.pickup_details.deliveryType ==='NORMAL' &&(<View>
+<CustomText text={'Delivery Type'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+         <View style={{flexDirection:'row',}}>
+         <CustomRadioButton title={'Normal'} selectedColor={Colors.darkSkyBlue} selected={this.state.normal_selected} onPress={()=>this.isSelected(11)}/>
+         <CustomRadioButton title={'Bullet'} selectedColor={Colors.darkSkyBlue} selected={this.state.bullet_selected} onPress={()=>this.isSelected(12)}/>
+         </View>
+</View>)}
 {/*///////////////////////////// Order Status Block //////////////////////////////////////////////// */}
 
 {this.state.pickup_details.pickupStatus == 'ASSIGNED' && (<View>
@@ -379,7 +470,7 @@ render(){
     
       </View>)}
 
-      <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>Actions.reset('pickup')} />
+      <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>this.update_delivery_type()} />
       <View style={{alignItems:'flex-end',marginTop:SECTION_MARGIN_TOP}}><CustomText  text={Strings.version} textType={Strings.subtext} color={Colors.darkSkyBlue} /></View>
           </View>
         </ScrollView>

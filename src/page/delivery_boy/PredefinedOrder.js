@@ -63,106 +63,8 @@ flashMode: RNCamera.Constants.FlashMode.auto,
 
   ////////////////////////////// Printing function //////////////////////////////////////////////////////////////////////////////////////
 
-//   async printHTML(){
-//     await RNPrint.print({
-//      html: `<div class="container">
-//      <div class="container-body">
-//          <mat-card>
-//              <div id="reference-print-section" class="tableview">
-//                  <div class="logo-section">
-//                  <img src="data:image/png;base64, ${this.state.image_code}" width="70" height="50">
-//                  </div>
-//                  <div class="example-container mat-elevation-z8 " id="tablesection" #TABLE>
-//                      <table mat-table [dataSource]="dataSource" #table matSort border="1" style="border-color: black;">
-//                          <ng-container matColumnDef="slno">
-//                              <th mat-header-cell *matHeaderCellDef>Slno.</th>
-//                              <td mat-cell *matCellDef="let element;let i=index;">{{i+1}} </td>
-//                          </ng-container>
-//                          <ng-container matColumnDef="predefinedOrderid">
-//                              <th mat-header-cell *matHeaderCellDef matTooltip="Bulk Predefined Order Id"><b>Predefined
-//                                      Order
-//                                      Id</b></th>
-//                              <td mat-cell *matCellDef="let element">
-//                                  ${this.state.pdoid_details.preDefinedOrderId}</td>
-//                          </ng-container>
-//                          <ng-container matColumnDef="barcode">
-//                              <th mat-header-cell *matHeaderCellDef><b>Barcode</b></th>
-//                              <td mat-cell *matCellDef="let element">
-//                                  <div fxLayout="row" fxLayoutAlign="start center">
-//                                  <img src="data:image/png;base64, ${this.state.image_code2}" width="70" height="50">
-//                                  <div style="    background-color: #DF3E2A;
-//                                  margin-left: 40px;
-//                                  font-size: 14px;
-//                                  width: 50%;
-//                                  margin-top: 10px;">
-//                                          <div style="padding: 6px 21px;">
-//                                              <div class="row">
-//                                                  <div class="col-sm-2">
-//                                                      <label style="font-size: 14px;color: black;">Price</label>
-//                                                  </div>
-//                                                  <div style="    background-color: white;
-//                                                  margin-left: 8px;
-//                                                  color: black;
-//                                              ">
-//                                                      <span>${this.state.pdoid_details.rate}&nbsp;/-</span>
-//                                                  </div>
-//                                              </div>
-//                                              <div style="font-size:12px;color: black;">
-//                                                   <div style="margin-top: 3px;">
-//                                                      <label>Height</label>
-//                                                  </div>
-//                                                  <div style="    background-color: white;
-//                                                  margin: 4px 9px;
-//                                              ">
-//                                                      <span>${this.state.pdoid_details.height}&nbsp;cm</span>
-//                                                  </div>
-//                                                  <div style="    margin-top: 3px;
-//                                                  ">
-//                                                      <label>Width</label>
-//                                                  </div>
-//                                                  <div class="ranges col-sm-3">
-//                                                      <span>${this.state.pdoid_details.width}&nbsp;cm</span>
-//                                                  </div>
-//                                              </div>
-//                                              <div class="shipment-values row">
-//                                                  <div class="titles col-sm-2">
-//                                                     <label>Weight</label>
-//                                                 </div>
-//                                                 <div style="    color: black;
-//                                                 ">
-//                                                     <span>${this.state.pdoid_details.weight}&nbsp;gm</span>
-//                                                 </div>
-//                                                 <div style="    margin-top: 3px;
-//                                                 ">
-//                                                     <label>Length</label>
-//                                                 </div>
-//                                                 <div style="    color: black;
-//                                                 ">
-//                                                     <span>${this.state.pdoid_details.length}&nbsp;cm</span>
-//                                                 </div>
-//                                             </div>
-//                                          </div>
-//                                          </div>
-//                                  </div>
-//                                  <Barcode value="${this.state.pdoid_details.preDefinedOrderId}" text="true"
-//                                  width="width" height="height" 
-//                                  />
-//                              </td>
-//                          </ng-container>
- 
-//                          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-//                          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-//                      </table>
-//                  </div>
-//              </div>
-//          </mat-card>
-//      </div>
-//  </div>`
-//     });
-//   }
-
-
   async printHTML(){
+    
     await RNPrint.print({
       html:`<html>
       <head>
@@ -220,11 +122,13 @@ flashMode: RNCamera.Constants.FlashMode.auto,
                   <tr style="text-align: center; background-color: #30BCC9; color: #fff;">
                       <td class="white">Sl No</td>
                       <td class="white">Predefined Id</td>
-                      <td class="white">Sticker</td>
+                      <td class="white" colspan="3">Sticker</td>
+                     
                   </tr>
               </thead>
               <tbody>
                   ${this.state.ar}
+                  
               </tbody>
           </table>
       </body>
@@ -435,63 +339,53 @@ fetch_predefined_details(id) {
             this.state.ar.push(`<tr style="text-align:center">
             <td>${i+1}</td>
 <td>${result.payload[i].preDefinedOrderId}</td>
-<td><img src="data:image/png;base64, ${this.state.image_code2}" width="70" height="50">
-<Barcode value="hello" format="CODE128"/></td>
-<img id='barcode' src="https://api.qrserver.com/v1/create-qr-code/?data=HelloWorld&amp;size=100x100" alt="" title="HELLO" width="50" height="50" />
-<div style="    background-color: #DF3E2A;
-                                 margin-left: 40px;
-                                  font-size: 14px;
-                                  width: 50%;
-                                  margin-top: 10px;">
-                                          <div style="padding: 6px 21px;">
-                                              <div class="row">
-                                                  <div class="col-sm-2">
-                                                      <label style="font-size: 14px;color: black;">Price</label>
-                                                  </div>
-                                                 <div style="    background-color: white;
-                                                margin-left: 8px;
-                                                 color: black;
-                                              ">
-                                                      <span>${result.payload[i].bulkPredefinedOrderResponse.rate}&nbsp;/-</span>
-                                                  </div>
-                                              </div>
-                                              <div style="font-size:12px;color: black;">
-                                                   <div style="margin-top: 3px;">
-                                                      <label>Height</label>
-                                                  </div>
-                                                  <div style="    background-color: white;
-                                                  margin: 4px 9px;
-                                              ">
-                                                      <span>${result.payload[i].bulkPredefinedOrderResponse.height}&nbsp;cm</span>
-                                                  </div>
-                                                  <div style="    margin-top: 3px;
-                                                  ">
-                                                      <label>Width</label>
-                                                  </div>
-                                                  <div class="ranges col-sm-3">
-                                                      <span>${result.payload[i].bulkPredefinedOrderResponse.width}&nbsp;cm</span>
-                                                  </div>
-                                              </div>
-                                              <div class="shipment-values row">
-                                                 <div class="titles col-sm-2">
-                                                     <label>Weight</label>
-                                                 </div>
-                                                 <div style="    color: black;
-                                                 ">
-                                                     <span>${result.payload[i].bulkPredefinedOrderResponse.weight}&nbsp;gm</span>
-                                                 </div>
-                                                 <div style="    margin-top: 3px;
-                                                 ">
-                                                     <label>Length</label>
-                                                 </div>
-                                                 <div style="    color: black;
-                                                 ">
-                                                     <span>${result.payload[i].bulkPredefinedOrderResponse.length}&nbsp;cm</span>
-                                                 </div>
-                                             </div>
-                                          </div>
-                                          </div>
-                                  </div>
+
+<td style="borderwidth:5px ; bordercolor:#fff">
+<div><img src="data:image/png;base64, ${this.state.image_code2}" width="70" height="50"><div>
+<td style="width:200px ; cellspacing:10">
+<div style=" background-color: #DF3E2A; padding : 10px ; cellspacing:10 ">
+                 <table cellspacing="10"  bordercolor:"#DF3E2A" >
+                 <tr> 
+                    <td style="color:white ;padding: 5px;
+                    border: 2px solid #DF3E2A;"><b>Price </b></td>
+                    <td style="padding: 5px;
+                    border: 2px solid #DF3E2A;" bgcolor="white" colspan="3">${result.payload[i].bulkPredefinedOrderResponse.rate}&nbsp;/- </td>
+                 
+                 </tr>
+                 <tr> 
+                    <td style="color:white ;padding: 5px;
+                    border: 2px solid #DF3E2A;"><b>Height </b></td>
+                    <td style="padding: 5px;
+                    border: 2px solid #DF3E2A;" bgcolor="white">${result.payload[i].bulkPredefinedOrderResponse.height}&nbsp;cm </td>
+                    
+                    <td style="color:white ;padding: 5px;
+                    border: 2px solid #DF3E2A;"><b>Width </b></td>
+                    <td style="padding: 5px;
+                    border: 2px solid #DF3E2A;" bgcolor="white">${result.payload[i].bulkPredefinedOrderResponse.width}&nbsp;cm </td>
+                 </tr>
+
+                 <tr> 
+                 <td style="color:white ;padding: 5px;
+                 border: 2px solid #DF3E2A;"><b>Weight </b></td>
+                 <td style="padding: 5px;
+                 border: 2px solid #DF3E2A;" bgcolor="white">${result.payload[i].bulkPredefinedOrderResponse.weight}&nbsp;gm </td>
+                 <td style="color:white ;padding: 5px;
+                 border: 2px solid #DF3E2A;"><b>Length </b></td>
+                 <td style="padding: 5px;
+                 border: 2px solid #DF3E2A;" bgcolor="white">${result.payload[i].bulkPredefinedOrderResponse.length}&nbsp;cm </td>
+              </tr>
+                 
+                 </table>
+                 </div>
+             </div>
+ </td>
+ <td>  <Barcode value=${result.payload[i].preDefinedOrderId} ></Barcode>
+</td>
+
+</td>
+
+
+
 
 </tr>`,);
          }
@@ -657,7 +551,7 @@ if(this.state.pdoid_details.length != null){
       <View style={styles.cell2}><CustomText text={item.assignerName ? item.assignerName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell2}><CustomText text={item.updatedDate ? item.updatedDate : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
 
-      <View style={styles.cell2}><CustomText text={parseInt(item.availableToId)-parseInt(item.availableFromId)+1} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+      <View style={styles.cell2}><CustomText text={parseInt(item.assignedToId)-parseInt(item.assignedFromId)+1} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell2}><CustomText text={item.availableFromId ? item.prefix+item.availableFromId +"-"+ item.prefix+item.availableToId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell2}><Button  transparent onPress={()=>Actions.usedunusedpdoid({pre_assign_id:item.preorderAssignId})}><Icon style={{ color: Colors.black,fontSize:30,paddingLeft:30 }} name='ios-eye' /></Button></View>
     <View style={styles.cell2}><Button  transparent onPress={()=>this.fetch_predefined_details(item.preorderAssignId)}><Icon style={{ color: Colors.black ,fontSize:26,paddingLeft:30}} name='ios-barcode' /></Button></View>
@@ -755,9 +649,9 @@ if(this.state.pdoid_details.length != null){
 
           {/*////////////////////// Print Button Block //////////////////////////////////////////////// */}
 
-          <View style={{ flexDirection: 'row', marginTop: SECTION_MARGIN_TOP, backgroundColor: Colors.aash, }}>
-            <View style={{ flex: 4 ,paddingRight:150}}><CustomDropdown data={myArray} height={SHORT_BUTTON_HEIGHT} backgroundColor={Colors.aash} onChangeValue={(value, index, data) => { this.setState({ offset: 0 }); setTimeout(() => { {if(value=='Assign Pending' || value=='Assigned' || value=='Reassign'){this.fetch_predefined_orders(data[index]['name']);}else{this.fetch_predefined_orders2(data[index]['name'])}; this.setState({pdoid_status:value})} }, 100); }} /></View>
-            {/* <View style={{ flex: 3 }}><CustomButton title={'Track Order ID'} text_color={Colors.darkSkyBlue} backgroundColor={Colors.white} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={()=>this.setState({modalVisible:true})} /></View> */}
+          <View style={{ flexDirection: 'row', marginTop: SECTION_MARGIN_TOP, backgroundColor: Colors.aash,justifyContent:'space-between' }}>
+            <View style={{ flex: 4 }}><CustomDropdown data={myArray} height={SHORT_BUTTON_HEIGHT} backgroundColor={Colors.aash} onChangeValue={(value, index, data) => { this.setState({ offset: 0 }); setTimeout(() => { {if(value=='Assign Pending' || value=='Assigned' || value=='Reassign'){this.fetch_predefined_orders(data[index]['name']);}else{this.fetch_predefined_orders2(data[index]['name'])}; this.setState({pdoid_status:value})} }, 100); }} /></View>
+            <View style={{ flex: 3 }}><CustomButton title={'Track Order ID'} text_color={Colors.darkSkyBlue} backgroundColor={Colors.white} height={SHORT_BUTTON_HEIGHT} fontSize={16} marginRight={10} borderRadius={SHORT_BLOCK_BORDER_RADIUS} marginTop={10} onPress={()=>Actions.trackorder()} /></View>
           </View>
 
           {/*//////////////////////// Horizontal Order Details Block //////////////////////////////////////////////// */}
