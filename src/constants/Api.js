@@ -98,6 +98,7 @@ export const VALIDATE_PDOID= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-assign/a
 export const ASSIGN_SINGLE_ORDER= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-assign/single-order';
 export const PREORDER_TRACKING= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-assign/tracking-preorder';
 export const UPDATE_DELIVERY_TYPE= BASE_URL_ORDER + SUB_URL_ORDER + 'order/orderId/';
+export const PAYMENT_DETAILS= BASE_URL_ORDER + SUB_URL_ORDER + 'orderId/';
 
 
 

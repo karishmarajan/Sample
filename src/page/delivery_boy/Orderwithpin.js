@@ -44,7 +44,7 @@ export default class orderwithpin extends React.Component {
       errorTextsender_pincode: '',
       errorTextreciever_pincode: '',
       hasError: false,
-      predefinedpin:'',
+      predefinedpin:this.props.pre_id ? this.props.pre_id :'',
       sender_pincode:'',
       reciever_pincode:'',
       customertype:'',
@@ -69,6 +69,9 @@ export default class orderwithpin extends React.Component {
       pdoid_assign_id:'',
       payment:'',
       del_color:Colors.red,
+      isAtAgent:false,
+      isPickupRequired:true,
+      office_id:'',
       camera: {
         type: RNCamera.Constants.Type.back,
 	flashMode: RNCamera.Constants.FlashMode.auto,
@@ -81,11 +84,15 @@ export default class orderwithpin extends React.Component {
         AsyncStorage.getItem(KEY).then((value => {
           let data = JSON.parse(value);
 
-           this.setState({personId:data.personId})
+           this.setState({personId:data.personId, office_id:data.officeId})
 
          console.log('KKKKKKKKKKKKKK',data) 
       }));
             this.fetch_customers_list();
+
+            if(!this.props.pre_id ==''){
+this.validate_pdoid(this.props.pre_id);
+            }
 
       }
 
@@ -155,10 +162,10 @@ pdoid_payment_status_update() {
     let data = JSON.parse(value);
 
 
-//   if(this.state.customer===false){
-//     Toast.show({ text: 'Assignment not completed', type: 'warning' });
-// return;
-//   }
+  if(this.state.customerIdentityType===''){
+    Toast.show({ text: 'Assignment not completed', type: 'warning' });
+return;
+  }
 
 let body = {
   
@@ -224,7 +231,7 @@ return;
           console.log('Success:', JSON.stringify(result));
           this.setState({btn_assign:false})
           Toast.show({ text:result.message , type: 'success' });
-
+this.validate_pdoid(this.state.predefinedpin)
         }
         else {
           console.log(result.message,'Failed');
@@ -263,18 +270,29 @@ return;
          
           }else if(result.payload.assigneeUserType == 'CUSTOMER' && result.payload.paymentStatus =='PENDING'){
             this.setState({assign:true,customer:true,sender_name:result.payload.assigneeName,customer_id:result.payload.assigneeId,customerIdentityType:result.payload.customerIdentityType ,btn_assign:false,btn_pay:true})
+         
+          }else if(result.payload.assigneeUserType == 'DELIVERY_BOY' && result.payload.paymentStatus =='COMPLETED'){
+            this.setState({assign:true,customer:false,btn_assign:true,btn_pay:false})
 
             }else{
             this.setState({assign:true,customer:true,sender_name:result.payload.assigneeName,customer_id:result.payload.assigneeId,customerIdentityType:result.payload.customerIdentityType ,btn_assign:false,btn_pay:false})
           }
           if(result.payload.paymentStatus === 'COMPLETED'){
             this.setState({del_color:Colors.green})
+          }else if(result.payload.paymentStatus === 'NO_PAYMENT_REQD'){
+            this.setState({del_color:Colors.green})
+
+          }
+          else{
+            this.setState({del_color:Colors.red})
+
           }
         }
         else {
           console.log(result.message,'Failed');
           Toast.show({ text:result.message , type: 'warning' });
-  
+          this.setState({assign:false,})
+
   
         }
       })
@@ -319,10 +337,10 @@ return;
       "deliveryPincode": this.state.reciever_pincode,
       "deliveryType": this.state.bullet == true ? "BULLET" : "NORMAL",
       "finalCodCharge": this.state.cod ? this.state.cod :0,
-      "isAtDeliveryAgent": false,
+      "isAtDeliveryAgent": this.state.isAtAgent,
       "isAtOffice": false,
       "isManualPickup": false,
-      "isPickupRequired": true,
+      "isPickupRequired": this.state.isPickupRequired,
       "pickupPincode": this.state.sender_pincode,
       "preDefinedOrderId": this.state.predefinedpin,
     }
@@ -430,16 +448,16 @@ Actions.dashboard();
   
          <View padding={30}>
 
-         {/* <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:1}}>
+         <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:1}}>
            <CustomText text={'Collected'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
            <Switch
           trackColor={{false: 'gray', true: 'teal'}}
           thumbColor="white"
           ios_backgroundColor="gray"
-          onValueChange={(value) =>{ this.setState({collected_toggle: value})}}
+          onValueChange={(value) =>{ this.setState({collected_toggle: value});if(value==true){this.setState({isAtAgent:true,isPickupRequired:false})}else{this.setState({isAtAgent:false,isPickupRequired:true})}}}
           value={this.state.collected_toggle}
         />
-           </View> */}
+           </View>
 
          <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:1}}>
            <CustomText text={'Quick Order'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
@@ -470,28 +488,30 @@ Actions.dashboard();
     <CustomSearchBox  placeholder={'Select'} onTextChange={(text)=>this.setState({customer_id: text})}  value={this.state.customer_id}  onItemSelect={(item) =>{ if(item.id.charAt(0)=='B'){this.setState({customer_id:item.id.replace('B', ''),customerIdentityType:"BRANCH_USER"})}else{this.setState({customer_id:item.id , customerIdentityType:"COMMON_USER"})}}} items={this.state.users} />
       </View>)} */}
 {this.state.assign == true && (<View>
-  {this.state.customer == false && (<View>
+  {this.state.customer == false && (<View style={{flex:1}}>
         <CustomText text={'Sender Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-   <View style={{flexDirection:'row', justifyContent:'space-between',paddingHorizontal:10}}>  
+   <View style={{flexDirection:'row', justifyContent:'space-between'}}>  
      <View style={{flex:4}}><CustomSearchBox  placeholder={'Select'} onTextChange={(text)=>this.setState({sender_name: text})}  value={this.state.sender_name}  onItemSelect={(item) =>{ if(item.id.charAt(0)=='B'){this.setState({customer_id:item.id.replace('B', ''),customerIdentityType:"BRANCH_USER", sender_name:item.name})}else{this.setState({customer_id:item.id , customerIdentityType:"COMMON_USER", sender_name:item.name})}}} items={this.state.users} /></View>
      {this.state.btn_assign === true && (<View style={{flex:2}}><CustomButton title={'Assign'} marginTop={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.assign_customer()} /></View>)}
 
      </View>
       </View>)}
 
-      {this.state.customer == true && (<View>
+      {this.state.customer == true && (<View style={{flex:1}}>
         <CustomText text={'Sender Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomInput flex={1} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} value={this.state.sender_name} />
       </View>)}
 
       <View>
       <CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-<View style={{flexDirection:'row', justifyContent:'space-between',paddingHorizontal:10}}>
+<View style={{flexDirection:'row', justifyContent:'space-between',flex:1}}>
 <View style={{flexDirection:'row',flex:4,borderColor:Colors.borderColor,borderWidth:SHORT_BORDER_WIDTH,borderRadius:SHORT_BORDER_RADIUS,padding:1,justifyContent:'space-between'}}>
        <View style={{flex:3}}><CustomInput flex={1} value={''+this.state.payment} backgroundColor={Colors.white} /></View>
        <View style={{flex:2,justifyContent:'center'}}><Icon style={{ color: this.state.del_color ,fontSize:26,paddingLeft:30}} name='md-cash' /></View>     
         </View>
   {this.state.btn_pay === true && (<View style={{flex:2,marginLeft:5}}><CustomButton title={'Pay'} marginTop={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.pdoid_payment_status_update()} /></View>)}
+  {this.state.btn_pay === false && (<View style={{flex:2,marginLeft:5}}><CustomButton title={'Details'} marginTop={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.paymentdetails({order_id:this.state.predefinedpin})} /></View>)}
+
 
 </View>
       </View>
