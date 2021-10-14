@@ -13,6 +13,8 @@ import { SECTION_MARGIN_TOP, COLUMN_PADDING, SHORT_BUTTON_HEIGHT, LOGIN_FIELD_HE
 import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
 import CustomCheckBox from '../../component/CustomCheckBox';
+import CustomAlertComponent from '../../component/CustomAlertComponent';
+
 import session, { KEY } from '../../session/SessionManager';
 import Api from '../../component/Fetch';
 import { PICKUP_ORDERS, PICKUP_ORDER_UPDATE , PICKUP_STATUS_CLOSE, GET_PICKUP_BY_SCAN} from '../../constants/Api';
@@ -33,7 +35,20 @@ export default class PickUp extends React.Component {
     super(props);
     this.camera = null;
     this.barcodeCodes = [];
- this.state = {
+    this.onPressAlertPositiveButton = this.onPressAlertPositiveButton.bind(this);
+    this.onPressAlertNegativeButton = this.onPressAlertNegativeButton.bind(this);
+   
+  }
+  onPressAlertPositiveButton() {
+    this.pickup_update_collect(this.state.pickup_details.orderId);
+    Actions.pickup();
+
+  }
+  onPressAlertNegativeButton() {
+  this.setState({alert_visible:false})
+  Actions.pickup();
+  }
+ state = {
     filterType: Strings.status,
     search: '',
     pickup_list: [],
@@ -54,13 +69,17 @@ export default class PickUp extends React.Component {
     allChecked: false,
     quick_scan:false,
     scan_title:'',
+    alert_visible:false,
+    alert_title:'Alert',
+    alert_message:'Do you want to change status to collected ?',
+    order_id:'',
     camera: {
       type: RNCamera.Constants.Type.back,
 flashMode: RNCamera.Constants.FlashMode.auto,
     }
 
   };
-  }
+  
 
 
   componentDidMount() {
@@ -279,7 +298,8 @@ pickup_close_all() {
 }else if(this.state.scan_title ==='Normal Scan'){
   Actions.pickupdetails({pickup_id:this.state.pickup_details.pickupId});
 }else{
-this.pickup_update(this.state.pickup_details.orderId);
+  this.setState({alert_visible:true})
+// this.pickup_update_collect(this.state.pickup_details.orderId);
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
  
@@ -299,7 +319,7 @@ this.pickup_update(this.state.pickup_details.orderId);
 
   ///////////////////////////////// Pickup order update function //////////////////////////////////////////////////////////////////////////////////////// 
  
-  pickup_update(order_id) {
+  pickup_update_collect(order_id) {
 
     let body = {
 
@@ -317,8 +337,8 @@ this.pickup_update(this.state.pickup_details.orderId);
          this.setState({final_cod_charge:result.payload.finalCodCharge})
           console.log('Success:', JSON.stringify(result));
           Toast.show({ text: result.message, type: 'success' });
-
-          this.fetch_pickup_details(this.props.pickup_id);
+         this.setState({alert_visible:false});
+         this.fetch_pickup_orders(Strings.assigned) ;
 
         }
         else {
@@ -664,6 +684,19 @@ render() {
                 ListHeaderComponentStyle={styles.header}
               />
             </ScrollView>
+            <CustomAlertComponent
+              displayAlert={this.state.alert_visible}
+              displayAlertIcon={true}
+              alertTitleText={this.state.alert_title}
+              alertMessageText={this.state.alert_message}
+              displayPositiveButton={true}
+              positiveButtonText={'YES'}
+              displayNegativeButton={true}
+              negativeButtonText={'NO'}
+              onPressPositiveButton={this.onPressAlertPositiveButton}
+              onPressNegativeButton={this.onPressAlertNegativeButton}
+            />
+
             <View style={{alignItems:'flex-end',marginTop:SECTION_MARGIN_TOP,marginBottom:SECTION_MARGIN_TOP}}><CustomText  text={Strings.version} textType={Strings.subtext} color={Colors.darkSkyBlue} /></View>
           </View>
           </ScrollView>

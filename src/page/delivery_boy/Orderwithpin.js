@@ -55,6 +55,7 @@ export default class orderwithpin extends React.Component {
       cod_toggle:false,
       quick_order:'',
       additional_charge:'',
+      errorTextAdditional:'',
       cod:'',
       collected_toggle:false,
       users:[],
@@ -71,6 +72,7 @@ export default class orderwithpin extends React.Component {
       del_color:Colors.red,
       isAtAgent:false,
       isPickupRequired:true,
+      agent_id:0,
       office_id:'',
       camera: {
         type: RNCamera.Constants.Type.back,
@@ -124,9 +126,9 @@ fetch_customers_list() {
       let customers = [];
 
       for(var i = 0; i < count; i++){
-        customers.push({name:result.payload[i].firstName+' '+result.payload[i].lastName, id: result.payload[i].userId });
+        // customers.push({name:result.payload[i].firstName+' '+result.payload[i].lastName, id: result.payload[i].userId });
 
-      //  customers.push({name: result.payload[i].userId+' - '+ result.payload[i].firstName+' '+result.payload[i].lastName +' - '+result.payload[i].mobileNumber, id: result.payload[i].userId });
+       customers.push({name: result.payload[i].userId+' - '+ result.payload[i].firstName+' '+result.payload[i].lastName +' - '+result.payload[i].mobileNumber, id: result.payload[i].userId ,na:result.payload[i].firstName+' '+result.payload[i].lastName});
      }
      this.setState({ users: customers });
     }
@@ -162,7 +164,11 @@ pdoid_payment_status_update() {
     let data = JSON.parse(value);
 
 
-  if(this.state.customerIdentityType===''){
+  if(this.state.customerIdentityType==='' ){
+    Toast.show({ text: 'Assignment not completed', type: 'warning' });
+return;
+  }
+  if(this.state.btn_assign=== true){
     Toast.show({ text: 'Assignment not completed', type: 'warning' });
 return;
   }
@@ -324,7 +330,10 @@ return;
     Toast.show({ text: 'Payment not completed', type: 'warning' });
 return;
   }
-
+  if(this.state.additional_charge==="" && this.state.bullet === true) {
+    this.setState({hasError: true, errorTextAdditional: 'must apply additional charge if delivery type is bullet !'});
+    return;
+  }
   let body = {
       "additionalCharges": this.state.additional_charge ? this.state.additional_charge : 0 ,
       "createdAtOfficeId": 0,
@@ -332,7 +341,7 @@ return;
       "creatorUserType": "DELIVERY_AGENT",
       "customerId": this.state.customer_id ? this.state.customer_id : null,
       "customerIdentityType": this.state.customerIdentityType ? this.state.customerIdentityType : null,
-      "deliveryAgentId": 0,
+      "deliveryAgentId": this.state.agent_id,
       "deliveryCharge": this.state.payment,
       "deliveryPincode": this.state.reciever_pincode,
       "deliveryType": this.state.bullet == true ? "BULLET" : "NORMAL",
@@ -454,7 +463,7 @@ Actions.dashboard();
           trackColor={{false: 'gray', true: 'teal'}}
           thumbColor="white"
           ios_backgroundColor="gray"
-          onValueChange={(value) =>{ this.setState({collected_toggle: value});if(value==true){this.setState({isAtAgent:true,isPickupRequired:false})}else{this.setState({isAtAgent:false,isPickupRequired:true})}}}
+          onValueChange={(value) =>{ this.setState({collected_toggle: value});if(value==true){this.setState({isAtAgent:true,isPickupRequired:false,agent_id:parseInt(this.state.personId)})}else{this.setState({isAtAgent:false,isPickupRequired:true,agent_id:0})}}}
           value={this.state.collected_toggle}
         />
            </View>
@@ -474,7 +483,7 @@ Actions.dashboard();
         <View style={{flexDirection:'row'}}>
         <CustomText text={'Preorder Id'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomMandatory/></View>
-        <CustomInput flex={1}   borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) =>{this.setState({predefinedpin: text , errorTextpreid:""});this.validate_pdoid(text)}} value={this.state.predefinedpin} />
+        <CustomInput flex={1}   borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) =>{this.setState({predefinedpin: text , errorTextpreid:"",sender_name:'',customerIdentityType:''});this.validate_pdoid(text)}} value={this.state.predefinedpin} />
         {!!this.state.errorTextpreid && (<Text style={{color: 'red'}}>{this.state.errorTextpreid}</Text>)}
         <CustomButton title={'Scan code'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.setState({modalVisible:true})} />
        
@@ -491,7 +500,7 @@ Actions.dashboard();
   {this.state.customer == false && (<View style={{flex:1}}>
         <CustomText text={'Sender Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
    <View style={{flexDirection:'row', justifyContent:'space-between'}}>  
-     <View style={{flex:4}}><CustomSearchBox  placeholder={'Select'} onTextChange={(text)=>this.setState({sender_name: text})}  value={this.state.sender_name}  onItemSelect={(item) =>{ if(item.id.charAt(0)=='B'){this.setState({customer_id:item.id.replace('B', ''),customerIdentityType:"BRANCH_USER", sender_name:item.name})}else{this.setState({customer_id:item.id , customerIdentityType:"COMMON_USER", sender_name:item.name})}}} items={this.state.users} /></View>
+     <View style={{flex:4}}><CustomSearchBox  placeholder={'Select'} onTextChange={(text)=>this.setState({sender_name: text})}  value={this.state.sender_name}  onItemSelect={(item) =>{ if(item.id.charAt(0)=='B'){this.setState({customer_id:item.id.replace('B', ''),customerIdentityType:"BRANCH_USER", sender_name:item.na})}else{this.setState({customer_id:item.id , customerIdentityType:"COMMON_USER", sender_name:item.na})}}} items={this.state.users} /></View>
      {this.state.btn_assign === true && (<View style={{flex:2}}><CustomButton title={'Assign'} marginTop={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.assign_customer()} /></View>)}
 
      </View>
@@ -560,6 +569,8 @@ Actions.dashboard();
            </View>
           {this.state.additional_charge_toggle == true &&(<View>
             <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({additional_charge: text , })} value={this.state.additional_charge} />
+            {!!this.state.errorTextAdditional && (<Text style={{color: 'red'}}>{this.state.errorTextAdditional}</Text>)}
+
           </View>)} 
            <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:1}}>
            <CustomText text={'COD'} keyboardType={"number-pad"} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>

@@ -74,7 +74,9 @@ this.setState({user_type:'CUSTOMER'})
       let customers = [];
 
       for(var i = 0; i < count; i++){
-       customers.push({name:result.payload[i].firstName+' '+result.payload[i].lastName , id: result.payload[i].userId , type:result.payload[i].customerIdentityType});
+      //  customers.push({name:result.payload[i].firstName+' '+result.payload[i].lastName , id: result.payload[i].userId , type:result.payload[i].customerIdentityType});
+      customers.push({name: result.payload[i].userId+' - '+ result.payload[i].firstName+' '+result.payload[i].lastName +' - '+result.payload[i].mobileNumber, id: result.payload[i].userId ,na:result.payload[i].firstName+'  '+result.payload[i].lastName, type:result.payload[i].customerIdentityType});
+
      }
      this.setState({ users: customers });
     }
@@ -104,7 +106,7 @@ fetch_delivery_agent_list() {
       let agents = [];
 
       for(var i = 0; i < count; i++){
-       agents.push({name:result.payload[i].firstName+' '+result.payload[i].lastName , id: result.payload[i].personId });
+       agents.push({name:result.payload[i].firstName+' '+result.payload[i].lastName , id: result.payload[i].personId , na:result.payload[i].firstName+'  '+result.payload[i].lastName});
      }
      this.setState({ users: agents });
     }
@@ -134,7 +136,7 @@ fetch_office_staffs_list() {
       let staffs = [];
 
       for(var i = 0; i < count; i++){
-       staffs.push({name: result.payload[i].firstName+' '+result.payload[i].lastName , id: result.payload[i].officeStaffId });
+       staffs.push({name: result.payload[i].firstName+' '+result.payload[i].lastName , id: result.payload[i].officeStaffId , na:result.payload[i].firstName+'  '+result.payload[i].lastName});
      }
      this.setState({ users: staffs });
     }
@@ -253,14 +255,14 @@ if(this.state.user_type==="") {
           <View style={{flex: 1, flexDirection: 'column',backgroundColor:Colors.mainBackgroundColor,padding:MAIN_VIEW_PADDING}}>
         
         <CustomText text={'User Type'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <CustomDropdown data={myArray} height={SHORT_BUTTON_HEIGHT} backgroundColor={Colors.aash} onChangeValue={(value, index, data) => {setTimeout(() => {this.setState({errorTextuser_type:''}) ;{if(value=='DELIVERY BOY'){this.fetch_delivery_agent_list()}else if(value=='CUSTOMER'){this.fetch_customers_list()}else if(value=='----Select----'){this.setState({user_type:''})}else {this.fetch_office_staffs_list()}}}, 100); }} />
+        <CustomDropdown data={myArray} height={SHORT_BUTTON_HEIGHT} backgroundColor={Colors.aash} onChangeValue={(value, index, data) => {setTimeout(() => {this.setState({errorTextuser_type:'',user_name:''}) ;{if(value=='DELIVERY BOY'){this.fetch_delivery_agent_list()}else if(value=='CUSTOMER'){this.fetch_customers_list()}else if(value=='----Select----'){this.setState({user_type:''})}else {this.fetch_office_staffs_list()}}}, 100); }} />
         {!!this.state.errorTextuser_type && (<Text style={{color: 'red'}}>{this.state.errorTextuser_type}</Text>)}
 
        <CustomText text={'PDOID'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
          <CustomInput flex={1} keyboardType={"number-pad"} maxLength={6} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => {this.setState({no_pdoid: text , errorTextno_pdoid:""})}} value={this.state.no_pdoid} />
         {!!this.state.errorTextno_pdoid && (<Text style={{color: 'red'}}>{this.state.errorTextno_pdoid}</Text>)}
         <CustomText text={'User Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-       <CustomSearchBox onTextChange={(text)=>{setTimeout(()=>{this.setState({user_name: text})},0)}} value={this.state.user_name} placeholder={'Select'} onItemSelect={(item) =>{ setTimeout(() => {this.setState({user_name:item.name ,user_id:item.id, cus_type:item.type, errorTextuser:""});}, 500); }} items={this.state.users} />
+       <CustomSearchBox onTextChange={(text)=>{setTimeout(()=>{this.setState({user_name: text})},0)}} value={this.state.user_name} placeholder={'Select'} onItemSelect={(item) =>{ setTimeout(() => {this.setState({user_name:item.na ,user_id:item.id, cus_type:item.type, errorTextuser:""});}, 500); }} items={this.state.users} />
        {!!this.state.errorTextuser && (<Text style={{color: 'red'}}>{this.state.errorTextuser}</Text>)}
 
         <CustomButton title={'ADD'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.assign_pdoid()} />

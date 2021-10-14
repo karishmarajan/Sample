@@ -438,7 +438,9 @@ render(){
               </View>
 <View style={{ backgroundColor:Colors.white,flexGrow:1,paddingLeft:MAIN_VIEW_PADDING,paddingRight:MAIN_VIEW_PADDING,paddingBottom:MAIN_VIEW_PADDING}}>
 
-<View style={{height:300}}>
+<View style={{height:320}}>
+<Grid ><Col><CustomText text={'COD Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
+        <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.finalCodCharge  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
 <Grid ><Col><CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
         <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.originalDeliveryCharge  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
  <Grid ><Col><CustomText text={'Package Allowed'} textType={Strings.subtext} color={Colors.black}/></Col>
