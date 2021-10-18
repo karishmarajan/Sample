@@ -303,7 +303,12 @@ pickup_close_all() {
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
  
-}else{
+}
+else if(this.state.pickup_details){
+  Toast.show({text:'This order is not assigned to you now',type:'warning'})
+
+}
+else{
   Toast.show({text:'This is not your order',type:'warning'})
 }
           }

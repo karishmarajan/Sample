@@ -8,7 +8,7 @@ import Colors from '../../constants/Colors';
 import Strings from '../../constants/Strings';
 import CustomInput from '../../component/CustomInput';
 import CustomText from '../../component/CustomText';
-import { SECTION_MARGIN_TOP,LOGIN_FIELD_HEIGHT, MAIN_BLOCK_BORDER_RADIUS, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,ADDRESS_FIELD_HEIGHT, SIGNATURE_VIEW_HEIGHT,TOTAL_BLOCK, CREDIT_FIELD_HEIGHT,TEXT_MARGIN_TOP, CAMERA_SIZE,FOURTH_FONT } from '../../constants/Dimen';
+import { SECTION_MARGIN_TOP,SHORT_BORDER_RADIUS, MAIN_BLOCK_BORDER_RADIUS, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,MAIN_VIEW_PADDING,BORDER_WIDTH,SHORT_BORDER_WIDTH,ADDRESS_FIELD_HEIGHT, SIGNATURE_VIEW_HEIGHT,TOTAL_BLOCK, CREDIT_FIELD_HEIGHT,TEXT_MARGIN_TOP, CAMERA_SIZE,FOURTH_FONT } from '../../constants/Dimen';
 import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
 import CustomRadioButton from '../../component/CustomRadioButton';
@@ -43,7 +43,8 @@ export default class PickupDetails extends React.Component {
     delivery_type:'',
     normal_selected:true,
     bullet_selected:false,
-    
+    modal_visible2:false,
+    bullet_additional_btn_pay:true,
   };
 
 
@@ -312,6 +313,22 @@ render(){
 </View>
 </Modal>
 
+{/*////////////////////////////////////// Modal Block 2 //////////////////////////////////////////////// */}
+
+<Modal visible={this.state.modal_visible2} supportedOrientations={['landscape']} transparent>
+<View style={{ justifyContent: 'center', flex: 1, backgroundColor: Colors.transparent, }}>
+    <View style={{ backgroundColor: Colors.white, alignSelf: 'center', marginTop:SECTION_MARGIN_TOP }}>
+        <View style={{ flexDirection: 'row', alignSelf: 'flex-end' , flexGrow:1}}>  
+        <View style={styles.modalview}>
+          <CustomInput  onChangeText={(text)=>this.setState({reason:text})} flex={1}/>
+          <CustomButton title={'Submit'} onPress={()=>this.setState({reason_val:this.state.reason,modal_visible:false})}/>
+        </View>
+        </View>
+    </View>
+</View>
+</Modal>
+
+
 <Modal visible={this.state.modal_view} supportedOrientations={['landscape']} transparent>
 <View style={{ flexDirection: 'row', alignSelf: 'flex-end', }}>  
         <View style={styles.modalview1}>
@@ -394,12 +411,24 @@ render(){
 </View>
 
 {/* ////////////////////////////////////////////////////////////////////////// */}
-{this.state.pickup_details.deliveryType ==='NORMAL' &&(<View>
+{this.state.pickup_details.deliveryType ==='NORMAL' &&(
+  <View style={{ backgroundColor:Colors.white,flexGrow:1,paddingLeft:MAIN_VIEW_PADDING,paddingRight:MAIN_VIEW_PADDING,paddingBottom:MAIN_VIEW_PADDING,marginTop:SECTION_MARGIN_TOP}}>
+
 <CustomText text={'Delivery Type'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
          <View style={{flexDirection:'row',}}>
          <CustomRadioButton title={'Normal'} selectedColor={Colors.darkSkyBlue} selected={this.state.normal_selected} onPress={()=>this.isSelected(11)}/>
          <CustomRadioButton title={'Bullet'} selectedColor={Colors.darkSkyBlue} selected={this.state.bullet_selected} onPress={()=>this.isSelected(12)}/>
          </View>
+         <View>
+      <CustomText text={'Additional Charge'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+<View style={{flexDirection:'row', justifyContent:'space-between'}}>
+      <View style={{flex:4}}><CustomInput flex={1} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} onChangeText={(text) =>{this.balanceCalculate(text); this.setState({amount_recieved: text, errorTextamount_recieved:''})}} value={this.state.amount_recieved} /></View>
+  {this.state.bullet_additional_btn_pay === true && (<View style={{flex:2,marginLeft:5}}><CustomButton title={'Pay'} marginTop={1} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.pdoid_payment_status_update()} /></View>)}
+  {this.state.bullet_additional_btn_pay === false && (<View style={{flex:2,marginLeft:5}}><CustomButton title={'Details'} marginTop={1} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.paymentdetails({order_id:this.state.predefinedpin})} /></View>)}
+
+
+</View>
+      </View>
 </View>)}
 {/*///////////////////////////// Order Status Block //////////////////////////////////////////////// */}
 
@@ -431,16 +460,23 @@ render(){
 {/*/////////////////////////////// Total & Payment Block //////////////////////////////////////////////// */}
 
 
-{ this.state.pickup_details.payableBySender > 0 &&  (<View>
+<View>
 <View style={{backgroundColor:Colors.white,flex:10,flexDirection:'row' ,marginTop:SECTION_MARGIN_TOP,padding:MAIN_VIEW_PADDING,alignItems:'center',}}>
               <CustomText  text={'Total & Payment'} textType={Strings.subtitle} flex={9} fontWeight={'bold'} />
               <Icon name={'md-arrow-dropdown'} style={{color:Colors.black,fontSize:FOURTH_FONT,flex:1,}}/>
               </View>
 <View style={{ backgroundColor:Colors.white,flexGrow:1,paddingLeft:MAIN_VIEW_PADDING,paddingRight:MAIN_VIEW_PADDING,paddingBottom:MAIN_VIEW_PADDING}}>
 
-<View style={{height:320}}>
+<View style={{height:420}}>
 <Grid ><Col><CustomText text={'COD Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
         <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.finalCodCharge  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+ <Grid ><Col></Col>
+   <Col><CustomButton title={'Details'} marginTop={5} marginBottom={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>{this.setState({modal_visible2:true})}} /></Col></Grid>       
+   <Grid ><Col><CustomText text={'Additional Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
+        <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.additionalCharges  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+ <Grid ><Col></Col>
+   <Col><CustomButton title={'Details'} marginTop={5} marginBottom={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.paymentdetails({order_id:this.state.predefinedpin})} /></Col></Grid>       
+
 <Grid ><Col><CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
         <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.originalDeliveryCharge  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
  <Grid ><Col><CustomText text={'Package Allowed'} textType={Strings.subtext} color={Colors.black}/></Col>
@@ -449,12 +485,14 @@ render(){
        <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.deliveryChargeCreditDeduction } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
   <Grid><Col><CustomText text={'Total'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.deliveryChargeAfterDeductions  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
-       <Grid><Col><CustomText text={'Additional Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
-       <Col><View style={styles.inputview}><CustomInput flex={1} placeholder={`${this.state.pickup_details.additionalCharges}`} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} onChangeText={(text) =>{this.additional_Calculate(text); this.setState({amount_recieved:'',balance_amount:'',amount_to_pay:''})}} value={this.state.pickup_details.additionalCharges ? this.state.pickup_details.additionalCharges : 0 } /></View></Col></Grid> 
+       {/* <Grid><Col><CustomText text={'Additional Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
+       <Col><View style={styles.inputview}><CustomInput flex={1} placeholder={`${this.state.pickup_details.additionalCharges}`} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} onChangeText={(text) =>{this.additional_Calculate(text); this.setState({amount_recieved:'',balance_amount:'',amount_to_pay:''})}} value={this.state.pickup_details.additionalCharges ? this.state.pickup_details.additionalCharges : 0 } /></View></Col></Grid>  */}
        <Grid><Col><CustomText text={'Sender Payment'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><View style={styles.inputview}><CustomText text={this.state.sender_payment } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
       </View>
 
+
+      { this.state.pickup_details.payableBySender > 0 &&  (<View>
       <CustomText  text={'Payment Method'} textType={Strings.subtitle} flex={9} />
       <CustomDropdown data={myArray2} height={TEXT_FIELD_HIEGHT}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} />
 
@@ -468,9 +506,10 @@ render(){
        <Col><CustomInput flex={1} value={this.state.amount_to_pay} /></Col></Grid>
        </View>
        <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>this.cash_payment()} />
+      
+    </View>)}
+    </View>
       </View>
-    
-      </View>)}
 
       <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>this.update_delivery_type()} />
       <View style={{alignItems:'flex-end',marginTop:SECTION_MARGIN_TOP}}><CustomText  text={Strings.version} textType={Strings.subtext} color={Colors.darkSkyBlue} /></View>
@@ -525,7 +564,8 @@ const styles=StyleSheet.create({
     backgroundColor:Colors.textBackgroundColor,
     height:40,
     alignItems:'flex-start',
-    justifyContent:'center'
+    justifyContent:'center',
+    marginTop:5,
   },
   inputviewaddress :{
     backgroundColor:Colors.textBackgroundColor,
