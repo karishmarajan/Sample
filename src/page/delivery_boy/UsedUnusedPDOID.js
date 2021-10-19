@@ -40,6 +40,7 @@ export default class UsedUnusedPDOID extends React.Component {
       pdoid_status:'USED',
       status_type:'USED',
       bool:true,
+      personId:'',
    };
   }
 
@@ -47,8 +48,8 @@ export default class UsedUnusedPDOID extends React.Component {
    componentDidMount() {
     AsyncStorage.getItem(KEY).then((value => {
       let data = JSON.parse(value);
-
-       
+      this.setState({personId:data.personId})
+   
   }));
         this.fetch_predefined_orders('USED');
 
@@ -123,7 +124,7 @@ _body = (item) => {
   if(this.state.status_type == 'USED' && this.state.pdoid_status =='USED' ){
     return (
 
-    <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3 , borderTopWidth:0.3}}>
+    <View style={{ flexDirection: 'row',}}>
      
      <View style={styles.cell2}><CustomText text={item.preDefinedOrderId ? item.preDefinedOrderId: Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell2}><CustomText text={item.assigneeName ? item.assigneeName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
@@ -142,14 +143,15 @@ _body = (item) => {
 
   else{
     return(
-      <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3 ,borderTopWidth:0.3}}>
+      <View style={{ flexDirection: 'row'}}>
 
 <View style={styles.cell2}><CustomText text={item.preDefinedOrderId ? item.preDefinedOrderId: Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell2}><CustomText text={item.assigneeName ? item.assigneeName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell2}><CustomText text={item.assignedDate ? item.assignedDate :Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       {this.props.status === 'RE_ASSIGN' &&(<View style={styles.cell2}><CustomButton title={'CreateOrder'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={10} marginLeft={10} marginRight={10} marginBottom={10}  text_color={Colors.white} onPress={()=>Actions.orderwithpin({pre_id:item.preDefinedOrderId, rate:item.bulkPredefinedOrderResponse.rate})} /></View>)}
+      {item.assigneeId == this.state.personId && (<View>
       {this.props.status === 'ASSIGNED' &&(<View style={styles.cell2}><CustomButton title={'CreateOrder'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={10} marginLeft={10} marginRight={10} marginBottom={10}  text_color={Colors.white} onPress={()=>Actions.orderwithpin({pre_id:item.preDefinedOrderId, rate:item.bulkPredefinedOrderResponse.rate})} /></View>)}
-
+</View>)}
       <View style={styles.cell2}><Button  transparent onPress={()=>Actions.trackorder({pre_order_id:item.preDefinedOrderId})}><Icon style={{ color: Colors.black,fontSize:30,paddingLeft:30 }} name='ios-eye' /></Button></View>
       </View>
     )
@@ -223,7 +225,6 @@ const styles = StyleSheet.create({
     padding: 6,
     alignSelf: 'stretch',
     textAlign: 'center',
-    borderRightWidth: 0.3,
     backgroundColor:Colors.buttonBackgroundColor
 
 
@@ -235,9 +236,10 @@ const styles = StyleSheet.create({
     padding: 6,
     alignSelf: 'stretch',
     textAlign: 'center',
-    borderRightWidth: 0.3,
     backgroundColor:Colors.white,
-    justifyContent:'center'
+    justifyContent:'center',
+    borderColor:Colors.aash,
+    borderBottomWidth:3,
   },
 
   body: {

@@ -417,7 +417,7 @@ if(this.state.pdoid_details.length != null){
     if(this.state.status_type == 'PENDING' && this.state.pdoid_status =='Reassign Pending' ){
       return (
 
-        <View style={{ flexDirection: 'row', borderBottomWidth: 0.3,borderTopWidth:0.3 , borderLeftWidth:0.3 ,marginTop:6}}>
+        <View style={{ flexDirection: 'row', marginTop:6}}>
           <View style={styles.cell}><CustomText text={'SLNO'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
           <View style={styles.cell}><CustomText text={'Re-Assigned By'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
           <View style={styles.cell}><CustomText text={'Re-Assigned Date'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
@@ -436,7 +436,7 @@ if(this.state.pdoid_details.length != null){
     
     else if(this.state.status_type == 'PAYMENT_PENDING' && this.state.pdoid_status =='Payment Pending'){
       return(
-        <View style={{ flexDirection: 'row', borderBottomWidth: 0.3,borderTopWidth:0.3 , borderLeftWidth:0.3 ,marginTop:6}}>
+        <View style={{ flexDirection: 'row',marginTop:6}}>
        <View style={styles.cell}><CustomText text={'SLNO'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
           <View style={styles.cell}><CustomText text={'Re-Assigned By'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
           <View style={styles.cell}><CustomText text={'Re-Assigned Date'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
@@ -454,7 +454,7 @@ if(this.state.pdoid_details.length != null){
     }
     else if(this.state.status_type == 'RE_ASSIGN' && this.state.pdoid_status =='Reassign'){
       return(
-        <View style={{ flexDirection: 'row', borderBottomWidth: 0.3,borderTopWidth:0.3 , borderLeftWidth:0.3 ,marginTop:6}}>
+        <View style={{ flexDirection: 'row',marginTop:6}}>
                <View style={styles.cell}><CustomText text={'Sl No'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
 
         <View style={styles.cell}><CustomText text={'Assigned By'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
@@ -470,7 +470,7 @@ if(this.state.pdoid_details.length != null){
     }
     else if(this.state.status_type == 'ASSIGNED' && this.state.pdoid_status =='Assigned'){
       return(
-        <View style={{ flexDirection: 'row', borderBottomWidth: 0.3,borderTopWidth:0.3 , borderLeftWidth:0.3 ,marginTop:6}}>
+        <View style={{ flexDirection: 'row',marginTop:6}}>
                 <View style={styles.cell}><CustomText text={'Sl No'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
 
         <View style={styles.cell}><CustomText text={'Assigned By'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
@@ -484,7 +484,7 @@ if(this.state.pdoid_details.length != null){
     }
     else if(this.state.status_type == 'PENDING' && this.state.pdoid_status =='Assign Pending'){
       return(
-        <View style={{ flexDirection: 'row', borderBottomWidth: 0.3,borderTopWidth:0.3 , borderLeftWidth:0.3 ,marginTop:6}}>
+        <View style={{ flexDirection: 'row' ,marginTop:6}}>
         <View style={styles.cell}><CustomText text={'Sl No'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={'Assigned By'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={'Assigned Date'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
@@ -499,7 +499,7 @@ if(this.state.pdoid_details.length != null){
     
     else{
       return(
-      <View style={{ flexDirection: 'row', borderBottomWidth: 0.3,borderTopWidth:0.3 , borderLeftWidth:0.3 ,marginTop:6}}>
+      <View style={{ flexDirection: 'row',marginTop:6}}>
       <View style={styles.cell}><CustomText text={'SLNO'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell}><CustomText text={'Re-Assigned By'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell}><CustomText text={'Re-Assigned Date'} textType={Strings.subtext} fontWeight={'bold'} color={Colors.white} alignSelf={'center'} textAlign={'center'} /></View>
@@ -524,7 +524,7 @@ if(this.state.pdoid_details.length != null){
     if(this.state.status_type == 'PENDING' && this.state.pdoid_status =='Reassign Pending' ){
       return (
 
-      <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3 ,borderTopWidth:0.3}}>
+      <View style={{ flexDirection: 'row',}}>
        
        <View style={styles.cell2}><CustomText text={index + 1} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell2}><CustomText text={item.assignerName ? item.assignerName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
@@ -534,7 +534,7 @@ if(this.state.pdoid_details.length != null){
         <View style={styles.cell2}><CustomText text={item.assigneeId ? item.assigneeId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell2}><CustomText text={item.assigneeName ? item.assigneeName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell2}><CustomText text={item.availableFromId ? item.prefix+item.availableFromId +"-"+ item.prefix+item.availableToId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell2}><Button  transparent onPress={()=>Actions.usedunusedpdoid({pre_assign_id:item.preorderAssignId, status:this.state.status_type})}><Icon style={{ color: Colors.black,fontSize:30,paddingLeft:30 }} name='ios-eye' /></Button></View>
+        <View style={styles.cell2}><Button  transparent onPress={()=>Actions.usedunusedpdoid({pre_assign_id:item.preorderAssignId, status:this.state.status_type,assignee_id:item.assigneeId})}><Icon style={{ color: Colors.black,fontSize:30,paddingLeft:30 }} name='ios-eye' /></Button></View>
     <View style={styles.cell2}><Button  transparent onPress={()=>this.fetch_predefined_details(item.preorderAssignId)}><Icon style={{ color: Colors.black ,fontSize:26,paddingLeft:30}} name='ios-barcode' /></Button></View>
        
 
@@ -545,7 +545,7 @@ if(this.state.pdoid_details.length != null){
   
   else if(this.state.status_type == 'ASSIGNED' && this.state.pdoid_status =='Assigned'){
     return(
-      <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3, borderTopWidth:0.3 }}>
+      <View style={{ flexDirection: 'row',}}>
            <View style={styles.cell2}><CustomText text={index + 1} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
 
       <View style={styles.cell2}><CustomText text={item.assignerName ? item.assignerName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
@@ -553,14 +553,14 @@ if(this.state.pdoid_details.length != null){
 
       <View style={styles.cell2}><CustomText text={parseInt(item.assignedToId)-parseInt(item.assignedFromId)+1} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell2}><CustomText text={item.assignedFromId ? item.prefix+item.assignedFromId +"-"+ item.prefix+item.assignedToId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-      <View style={styles.cell2}><Button  transparent onPress={()=>Actions.usedunusedpdoid({pre_assign_id:item.preorderAssignId, status:this.state.status_type})}><Icon style={{ color: Colors.black,fontSize:30,paddingLeft:30 }} name='ios-eye' /></Button></View>
+      <View style={styles.cell2}><Button  transparent onPress={()=>Actions.usedunusedpdoid({pre_assign_id:item.preorderAssignId, status:this.state.status_type,assignee_id:item.assigneeId})}><Icon style={{ color: Colors.black,fontSize:30,paddingLeft:30 }} name='ios-eye' /></Button></View>
     <View style={styles.cell2}><Button  transparent onPress={()=>this.fetch_predefined_details(item.preorderAssignId)}><Icon style={{ color: Colors.black ,fontSize:26,paddingLeft:30}} name='ios-barcode' /></Button></View>
       </View>
       )
   }
   else if(this.state.status_type == 'RE_ASSIGN' && this.state.pdoid_status =='Reassign'){
     return(
-      <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3, borderTopWidth:0.3 }}>
+      <View style={{ flexDirection: 'row',}}>
       
       <View style={styles.cell2}><CustomText text={index + 1} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell2}><CustomText text={item.assignerName ? item.assignerName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
@@ -569,14 +569,14 @@ if(this.state.pdoid_details.length != null){
       <View style={styles.cell2}><CustomText text={parseInt(item.availableToId)-parseInt(item.availableFromId)+1} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell2}><CustomText text={item.availableFromId ? item.prefix+item.availableFromId +"-"+ item.prefix+item.availableToId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell2}><CustomButton title={'Assign'} showIcon={true} icon_name={'ios-person'} icon_color={Colors.white} icon_fontsize={FOURTH_FONT} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={20} marginLeft={20} marginRight={20} marginBottom={20}  text_color={Colors.white} onPress={()=>Actions.assignpredefined({assigned_id:item.preorderAssignId, PDOID:parseInt(item.availableToId)-parseInt(item.availableFromId)+1, available_from:item.availableFromId, available_to:item.availableToId ,prefix:item.prefix})} /></View>
-      <View style={styles.cell2}><Button  transparent onPress={()=>Actions.usedunusedpdoid({pre_assign_id:item.preorderAssignId, status:this.state.status_type})}><Icon style={{ color: Colors.black,fontSize:30,paddingLeft:30 }} name='ios-eye' /></Button></View>
+      <View style={styles.cell2}><Button  transparent onPress={()=>Actions.usedunusedpdoid({pre_assign_id:item.preorderAssignId, status:this.state.status_type,assignee_id:item.assigneeId})}><Icon style={{ color: Colors.black,fontSize:30,paddingLeft:30 }} name='ios-eye' /></Button></View>
     <View style={styles.cell2}><Button  transparent onPress={()=>this.fetch_predefined_details(item.preorderAssignId)}><Icon style={{ color: Colors.black ,fontSize:26,paddingLeft:30}} name='ios-barcode' /></Button></View>
       </View>
       )
   }
   else if(this.state.status_type == 'PAYMENT_PENDING' && this.state.pdoid_status =='Payment Pending'){
     return(
-      <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3 , borderTopWidth:0.3}}>
+      <View style={{ flexDirection: 'row',}}>
       <View style={styles.cell2}><CustomText text={index + 1} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell2}><CustomText text={item.assignerName ? item.assignerName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell2}><CustomText text={item.updatedDate ? item.updatedDate : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
@@ -586,14 +586,14 @@ if(this.state.pdoid_details.length != null){
       <View style={styles.cell2}><CustomText text={item.assigneeName ? item.assigneeName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell2}><CustomText text={item.availableFromId ? item.prefix+item.availableFromId +"-"+ item.prefix+item.availableToId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell2}><CustomButton title={'Pay'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={20} marginLeft={20} marginRight={20} marginBottom={20}  text_color={Colors.white} onPress={()=>this.pdoid_payment_status_update(item.preorderAssignId)} /></View>
-      <View style={styles.cell2}><Button  transparent onPress={()=>Actions.usedunusedpdoid({pre_assign_id:item.preorderAssignId,status:this.state.status_type})}><Icon style={{ color: Colors.black,fontSize:30,paddingLeft:30 }} name='ios-eye' /></Button></View>
+      <View style={styles.cell2}><Button  transparent onPress={()=>Actions.usedunusedpdoid({pre_assign_id:item.preorderAssignId,status:this.state.status_type,assignee_id:item.assigneeId})}><Icon style={{ color: Colors.black,fontSize:30,paddingLeft:30 }} name='ios-eye' /></Button></View>
     <View style={styles.cell2}><Button  transparent onPress={()=>this.fetch_predefined_details(item.preorderAssignId)}><Icon style={{ color: Colors.black ,fontSize:26,paddingLeft:30}} name='ios-barcode' /></Button></View>
       </View>
       )
   }
   else if(this.state.status_type == 'PENDING' && this.state.pdoid_status =='Assign Pending'){
     return(
-      <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3 , borderTopWidth:0.3}}>
+      <View style={{ flexDirection: 'row',}}>
             <View style={styles.cell2}><CustomText text={index + 1} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
 
       <View style={styles.cell2}><CustomText text={item.assignerName ? item.assignerName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
@@ -608,7 +608,7 @@ if(this.state.pdoid_details.length != null){
   }
     else{
       return(
-        <View style={{ flexDirection: 'row', borderBottomWidth: 0.3 , borderLeftWidth:0.3, borderTopWidth:0.3 }}>
+        <View style={{ flexDirection: 'row', }}>
               <View style={styles.cell2}><CustomText text={index + 1} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
 
         <View style={styles.cell2}><CustomText text={item.assignerName ? item.assignerName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
@@ -620,7 +620,7 @@ if(this.state.pdoid_details.length != null){
         <View style={styles.cell2}><CustomText text={item.availableFromId ? item.prefix+item.availableFromId +"-"+ item.prefix+item.availableToId : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         
         <View style={styles.cell2}><CustomText text={item.assigneeName ? item.assigneeName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell2}><Button  transparent onPress={()=>Actions.usedunusedpdoid({pre_assign_id:item.preorderAssignId, status:this.state.status_type})}><Icon style={{ color: Colors.black,fontSize:30,paddingLeft:30 }} name='ios-eye' /></Button></View>
+        <View style={styles.cell2}><Button  transparent onPress={()=>Actions.usedunusedpdoid({pre_assign_id:item.preorderAssignId, status:this.state.status_type,assignee_id:item.assigneeId})}><Icon style={{ color: Colors.black,fontSize:30,paddingLeft:30 }} name='ios-eye' /></Button></View>
     <View style={styles.cell2}><Button  transparent onPress={()=>this.fetch_predefined_details(item.preorderAssignId)}><Icon style={{ color: Colors.black ,fontSize:26,paddingLeft:30}} name='ios-barcode' /></Button></View>
 
         </View>
@@ -693,7 +693,6 @@ const styles = StyleSheet.create({
     padding: 6,
     alignSelf: 'stretch',
     textAlign: 'center',
-    borderRightWidth: 0.3,
     backgroundColor:Colors.buttonBackgroundColor
 
 
@@ -704,10 +703,10 @@ const styles = StyleSheet.create({
     padding: 6,
     alignSelf: 'stretch',
     textAlign: 'center',
-    borderRightWidth: 0.3,
     backgroundColor:Colors.white,
-    justifyContent:'center'
-
+    justifyContent:'center',
+    borderColor:Colors.aash,
+    borderBottomWidth:3,
 
   },
   cell1: {
@@ -715,7 +714,6 @@ const styles = StyleSheet.create({
     padding: 6,
     alignSelf: 'stretch',
     textAlign: 'center',
-    borderRightWidth: 0.3,
 
 
   },

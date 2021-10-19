@@ -206,7 +206,7 @@ if(this.state.user_type==="") {
 
   let body = {
     "assignerId": data.personId,
-    "assignerName": data.firstName +''+ data.lastName,
+    "assignerName": data.firstName +' '+ data.lastName,
     "assignerUserType": "DELIVERY_BOY",
     "preorderAssignId": this.props.assigned_id,
     "preorderRangeAssignRequest": [
@@ -286,9 +286,9 @@ if(this.state.user_type==="") {
        {!!this.state.errorTextuser && (<Text style={{color: 'red'}}>{this.state.from_pdoid}</Text>)}
 
 
-       {/* <CustomText text={'PDOID'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+       <CustomText text={'PDOID'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
          <CustomInput flex={1} keyboardType={"number-pad"} maxLength={6} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => {this.setState({no_pdoid: text , errorTextno_pdoid:""})}} value={this.state.no_pdoid} />
-        {!!this.state.errorTextno_pdoid && (<Text style={{color: 'red'}}>{this.state.errorTextno_pdoid}</Text>)} */}
+        {!!this.state.errorTextno_pdoid && (<Text style={{color: 'red'}}>{this.state.errorTextno_pdoid}</Text>)}
         <CustomText text={'User Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
        <CustomSearchBox onTextChange={(text)=>{setTimeout(()=>{this.setState({user_name: text})},0)}} value={this.state.user_name} placeholder={'Select'} onItemSelect={(item) =>{ setTimeout(() => {this.setState({user_name:item.na ,user_id:item.id, cus_type:item.type, errorTextuser:""});}, 500); }} items={this.state.users} />
        {!!this.state.errorTextuser && (<Text style={{color: 'red'}}>{this.state.errorTextuser}</Text>)}

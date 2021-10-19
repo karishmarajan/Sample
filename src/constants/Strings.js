@@ -19,7 +19,7 @@ const Strings = {
     failed:'FAILED',
     completed:'COMPLETED',
     offset:'offset',
-    na:'N/A',
+    na:'XXXX',
     version:'V9'
 
   };

@@ -45,6 +45,7 @@ export default class PickupDetails extends React.Component {
     bullet_selected:false,
     modal_visible2:false,
     bullet_additional_btn_pay:true,
+    order_type:'',
   };
 
 
@@ -52,6 +53,10 @@ export default class PickupDetails extends React.Component {
     
     this.fetch_pickup_details(this.props.pickup_id);
   }
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+isCharacterALetter(char) {
+  return (/[a-zA-Z]/).test(char)
+}
 //////////////////////////////////////////////////////////////////////////////
 
 isSelected(no){
@@ -101,12 +106,25 @@ if(no == 12){
 
       console.log('Success:', JSON.stringify(result));
       this.setState({pickup_details : result.payload, sender_payment: result.payload.payableBySender})
-    if(result.payload.deliveryType === 'NORMAL'){
+   ////////////////////////// checking delivery type /////////////////////////////////////////////////////////////////////////////////////
+     
+   if(result.payload.deliveryType === 'NORMAL'){
       this.isSelected(11)
     }else{
       this.isSelected(12)
-
     }
+
+    ///////////////////////// checking order id type ////////////////////////////////////////////////////////////////////////////////////////////
+
+    if(result.payload.isPreDefinedOrderWithPin === true )
+    {
+      this.setState({order_type:'PREDEFINED_ORDER_ID'})
+
+    }else
+    {
+      this.setState({order_type:'AUTOMATIC_ORDER_ID'})
+    }
+
     }
     else{
       console.log('Failed');
@@ -471,11 +489,11 @@ render(){
 <Grid ><Col><CustomText text={'COD Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
         <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.finalCodCharge  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
  <Grid ><Col></Col>
-   <Col><CustomButton title={'Details'} marginTop={5} marginBottom={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>{this.setState({modal_visible2:true})}} /></Col></Grid>       
+   <Col><CustomButton title={'Details'} marginTop={5} marginBottom={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>{Actions.codcharges({order_id:this.state.pickup_details.orderId})}} /></Col></Grid>       
    <Grid ><Col><CustomText text={'Additional Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
         <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.additionalCharges  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
  <Grid ><Col></Col>
-   <Col><CustomButton title={'Details'} marginTop={5} marginBottom={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.paymentdetails({order_id:this.state.predefinedpin})} /></Col></Grid>       
+   <Col><CustomButton title={'Details'} marginTop={5} marginBottom={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.additionalcharges({order_id:this.state.pickup_details.preDefinedOrderId, order_type:this.state.order_type})} /></Col></Grid>       
 
 <Grid ><Col><CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
         <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.originalDeliveryCharge  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>

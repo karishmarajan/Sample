@@ -49,6 +49,8 @@ import UsedUnusedPDOID from './page/delivery_boy/UsedUnusedPDOID';
 import BarcodePrint from './page/delivery_boy/BarcodePrint';
 import CustomerAddress from './page/delivery_boy/CustomerAddress';
 import PaymentDetails from './page/delivery_boy/PaymentDetails';
+import AdditionalCharges from './page/delivery_boy/AdditionalCharges';
+import CodCharges from './page/delivery_boy/CodCharges';
 
 
 
@@ -106,6 +108,8 @@ export default class Main extends Component {
             <Scene  key="barcodeprint" component={BarcodePrint} hideNavBar />
             <Scene  key="customeraddress" component={CustomerAddress} hideNavBar />
             <Scene  key="paymentdetails" component={PaymentDetails} hideNavBar />
+            <Scene  key="additionalcharges" component={AdditionalCharges} hideNavBar />
+            <Scene  key="codcharges" component={CodCharges} hideNavBar />
 
           </Scene>
         </Router>

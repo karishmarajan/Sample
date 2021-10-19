@@ -99,6 +99,7 @@ export const ASSIGN_SINGLE_ORDER= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-ass
 export const PREORDER_TRACKING= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-assign/tracking-preorder';
 export const UPDATE_DELIVERY_TYPE= BASE_URL_ORDER + SUB_URL_ORDER + 'order/orderId/';
 export const PAYMENT_DETAILS= BASE_URL_ORDER + SUB_URL_ORDER + 'orderId/';
+export const ADD_PAYMENT_BY_TYPE= BASE_URL_ORDER + SUB_URL_ORDER + 'order/addPayment';
 
 
 
