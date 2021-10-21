@@ -334,6 +334,10 @@ return;
     this.setState({hasError: true, errorTextAdditional: 'must apply additional charge if delivery type is bullet !'});
     return;
   }
+  if(parseInt(this.state.additional_charge) < 0 && this.state.bullet === true) {
+    Toast.show({ text: 'Must be greater than zero', type: 'warning' });
+return;
+  }
   let body = {
       "additionalCharges": this.state.additional_charge ? this.state.additional_charge : 0 ,
       "createdAtOfficeId": 0,

@@ -49,7 +49,10 @@ export default class AssignPredefined extends React.Component {
     from_pdoid:'',
     to_pdoid:'',
     range:[],
-
+    errorTextfrom_pdoid:'',
+    errorTextto_pdoid:'',
+    no_1:'',
+    no_2:'',
   }
 
   ///////////////////////////////////////// Component did mount function ///////////////////////////////////////////////////////////////////////////////
@@ -72,7 +75,7 @@ range_func() {
       if(this.props.available_from != null){
         let range = [];
         for(var i = parseInt (this.props.available_from); i <= parseInt( this.props.available_to); i++){
-        range.push({name: this.props.prefix+''+i});
+        range.push({name: this.props.prefix+''+i , na:i});
   
        }
        this.setState({ range: range });
@@ -181,14 +184,20 @@ if(this.state.user_type==="") {
     this.setState({hasError: true, errorTextuser_type: 'Please select user type!'});
     return;
   }
-  if(this.state.no_pdoid==="") {
-    this.setState({hasError: true, errorTextno_pdoid: 'Please enter no of PDOID !'});
-    return;
-  }
-  if(parseInt(this.props.PDOID)<parseInt(this.state.no_pdoid)){
-    this.setState({hasError:true, errorTextno_pdoid:'Only left '+this.props.PDOID})
-    return;
-  }
+  // if(this.state.no_pdoid==="") {
+  //   this.setState({hasError: true, errorTextno_pdoid: 'Please enter no of PDOID !'});
+  //   return;
+  // }
+  // if(parseInt(this.props.PDOID)<parseInt(this.state.no_pdoid)){
+  //   this.setState({hasError:true, errorTextno_pdoid:'Only left '+this.props.PDOID})
+  //   return;
+  // }
+
+  if(parseInt(this.state.no_2)<parseInt(this.state.no_1)){
+    Toast.show({ text:"From cannot be greater than to" , type: 'warning' });
+       return;
+     }
+
   if(this.state.user_name==="") {
     this.setState({hasError: true, errorTextuser: 'Please select user !'});
     return;
@@ -199,10 +208,10 @@ if(this.state.user_type==="") {
     return;
   }
 
-  if(parseInt (this.state.no_pdoid)===0) {
-    Toast.show({ text:"Cannot be zero" , type: 'warning' });
-    return;
-  }
+  // if(parseInt (this.state.no_pdoid)===0) {
+  //   Toast.show({ text:"Cannot be zero" , type: 'warning' });
+  //   return;
+  // }
 
   let body = {
     "assignerId": data.personId,
@@ -216,15 +225,15 @@ if(this.state.user_type==="") {
         "assigneeUserType":this.state.user_type,
         "customerIdentityType": this.state.cus_type,
         "officeId": data.officeId,
-        "preorderFrom": this.props.available_from,
-        "preorderTo": parseInt(this.props.available_from)+parseInt(this.state.no_pdoid)-1
+        "preorderFrom": this.state.from_pdoid,
+        "preorderTo": this.state.to_pdoid
       }
     ]
     }
 
   Api.fetch_request(ASSIGN_PDOID, 'PUT', '', JSON.stringify(body))
     .then(result => {
-
+console.log("error   "+result.error)
       if (result.error != true) {
         Toast.show({ text: result.message, type: 'success' });
         console.log('Success:', JSON.stringify(result));
@@ -281,14 +290,19 @@ if(this.state.user_type==="") {
         <CustomDropdown data={myArray} height={SHORT_BUTTON_HEIGHT} backgroundColor={Colors.aash} onChangeValue={(value, index, data) => {setTimeout(() => {this.setState({errorTextuser_type:'',user_name:''}) ;{if(value=='DELIVERY BOY'){this.fetch_delivery_agent_list()}else if(value=='CUSTOMER'){this.fetch_customers_list()}else if(value=='----Select----'){this.setState({user_type:''})}else {this.fetch_office_staffs_list()}}}, 100); }} />
         {!!this.state.errorTextuser_type && (<Text style={{color: 'red'}}>{this.state.errorTextuser_type}</Text>)}
 
-        <CustomText text={'Predefined ID'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <CustomSearchBox onTextChange={(text)=>{setTimeout(()=>{this.setState({from_pdoid: text})},0)}} value={this.state.from_pdoid} placeholder={'Select'} onItemSelect={(item) =>{ setTimeout(() => {this.setState({from_pdoid:item.na ,errorTextuser:""});}, 500); }} items={this.state.range} />
-       {!!this.state.errorTextuser && (<Text style={{color: 'red'}}>{this.state.from_pdoid}</Text>)}
+        <CustomText text={'From'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+        <CustomSearchBox onTextChange={(text)=>{setTimeout(()=>{this.setState({from_pdoid: text})},0)}} value={this.state.from_pdoid} placeholder={'Select'} onItemSelect={(item) =>{ setTimeout(() => {this.setState({from_pdoid:item.name, no_1:item.na ,errorTextfrom_pdoid:""});}, 500); }} items={this.state.range} />
+       {!!this.state.errorTextfrom_pdoid && (<Text style={{color: 'red'}}>{this.state.from_pdoid}</Text>)}
+
+       <CustomText text={'To'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+        <CustomSearchBox onTextChange={(text)=>{setTimeout(()=>{this.setState({from_pdoid: text})},0)}} value={this.state.to_pdoid} placeholder={'Select'} onItemSelect={(item) =>{ setTimeout(() => {this.setState({to_pdoid:item.name, no_2:item.na ,errorTextto_pdoid:""});}, 500); }} items={this.state.range} />
+       {!!this.state.errorTextto_pdoid && (<Text style={{color: 'red'}}>{this.state.to_pdoid}</Text>)}
 
 
-       <CustomText text={'PDOID'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+       {/* <CustomText text={'PDOID'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
          <CustomInput flex={1} keyboardType={"number-pad"} maxLength={6} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => {this.setState({no_pdoid: text , errorTextno_pdoid:""})}} value={this.state.no_pdoid} />
-        {!!this.state.errorTextno_pdoid && (<Text style={{color: 'red'}}>{this.state.errorTextno_pdoid}</Text>)}
+        {!!this.state.errorTextno_pdoid && (<Text style={{color: 'red'}}>{this.state.errorTextno_pdoid}</Text>)} */}
+
         <CustomText text={'User Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
        <CustomSearchBox onTextChange={(text)=>{setTimeout(()=>{this.setState({user_name: text})},0)}} value={this.state.user_name} placeholder={'Select'} onItemSelect={(item) =>{ setTimeout(() => {this.setState({user_name:item.na ,user_id:item.id, cus_type:item.type, errorTextuser:""});}, 500); }} items={this.state.users} />
        {!!this.state.errorTextuser && (<Text style={{color: 'red'}}>{this.state.errorTextuser}</Text>)}

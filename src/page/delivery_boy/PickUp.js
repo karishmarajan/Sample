@@ -295,8 +295,11 @@ pickup_close_all() {
 {
   if(this.state.scan_title ==='Quick Scan' && parseInt(this.state.pickup_details.payableBySender) > 0 ){
   Actions.pickupdetails({pickup_id:this.state.pickup_details.pickupId});
+}else if(this.state.scan_title ==='Quick Scan' && this.state.pickup_details.pickupStatus != 'ASSIGNED' ){
+  Toast.show({text:'This order is not assigned to you now !',type:'warning'})
 }else if(this.state.scan_title ==='Normal Scan'){
   Actions.pickupdetails({pickup_id:this.state.pickup_details.pickupId});
+
 }else{
   this.setState({alert_visible:true})
 // this.pickup_update_collect(this.state.pickup_details.orderId);
@@ -304,7 +307,7 @@ pickup_close_all() {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
  
 }
-else if(this.state.pickup_details){
+else if(!this.state.pickup_details.deliveryBoy){
   Toast.show({text:'This order is not assigned to you now',type:'warning'})
 
 }

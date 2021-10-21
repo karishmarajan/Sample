@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView,StyleSheet,Modal,Linking } from 'react-native';
+import { ScrollView,StyleSheet,Modal,Linking , AsyncStorage} from 'react-native';
 import { Container, View, Button, Left, Right,Icon,Grid,Col, Toast, Text} from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
@@ -12,9 +12,10 @@ import { SECTION_MARGIN_TOP,SHORT_BORDER_RADIUS, MAIN_BLOCK_BORDER_RADIUS, SHORT
 import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
 import CustomRadioButton from '../../component/CustomRadioButton';
+import session, { KEY } from '../../session/SessionManager';
 
 import Api from '../../component/Fetch';
-import { PICKUP_DETAILS , PICKUP_ORDER_UPDATE , PAYMENT_BY_CASH, UPDATE_DELIVERY_TYPE} from '../../constants/Api';
+import { PICKUP_DETAILS , PICKUP_ORDER_UPDATE , PAYMENT_BY_CASH, UPDATE_DELIVERY_TYPE, ADD_PAYMENT_BY_TYPE} from '../../constants/Api';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 
 
@@ -36,6 +37,9 @@ export default class PickupDetails extends React.Component {
     amount_payed:'',
     amount_to_pay:'',
     additional_charge:'0',
+    additional_charge2:'',
+    errorTextadditional_charge2:'',
+    order_id:'',
     pay_by_sender_withAdditinal:'',
     sender_payment:'0',
     errorTextamount_recieved:'',
@@ -46,11 +50,17 @@ export default class PickupDetails extends React.Component {
     modal_visible2:false,
     bullet_additional_btn_pay:true,
     order_type:'',
+    personId:'',
+    officeId:'',
   };
 
 
   componentDidMount() {
-    
+    AsyncStorage.getItem(KEY).then((value => {
+      let data = JSON.parse(value);
+      this.setState({personId:data.personId, officeId:data.officeId})
+   
+  }));
     this.fetch_pickup_details(this.props.pickup_id);
   }
   //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -93,6 +103,7 @@ if(no == 12){
 };
 
 
+
   //////////////////////////////////////////// Pickup details fetching function  //////////////////////////////////////////////////////////////////////////////////  
  
  fetch_pickup_details(id){
@@ -118,11 +129,11 @@ if(no == 12){
 
     if(result.payload.isPreDefinedOrderWithPin === true )
     {
-      this.setState({order_type:'PREDEFINED_ORDER_ID'})
+      this.setState({order_type:'PREDEFINED_ORDER_ID', order_id:result.payload.preDefinedOrderId})
 
     }else
     {
-      this.setState({order_type:'AUTOMATIC_ORDER_ID'})
+      this.setState({order_type:'AUTOMATIC_ORDER_ID', order_id:result.payload.orderId})
     }
 
     }
@@ -291,6 +302,51 @@ cash_payment() {
     })
 }
 
+ ////////////////////////////////////// Additional charge adding function ///////////////////////////////////////////////////////////////////////////////////
+ 
+ add_additional_charge() {
+
+  if (this.state.additional_charge2 === "") {
+      this.setState({ hasError: true, errorTextadditional_charge2: 'Please fill !' });
+      return;
+    }
+    if (parseInt (this.state.additional_charge2) <= 0) {
+      this.setState({ hasError: true, errorTextadditional_charge2: 'Please add valid charge !' });
+      return;
+    }
+    
+
+    let body = {
+      
+      "amountCollected": this.state.additional_charge2,
+      "officeId": this.state.officeId,
+      "officeStaffId": this.state.personId,
+      "officeStaffType": "DELIVERY_AGENT",
+      "orderId": this.state.order_id,
+      "orderType":this.state.order_type,
+      "paymentType": "ADDITIONAL_CHARGE"
+   
+    };
+
+    Api.fetch_request(ADD_PAYMENT_BY_TYPE, 'POST', '', JSON.stringify(body))
+      .then(result => {
+
+        if (result.error != true) {
+
+          console.log('Success:', JSON.stringify(result));
+          Toast.show({ text: result.message, type: 'success' });
+          this.update_delivery_type()
+          this.fetch_pickup_details(this.props.pickup_id);
+
+        }
+        else {
+          console.log('Failed');
+          Toast.show({ text: result.message, type: 'warning' });
+        }
+      })
+  
+}
+
   /////////////////////////////////// Render Method  /////////////////////////////////////////////////////////////////////////////
 
 render(){
@@ -437,16 +493,19 @@ render(){
          <CustomRadioButton title={'Normal'} selectedColor={Colors.darkSkyBlue} selected={this.state.normal_selected} onPress={()=>this.isSelected(11)}/>
          <CustomRadioButton title={'Bullet'} selectedColor={Colors.darkSkyBlue} selected={this.state.bullet_selected} onPress={()=>this.isSelected(12)}/>
          </View>
-         <View>
+         {this.state.delivery_type === 'BULLET' && (<View>
       <CustomText text={'Additional Charge'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
 <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-      <View style={{flex:4}}><CustomInput flex={1} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} onChangeText={(text) =>{this.balanceCalculate(text); this.setState({amount_recieved: text, errorTextamount_recieved:''})}} value={this.state.amount_recieved} /></View>
-  {this.state.bullet_additional_btn_pay === true && (<View style={{flex:2,marginLeft:5}}><CustomButton title={'Pay'} marginTop={1} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.pdoid_payment_status_update()} /></View>)}
+      <View style={{flex:4}}><CustomInput flex={1} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} onChangeText={(text) =>{this.setState({additional_charge2: text, errorTextadditional_charge2:''})}} value={this.state.additional_charge2} /></View>
+
+  {this.state.bullet_additional_btn_pay === true && (<View style={{flex:2,marginLeft:5}}><CustomButton title={'ADD'} marginTop={1} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.add_additional_charge()} /></View>)}
   {this.state.bullet_additional_btn_pay === false && (<View style={{flex:2,marginLeft:5}}><CustomButton title={'Details'} marginTop={1} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.paymentdetails({order_id:this.state.predefinedpin})} /></View>)}
 
 
 </View>
-      </View>
+{!!this.state.errorTextadditional_charge2 && (<Text style={{ color: 'red' }}>{this.state.errorTextadditional_charge2}</Text>)}
+
+      </View>)}
 </View>)}
 {/*///////////////////////////// Order Status Block //////////////////////////////////////////////// */}
 

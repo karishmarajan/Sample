@@ -48,12 +48,58 @@ export default class AdditionalCharges extends React.Component {
         this.fetch_additionalCharge();
 
   }
+
+  ///////////////////////////////////// PDOID payment status update function ////////////////////////////////////////////////////////////////////////////////////
+  
+pay_additional_charge() {
+  
+  AsyncStorage.getItem(KEY).then((value => {
+    let data = JSON.parse(value);
+
+
+let body = {
+  
+    "officeId": data.officeId,
+    "officeStaffId": data.personId,
+    "officeStaffType": "DELIVERY_AGENT",
+    "paymentStatus": "COMPLETED",
+    "paymentType": "ADDITIONAL_CHARGE",
+    "preorderAssignId": this.state.pdoid_assign_id
+  
+}
+
+
+  Api.fetch_request(UPDATE_PDOID_PAYMENT_STATUS, 'PUT', '', JSON.stringify(body))
+    .then(result => {
+
+      if (result.error != true) {
+
+        console.log('Success:', JSON.stringify(result));
+        Toast.show({ text: result.message, type: 'success' });
+
+
+      }
+      else {
+        console.log('Failed');
+        Toast.show({ text: result.message, type: 'warning' });
+
+      }
+    })
+  }));
+
+}
+
+
    ////////////////////////////////////// Additional charge adding function ///////////////////////////////////////////////////////////////////////////////////
  
 add_additional_charge() {
 
     if (this.state.additional_charge === "") {
         this.setState({ hasError: true, errorTextadditional_charge: 'Please fill !' });
+        return;
+      }
+      if (parseInt (this.state.additional_charge) <= 0) {
+        this.setState({ hasError: true, errorTextadditional_charge: 'Please add valid charge !' });
         return;
       }
 
@@ -119,14 +165,11 @@ _body = (item) => {
 
     <View style={{ flexDirection: 'row',}}>
      
-     <View style={styles.cell2}><CustomText text={item.preDefinedOrderId ? item.preDefinedOrderId: Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-      <View style={styles.cell2}><CustomText text={item.assigneeName ? item.assigneeName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-      <View style={styles.cell2}><CustomText text={item.assignedDate ? item.assignedDate :Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-      <View style={styles.cell2}><CustomText text={item.orderCreatedDate ? item.orderCreatedDate :Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-      <View style={styles.cell2}><CustomText text={item.preDefinedOrderStatus ? item.preDefinedOrderStatus :Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-      <View style={styles.cell2}><Button  transparent onPress={()=>Actions.trackorder({pre_order_id:item.preDefinedOrderId})}><Icon style={{ color: Colors.black,fontSize:30,paddingLeft:30 }} name='ios-eye' /></Button></View>
+     <View style={styles.cell1}><CustomText text={item.amountCollected ? item.amountCollected: Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+    { item.paymentStatus == null && ( <View style={styles.cell2}><CustomButton title={'PAY'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5} text_marginbottom={3} text_margintop={3} paddingBottom={3} paddingTop={3} text_color={Colors.white} onPress={()=>this.pay_additional_charge()} /></View> )}
+    { item.paymentStatus == 'COMPLETED' && ( <View style={styles.cell2}><CustomButton title={'DETAILS'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5}  text_color={Colors.white} onPress={()=>Actions.orderwithpin({pre_id:item.preDefinedOrderId, rate:item.bulkPredefinedOrderResponse.rate})} /></View>)}
 
-      <View style={styles.cell2}><Button  transparent onPress={()=>Actions.customeraddress({cus_id:item.assigneeId, cus_type:item.customerIdentityType})}><Icon style={{ color: Colors.black,fontSize:30,paddingLeft:30 }} name='ios-person' /></Button></View>
+      <View style={styles.cell2}><CustomButton title={'EDIT'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5}  text_color={Colors.white} onPress={()=>Actions.orderwithpin({pre_id:item.preDefinedOrderId, rate:item.bulkPredefinedOrderResponse.rate})} /></View>
      
 
     </View>
@@ -160,10 +203,10 @@ _body = (item) => {
     
           {/*//////////////////////// Horizontal Order Details Block //////////////////////////////////////////////// */}
 
-          <View>
+          <View style={{marginTop:SECTION_MARGIN_TOP}}>
             <ScrollView horizontal={true} contentContainerStyle={{ flexGrow: 1 }} style={{ backgroundColor: Colors.white }}>
               <FlatList
-                data={this.state.predefined_status_list}
+                data={this.state.charges}
                 keyExtractor={(x, i) => i}
                 renderItem={({ item }) => this._body(item)}
               />
@@ -200,16 +243,28 @@ const styles = StyleSheet.create({
 
   },
 
-  cell2: {
+  cell1: {
     
-    width: 130,
-    padding: 6,
+    width: 120,
+    padding: 3,
     alignSelf: 'stretch',
     textAlign: 'center',
     backgroundColor:Colors.white,
     justifyContent:'center',
     borderColor:Colors.aash,
-    borderBottomWidth:3,
+    borderBottomWidth:5,
+  },
+
+  cell2: {
+    
+    width: 80,
+    padding: 3,
+    alignSelf: 'stretch',
+    textAlign: 'center',
+    backgroundColor:Colors.white,
+    justifyContent:'center',
+    borderColor:Colors.aash,
+    borderBottomWidth:5,
   },
 
   body: {
