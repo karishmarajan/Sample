@@ -57,6 +57,7 @@ export default class orderwithpin extends React.Component {
       additional_charge:'',
       errorTextAdditional:'',
       cod:'',
+      errorTextcod:'',
       collected_toggle:false,
       users:[],
       checked_customer:false,
@@ -334,7 +335,15 @@ return;
     this.setState({hasError: true, errorTextAdditional: 'must apply additional charge if delivery type is bullet !'});
     return;
   }
-  if(parseInt(this.state.additional_charge) < 0 && this.state.bullet === true) {
+  if(parseInt(this.state.additional_charge) <= 0 && this.state.bullet === true) {
+    Toast.show({ text: 'Must be greater than zero', type: 'warning' });
+return;
+  }
+  if(this.state.cod==="" && this.state.cod_toggle === true) {
+    this.setState({hasError: true, errorTextcod: 'Please fill !'});
+    return;
+  }
+  if(parseInt(this.state.cod) <= 0 && this.state.cod_toggle === true) {
     Toast.show({ text: 'Must be greater than zero', type: 'warning' });
 return;
   }
@@ -354,6 +363,9 @@ return;
       "isAtOffice": false,
       "isManualPickup": false,
       "isPickupRequired": this.state.isPickupRequired,
+      "officeStaffId": this.state.agent_id,
+  "officeStaffType": "DELIVERY_AGENT",
+  "paymentType": "ADDITIONAL_CHARGE",
       "pickupPincode": this.state.sender_pincode,
       "preDefinedOrderId": this.state.predefinedpin,
     }
@@ -572,7 +584,7 @@ Actions.dashboard();
         />
            </View>
           {this.state.additional_charge_toggle == true &&(<View>
-            <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({additional_charge: text , })} value={this.state.additional_charge} />
+            <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({additional_charge: text , errorTextAdditional:''})} value={this.state.additional_charge} />
             {!!this.state.errorTextAdditional && (<Text style={{color: 'red'}}>{this.state.errorTextAdditional}</Text>)}
 
           </View>)} 
@@ -587,7 +599,9 @@ Actions.dashboard();
         />
            </View>
            {this.state.cod_toggle == true &&(<View>
-            <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({cod: text , })} value={this.state.cod} />
+            <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({cod: text , errorTextcod:''})} value={this.state.cod} />
+            {!!this.state.errorTextcod && (<Text style={{color: 'red'}}>{this.state.errorTextcod}</Text>)}
+
            </View>)}
 
 </View>)}

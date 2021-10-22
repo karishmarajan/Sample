@@ -16,7 +16,7 @@ import CustomDropdown from '../../component/CustomDropdown';
 import session, { KEY } from '../../session/SessionManager';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 import Api from '../../component/Fetch';
-import { ADD_PAYMENT_BY_TYPE, PAYMENT_DETAILS , PDOID_LIST_BY_STATUS, UPDATE_PDOID_PAYMENT_STATUS} from '../../constants/Api';
+import { ADD_PAYMENT_BY_TYPE, PAYMENT_DETAILS , PDOID_LIST_BY_STATUS, ADD_PAYMENT_BY_PAYMENTID} from '../../constants/Api';
 import RNPrint from 'react-native-print';
 import _ from "lodash";
 import { RNCamera } from 'react-native-camera';
@@ -35,6 +35,9 @@ export default class AdditionalCharges extends React.Component {
       errorTextadditional_charge:'',
       hasError:false,
       order_type:'',
+      modal_visible:false,
+      changed_additional_charge:'',
+      edited_no:'',
    };
   }
 
@@ -51,31 +54,17 @@ export default class AdditionalCharges extends React.Component {
 
   ///////////////////////////////////// PDOID payment status update function ////////////////////////////////////////////////////////////////////////////////////
   
-pay_additional_charge() {
+pay_additional_charge(id) {
   
-  AsyncStorage.getItem(KEY).then((value => {
-    let data = JSON.parse(value);
-
-
-let body = {
-  
-    "officeId": data.officeId,
-    "officeStaffId": data.personId,
-    "officeStaffType": "DELIVERY_AGENT",
-    "paymentStatus": "COMPLETED",
-    "paymentType": "ADDITIONAL_CHARGE",
-    "preorderAssignId": this.state.pdoid_assign_id
-  
-}
-
-
-  Api.fetch_request(UPDATE_PDOID_PAYMENT_STATUS, 'PUT', '', JSON.stringify(body))
+ 
+  Api.fetch_request(ADD_PAYMENT_BY_PAYMENTID+id+'/paymentStatus/COMPLETED', 'PUT', '',)
     .then(result => {
 
       if (result.error != true) {
 
         console.log('Success:', JSON.stringify(result));
         Toast.show({ text: result.message, type: 'success' });
+        this.fetch_additionalCharge();
 
 
       }
@@ -85,7 +74,6 @@ let body = {
 
       }
     })
-  }));
 
 }
 
@@ -161,15 +149,16 @@ fetch_additionalCharge() {
   //////////////////////////////////// Delivery orders body part ///////////////////////////////////////////////////////////////////////////////////
 
 _body = (item) => {
+  // this.setState({edited_no:item.amountCollected})
     return (
 
     <View style={{ flexDirection: 'row',}}>
      
      <View style={styles.cell1}><CustomText text={item.amountCollected ? item.amountCollected: Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-    { item.paymentStatus == null && ( <View style={styles.cell2}><CustomButton title={'PAY'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5} text_marginbottom={3} text_margintop={3} paddingBottom={3} paddingTop={3} text_color={Colors.white} onPress={()=>this.pay_additional_charge()} /></View> )}
-    { item.paymentStatus == 'COMPLETED' && ( <View style={styles.cell2}><CustomButton title={'DETAILS'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5}  text_color={Colors.white} onPress={()=>Actions.orderwithpin({pre_id:item.preDefinedOrderId, rate:item.bulkPredefinedOrderResponse.rate})} /></View>)}
+    { item.paymentStatus == null && ( <View style={styles.cell2}><CustomButton title={'PAY'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5} text_marginbottom={3} text_margintop={3} paddingBottom={3} paddingTop={3} text_color={Colors.white} onPress={()=>this.pay_additional_charge(item.paymentId)} /></View> )}
+    { item.paymentStatus == 'COMPLETED' && ( <View style={styles.cell2}><CustomButton title={'DETAILS'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} text_color={Colors.white} onPress={()=>Actions.paymentdetails({payment_id:item.paymentId})} /></View>)}
 
-      <View style={styles.cell2}><CustomButton title={'EDIT'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5}  text_color={Colors.white} onPress={()=>Actions.orderwithpin({pre_id:item.preDefinedOrderId, rate:item.bulkPredefinedOrderResponse.rate})} /></View>
+    { item.paymentStatus == null && ( <View style={styles.cell2}><CustomButton title={'EDIT'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5}  text_color={Colors.white} onPress={()=>this.setState({modal_visible:true,edited_no:item.amountCollected})} /></View>)}
      
 
     </View>
@@ -191,6 +180,29 @@ _body = (item) => {
     return (
 
       <Container>
+
+
+
+{/*////////////////////////////////////// Modal Block //////////////////////////////////////////////// */}
+
+<Modal visible={this.state.modal_visible} supportedOrientations={['landscape']} transparent>
+<View style={{ justifyContent: 'center', flex: 1, backgroundColor: Colors.transparent, }}>
+    <View style={{ backgroundColor: Colors.white, alignSelf: 'center', marginTop:SECTION_MARGIN_TOP }}>
+        <View style={{ flexDirection: 'row', alignSelf: 'flex-end' }}>  
+        <View style={styles.modalview}>
+          <CustomInput  onChangeText={(text)=>this.setState({changed_additional_charge:text})} flex={1} placeholder={`${this.state.edited_no}`} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} keyboardType={'number-pad'}/>
+          <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:10}}>
+          <CustomButton title={'Edit'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.setState({modal_visible:false,})}/>
+          <CustomButton title={'Remove'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.setState({modal_visible:false,})}/>
+
+          </View>
+        </View>
+        </View>
+    </View>
+</View>
+</Modal>
+
+
         <Navbar left={left} title="Additional Charges" />
         <ScrollView contentContainerStyle={{flexGrow:1}} style={{ flexDirection: 'column', padding: MAIN_VIEW_PADDING, backgroundColor: Colors.textBackgroundColor }}>
 <View style={{padding:MAIN_VIEW_PADDING,backgroundColor:Colors.white}}>
@@ -313,6 +325,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  modalview :{
+    margin:SECTION_MARGIN_TOP,
+    padding:SECTION_MARGIN_TOP,
+    maxWidth:'60%',
+    minWidth:'60%',
   },
 
 });

@@ -148,11 +148,12 @@ _body = (item) => {
 <View style={styles.cell2}><CustomText text={item.preDefinedOrderId ? item.preDefinedOrderId: Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell2}><CustomText text={item.assigneeName ? item.assigneeName : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
       <View style={styles.cell2}><CustomText text={item.assignedDate ? item.assignedDate :Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+      <View style={styles.cell2}><Button  transparent onPress={()=>Actions.trackorder({pre_order_id:item.preDefinedOrderId})}><Icon style={{ color: Colors.black,fontSize:30,paddingLeft:30 }} name='ios-eye' /></Button></View>
+
       {this.props.status === 'RE_ASSIGN' &&(<View style={styles.cell2}><CustomButton title={'CreateOrder'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={10} marginLeft={10} marginRight={10} marginBottom={10}  text_color={Colors.white} onPress={()=>Actions.orderwithpin({pre_id:item.preDefinedOrderId, rate:item.bulkPredefinedOrderResponse.rate})} /></View>)}
       {item.assigneeId == this.state.personId && (<View>
       {this.props.status === 'ASSIGNED' &&(<View style={styles.cell2}><CustomButton title={'CreateOrder'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={10} marginLeft={10} marginRight={10} marginBottom={10}  text_color={Colors.white} onPress={()=>Actions.orderwithpin({pre_id:item.preDefinedOrderId, rate:item.bulkPredefinedOrderResponse.rate})} /></View>)}
 </View>)}
-      <View style={styles.cell2}><Button  transparent onPress={()=>Actions.trackorder({pre_order_id:item.preDefinedOrderId})}><Icon style={{ color: Colors.black,fontSize:30,paddingLeft:30 }} name='ios-eye' /></Button></View>
       </View>
     )
   }

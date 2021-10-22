@@ -184,6 +184,16 @@ if(this.state.user_type==="") {
     this.setState({hasError: true, errorTextuser_type: 'Please select user type!'});
     return;
   }
+  if(this.state.from_pdoid==="") {
+    this.setState({hasError: true, errorTextfrom_pdoid: 'Please select from range!'});
+    return;
+  }
+
+  if(this.state.to_pdoid==="") {
+    this.setState({hasError: true, errorTextto_pdoid: 'Please select to range!'});
+    return;
+  }
+
   // if(this.state.no_pdoid==="") {
   //   this.setState({hasError: true, errorTextno_pdoid: 'Please enter no of PDOID !'});
   //   return;
@@ -218,17 +228,17 @@ if(this.state.user_type==="") {
     "assignerName": data.firstName +' '+ data.lastName,
     "assignerUserType": "DELIVERY_BOY",
     "preorderAssignId": this.props.assigned_id,
-    "preorderRangeAssignRequest": [
+    "preorderRangeAssignRequest": 
       {
         "assigneeId": this.state.user_id,
         "assigneeName": this.state.user_name,
         "assigneeUserType":this.state.user_type,
         "customerIdentityType": this.state.cus_type,
         "officeId": data.officeId,
-        "preorderFrom": this.state.from_pdoid,
-        "preorderTo": this.state.to_pdoid
+        "preorderFrom":parseInt(this.state.no_1),
+        "preorderTo":parseInt(this.state.no_2)
       }
-    ]
+    
     }
 
   Api.fetch_request(ASSIGN_PDOID, 'PUT', '', JSON.stringify(body))
@@ -292,11 +302,11 @@ console.log("error   "+result.error)
 
         <CustomText text={'From'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomSearchBox onTextChange={(text)=>{setTimeout(()=>{this.setState({from_pdoid: text})},0)}} value={this.state.from_pdoid} placeholder={'Select'} onItemSelect={(item) =>{ setTimeout(() => {this.setState({from_pdoid:item.name, no_1:item.na ,errorTextfrom_pdoid:""});}, 500); }} items={this.state.range} />
-       {!!this.state.errorTextfrom_pdoid && (<Text style={{color: 'red'}}>{this.state.from_pdoid}</Text>)}
+       {!!this.state.errorTextfrom_pdoid && (<Text style={{color: 'red'}}>{this.state.errorTextfrom_pdoid}</Text>)}
 
        <CustomText text={'To'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomSearchBox onTextChange={(text)=>{setTimeout(()=>{this.setState({from_pdoid: text})},0)}} value={this.state.to_pdoid} placeholder={'Select'} onItemSelect={(item) =>{ setTimeout(() => {this.setState({to_pdoid:item.name, no_2:item.na ,errorTextto_pdoid:""});}, 500); }} items={this.state.range} />
-       {!!this.state.errorTextto_pdoid && (<Text style={{color: 'red'}}>{this.state.to_pdoid}</Text>)}
+       {!!this.state.errorTextto_pdoid && (<Text style={{color: 'red'}}>{this.state.errorTextto_pdoid}</Text>)}
 
 
        {/* <CustomText text={'PDOID'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>

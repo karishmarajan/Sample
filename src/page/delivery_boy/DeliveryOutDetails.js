@@ -80,6 +80,8 @@ export default class DeliveryOutDetails extends React.Component {
     modalVisibleProof: false,
     modalVisibleSignature: false,
     flag:0,
+    order_id:'',
+    order_type:'',
   };
 
 
@@ -144,12 +146,12 @@ export default class DeliveryOutDetails extends React.Component {
           console.log("hello", result.payload.isPreDefinedOrderWithPin);
           if (result.payload.isPreDefinedOrderWithPin == false) {
             console.log("isprdefined is false")
-            this.setState({ ispredefined: false,altno:false });
+            this.setState({ ispredefined: false,altno:false , order_type:'AUTOMATIC_ORDER_ID', order_id:result.payload.orderId});
 
           }
           else if (result.payload.isPreDefinedOrderWithPin == true) {
             console.log("isprdefined is true")
-            this.setState({ ispredefined: true,altno:true });
+            this.setState({ ispredefined: true,altno:true ,order_type:'PREDEFINED_ORDER_ID', order_id:result.payload.preDefinedOrderId});
 
           }
           else {
@@ -497,7 +499,8 @@ if(this.state.otp_verified==true)
     const { ispredefined } = this.state;
     var left = (
       <Left style={{ flex: 1 }}>
-        <Button onPress={() => Actions.pop()} transparent>
+        <Button onPress={() => {Actions.pop();
+          Actions.refresh({key: Math.random()})}} transparent>
           <Icon style={{ color: Colors.navbarIconColor }} name='md-arrow-round-back' />
         </Button>
       </Left>
@@ -817,14 +820,19 @@ if(this.state.otp_verified==true)
 
             {/*////////////////////// Total & Payment Block //////////////////////////////////////////////// */}
             {this.state.delivery_details.deliveryStatus == 'ASSIGNED' && (<View>
-              {this.state.delivery_details.payableByReceiver > 0 && (<View>
+              <View>
                 <View style={{ backgroundColor: Colors.white, flex: 10, flexDirection: 'row', marginTop: SECTION_MARGIN_TOP, padding: MAIN_VIEW_PADDING, alignItems: 'center', }}>
                   <CustomText text={'Total & Payment'} textType={Strings.subtitle} flex={9} fontWeight={'bold'} />
 
                 </View>
                 <View style={{ backgroundColor: Colors.white, flexGrow: 1, paddingLeft: MAIN_VIEW_PADDING, paddingRight: MAIN_VIEW_PADDING, paddingBottom: MAIN_VIEW_PADDING }}>
 
-                  <View style={{ height: 250 }}>
+                  <View style={{ height: 350 }}>
+                  <Grid ><Col><CustomText text={'Additional Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
+        <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.additionalCharges  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+ <Grid ><Col></Col>
+   <Col><CustomButton title={'Details'} marginTop={5} marginBottom={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.additionalcharges({order_id:this.state.order_id, order_type:this.state.order_type})} /></Col></Grid>       
+
                     <Grid ><Col><CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black} /></Col>
                       <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.originalDeliveryCharge} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>
                     <Grid ><Col><CustomText text={'Package Allowed'} textType={Strings.subtext} color={Colors.black} /></Col>
@@ -839,6 +847,7 @@ if(this.state.otp_verified==true)
                       <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.payableByReceiver} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>
                   </View>
 
+                  {this.state.delivery_details.payableByReceiver > 0 && (<View>
                   <CustomText text={'Payment Method'} textType={Strings.subtitle} flex={9} />
                   <CustomDropdown data={myArray2} height={TEXT_FIELD_HIEGHT} borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} />
 
@@ -852,16 +861,17 @@ if(this.state.otp_verified==true)
                       <Col><CustomInput flex={1} value={this.state.balance_amount} /></Col></Grid>
                   </View>
                   <CustomButton title={'Update'} backgroundColor={Colors.darkSkyBlue} onPress={() => this.delivery_cash_payment()} />
+               </View>)}
                 </View>
 
-              </View>)}
+              </View>
             </View>)}
 
         
             {/* /////////////////////////////////////////////////////////   change with isPreDefinedOrderWithPin true case ///////////////////////////// */}
           {this.state.otp_verified === false &&(<View>
               
-                <View style={{ flexDirection: 'row', }}>
+                <View style={{ flexDirection: 'row', marginTop:SECTION_MARGIN_TOP}}>
                  {ispredefined==false&& <CustomRadioButton title={'Same as delivery details'} selectedColor={Colors.darkSkyBlue} selected={this.state.same} onPress={() => this.isSelected(1)} />}
                   <CustomRadioButton title={'Alternative number'} padding={12} selectedColor={Colors.darkSkyBlue} selected={this.state.altno} onPress={() => this.isSelected(2)} />
                 </View>

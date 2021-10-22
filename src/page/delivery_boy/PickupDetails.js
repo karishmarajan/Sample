@@ -352,7 +352,7 @@ cash_payment() {
 render(){
     var left = (
         <Left style={{ flex: 1 }}>
-          <Button onPress={() => Actions.pop()} transparent>
+          <Button onPress={() => { Actions.pop();Actions.refresh({key: Math.random()})}} transparent>
             <Icon style={{ color:Colors.navbarIconColor}} name='md-arrow-round-back' />
             </Button>
         </Left>
@@ -548,11 +548,11 @@ render(){
 <Grid ><Col><CustomText text={'COD Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
         <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.finalCodCharge  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
  <Grid ><Col></Col>
-   <Col><CustomButton title={'Details'} marginTop={5} marginBottom={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>{Actions.codcharges({order_id:this.state.pickup_details.orderId})}} /></Col></Grid>       
+   <Col><CustomButton title={'Details'} marginTop={5} marginBottom={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>{Actions.codcharges({order_id:this.state.order_id, order_type:this.state.order_type})}} /></Col></Grid>       
    <Grid ><Col><CustomText text={'Additional Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
         <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.additionalCharges  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
  <Grid ><Col></Col>
-   <Col><CustomButton title={'Details'} marginTop={5} marginBottom={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.additionalcharges({order_id:this.state.pickup_details.preDefinedOrderId, order_type:this.state.order_type})} /></Col></Grid>       
+   <Col><CustomButton title={'Details'} marginTop={5} marginBottom={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.additionalcharges({order_id:this.state.order_id, order_type:this.state.order_type})} /></Col></Grid>       
 
 <Grid ><Col><CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
         <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.originalDeliveryCharge  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
