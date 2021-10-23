@@ -67,6 +67,12 @@ export default class PickupDetails extends React.Component {
 isCharacterALetter(char) {
   return (/[a-zA-Z]/).test(char)
 }
+///////////////////////////////////////////////////////////////////////////////////////////
+refresh_func(){
+  Actions.pop()
+  setTimeout(() => { Actions.refresh({key:Math.random()}) },10);
+}
+
 //////////////////////////////////////////////////////////////////////////////
 
 isSelected(no){
@@ -157,8 +163,8 @@ update_delivery_type() {
         console.log('Success:', JSON.stringify(result));
         Toast.show({ text: result.message, type: 'success' });
 
-        Actions.pop()
-        Actions.refresh({key: Math.random()})
+        // Actions.pop()
+        // Actions.refresh({key: Math.random()})
       }
       else {
         console.log('Failed');
@@ -352,7 +358,7 @@ cash_payment() {
 render(){
     var left = (
         <Left style={{ flex: 1 }}>
-          <Button onPress={() => { Actions.pop();Actions.refresh({key: Math.random()})}} transparent>
+          <Button onPress={() => { this.refresh_func()}} transparent>
             <Icon style={{ color:Colors.navbarIconColor}} name='md-arrow-round-back' />
             </Button>
         </Left>
@@ -564,12 +570,14 @@ render(){
        <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.deliveryChargeAfterDeductions  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
        {/* <Grid><Col><CustomText text={'Additional Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><View style={styles.inputview}><CustomInput flex={1} placeholder={`${this.state.pickup_details.additionalCharges}`} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} onChangeText={(text) =>{this.additional_Calculate(text); this.setState({amount_recieved:'',balance_amount:'',amount_to_pay:''})}} value={this.state.pickup_details.additionalCharges ? this.state.pickup_details.additionalCharges : 0 } /></View></Col></Grid>  */}
+           </View>
+
+        {/* { this.state.pickup_details.payableBySender > 0 &&  ( <View>
        <Grid><Col><CustomText text={'Sender Payment'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><View style={styles.inputview}><CustomText text={this.state.sender_payment } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
-      </View>
 
 
-      { this.state.pickup_details.payableBySender > 0 &&  (<View>
+    
       <CustomText  text={'Payment Method'} textType={Strings.subtitle} flex={9} />
       <CustomDropdown data={myArray2} height={TEXT_FIELD_HIEGHT}  borderWidth={SHORT_BORDER_WIDTH} borderColor={Colors.borderColor} paddingBottom={SECTION_MARGIN_TOP} />
 
@@ -584,11 +592,11 @@ render(){
        </View>
        <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>this.cash_payment()} />
       
-    </View>)}
+    </View>)} */}
     </View>
       </View>
 
-      <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>this.update_delivery_type()} />
+      {/* <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>this.update_delivery_type()} /> */}
       <View style={{alignItems:'flex-end',marginTop:SECTION_MARGIN_TOP}}><CustomText  text={Strings.version} textType={Strings.subtext} color={Colors.darkSkyBlue} /></View>
           </View>
         </ScrollView>

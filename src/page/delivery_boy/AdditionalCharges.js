@@ -51,7 +51,11 @@ export default class AdditionalCharges extends React.Component {
         this.fetch_additionalCharge();
 
   }
-
+///////////////////////////////////////////////////////////////////////////////////////////
+refresh_func(){
+  Actions.pop()
+  setTimeout(() => { Actions.refresh({key:Math.random()}) },10);
+}
   ///////////////////////////////////// PDOID payment status update function ////////////////////////////////////////////////////////////////////////////////////
   
 pay_additional_charge(id) {
@@ -156,10 +160,13 @@ _body = (item) => {
      
      <View style={styles.cell1}><CustomText text={item.amountCollected ? item.amountCollected: Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
     { item.paymentStatus == null && ( <View style={styles.cell2}><CustomButton title={'PAY'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5} text_marginbottom={3} text_margintop={3} paddingBottom={3} paddingTop={3} text_color={Colors.white} onPress={()=>this.pay_additional_charge(item.paymentId)} /></View> )}
+    { item.paymentStatus == 'PENDING' && ( <View style={styles.cell2}><CustomButton title={'PAY'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5} text_marginbottom={3} text_margintop={3} paddingBottom={3} paddingTop={3} text_color={Colors.white} onPress={()=>this.pay_additional_charge(item.paymentId)} /></View> )}
+
     { item.paymentStatus == 'COMPLETED' && ( <View style={styles.cell2}><CustomButton title={'DETAILS'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} text_color={Colors.white} onPress={()=>Actions.paymentdetails({payment_id:item.paymentId})} /></View>)}
 
-    { item.paymentStatus == null && ( <View style={styles.cell2}><CustomButton title={'EDIT'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5}  text_color={Colors.white} onPress={()=>this.setState({modal_visible:true,edited_no:item.amountCollected})} /></View>)}
+    {/* { item.paymentStatus == null && ( <View style={styles.cell2}><CustomButton title={'EDIT'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5}  text_color={Colors.white} onPress={()=>this.setState({modal_visible:true,edited_no:item.amountCollected})} /></View>)} */}
      
+    {/* { item.paymentStatus == 'PENDING' && ( <View style={styles.cell2}><CustomButton title={'EDIT'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5}  text_color={Colors.white} onPress={()=>this.setState({modal_visible:true,edited_no:item.amountCollected})} /></View>)} */}
 
     </View>
 
@@ -172,7 +179,7 @@ _body = (item) => {
   render() {
     var left = (
       <Left style={{ flex: 1 }}>
-        <Button  width={CLOSE_WIDTH}  onPress={() => Actions.pop()} transparent>
+        <Button  width={CLOSE_WIDTH}  onPress={() => {this.refresh_func()}} transparent>
         <Icon style={{ color: Colors.navbarIconColor,fontSize:22 }} name='md-arrow-round-back' />
         </Button>
       </Left>

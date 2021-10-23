@@ -364,8 +364,7 @@ return;
       "isManualPickup": false,
       "isPickupRequired": this.state.isPickupRequired,
       "officeStaffId": this.state.agent_id,
-  "officeStaffType": "DELIVERY_AGENT",
-  "paymentType": "ADDITIONAL_CHARGE",
+     "officeStaffType": "DELIVERY_AGENT",
       "pickupPincode": this.state.sender_pincode,
       "preDefinedOrderId": this.state.predefinedpin,
     }
