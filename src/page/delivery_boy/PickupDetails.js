@@ -502,7 +502,7 @@ render(){
          {this.state.delivery_type === 'BULLET' && (<View>
       <CustomText text={'Additional Charge'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
 <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-      <View style={{flex:4}}><CustomInput flex={1} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} onChangeText={(text) =>{this.setState({additional_charge2: text, errorTextadditional_charge2:''})}} value={this.state.additional_charge2} /></View>
+      <View style={{flex:4}}><CustomInput flex={1} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} onChangeText={(text) =>{this.setState({additional_charge2: text, errorTextadditional_charge2:''})}} value={'Rs. '+this.state.additional_charge2} /></View>
 
   {this.state.bullet_additional_btn_pay === true && (<View style={{flex:2,marginLeft:5}}><CustomButton title={'ADD'} marginTop={1} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.add_additional_charge()} /></View>)}
   {this.state.bullet_additional_btn_pay === false && (<View style={{flex:2,marginLeft:5}}><CustomButton title={'Details'} marginTop={1} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.paymentdetails({order_id:this.state.predefinedpin})} /></View>)}
@@ -552,22 +552,22 @@ render(){
 
 <View style={{height:420}}>
 <Grid ><Col><CustomText text={'COD Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
-        <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.finalCodCharge  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+        <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.pickup_details.finalCodCharge  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
  <Grid ><Col></Col>
    <Col><CustomButton title={'Details'} marginTop={5} marginBottom={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>{Actions.codcharges({order_id:this.state.order_id, order_type:this.state.order_type})}} /></Col></Grid>       
    <Grid ><Col><CustomText text={'Additional Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
-        <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.additionalCharges  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+        <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.pickup_details.additionalCharges  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
  <Grid ><Col></Col>
    <Col><CustomButton title={'Details'} marginTop={5} marginBottom={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.additionalcharges({order_id:this.state.order_id, order_type:this.state.order_type})} /></Col></Grid>       
 
 <Grid ><Col><CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
-        <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.originalDeliveryCharge  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+        <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.pickup_details.originalDeliveryCharge  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
  <Grid ><Col><CustomText text={'Package Allowed'} textType={Strings.subtext} color={Colors.black}/></Col>
         <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.deliveryChargePackageDeduction   } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
  <Grid><Col><CustomText text={'Credit Allowed'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.deliveryChargeCreditDeduction } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
   <Grid><Col><CustomText text={'Total'} textType={Strings.subtext} color={Colors.black}/></Col>
-       <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.deliveryChargeAfterDeductions  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+       <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.pickup_details.deliveryChargeAfterDeductions  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
        {/* <Grid><Col><CustomText text={'Additional Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><View style={styles.inputview}><CustomInput flex={1} placeholder={`${this.state.pickup_details.additionalCharges}`} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} onChangeText={(text) =>{this.additional_Calculate(text); this.setState({amount_recieved:'',balance_amount:'',amount_to_pay:''})}} value={this.state.pickup_details.additionalCharges ? this.state.pickup_details.additionalCharges : 0 } /></View></Col></Grid>  */}
            </View>

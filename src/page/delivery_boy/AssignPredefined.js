@@ -47,7 +47,9 @@ export default class AssignPredefined extends React.Component {
     pdoid_from:'',
     hasError:false,
     from_pdoid:'',
+    from_pdoid1:'',
     to_pdoid:'',
+    to_pdoid1:'',
     range:[],
     errorTextfrom_pdoid:'',
     errorTextto_pdoid:'',
@@ -184,12 +186,12 @@ if(this.state.user_type==="") {
     this.setState({hasError: true, errorTextuser_type: 'Please select user type!'});
     return;
   }
-  if(this.state.from_pdoid==="") {
+  if(this.state.from_pdoid1==="") {
     this.setState({hasError: true, errorTextfrom_pdoid: 'Please select from range!'});
     return;
   }
 
-  if(this.state.to_pdoid==="") {
+  if(this.state.to_pdoid1==="") {
     this.setState({hasError: true, errorTextto_pdoid: 'Please select to range!'});
     return;
   }
@@ -301,11 +303,11 @@ console.log("error   "+result.error)
         {!!this.state.errorTextuser_type && (<Text style={{color: 'red'}}>{this.state.errorTextuser_type}</Text>)}
 
         <CustomText text={'From'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <CustomSearchBox onTextChange={(text)=>{setTimeout(()=>{this.setState({from_pdoid: text})},0)}} value={this.state.from_pdoid} placeholder={'Select'} onItemSelect={(item) =>{ setTimeout(() => {this.setState({from_pdoid:item.name, no_1:item.na ,errorTextfrom_pdoid:""});}, 500); }} items={this.state.range} />
+        <CustomSearchBox onTextChange={(text)=>{setTimeout(()=>{this.setState({from_pdoid: text})},0)}} value={this.state.from_pdoid1 ? this.state.from_pdoid1 : this.state.from_pdoid} placeholder={'Select'} onItemSelect={(item) =>{ setTimeout(() => {this.setState({from_pdoid1:item.name, no_1:item.na ,errorTextfrom_pdoid:""});}, 500); }} items={this.state.range} />
        {!!this.state.errorTextfrom_pdoid && (<Text style={{color: 'red'}}>{this.state.errorTextfrom_pdoid}</Text>)}
 
        <CustomText text={'To'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-        <CustomSearchBox onTextChange={(text)=>{setTimeout(()=>{this.setState({from_pdoid: text})},0)}} value={this.state.to_pdoid} placeholder={'Select'} onItemSelect={(item) =>{ setTimeout(() => {this.setState({to_pdoid:item.name, no_2:item.na ,errorTextto_pdoid:""});}, 500); }} items={this.state.range} />
+        <CustomSearchBox onTextChange={(text)=>{setTimeout(()=>{this.setState({to_pdoid: text})},0)}} value={this.state.to_pdoid1 ? this.state.to_pdoid1 : this.state.to_pdoid} placeholder={'Select'} onItemSelect={(item) =>{ setTimeout(() => {this.setState({to_pdoid1:item.name, no_2:item.na ,errorTextto_pdoid:""});}, 500); }} items={this.state.range} />
        {!!this.state.errorTextto_pdoid && (<Text style={{color: 'red'}}>{this.state.errorTextto_pdoid}</Text>)}
 
 

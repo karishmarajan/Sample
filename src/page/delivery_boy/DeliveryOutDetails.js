@@ -321,6 +321,14 @@ export default class DeliveryOutDetails extends React.Component {
 
   delivery_status_update() {
 
+    // if(parseInt(this.state.delivery_details.additionalCharges) > 0){
+    //   Toast.show({ text: "addititional charge payment pending", type: 'warning' });
+    //   return; 
+    // }
+    // if(parseInt(this.state.delivery_details.finalCodCharge) > 0){
+    //   Toast.show({ text: "COD charge payment pending", type: 'warning' });
+    //   return; 
+    // }
     let body = {
 
       "deliveryFailedReason": this.state.reason_val,
@@ -827,24 +835,28 @@ if(this.state.otp_verified==true)
                 </View>
                 <View style={{ backgroundColor: Colors.white, flexGrow: 1, paddingLeft: MAIN_VIEW_PADDING, paddingRight: MAIN_VIEW_PADDING, paddingBottom: MAIN_VIEW_PADDING }}>
 
-                  <View style={{ height: 350 }}>
+                  <View style={{ height: 420}}>
                   <Grid ><Col><CustomText text={'Additional Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
-        <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.additionalCharges  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+        <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.delivery_details.additionalCharges  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
  <Grid ><Col></Col>
-   <Col><CustomButton title={'Details'} marginTop={5} marginBottom={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.additionalcharges({order_id:this.state.order_id, order_type:this.state.order_type})} /></Col></Grid>       
+   <Col><CustomButton title={'Details'} marginTop={1} marginBottom={1} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.additionalcharges({order_id:this.state.order_id, order_type:this.state.order_type})} /></Col></Grid>       
+   <Grid ><Col><CustomText text={'COD'} textType={Strings.subtext} color={Colors.black}/></Col>
+        <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.delivery_details.finalCodCharge  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+ <Grid ><Col></Col>
+   <Col><CustomButton title={'Details'} marginTop={1} marginBottom={1} backgroundColor={Colors.darkSkyBlue} onPress={()=>{Actions.codcharges({order_id:this.state.order_id, order_type:this.state.order_type, page:'DELIVERY'})}} /></Col></Grid>       
 
                     <Grid ><Col><CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black} /></Col>
-                      <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.originalDeliveryCharge} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>
+                      <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.delivery_details.originalDeliveryCharge} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>
                     <Grid ><Col><CustomText text={'Package Allowed'} textType={Strings.subtext} color={Colors.black} /></Col>
                       <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.deliveryChargePackageDeduction} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>
                     <Grid><Col><CustomText text={'Credit Allowed'} textType={Strings.subtext} color={Colors.black} /></Col>
                       <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.deliveryChargeCreditDeduction} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>
-                      <Grid><Col><CustomText text={'Final COD'} textType={Strings.subtext} color={Colors.black} /></Col>
-                      <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.finalCodCharge} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>      
+                      {/* <Grid><Col><CustomText text={'Final COD'} textType={Strings.subtext} color={Colors.black} /></Col>
+                      <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.finalCodCharge} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>       */}
                     <Grid><Col><CustomText text={'Total Amount'} textType={Strings.subtext} color={Colors.black} /></Col>
-                      <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.deliveryChargeAfterDeductions} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>
+                      <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.delivery_details.deliveryChargeAfterDeductions} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>
                     <Grid><Col><CustomText text={'Reciever Payment'} textType={Strings.subtext} color={Colors.black} /></Col>
-                      <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.payableByReceiver} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>
+                      <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.delivery_details.payableByReceiver} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>
                   </View>
 
                   {this.state.delivery_details.payableByReceiver > 0 && (<View>

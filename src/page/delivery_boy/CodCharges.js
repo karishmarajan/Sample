@@ -158,14 +158,15 @@ _body = (item) => {
 
     <View style={{ flexDirection: 'row',}}>
      
-     <View style={styles.cell1}><CustomText text={item.amountCollected ? item.amountCollected: Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+     <View style={styles.cell1}><CustomText text={item.amountCollected ? 'Rs. '+item.amountCollected: Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+     {this.props.page === 'DELIVERY' && (<View>
     { item.paymentStatus == null && ( <View style={styles.cell2}><CustomButton title={'PAY'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5} text_marginbottom={3} text_margintop={3} paddingBottom={3} paddingTop={3} text_color={Colors.white} onPress={()=>this.pay_cod_charge(item.paymentId)} /></View> )}
     { item.paymentStatus == 'PENDING' && ( <View style={styles.cell2}><CustomButton title={'PAY'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5} text_marginbottom={3} text_margintop={3} paddingBottom={3} paddingTop={3} text_color={Colors.white} onPress={()=>this.pay_cod_charge(item.paymentId)} /></View> )}
 
-    { item.paymentStatus == 'COMPLETED' && ( <View style={styles.cell2}><CustomButton title={'DETAILS'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} text_color={Colors.white} onPress={()=>Actions.paymentdetails({payment_id:item.paymentId})} /></View>)}
-
-    {/* { item.paymentStatus == null && ( <View style={styles.cell2}><CustomButton title={'EDIT'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5}  text_color={Colors.white} onPress={()=>this.setState({modal_visible:true,edited_no:item.amountCollected})} /></View>)} */}
-    {/* { item.paymentStatus == 'PENDING' && ( <View style={styles.cell2}><CustomButton title={'EDIT'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5}  text_color={Colors.white} onPress={()=>this.setState({modal_visible:true,edited_no:item.amountCollected})} /></View>)} */}
+    { item.paymentStatus == 'COMPLETED' && ( <View style={styles.cell2}><CustomButton title={'DETAILS'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={1} text_color={Colors.white} onPress={()=>Actions.paymentdetails({payment_id:item.paymentId})} /></View>)}
+    </View>)}
+    { item.paymentStatus == null && ( <View style={styles.cell2}><CustomButton title={'EDIT'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5}  text_color={Colors.white} onPress={()=>this.setState({modal_visible:true,edited_no:item.amountCollected})} /></View>)}
+    { item.paymentStatus == 'PENDING' && ( <View style={styles.cell2}><CustomButton title={'EDIT'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5}  text_color={Colors.white} onPress={()=>this.setState({modal_visible:true,edited_no:item.amountCollected})} /></View>)}
 
 
     </View>
@@ -197,7 +198,7 @@ _body = (item) => {
     <View style={{ backgroundColor: Colors.white, alignSelf: 'center', marginTop:SECTION_MARGIN_TOP }}>
         <View style={{ flexDirection: 'row', alignSelf: 'flex-end' }}>  
         <View style={styles.modalview}>
-          <CustomInput  onChangeText={(text)=>this.setState({changed_cod_charge:text})} flex={1} placeholder={`${this.state.edited_no}`} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} keyboardType={'number-pad'}/>
+          <CustomInput  onChangeText={(text)=>this.setState({changed_cod_charge:text})} flex={1} placeholder={`Rs. ${this.state.edited_no}`} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} keyboardType={'number-pad'}/>
           <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:10}}>
           <CustomButton title={'Edit'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.setState({modal_visible:false,})}/>
           <CustomButton title={'Remove'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.setState({modal_visible:false,})}/>
@@ -270,8 +271,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     backgroundColor:Colors.white,
     justifyContent:'center',
-    borderColor:Colors.aash,
-    borderBottomWidth:5,
+    borderColor:Colors.borderColor,
+    borderWidth:0.3,
+margin:5
   },
 
   cell2: {
@@ -282,9 +284,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     backgroundColor:Colors.white,
     justifyContent:'center',
-    borderColor:Colors.aash,
-    borderBottomWidth:5,
-  },
+borderColor:Colors.borderColor,
+    borderWidth:0.3,
+margin:5  },
 
   body: {
     flex: 1,

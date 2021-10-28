@@ -530,7 +530,7 @@ Actions.dashboard();
       <CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
 <View style={{flexDirection:'row', justifyContent:'space-between',flex:1}}>
 <View style={{flexDirection:'row',flex:4,borderColor:Colors.borderColor,borderWidth:SHORT_BORDER_WIDTH,borderRadius:SHORT_BORDER_RADIUS,padding:1,justifyContent:'space-between'}}>
-       <View style={{flex:3}}><CustomInput flex={1} value={''+this.state.payment} backgroundColor={Colors.white} /></View>
+       <View style={{flex:3}}><CustomInput flex={1} value={'Rs .'+this.state.payment} backgroundColor={Colors.white} /></View>
        <View style={{flex:2,justifyContent:'center'}}><Icon style={{ color: this.state.del_color ,fontSize:26,paddingLeft:30}} name='md-cash' /></View>     
         </View>
   {this.state.btn_pay === true && (<View style={{flex:2,marginLeft:5}}><CustomButton title={'Pay'} marginTop={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.pdoid_payment_status_update()} /></View>)}
