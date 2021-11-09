@@ -97,13 +97,17 @@ export default class PaymentDetails extends React.Component {
   return (
 
     <View style={{ backgroundColor:Colors.white,borderRadius:MAIN_BLOCK_BORDER_RADIUS,padding:COLUMN_PADDING,marginTop:SECTION_MARGIN_TOP}}>
+       <View style={{flexDirection:'row'}}>
+    <View style={{flex:4}}><CustomText text={'Order Id'} fontWeight={'bold'} textType={Strings.maintext}/></View>
+    <View style={{flex:4}}><CustomText text={item.orderId ? item.orderId :'N/A' }  textType={Strings.maintext}/></View>
+    </View>
     <View style={{flexDirection:'row'}}>
     <View style={{flex:4}}><CustomText text={'Assigned By'} fontWeight={'bold'} textType={Strings.maintext}/></View>
     <View style={{flex:4}}><CustomText text={item.assignerName ? item.assignerName :'N/A' }  textType={Strings.maintext}/></View>
     </View>
     <View style={{flexDirection:'row'}}>
     <View style={{flex:4}}><CustomText text={'Assigner Id'} fontWeight={'bold'} textType={Strings.maintext}/></View>
-    <View style={{flex:4}}><CustomText text={item.assignerName ? item.assignerName :'N/A' }  textType={Strings.maintext}/></View>
+    <View style={{flex:4}}><CustomText text={item.assignerId ? item.assignerId :'N/A' }  textType={Strings.maintext}/></View>
     </View>
    
     <View style={{flexDirection:'row'}}>
@@ -113,7 +117,7 @@ export default class PaymentDetails extends React.Component {
     
     <View style={{flexDirection:'row'}}>
     <View style={{flex:4}}><CustomText text={'Rate'} fontWeight={'bold'} textType={Strings.maintext}/></View>
-    <View style={{flex:4}}><CustomText text={item.amountCollected ? item.amountCollected :'N/A' }  textType={Strings.maintext}/></View>
+    <View style={{flex:4}}><CustomText text={item.amountCollected ? 'Rs. '+item.amountCollected :'N/A' }  textType={Strings.maintext}/></View>
     </View>
 
     <View style={{flexDirection:'row'}}>
@@ -174,6 +178,10 @@ export default class PaymentDetails extends React.Component {
               />
 </View>)}
 {this.props.payment_id && (<View style={{ backgroundColor:Colors.white,borderRadius:MAIN_BLOCK_BORDER_RADIUS,padding:COLUMN_PADDING,marginTop:SECTION_MARGIN_TOP}}>
+  <View style={{flexDirection:'row'}}>
+    <View style={{flex:4}}><CustomText text={'Order Id'} fontWeight={'bold'} textType={Strings.maintext}/></View>
+    <View style={{flex:4}}><CustomText text={this.state.payment_details2.orderId ? this.state.payment_details2.orderId :'N/A' }  textType={Strings.maintext}/></View>
+    </View>
     <View style={{flexDirection:'row'}}>
     <View style={{flex:4}}><CustomText text={'Assigned By'} fontWeight={'bold'} textType={Strings.maintext}/></View>
     <View style={{flex:4}}><CustomText text={this.state.payment_details2.assignerName ? this.state.payment_details2.assignerName :'N/A' }  textType={Strings.maintext}/></View>

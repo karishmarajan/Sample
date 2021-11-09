@@ -16,7 +16,7 @@ import CustomDropdown from '../../component/CustomDropdown';
 import session, { KEY } from '../../session/SessionManager';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
 import Api from '../../component/Fetch';
-import { ADD_PAYMENT_BY_TYPE, PAYMENT_DETAILS , PDOID_LIST_BY_STATUS, ADD_PAYMENT_BY_PAYMENTID} from '../../constants/Api';
+import { ADD_PAYMENT_BY_TYPE, PAYMENT_DETAILS , EDIT_PAYMENT, ADD_PAYMENT_BY_PAYMENTID} from '../../constants/Api';
 import RNPrint from 'react-native-print';
 import _ from "lodash";
 import { RNCamera } from 'react-native-camera';
@@ -38,6 +38,7 @@ export default class AdditionalCharges extends React.Component {
       modal_visible:false,
       changed_additional_charge:'',
       edited_no:'',
+      payment_id:'',
    };
   }
 
@@ -56,6 +57,51 @@ refresh_func(){
   Actions.pop()
   setTimeout(() => { Actions.refresh({key:Math.random()}) },10);
 }
+
+
+////////////////////////////////////// Additional charge editing function ///////////////////////////////////////////////////////////////////////////////////
+ 
+edit_additional_charge() {
+
+  if (this.state.changed_additional_charge === "") {
+    Toast.show({ text: "Please enter valid data", type: 'warning' });
+    return;
+    }
+
+    let body = {
+      
+      "amountCollected": this.state.changed_additional_charge,
+      "officeId": this.state.officeId,
+      "officeStaffId": this.state.personId,
+      "officeStaffType": "DELIVERY_AGENT",
+      "orderId": this.props.order_id,
+      "orderType":this.props.order_type,
+      "paymentId": this.state.payment_id,
+      "paymentStatus": "PENDING",
+      "paymentType": "ADDITIONAL_CHARGE"
+   
+    };
+
+    Api.fetch_request(EDIT_PAYMENT, 'PUT', '', JSON.stringify(body))
+      .then(result => {
+
+        if (result.error != true) {
+
+          console.log('Success:', JSON.stringify(result));
+          Toast.show({ text: result.message, type: 'success' });
+          this.fetch_additionalCharge();
+
+          this.setState({modal_visible:false,})
+        }
+        else {
+          console.log('Failed');
+          Toast.show({ text: result.message, type: 'warning' });
+        }
+      })
+  
+}
+
+
   ///////////////////////////////////// PDOID payment status update function ////////////////////////////////////////////////////////////////////////////////////
   
 pay_additional_charge(id) {
@@ -164,9 +210,9 @@ _body = (item) => {
 
     { item.paymentStatus == 'COMPLETED' && ( <View style={styles.cell2}><CustomButton title={'DETAILS'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={1} text_color={Colors.white} onPress={()=>Actions.paymentdetails({payment_id:item.paymentId})} /></View>)}
 
-    { item.paymentStatus == null && ( <View style={styles.cell2}><CustomButton title={'EDIT'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5}  text_color={Colors.white} onPress={()=>this.setState({modal_visible:true,edited_no:item.amountCollected})} /></View>)}
+    { item.paymentStatus == null && ( <View style={styles.cell2}><CustomButton title={'EDIT'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5}  text_color={Colors.white} onPress={()=>this.setState({modal_visible:true,edited_no:item.amountCollected, payment_id:item.paymentId})} /></View>)}
      
-    { item.paymentStatus == 'PENDING' && ( <View style={styles.cell2}><CustomButton title={'EDIT'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5}  text_color={Colors.white} onPress={()=>this.setState({modal_visible:true,edited_no:item.amountCollected})} /></View>)}
+    { item.paymentStatus == 'PENDING' && ( <View style={styles.cell2}><CustomButton title={'EDIT'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5}  text_color={Colors.white} onPress={()=>this.setState({modal_visible:true,edited_no:item.amountCollected, payment_id:item.paymentId})} /></View>)}
 
     </View>
 
@@ -199,7 +245,7 @@ _body = (item) => {
         <View style={styles.modalview}>
           <CustomInput  onChangeText={(text)=>this.setState({changed_additional_charge:text})} flex={1} placeholder={`Rs .${this.state.edited_no}`} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} keyboardType={'number-pad'}/>
           <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:10}}>
-          <CustomButton title={'Edit'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.setState({modal_visible:false,})}/>
+          <CustomButton title={'Edit'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.edit_additional_charge()}/>
           <CustomButton title={'Remove'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.setState({modal_visible:false,})}/>
 
           </View>

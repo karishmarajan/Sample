@@ -684,7 +684,7 @@ if(this.state.otp_verified==true)
                 <CustomText text={'Delivery Type'} textType={Strings.subtext} color={Colors.black} />
                 <View style={styles.inputview2}><CustomText text={this.state.delivery_details.deliveryType ? this.state.delivery_details.deliveryType : Strings.na} textType={Strings.subtext} color={Colors.black} /></View>
                 <CustomText text={'Credit Allowed'} textType={Strings.subtext} color={Colors.black} />
-                <View style={styles.inputview2}><CustomText text={this.state.delivery_details.creditAllowed ? this.state.delivery_details.creditAllowed : Strings.na} textType={Strings.subtext} color={Colors.black} /></View>
+                <View style={styles.inputview2}><CustomText text={'Rs. '+this.state.delivery_details.creditAllowed ? this.state.delivery_details.creditAllowed : Strings.na} textType={Strings.subtext} color={Colors.black} /></View>
                 <CustomText text={'Location'} textType={Strings.subtext} color={Colors.black} />
                 <View style={styles.inputview2}><CustomText text={this.state.delivery_details.localBodyType ? this.state.delivery_details.localBodyType : Strings.na} textType={Strings.subtext} color={Colors.black} /></View>
                 <CustomText text={'Proof to be produced'} textType={Strings.subtext} color={Colors.black} />
@@ -848,9 +848,9 @@ if(this.state.otp_verified==true)
                     <Grid ><Col><CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black} /></Col>
                       <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.delivery_details.originalDeliveryCharge} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>
                     <Grid ><Col><CustomText text={'Package Allowed'} textType={Strings.subtext} color={Colors.black} /></Col>
-                      <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.deliveryChargePackageDeduction} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>
+                      <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.delivery_details.deliveryChargePackageDeduction} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>
                     <Grid><Col><CustomText text={'Credit Allowed'} textType={Strings.subtext} color={Colors.black} /></Col>
-                      <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.deliveryChargeCreditDeduction} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>
+                      <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.delivery_details.deliveryChargeCreditDeduction} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>
                       {/* <Grid><Col><CustomText text={'Final COD'} textType={Strings.subtext} color={Colors.black} /></Col>
                       <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.finalCodCharge} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>       */}
                     <Grid><Col><CustomText text={'Total Amount'} textType={Strings.subtext} color={Colors.black} /></Col>

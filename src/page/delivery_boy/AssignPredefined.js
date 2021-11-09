@@ -316,7 +316,7 @@ console.log("error   "+result.error)
         {!!this.state.errorTextno_pdoid && (<Text style={{color: 'red'}}>{this.state.errorTextno_pdoid}</Text>)} */}
 
         <CustomText text={'User Name'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
-       <CustomSearchBox onTextChange={(text)=>{setTimeout(()=>{this.setState({user_name: text})},0)}} value={this.state.user_name} placeholder={'Select'} onItemSelect={(item) =>{ setTimeout(() => {this.setState({user_name:item.na ,user_id:item.id, cus_type:item.type, errorTextuser:""});}, 500); }} items={this.state.users} />
+       <CustomSearchBox onTextChange={(text)=>{setTimeout(()=>{this.setState({user_name: text,errorTextuser:''})},0)}} value={this.state.user_name} placeholder={'Select'} onItemSelect={(item) =>{ setTimeout(() => {this.setState({user_name:item.na ,user_id:item.id, cus_type:item.type, errorTextuser:""});}, 500); }} items={this.state.users} />
        {!!this.state.errorTextuser && (<Text style={{color: 'red'}}>{this.state.errorTextuser}</Text>)}
 
         <CustomButton title={'ADD'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.assign_pdoid()} />

@@ -563,9 +563,9 @@ render(){
 <Grid ><Col><CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
         <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.pickup_details.originalDeliveryCharge  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
  <Grid ><Col><CustomText text={'Package Allowed'} textType={Strings.subtext} color={Colors.black}/></Col>
-        <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.deliveryChargePackageDeduction   } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+        <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.pickup_details.deliveryChargePackageDeduction   } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
  <Grid><Col><CustomText text={'Credit Allowed'} textType={Strings.subtext} color={Colors.black}/></Col>
-       <Col><View style={styles.inputview}><CustomText text={this.state.pickup_details.deliveryChargeCreditDeduction } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+       <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.pickup_details.deliveryChargeCreditDeduction } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
   <Grid><Col><CustomText text={'Total'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.pickup_details.deliveryChargeAfterDeductions  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
        {/* <Grid><Col><CustomText text={'Additional Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
