@@ -162,6 +162,7 @@ update_delivery_type() {
        this.setState({final_cod_charge:result.payload.finalCodCharge})
         console.log('Success:', JSON.stringify(result));
         Toast.show({ text: result.message, type: 'success' });
+        this.fetch_pickup_details(this.props.pickup_id);
 
         // Actions.pop()
         // Actions.refresh({key: Math.random()})
@@ -342,7 +343,6 @@ cash_payment() {
           console.log('Success:', JSON.stringify(result));
           Toast.show({ text: result.message, type: 'success' });
           this.update_delivery_type()
-          this.fetch_pickup_details(this.props.pickup_id);
 
         }
         else {
@@ -502,7 +502,7 @@ render(){
          {this.state.delivery_type === 'BULLET' && (<View>
       <CustomText text={'Additional Charge'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
 <View style={{flexDirection:'row', justifyContent:'space-between'}}>
-      <View style={{flex:4}}><CustomInput flex={1} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} onChangeText={(text) =>{this.setState({additional_charge2: text, errorTextadditional_charge2:''})}} value={'Rs. '+this.state.additional_charge2} /></View>
+      <View style={{flex:4}}><CustomInput flex={1} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} onChangeText={(text) =>{this.setState({additional_charge2: text, errorTextadditional_charge2:''})}} value={this.state.additional_charge2} /></View>
 
   {this.state.bullet_additional_btn_pay === true && (<View style={{flex:2,marginLeft:5}}><CustomButton title={'ADD'} marginTop={1} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.add_additional_charge()} /></View>)}
   {this.state.bullet_additional_btn_pay === false && (<View style={{flex:2,marginLeft:5}}><CustomButton title={'Details'} marginTop={1} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.paymentdetails({order_id:this.state.predefinedpin})} /></View>)}

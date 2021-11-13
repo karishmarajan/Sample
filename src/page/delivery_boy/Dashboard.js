@@ -474,7 +474,8 @@ export default class Dashboard extends React.Component {
     return (
       <View style={{flex:1,flexDirection:'row',marginLeft:10,flex:8}}>
                 <CustomButton title={'Accept Selected'} backgroundColor={Colors.green}  height={SHORT_BUTTON_HEIGHT}  flex={1} onPress={()=>this.delivery_assigned_accept()}/>
-                <CustomButton title={'Reject Selected'} backgroundColor={Colors.red}  height={SHORT_BUTTON_HEIGHT} marginLeft={SECTION_MARGIN_TOP}  flex={1} onPress={()=>{this.setState({delivery_reject_modal:true});}}/>
+                <CustomButton title={'Reject Selected'} backgroundColor={Colors.red}  height={SHORT_BUTTON_HEIGHT} marginLeft={SECTION_MARGIN_TOP}  flex={1} onPress={()=>{if(!(this.state.checked).length){      Toast.show({ text:"Nothing Selected", type: 'warning' });
+}else{this.setState({delivery_reject_modal:true});}}}/>
               </View>
     )
   }

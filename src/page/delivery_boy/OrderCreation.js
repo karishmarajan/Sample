@@ -1052,7 +1052,7 @@ verifyEmail(email) {
     //   this.setState({hasError: true, errorTextsender_gmap: 'Please fill !'});
     //   return;
     // }
-    if(this.state.sender_gmap_wp !="") {
+    if(!this.state.sender_gmap_wp == "") {
       console.log('9')
     if(!this.verifyGmap((this.state.sender_gmap_wp).trim())) {
       console.log('9.5')
@@ -1298,7 +1298,7 @@ delivery_continue() {
   //   this.setState({hasError: true, errorTextrec_gmap: 'Please fill !'});
   //   return;
   // }
-  if(this.state.glink_pickup_page2_new !="") {
+  if(!this.state.glink_pickup_page2_new =="") {
   if(!this.verifyGmap(this.state.glink_pickup_page2_new)) {
     this.setState({hasError: true, errorTextrec_gmap: 'Please enter a valid link !'});
     return;
@@ -1316,7 +1316,7 @@ delivery_continue() {
   //   this.setState({hasError: true, errorTextrec_localbody: 'Please fill !'});
   //   return;
   // }
-  if(this.state.local_pickup_page2_new !="") {
+  if(!this.state.local_pickup_page2_new =="") {
   if(!this.verifyString((this.state.local_pickup_page2_new).replace(/ /g, '').trim())) {
     this.setState({hasError: true, errorTextrec_localbody: 'Please enter a valid data !'});
     return;
@@ -1351,14 +1351,14 @@ delivery_continue() {
   //   this.setState({hasError: true, errorTextrec_proof: 'Please fill !'});
   //   return;
   // }
-  if(this.state.proof !="") {
+  if(!this.state.proof =="") {
   if(!this.verifyString((this.state.proof).replace(/ /g, '').trim())) {
     this.setState({hasError: true, errorTextrec_proof: 'Please enter a valid data !'});
     return;
   }
 }
  
-  if(this.state.deliveredto !=""){
+  if(!this.state.deliveredto ==""){
   if(!this.verifyString((this.state.deliveredto).replace(/ /g, '').trim())) {
     this.setState({hasError: true, errorTextrec_canbedelivered: 'Please enter a valid name !'});
     return;
