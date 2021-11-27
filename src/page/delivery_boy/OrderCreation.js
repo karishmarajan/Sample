@@ -1207,7 +1207,7 @@ delivery_continue() {
       )
 
   }
-  if(this.state.select_pin==true)
+  if(this.state.select_pin_page2==true)
   {
      
     console.log('PINSELECTED',this.state.sender_country_np)
@@ -1531,12 +1531,14 @@ if(no == 12){
 if(no == 13){
   this.setState({new_customer:true})
   this.setState({existing_customer:false})
- 
+  this.setState({checked:false})
+
 }
 if(no == 14){
   this.setState({new_customer:false})
   this.setState({existing_customer:true})
- 
+  this.setState({checked:false})
+
 }
 if(no == 15){
   this.setState({same_selected:false})

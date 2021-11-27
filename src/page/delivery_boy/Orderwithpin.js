@@ -18,7 +18,7 @@ import CustomSearchBox from '../../component/CustomSearchBox';
 import { RNCamera } from 'react-native-camera';
 import { KEY, KEY1 } from '../../session/SessionManager';
 import Api from '../../component/Fetch';
-import {PREORDER_WITH_PIN,ALL_USERS,PAYER_PAYMENT, VALIDATE_PDOID, UPDATE_PDOID_PAYMENT_STATUS, ASSIGN_SINGLE_ORDER} from '../../constants/Api';
+import {PREORDER_WITH_PIN,ALL_USERS,PICKUP_PIN_BY_OFFICEID, VALIDATE_PDOID, UPDATE_PDOID_PAYMENT_STATUS, ASSIGN_SINGLE_ORDER} from '../../constants/Api';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import SideMenuDrawer from '../../component/SideMenuDrawer';
 
@@ -75,6 +75,9 @@ export default class orderwithpin extends React.Component {
       isPickupRequired:true,
       agent_id:0,
       office_id:'',
+      delivery_type:'NORMAL',
+      pincodes:[],
+      flag:0,
       camera: {
         type: RNCamera.Constants.Type.back,
 	flashMode: RNCamera.Constants.FlashMode.auto,
@@ -90,6 +93,8 @@ export default class orderwithpin extends React.Component {
            this.setState({personId:data.personId, office_id:data.officeId})
 
          console.log('KKKKKKKKKKKKKK',data) 
+         this.fetch_pincode_list(data.officeId);
+
       }));
             this.fetch_customers_list();
 
@@ -110,7 +115,15 @@ this.validate_pdoid(this.props.pre_id);
     }
     this.setState({torch_enable:tstate})
 }
-     
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+verifyMatch(name) {
+  for (const item of this.state.pincodes) {
+     if(item.name===name){
+       this.setState({flag:1})
+     }
+}
+}
    
 //////////////////////////////// Fetching all customers function //////////////////////////////////////////////////////////////////////////////
 
@@ -132,6 +145,33 @@ fetch_customers_list() {
        customers.push({name: result.payload[i].userId+' - '+ result.payload[i].firstName+' '+result.payload[i].lastName +' - '+result.payload[i].mobileNumber, id: result.payload[i].userId ,na:result.payload[i].firstName+' '+result.payload[i].lastName});
      }
      this.setState({ users: customers });
+    }
+    else{
+      console.log('Failed');
+    }
+})
+ 
+}
+
+//////////////////////////////// Fetching all pickup pincodes //////////////////////////////////////////////////////////////////////////////
+
+fetch_pincode_list(id) {
+
+  Api.fetch_request(PICKUP_PIN_BY_OFFICEID+id,'POST','')
+  .then(result => {
+   
+    if(result.error != true){
+
+      console.log('Success:', JSON.stringify(result));
+
+      var count = (result.payload).length;
+      let pins = [];
+
+      for(var i = 0; i < count; i++){
+
+       pins.push({name: result.payload[i]});
+     }
+     this.setState({ pincodes: pins });
     }
     else{
       console.log('Failed');
@@ -270,6 +310,12 @@ this.validate_pdoid(this.state.predefinedpin)
   
         if (result.error != true) {
           console.log('Success:', JSON.stringify(result));
+
+
+if(result.payload.deliveryType=='BULLET'){
+  this.setState({bullet:true, additional_charge:0, delivery_type:'BULLET'})
+}
+
           this.setState({pdoid_assign_id:result.payload.preorderAssignId,payment:result.payload.rate})
           if(result.payload.assigneeUserType == 'DELIVERY_BOY' && result.payload.paymentStatus =='PENDING'){
             Toast.show({ text:'Assign customer first' , type: 'success' });
@@ -319,6 +365,11 @@ if(this.state.predefinedpin==="") {
     this.setState({hasError: true, errorTextsender_pincode: 'Please enter pincode !'});
     return;
   }
+  if(this.state.flag===0) {
+    this.setState({hasError: true, errorTextsender_pincode: 'Please select from dropdown !'});
+    return;
+  }
+ 
   if(this.state.reciever_pincode==="") {
     this.setState({hasError: true, errorTextreciever_pincode: 'Please enter pincode !'});
     return;
@@ -335,7 +386,7 @@ return;
     this.setState({hasError: true, errorTextAdditional: 'must apply additional charge if delivery type is bullet !'});
     return;
   }
-  if(parseInt(this.state.additional_charge) <= 0 && this.state.bullet === true) {
+  if(parseInt(this.state.additional_charge) <= 0 && this.state.bullet === true && this.state.delivery_type =='NORMAL') {
     Toast.show({ text: 'Must be greater than zero', type: 'warning' });
 return;
   }
@@ -347,6 +398,7 @@ return;
     Toast.show({ text: 'Must be greater than zero', type: 'warning' });
 return;
   }
+
   let body = {
       "additionalCharges": this.state.additional_charge ? this.state.additional_charge : 0 ,
       "createdAtOfficeId": 0,
@@ -357,7 +409,7 @@ return;
       "deliveryAgentId": this.state.agent_id,
       "deliveryCharge": this.state.payment,
       "deliveryPincode": this.state.reciever_pincode,
-      "deliveryType": this.state.bullet == true ? "BULLET" : "NORMAL",
+      "deliveryType": this.state.bullet == true ? "BULLET" : this.state.delivery_type,
       "finalCodCharge": this.state.cod ? this.state.cod :0,
       "isAtDeliveryAgent": this.state.isAtAgent,
       "isAtOffice": false,
@@ -547,7 +599,8 @@ Actions.dashboard();
         <View style={{flexDirection:'row'}}>
         <CustomText text={'Source Pincode'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
         <CustomMandatory/></View>
-        <CustomInput flex={1} keyboardType={"number-pad"} maxLength={6} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_pincode: text , errorTextsender_pincode:""})} value={this.state.sender_pincode} />
+        <CustomSearchBox  placeholder={'Select Source Pincode'} onTextChange={(text)=>this.setState({sender_pincode: text})}  value={this.state.sender_pincode}  onItemSelect={(item) =>{ this.setState({sender_pincode: item.name , errorTextsender_pincode:""}); this.verifyMatch(item.name);}} items={this.state.pincodes} />
+        {/* <CustomInput flex={1} keyboardType={"number-pad"} maxLength={6} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({sender_pincode: text , errorTextsender_pincode:""})} value={this.state.sender_pincode} /> */}
         {!!this.state.errorTextsender_pincode && (<Text style={{color: 'red'}}>{this.state.errorTextsender_pincode}</Text>)}
 
         <View style={{flexDirection:'row'}}>
@@ -558,7 +611,7 @@ Actions.dashboard();
       
        
         {this.state.toggle === false && (<View>
-<View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:1}}>
+{this.state.delivery_type=='NORMAL' && (<View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:1}}>
            <CustomText text={'Bullet'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
            <Switch
           trackColor={{false: 'gray', true: 'teal'}}
@@ -567,7 +620,7 @@ Actions.dashboard();
           onValueChange={(value) => {this.setState({bullet: value,additional_charge_toggle:value});}}
           value={this.state.bullet}
         />
-           </View>
+           </View>)}
 
           {this.state.bullet === true &&(<View>  
             <CustomText text={'Additional Charges may apply'} textType={Strings.subtext} color={Colors.black} />
