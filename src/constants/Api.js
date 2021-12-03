@@ -102,7 +102,7 @@ export const PREORDER_TRACKING= BASE_URL_ORDER + SUB_URL_ORDER + 'preorder-assig
 export const UPDATE_DELIVERY_TYPE= BASE_URL_ORDER + SUB_URL_ORDER + 'order/orderId/';
 export const PAYMENT_DETAILS= BASE_URL_ORDER + SUB_URL_ORDER + 'orderId/';
 export const ADD_PAYMENT_BY_TYPE= BASE_URL_ORDER + SUB_URL_ORDER + 'order/addPayment';
-export const ADD_PAYMENT_BY_PAYMENTID= BASE_URL_ORDER + SUB_URL_ORDER + 'paymentId/';
+export const ADD_PAYMENT_BY_PAYMENTID= BASE_URL_ORDER + SUB_URL_ORDER + 'payment/update-payment-status';
 export const VIEW_PAYMENT_BY_PAYMENTID= BASE_URL_ORDER + SUB_URL_ORDER + 'paymentId/';
 export const EDIT_PAYMENT= BASE_URL_ORDER + SUB_URL_ORDER + 'payment';
 

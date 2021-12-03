@@ -15,13 +15,14 @@ import CustomRadioButton from '../../component/CustomRadioButton';
 import session, { KEY } from '../../session/SessionManager';
 
 import Api from '../../component/Fetch';
-import { PICKUP_DETAILS , PICKUP_ORDER_UPDATE , PAYMENT_BY_CASH, UPDATE_DELIVERY_TYPE, ADD_PAYMENT_BY_TYPE} from '../../constants/Api';
+import { PICKUP_DETAILS , PICKUP_ORDER_UPDATE , PAYMENT_BY_CASH, UPDATE_DELIVERY_TYPE, ADD_PAYMENT_BY_TYPE, PAYMENT_DETAILS} from '../../constants/Api';
 import CustomActivityIndicator from '../../component/CustomActivityIndicator';
+import _ from "lodash"
 
 
 const myArray=[{name:"Select a Status" , value:"Select a Status"},{name:"COLLECTED" , value:"COLLECTED"},{name:"ATTEMPT_FAILED" , value:"ATTEMPT FAILED"},{name:"UNVISITED" , value:"UNVISITED"}];
 const myArray1=[{name:"Select/Enter a Reason" , value:"Select/Enter a reason"},{name:"Address invalid" , value:"Address invalid"},{name:"Door was  locked" , value:"Door was  locked"},{name:"Enter a Reason" , value:"Enter a Reason"}];
-const myArray2=[{name:"Cash" , value:"Cash"},{name:"Credit card" , value:"Credit card"},{name:"Debit card" , value:"Debit card"},{name:"Paytm" , value:"Paytm"}];
+const myArray2=[{name:"Cash" , value:"Cash"}];
 
 export default class PickupDetails extends React.Component {
 
@@ -52,6 +53,17 @@ export default class PickupDetails extends React.Component {
     order_type:'',
     personId:'',
     officeId:'',
+    add_charges:[],
+    add_charges2:[],
+    cod_charges:[],
+    cod_charges2:[],
+
+    del_charges:[],
+    del_charges2:[],
+
+    add_charge_color:Colors.red,
+    cod_charge_color:Colors.red,
+    del_charge_color:Colors.red,
   };
 
 
@@ -108,8 +120,6 @@ if(no == 12){
   Linking.openURL(phoneNumber);
 };
 
-
-
   //////////////////////////////////////////// Pickup details fetching function  //////////////////////////////////////////////////////////////////////////////////  
  
  fetch_pickup_details(id){
@@ -141,7 +151,9 @@ if(no == 12){
     {
       this.setState({order_type:'AUTOMATIC_ORDER_ID', order_id:result.payload.orderId})
     }
-
+this.fetch_additionalCharge();
+this.fetch_cod_charge();
+this.fetch_deliveryCharge();
     }
     else{
       console.log('Failed');
@@ -353,6 +365,109 @@ cash_payment() {
   
 }
 
+
+////////////////////////////////////// Additional charge function ///////////////////////////////////////////////////////////////////////////////////
+ 
+fetch_additionalCharge() {
+
+
+  Api.fetch_request(PAYMENT_DETAILS+this.state.order_id+'/ADDITIONAL_CHARGE', 'GET', '')
+    .then(result => {
+
+      if (result.error != true) {
+
+        console.log('Success:', JSON.stringify(result));
+        this.setState({ add_charges: result.payload })
+
+let res=_.filter(this.state.add_charges,obj=>obj.paymentStatus=='PENDING');
+this.setState({add_charges2:res}) 
+
+console.log(this.state.add_charges2)
+if(this.state.add_charges2 !=''){
+this.setState({add_charge_color:Colors.red})
+}
+else{
+  this.setState({add_charge_color:Colors.green})
+
+}
+
+      }
+      else {
+        console.log('Failed');
+        this.setState({ charges: ''})
+        Toast.show({ text: result.message, type: 'warning' });
+      }
+    })
+}
+
+////////////////////////////////////// fetching cod charge function ///////////////////////////////////////////////////////////////////////////////////
+ 
+fetch_cod_charge() {
+
+
+  Api.fetch_request(PAYMENT_DETAILS+this.state.order_id+'/COD', 'GET', '')
+    .then(result => {
+
+      if (result.error != true) {
+
+        console.log('Success:', JSON.stringify(result));
+        this.setState({ cod_charges: result.payload })
+        let res=_.filter(this.state.cod_charges,obj=>obj.paymentStatus=='PENDING');
+        this.setState({cod_charges2:res}) 
+        
+        console.log(this.state.cod_charges2)
+        if(this.state.cod_charges2 !=''){
+        this.setState({cod_charge_color:Colors.red})
+        }
+        else{
+          this.setState({cod_charge_color:Colors.green})
+        
+        }
+        
+      }
+      else {
+        console.log('Failed');
+        this.setState({ charges: ''})
+        Toast.show({ text: result.message, type: 'warning' });
+      }
+    })
+}
+////////////////////////////////////// Delivery charge function ///////////////////////////////////////////////////////////////////////////////////
+ 
+fetch_deliveryCharge() {
+
+
+  Api.fetch_request(PAYMENT_DETAILS+this.state.order_id+'/DELIVERY_CHARGE', 'GET', '')
+    .then(result => {
+
+      if (result.error != true) {
+
+        console.log('Success:', JSON.stringify(result));
+        this.setState({ del_charges: result.payload })
+
+let res=_.filter(this.state.del_charges,obj=>obj.paymentStatus=='PENDING');
+this.setState({del_charges2:res}) 
+
+console.log(this.state.del_charges2)
+if(this.state.del_charges2 !=''){
+this.setState({del_charge_color:Colors.red})
+}
+else{
+  this.setState({del_charge_color:Colors.green})
+
+}
+
+      }
+      else {
+        console.log('Failed');
+        this.setState({ charges: ''})
+        Toast.show({ text: result.message, type: 'warning' });
+      }
+    })
+}
+
+
+
   /////////////////////////////////// Render Method  /////////////////////////////////////////////////////////////////////////////
 
 render(){
@@ -550,29 +665,51 @@ render(){
               </View>
 <View style={{ backgroundColor:Colors.white,flexGrow:1,paddingLeft:MAIN_VIEW_PADDING,paddingRight:MAIN_VIEW_PADDING,paddingBottom:MAIN_VIEW_PADDING}}>
 
-<View style={{height:420}}>
+<View style={{height:450}}>
 <Grid ><Col><CustomText text={'COD Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
-        <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.pickup_details.finalCodCharge  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+        <Col><View style={{flexDirection:'row',backgroundColor:Colors.textBackgroundColor}}>
+        <View style={styles.inputview}><CustomText text={'Rs. '+this.state.pickup_details.finalCodCharge  } textType={Strings.subtext} color={Colors.black}/></View>
+        <View style={{flex:1,justifyContent:'center',marginTop:5}}><Icon style={{ color: this.state.cod_charge_color,fontSize:22,justifyContent:'flex-end'}} name='md-cash' /></View>     
+        </View>
+        </Col></Grid>
  <Grid ><Col></Col>
    <Col><CustomButton title={'Details'} marginTop={5} marginBottom={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>{Actions.codcharges({order_id:this.state.order_id, order_type:this.state.order_type})}} /></Col></Grid>       
    <Grid ><Col><CustomText text={'Additional Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
-        <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.pickup_details.additionalCharges  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+        <Col>
+        <View style={{flexDirection:'row',backgroundColor:Colors.textBackgroundColor}}>
+        <View style={styles.inputview}><CustomText text={'Rs. '+this.state.pickup_details.additionalCharges  } textType={Strings.subtext} color={Colors.black}/></View>
+        <View style={{flex:1,justifyContent:'center',marginTop:5}}><Icon style={{ color: this.state.add_charge_color,fontSize:22,justifyContent:'flex-end'}} name='md-cash' /></View>     
+        </View>
+        </Col></Grid>
  <Grid ><Col></Col>
    <Col><CustomButton title={'Details'} marginTop={5} marginBottom={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.additionalcharges({order_id:this.state.order_id, order_type:this.state.order_type})} /></Col></Grid>       
 
+   <View style={{height:250,borderColor:Colors.borderColor,borderWidth:0.3,padding:5,marginBottom:5}}>
+
 <Grid ><Col><CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
-        <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.pickup_details.originalDeliveryCharge  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+        <Col>
+        <View style={{flexDirection:'row',backgroundColor:Colors.textBackgroundColor}}>
+        <View style={styles.inputview}><CustomText text={'Rs. '+this.state.pickup_details.originalDeliveryCharge  } textType={Strings.subtext} color={Colors.black}/></View>
+        <View style={{flex:1,justifyContent:'center',marginTop:5}}><Icon style={{ color: this.state.del_charge_color,fontSize:22,justifyContent:'flex-end'}} name='md-cash' /></View>     
+</View>
+        </Col></Grid>
+        <Grid ><Col></Col>
+   <Col><CustomButton title={'Details'} marginTop={1} marginBottom={1} backgroundColor={Colors.darkSkyBlue}onPress={()=>Actions.paymentdetails({order_id:this.state.pickup_details.preDefinedOrderId ?this.state.pickup_details.preDefinedOrderId :this.state.pickup_details.orderId})}/></Col></Grid>       
+ 
  <Grid ><Col><CustomText text={'Package Allowed'} textType={Strings.subtext} color={Colors.black}/></Col>
         <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.pickup_details.deliveryChargePackageDeduction   } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
  <Grid><Col><CustomText text={'Credit Allowed'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.pickup_details.deliveryChargeCreditDeduction } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
-  <Grid><Col><CustomText text={'Total'} textType={Strings.subtext} color={Colors.black}/></Col>
+  <Grid><Col><CustomText text={'Total Delivery Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.pickup_details.deliveryChargeAfterDeductions  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
        {/* <Grid><Col><CustomText text={'Additional Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><View style={styles.inputview}><CustomInput flex={1} placeholder={`${this.state.pickup_details.additionalCharges}`} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} onChangeText={(text) =>{this.additional_Calculate(text); this.setState({amount_recieved:'',balance_amount:'',amount_to_pay:''})}} value={this.state.pickup_details.additionalCharges ? this.state.pickup_details.additionalCharges : 0 } /></View></Col></Grid>  */}
+          </View>
            </View>
 
-        {/* { this.state.pickup_details.payableBySender > 0 &&  ( <View>
+{this.state.pickup_details.isPreDefinedOrderWithPin === false &&(<View>
+
+        { this.state.pickup_details.payableBySender > 0 &&  ( <View>
        <Grid><Col><CustomText text={'Sender Payment'} textType={Strings.subtext} color={Colors.black}/></Col>
        <Col><View style={styles.inputview}><CustomText text={this.state.sender_payment } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
 
@@ -592,7 +729,8 @@ render(){
        </View>
        <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue}  onPress={()=>this.cash_payment()} />
       
-    </View>)} */}
+    </View>)}
+    </View>)}
     </View>
       </View>
 
@@ -646,6 +784,7 @@ const styles=StyleSheet.create({
     borderRadius:5
   },
   inputview :{
+    flex:3,
     backgroundColor:Colors.textBackgroundColor,
     height:40,
     alignItems:'flex-start',

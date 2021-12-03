@@ -21,7 +21,7 @@ import CustomRadioButton from '../../component/CustomRadioButton';
 
 const myArray = [{ name: "Select a Status", value: "Select a Status" }, { name: "DELIVERED", value: "DELIVERED" }, { name: "ATTEMPT_FAILED", value: "ATTEMPT FAILED" }, { name: "UNVISITED", value: "UNVISITED" }];
 const myArray1 = [{ name: "Select/Enter a Reason", value: "Select/Enter a reason" }, { name: "Address invalid", value: "Address invalid" }, { name: "Door was  locked", value: "Door was  locked" }, { name: "Enter a Reason", value: "Enter a Reason" }];
-const myArray2 = [{ name: "Cash", value: "Cash" }, { name: "Credit card", value: "Credit card" }, { name: "Debit card", value: "Debit card" }, { name: "Paytm", value: "Paytm" }];
+const myArray2 = [{ name: "Cash", value: "Cash" },];
 
 const PendingView = () => (
   <View
@@ -247,6 +247,7 @@ export default class DeliveryOutDetails extends React.Component {
           console.log('Success:', JSON.stringify(result));
           this.setState({ otp_verified: true, errorTextverify: '' });
           Toast.show({ text: result.message, type: 'success' });
+          this.update_receiver_name();
         }
         else {
           console.log('Failed');
@@ -443,10 +444,8 @@ if(this.state.otp_verified==true)
           console.log('Success:', JSON.stringify(result));
           Toast.show({ text: result.message, type: 'success' });
 
-          // Actions.deliveryfirst();
-          // Actions.reset('deliveryfirst');
-          Actions.pop()
-          Actions.refresh({key: Math.random()})
+          // Actions.pop()
+          // Actions.refresh({key: Math.random()})
         }
         else {
           console.log('Failed');
@@ -835,7 +834,7 @@ if(this.state.otp_verified==true)
                 </View>
                 <View style={{ backgroundColor: Colors.white, flexGrow: 1, paddingLeft: MAIN_VIEW_PADDING, paddingRight: MAIN_VIEW_PADDING, paddingBottom: MAIN_VIEW_PADDING }}>
 
-                  <View style={{ height: 420}}>
+                  <View style={{ height: 450}}>
                   <Grid ><Col><CustomText text={'Additional Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
         <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.delivery_details.additionalCharges  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
  <Grid ><Col></Col>
@@ -845,19 +844,27 @@ if(this.state.otp_verified==true)
  <Grid ><Col></Col>
    <Col><CustomButton title={'Details'} marginTop={1} marginBottom={1} backgroundColor={Colors.darkSkyBlue} onPress={()=>{Actions.codcharges({order_id:this.state.order_id, order_type:this.state.order_type, page:'DELIVERY'})}} /></Col></Grid>       
 
+<View style={{height:250,borderColor:Colors.borderColor,borderWidth:0.3,padding:5,marginBottom:5}}>
                     <Grid ><Col><CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black} /></Col>
                       <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.delivery_details.originalDeliveryCharge} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>
+                      <Grid ><Col></Col>
+   <Col><CustomButton title={'Details'} marginTop={1} marginBottom={1} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.paymentdetails({order_id:this.state.delivery_details.preDefinedOrderId ?this.state.delivery_details.preDefinedOrderId :this.state.delivery_details.orderId})}/></Col></Grid>       
+ 
                     <Grid ><Col><CustomText text={'Package Allowed'} textType={Strings.subtext} color={Colors.black} /></Col>
                       <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.delivery_details.deliveryChargePackageDeduction} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>
                     <Grid><Col><CustomText text={'Credit Allowed'} textType={Strings.subtext} color={Colors.black} /></Col>
                       <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.delivery_details.deliveryChargeCreditDeduction} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>
                       {/* <Grid><Col><CustomText text={'Final COD'} textType={Strings.subtext} color={Colors.black} /></Col>
                       <Col><View style={styles.inputview}><CustomText text={this.state.delivery_details.finalCodCharge} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>       */}
-                    <Grid><Col><CustomText text={'Total Amount'} textType={Strings.subtext} color={Colors.black} /></Col>
+                    <Grid><Col><CustomText text={'Total Delivery Charge'} textType={Strings.subtext} color={Colors.black} /></Col>
                       <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.delivery_details.deliveryChargeAfterDeductions} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>
+
+</View>
+</View>
+
+{this.state.ispredefined === false && (<View>
                     <Grid><Col><CustomText text={'Reciever Payment'} textType={Strings.subtext} color={Colors.black} /></Col>
                       <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.delivery_details.payableByReceiver} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>
-                  </View>
 
                   {this.state.delivery_details.payableByReceiver > 0 && (<View>
                   <CustomText text={'Payment Method'} textType={Strings.subtitle} flex={9} />
@@ -873,6 +880,9 @@ if(this.state.otp_verified==true)
                       <Col><CustomInput flex={1} value={this.state.balance_amount} /></Col></Grid>
                   </View>
                   <CustomButton title={'Update'} backgroundColor={Colors.darkSkyBlue} onPress={() => this.delivery_cash_payment()} />
+
+                  </View>)}
+ 
                </View>)}
                 </View>
 

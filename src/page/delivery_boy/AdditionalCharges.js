@@ -10,7 +10,7 @@ import Strings from '../../constants/Strings';
 import CustomText from '../../component/CustomText';
 import CustomInput from '../../component/CustomInput';
 import CustomCheckBox from '../../component/CustomCheckBox';
-import { SECTION_MARGIN_TOP, COLUMN_PADDING, BORDER_WIDTH, LOGIN_FIELD_HEIGHT, SHORT_BLOCK_BORDER_RADIUS, TEXT_FIELD_HIEGHT,CLOSE_SIZE,CLOSE_WIDTH, MAIN_VIEW_PADDING } from '../../constants/Dimen';
+import { SECTION_MARGIN_TOP, COLUMN_PADDING, BORDER_WIDTH, SHORT_BORDER_WIDTH, SHORT_BLOCK_BORDER_RADIUS, SHORT_BORDER_RADIUS,CLOSE_SIZE,CLOSE_WIDTH, MAIN_VIEW_PADDING } from '../../constants/Dimen';
 import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
 import session, { KEY } from '../../session/SessionManager';
@@ -106,8 +106,18 @@ edit_additional_charge() {
   
 pay_additional_charge(id) {
   
+  AsyncStorage.getItem(KEY).then((value => {
+    let data = JSON.parse(value);
+
+ let body = {
+    "officeStaffId": this.state.personId,
+    "officeStaffName": data.firstName + ' ' + data.lastName,
+    "officeStaffType": "DELIVERY_AGENT",
+    "paymentId": id,
+    "paymentStatus": "COMPLETED"
+  }
  
-  Api.fetch_request(ADD_PAYMENT_BY_PAYMENTID+id+'/paymentStatus/COMPLETED', 'PUT', '',)
+  Api.fetch_request(ADD_PAYMENT_BY_PAYMENTID, 'PUT', '', JSON.stringify(body))
     .then(result => {
 
       if (result.error != true) {
@@ -124,6 +134,7 @@ pay_additional_charge(id) {
 
       }
     })
+  }));
 
 }
 
@@ -203,8 +214,21 @@ _body = (item) => {
     return (
 
     <View style={{ flexDirection: 'row',}}>
-     
+      {item.paymentStatus == null &&(<View style={{flexDirection:'row',flex:4,borderColor:Colors.borderColor,borderWidth:SHORT_BORDER_WIDTH,padding:1,justifyContent:'space-between',margin:5,width:120}}>
      <View style={styles.cell1}><CustomText text={item.amountCollected ? 'Rs. '+item.amountCollected: 'Rs. 0'} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+     <View style={{flex:1,justifyContent:'center',marginTop:5}}><Icon style={{ color: Colors.red ,fontSize:22,}} name='md-cash' /></View>     
+     </View>)}
+
+    {item.paymentStatus == 'PENDING' &&(<View style={{flexDirection:'row',flex:4,borderColor:Colors.borderColor,borderWidth:SHORT_BORDER_WIDTH,padding:1,justifyContent:'space-between',margin:5,width:120}}>
+     <View style={styles.cell1}><CustomText text={item.amountCollected ? 'Rs. '+item.amountCollected: 'Rs. 0'} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+     <View style={{flex:1,justifyContent:'center',marginTop:5}}><Icon style={{ color: Colors.red ,fontSize:22,justifyContent:'flex-end'}} name='md-cash' /></View>     
+     </View>)}
+
+     {item.paymentStatus == 'COMPLETED' &&(<View style={{flexDirection:'row',flex:4,borderColor:Colors.borderColor,borderWidth:SHORT_BORDER_WIDTH,padding:1,justifyContent:'space-between',margin:5,width:120}}>
+     <View style={styles.cell1}><CustomText text={item.amountCollected ? 'Rs. '+item.amountCollected: 'Rs. 0'} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+     <View style={{flex:1,justifyContent:'center',marginTop:5}}><Icon style={{ color: Colors.green ,fontSize:22,justifyContent:'flex-end'}} name='md-cash' /></View>     
+     </View>)}
+
 
      {!parseInt(item.amountCollected)==0 &&(<View>
     { item.paymentStatus == null && ( <View style={styles.cell2}><CustomButton title={'PAY'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5} text_marginbottom={3} text_margintop={3} paddingBottom={3} paddingTop={3} text_color={Colors.white} onPress={()=>this.pay_additional_charge(item.paymentId)} /></View> )}
@@ -311,15 +335,12 @@ const styles = StyleSheet.create({
   },
 
   cell1: {
-    
-    width: 120,
+    flex:3,
     padding: 3,
     alignSelf: 'stretch',
     textAlign: 'center',
     backgroundColor:Colors.white,
     justifyContent:'center',
-    borderColor:Colors.borderColor,
-    borderWidth:0.3,
 margin:5
   },
 

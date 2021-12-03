@@ -57,7 +57,7 @@ track_preorder(text) {
     
     // "customerIdentityType": this.state.customer_identity_type,
     "preDefinedOrderId": this.props.pre_order_id ?this.props.pre_order_id : text,
-    "preorderUserType": "DELIVERY_AGENT",
+    "preorderUserType": "DELIVERY_BOY",
     "userId": data.personId
 
   };

@@ -218,10 +218,11 @@ let body = {
   
     "officeId": data.officeId,
     "officeStaffId": data.personId,
+    "officeStaffName": data.firstName + ' ' + data.lastName,
     "officeStaffType": "DELIVERY_AGENT",
     "paymentStatus": "COMPLETED",
     "paymentType": "DELIVERY_CHARGE",
-    "preorderAssignId": this.state.pdoid_assign_id
+    "preOrderAssignId": this.state.pdoid_assign_id
   
 }
 

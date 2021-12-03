@@ -102,16 +102,16 @@ export default class PaymentDetails extends React.Component {
     <View style={{flex:4}}><CustomText text={item.orderId ? item.orderId :'N/A' }  textType={Strings.maintext}/></View>
     </View>
     <View style={{flexDirection:'row'}}>
-    <View style={{flex:4}}><CustomText text={'Assigned By'} fontWeight={'bold'} textType={Strings.maintext}/></View>
-    <View style={{flex:4}}><CustomText text={item.assignerName ? item.assignerName :'N/A' }  textType={Strings.maintext}/></View>
+    <View style={{flex:4}}><CustomText text={'Created By'} fontWeight={'bold'} textType={Strings.maintext}/></View>
+    <View style={{flex:4}}><CustomText text={item.createdOfficeStaffName ? item.createdOfficeStaffName :'N/A' }  textType={Strings.maintext}/></View>
     </View>
     <View style={{flexDirection:'row'}}>
-    <View style={{flex:4}}><CustomText text={'Assigner Id'} fontWeight={'bold'} textType={Strings.maintext}/></View>
-    <View style={{flex:4}}><CustomText text={item.assignerId ? item.assignerId :'N/A' }  textType={Strings.maintext}/></View>
+    <View style={{flex:4}}><CustomText text={'Creator Id'} fontWeight={'bold'} textType={Strings.maintext}/></View>
+    <View style={{flex:4}}><CustomText text={item.createdOfficeStaffId ? item.createdOfficeStaffId :'N/A' }  textType={Strings.maintext}/></View>
     </View>
    
     <View style={{flexDirection:'row'}}>
-    <View style={{flex:4}}><CustomText text={'Assigned Date'} fontWeight={'bold'}  textType={Strings.maintext}/></View>
+    <View style={{flex:4}}><CustomText text={'Created Date'} fontWeight={'bold'}  textType={Strings.maintext}/></View>
     <View style={{flex:4}}><CustomText text={item.createdDate ? item.createdDate :'N/A' }  textType={Strings.maintext}/></View>
     </View>
     
@@ -121,13 +121,13 @@ export default class PaymentDetails extends React.Component {
     </View>
 
     <View style={{flexDirection:'row'}}>
-    <View style={{flex:4}}><CustomText text={'Paid To'} fontWeight={'bold'} textType={Strings.maintext}/></View>
-    <View style={{flex:4}}><CustomText text={item.assignerName? item.assignerName :'N/A' }  textType={Strings.maintext}/></View>
+    <View style={{flex:4}}><CustomText text={'Collected By'} fontWeight={'bold'} textType={Strings.maintext}/></View>
+    <View style={{flex:4}}><CustomText text={item.completedOfficeStaffName? item.completedOfficeStaffName :'N/A' }  textType={Strings.maintext}/></View>
     </View>
 
     <View style={{flexDirection:'row'}}>
-    <View style={{flex:4}}><CustomText text={'Paid Date'} fontWeight={'bold'} textType={Strings.maintext}/></View>
-    <View style={{flex:4}}><CustomText text={item.createdDate ? item.createdDate :'N/A' }  textType={Strings.maintext}/></View>
+    <View style={{flex:4}}><CustomText text={'Collected Date'} fontWeight={'bold'} textType={Strings.maintext}/></View>
+    <View style={{flex:4}}><CustomText text={item.updatedDate ? item.updatedDate :'N/A' }  textType={Strings.maintext}/></View>
     </View>
     </View>
 
@@ -183,16 +183,16 @@ export default class PaymentDetails extends React.Component {
     <View style={{flex:4}}><CustomText text={this.state.payment_details2.orderId ? this.state.payment_details2.orderId :'N/A' }  textType={Strings.maintext}/></View>
     </View>
     <View style={{flexDirection:'row'}}>
-    <View style={{flex:4}}><CustomText text={'Assigned By'} fontWeight={'bold'} textType={Strings.maintext}/></View>
-    <View style={{flex:4}}><CustomText text={this.state.payment_details2.assignerName ? this.state.payment_details2.assignerName :'N/A' }  textType={Strings.maintext}/></View>
+    <View style={{flex:4}}><CustomText text={'Created By'} fontWeight={'bold'} textType={Strings.maintext}/></View>
+    <View style={{flex:4}}><CustomText text={this.state.payment_details2.createdOfficeStaffName ? this.state.payment_details2.createdOfficeStaffName :'N/A' }  textType={Strings.maintext}/></View>
     </View>
     <View style={{flexDirection:'row'}}>
-    <View style={{flex:4}}><CustomText text={'Assigner Id'} fontWeight={'bold'} textType={Strings.maintext}/></View>
-    <View style={{flex:4}}><CustomText text={this.state.payment_details2.assignerId ? this.state.payment_details2.assignerId :'N/A' }  textType={Strings.maintext}/></View>
+    <View style={{flex:4}}><CustomText text={'Creator Id'} fontWeight={'bold'} textType={Strings.maintext}/></View>
+    <View style={{flex:4}}><CustomText text={this.state.payment_details2.createdOfficeStaffId ? this.state.payment_details2.createdOfficeStaffId :'N/A' }  textType={Strings.maintext}/></View>
     </View>
     
     <View style={{flexDirection:'row'}}>
-    <View style={{flex:4}}><CustomText text={'Assigned Date'} fontWeight={'bold'}  textType={Strings.maintext}/></View>
+    <View style={{flex:4}}><CustomText text={'Created Date'} fontWeight={'bold'}  textType={Strings.maintext}/></View>
     <View style={{flex:4}}><CustomText text={this.state.payment_details2.createdDate ? this.state.payment_details2.createdDate :'N/A' }  textType={Strings.maintext}/></View>
     </View>
     
@@ -202,13 +202,13 @@ export default class PaymentDetails extends React.Component {
     </View>
 
     <View style={{flexDirection:'row'}}>
-    <View style={{flex:4}}><CustomText text={'Paid To'} fontWeight={'bold'} textType={Strings.maintext}/></View>
-    <View style={{flex:4}}><CustomText text={this.state.payment_details2.assignerName? this.state.payment_details2.assignerName :'N/A' }  textType={Strings.maintext}/></View>
+    <View style={{flex:4}}><CustomText text={'Collected By'} fontWeight={'bold'} textType={Strings.maintext}/></View>
+    <View style={{flex:4}}><CustomText text={this.state.payment_details2.completedOfficeStaffName? this.state.payment_details2.completedOfficeStaffName :'N/A' }  textType={Strings.maintext}/></View>
     </View>
 
     <View style={{flexDirection:'row'}}>
-    <View style={{flex:4}}><CustomText text={'Paid Date'} fontWeight={'bold'} textType={Strings.maintext}/></View>
-    <View style={{flex:4}}><CustomText text={this.state.payment_details2.createdDate ? this.state.payment_details2.createdDate :'N/A' }  textType={Strings.maintext}/></View>
+    <View style={{flex:4}}><CustomText text={'Collected Date'} fontWeight={'bold'} textType={Strings.maintext}/></View>
+    <View style={{flex:4}}><CustomText text={this.state.payment_details2.updatedDate ? this.state.payment_details2.updatedDate :'N/A' }  textType={Strings.maintext}/></View>
     </View>
     </View>)}
 
