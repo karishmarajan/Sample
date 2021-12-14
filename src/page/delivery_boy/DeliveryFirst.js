@@ -409,7 +409,10 @@ fetch_delivery_orders(status_type) {
             result.payload.forEach(obj => {
               if (!newArray.some(o => o.orderId === obj.orderId)) {
                 newArray.push({ ...obj })
+                if(status_type==='DELIVERED'){
+
                 this.state.delivery_ids.push(obj.orderId);
+                }
               }
         
             });
@@ -499,7 +502,7 @@ fetch_delivery_orders(status_type) {
         <View style={styles.cell}><CustomText text={item.deliveryStatus ? item.deliveryStatus : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={ item.attempt} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
         <View style={styles.cell}><CustomText text={item.deliveryType ? item.deliveryType : Strings.na} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
-        <View style={styles.cell}><CustomText text={item.payableByReceiver } textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
+        <View style={styles.cell}><CustomText text={item.payableByReceiver ? item.payableByReceiver : 0} textType={Strings.subtext} color={Colors.borderColor} alignSelf={'center'} textAlign={'center'} /></View>
 
         <View style={styles.cell}>
           <View>

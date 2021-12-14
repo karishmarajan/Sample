@@ -74,7 +74,7 @@ track_preorder(text) {
       else {
         console.log('Failed');
         this.setState({ predefined_details: ''})
-        Toast.show({ text: result.message, type: 'warning' });
+        // Toast.show({ text: result.message, type: 'warning' });
       }
     })
   }));

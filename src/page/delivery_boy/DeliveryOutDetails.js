@@ -13,10 +13,11 @@ import CustomButton from '../../component/CustomButton';
 import CustomDropdown from '../../component/CustomDropdown';
 import session, { KEY } from '../../session/SessionManager';
 import Api from '../../component/Fetch';
-import { ORDER_RECIVER_PAYMENT, DELIVERY_OUT_DETAILS, DELIVERY_CHARGE, DELIVERY_STATUS_UPDATE, DELIVERY_ORDER_PAYMENT, DELIVERY_PROOF_UPLOAD, UPDATE_RECEIVER_NAME, OTP, VERIFY_OTP } from '../../constants/Api';
+import { ORDER_RECIVER_PAYMENT, DELIVERY_OUT_DETAILS, DELIVERY_CHARGE, DELIVERY_STATUS_UPDATE, PAYMENT_DETAILS, DELIVERY_PROOF_UPLOAD, UPDATE_RECEIVER_NAME, OTP, VERIFY_OTP } from '../../constants/Api';
 import { RNCamera } from 'react-native-camera';
 import RNFetchBlob from 'rn-fetch-blob';
 import CustomRadioButton from '../../component/CustomRadioButton';
+import _ from "lodash"
 
 
 const myArray = [{ name: "Select a Status", value: "Select a Status" }, { name: "DELIVERED", value: "DELIVERED" }, { name: "ATTEMPT_FAILED", value: "ATTEMPT FAILED" }, { name: "UNVISITED", value: "UNVISITED" }];
@@ -82,6 +83,21 @@ export default class DeliveryOutDetails extends React.Component {
     flag:0,
     order_id:'',
     order_type:'',
+    add_charges:[],
+    add_charges2:[],
+    cod_charges:[],
+    cod_charges2:[],
+
+    del_charges:[],
+    del_charges2:[],
+
+    add_charge_color:Colors.red,
+    cod_charge_color:Colors.red,
+    del_charge_color:Colors.red,
+
+    pending_additional:'',
+    pending_cod:'',
+  
   };
 
 
@@ -141,6 +157,7 @@ export default class DeliveryOutDetails extends React.Component {
       .then(result => {
 
         if (result.error != true) {
+          
 
           console.log('Success:', JSON.stringify(result));
           console.log("hello", result.payload.isPreDefinedOrderWithPin);
@@ -161,10 +178,26 @@ export default class DeliveryOutDetails extends React.Component {
           }
 
           this.setState({ delivery_details: result.payload });
-
-          console.log()
-          this.setState({ receiver_name: result.payload.contactPersonName })
+          this.setState({ receiver_name: result.payload.contactPersonName,pending_additional:result.payload.pendingAdditionalCharge, pending_cod:result.payload.pendingCod })
           this.generate_invoice();
+//           this.fetch_additionalCharge();
+// this.fetch_cod_charge();
+this.fetch_deliveryCharge();
+
+
+if(result.payload.pendingAdditionalCharge >0){
+  this.setState({add_charge_color:Colors.red})
+}else{
+  this.setState({add_charge_color:Colors.green})
+
+}
+
+if(result.payload.pendingCod >0){
+  this.setState({cod_charge_color:Colors.red})
+}else{
+  this.setState({cod_charge_color:Colors.green})
+
+}
 
         }
         else {
@@ -321,15 +354,25 @@ export default class DeliveryOutDetails extends React.Component {
   ///////////////////////////////// Delivery order update function //////////////////////////////////////////////////////////////////////////////////////// 
 
   delivery_status_update() {
+    if(this.state.pending_additional > 0){
+      Toast.show({ text: "additional charge payment pending", type: 'warning' });
+      return; 
+    }
+    if(this.state.pending_cod > 0){
+      Toast.show({ text: "COD charge payment pending", type: 'warning' });
+      return; 
+    }
+    if (this.state.status == 'DELIVERED' && this.state.delivery_details.payableByReceiver > 0) {
+      Toast.show({ text: "Complete the payment first", type: 'warning' });
+      return; 
 
-    // if(parseInt(this.state.delivery_details.additionalCharges) > 0){
-    //   Toast.show({ text: "addititional charge payment pending", type: 'warning' });
-    //   return; 
-    // }
-    // if(parseInt(this.state.delivery_details.finalCodCharge) > 0){
-    //   Toast.show({ text: "COD charge payment pending", type: 'warning' });
-    //   return; 
-    // }
+    } 
+    if(this.state.otp_verified === false){
+      Toast.show({ text: "Need OTP verification", type: 'warning' });
+      return; 
+
+    }
+   
     let body = {
 
       "deliveryFailedReason": this.state.reason_val,
@@ -339,12 +382,7 @@ export default class DeliveryOutDetails extends React.Component {
     };
 
 
-    if (this.state.status == 'DELIVERED' && this.state.delivery_details.payableByReceiver > 0) {
-      Toast.show({ text: "Complete the payment first", type: 'warning' });
-    } else if(this.state.otp_verified === false){
-      Toast.show({ text: "Need OTP verification", type: 'warning' });
-    }
-    else {
+    
 
       Api.fetch_request(DELIVERY_STATUS_UPDATE, 'PUT', '', JSON.stringify(body))
         .then(result => {
@@ -359,7 +397,7 @@ export default class DeliveryOutDetails extends React.Component {
             Toast.show({ text: result.message, type: 'warning' });
           }
         })
-    }
+    
 
   }
 
@@ -442,7 +480,7 @@ if(this.state.otp_verified==true)
         if (result.error != true) {
 
           console.log('Success:', JSON.stringify(result));
-          Toast.show({ text: result.message, type: 'success' });
+          // Toast.show({ text: result.message, type: 'success' });
 
           // Actions.pop()
           // Actions.refresh({key: Math.random()})
@@ -498,6 +536,109 @@ if(this.state.otp_verified==true)
         })
       }, 100);
   }
+
+  ////////////////////////////////////// Additional charge function ///////////////////////////////////////////////////////////////////////////////////
+ 
+fetch_additionalCharge() {
+
+
+  Api.fetch_request(PAYMENT_DETAILS+this.state.order_id+'/ADDITIONAL_CHARGE', 'GET', '')
+    .then(result => {
+
+      if (result.error != true) {
+
+        console.log('Success:', JSON.stringify(result));
+        this.setState({ add_charges: result.payload })
+
+let res=_.filter(this.state.add_charges,obj=>obj.paymentStatus=='PENDING' || obj.paymentStatus== null);
+this.setState({add_charges2:res}) 
+
+console.log(this.state.add_charges2)
+if(this.state.add_charges2 !=''){
+this.setState({add_charge_color:Colors.red})
+}
+else{
+  this.setState({add_charge_color:Colors.green})
+
+}
+
+      }
+      else {
+        console.log('Failed');
+        this.setState({ charges: ''})
+        // Toast.show({ text: result.message, type: 'warning' });
+      }
+    })
+}
+
+////////////////////////////////////// fetching cod charge function ///////////////////////////////////////////////////////////////////////////////////
+ 
+fetch_cod_charge() {
+
+
+  Api.fetch_request(PAYMENT_DETAILS+this.state.order_id+'/COD', 'GET', '')
+    .then(result => {
+
+      if (result.error != true) {
+
+        console.log('Success:', JSON.stringify(result));
+        this.setState({ cod_charges: result.payload })
+        let res=_.filter(this.state.cod_charges,obj=>obj.paymentStatus=='PENDING' || obj.paymentStatus== null);
+        this.setState({cod_charges2:res}) 
+        
+        console.log(this.state.cod_charges2)
+        if(this.state.cod_charges2 !=''){
+        this.setState({cod_charge_color:Colors.red})
+        }
+        else{
+          this.setState({cod_charge_color:Colors.green})
+        
+        }
+        
+      }
+      else {
+        console.log('Failed');
+        this.setState({ charges: ''})
+        // Toast.show({ text: result.message, type: 'warning' });
+      }
+    })
+}
+////////////////////////////////////// Delivery charge function ///////////////////////////////////////////////////////////////////////////////////
+ 
+fetch_deliveryCharge() {
+
+
+  Api.fetch_request(PAYMENT_DETAILS+this.state.order_id+'/DELIVERY_CHARGE', 'GET', '')
+    .then(result => {
+
+      if (result.error != true) {
+
+        console.log('Success:', JSON.stringify(result));
+        this.setState({ del_charges: result.payload })
+
+let res=_.filter(this.state.del_charges,obj=>obj.paymentStatus=='PENDING'|| obj.paymentStatus== null);
+this.setState({del_charges2:res}) 
+
+console.log(this.state.del_charges2)
+if(this.state.del_charges2 !=''){
+this.setState({del_charge_color:Colors.red})
+}
+else{
+  this.setState({del_charge_color:Colors.green})
+
+}
+
+      }
+      else {
+        console.log('Failed');
+        this.setState({ charges: ''})
+        // Toast.show({ text: result.message, type: 'warning' });
+      }
+    })
+}
+
+
+
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -836,17 +977,38 @@ if(this.state.otp_verified==true)
 
                   <View style={{ height: 450}}>
                   <Grid ><Col><CustomText text={'Additional Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
-        <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.delivery_details.additionalCharges  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+        <Col>
+        <View style={{flexDirection:'row',backgroundColor:Colors.textBackgroundColor}}>
+
+        <View style={styles.inputview}><CustomText text={'Rs. '+this.state.delivery_details.additionalCharges  } textType={Strings.subtext} color={Colors.black}/></View>
+        <View style={{flex:1,justifyContent:'center',marginTop:5}}><Icon style={{ color: this.state.add_charge_color,fontSize:22,justifyContent:'flex-end'}} name='md-cash' /></View>     
+
+        </View>
+        </Col></Grid>
  <Grid ><Col></Col>
    <Col><CustomButton title={'Details'} marginTop={1} marginBottom={1} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.additionalcharges({order_id:this.state.order_id, order_type:this.state.order_type})} /></Col></Grid>       
    <Grid ><Col><CustomText text={'COD'} textType={Strings.subtext} color={Colors.black}/></Col>
-        <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.delivery_details.finalCodCharge  } textType={Strings.subtext} color={Colors.black}/></View></Col></Grid>
+        <Col>
+        <View style={{flexDirection:'row',backgroundColor:Colors.textBackgroundColor}}>
+
+         <View style={styles.inputview}><CustomText text={'Rs. '+this.state.delivery_details.finalCodCharge  } textType={Strings.subtext} color={Colors.black}/></View>
+         <View style={{flex:1,justifyContent:'center',marginTop:5}}><Icon style={{ color: this.state.cod_charge_color,fontSize:22,justifyContent:'flex-end'}} name='md-cash' /></View>     
+
+         </View>
+          </Col></Grid>
  <Grid ><Col></Col>
    <Col><CustomButton title={'Details'} marginTop={1} marginBottom={1} backgroundColor={Colors.darkSkyBlue} onPress={()=>{Actions.codcharges({order_id:this.state.order_id, order_type:this.state.order_type, page:'DELIVERY'})}} /></Col></Grid>       
 
 <View style={{height:250,borderColor:Colors.borderColor,borderWidth:0.3,padding:5,marginBottom:5}}>
                     <Grid ><Col><CustomText text={'Delivery Charge'} textType={Strings.subtext} color={Colors.black} /></Col>
-                      <Col><View style={styles.inputview}><CustomText text={'Rs. '+this.state.delivery_details.originalDeliveryCharge} textType={Strings.subtext} color={Colors.black} /></View></Col></Grid>
+                      <Col>
+                      <View style={{flexDirection:'row',backgroundColor:Colors.textBackgroundColor}}>
+
+                      <View style={styles.inputview}><CustomText text={'Rs. '+this.state.delivery_details.originalDeliveryCharge} textType={Strings.subtext} color={Colors.black} /></View>
+                      <View style={{flex:1,justifyContent:'center',marginTop:5}}><Icon style={{ color: this.state.del_charge_color,fontSize:22,justifyContent:'flex-end'}} name='md-cash' /></View>     
+
+                      </View>
+                      </Col></Grid>
                       <Grid ><Col></Col>
    <Col><CustomButton title={'Details'} marginTop={1} marginBottom={1} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.paymentdetails({order_id:this.state.delivery_details.preDefinedOrderId ?this.state.delivery_details.preDefinedOrderId :this.state.delivery_details.orderId})}/></Col></Grid>       
  
@@ -986,7 +1148,7 @@ undefined}
             </View>)}
 
 
-            <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue} onPress={() => this.update_receiver_name()} />
+            <CustomButton title={'Submit'} backgroundColor={Colors.darkSkyBlue} onPress={() => {Actions.pop();Actions.refresh({key: Math.random()})}} />
 
             <View style={{ alignItems: 'flex-end', marginTop: SECTION_MARGIN_TOP }}><CustomText text={Strings.version} textType={Strings.subtext} color={Colors.darkSkyBlue} /></View>
           </View>
@@ -1041,10 +1203,14 @@ const styles = StyleSheet.create({
     borderRadius: 5
   },
   inputview: {
+    flex:3,
+
     backgroundColor: Colors.textBackgroundColor,
     height: 40,
     alignItems: 'flex-start',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    marginTop:5,
+
   },
   inputview4: {
     backgroundColor: Colors.textBackgroundColor,

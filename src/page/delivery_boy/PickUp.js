@@ -258,7 +258,10 @@ pickup_close_all() {
             result.payload.forEach(obj => {
               if (!newArray.some(o => o.orderId === obj.orderId)) {
                 newArray.push({ ...obj })
-                this.state.pickup_ids.push(obj.orderId);
+                if(status_type==='COLLECTED'){
+                  this.state.pickup_ids.push(obj.orderId);
+
+                }
               }
         
             });

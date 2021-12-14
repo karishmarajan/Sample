@@ -272,7 +272,7 @@ _body = (item) => {
           <CustomInput  onChangeText={(text)=>this.setState({changed_additional_charge:text})} flex={1} placeholder={`Rs .${this.state.edited_no}`} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} keyboardType={'number-pad'}/>
           <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:10}}>
           <CustomButton title={'Edit'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.edit_additional_charge()}/>
-          <CustomButton title={'Remove'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.setState({modal_visible:false,})}/>
+          {/* <CustomButton title={'Remove'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.setState({modal_visible:false,})}/> */}
 
           </View>
         </View>

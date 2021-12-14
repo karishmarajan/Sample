@@ -18,7 +18,7 @@ import CustomSearchBox from '../../component/CustomSearchBox';
 import { RNCamera } from 'react-native-camera';
 import { KEY, KEY1 } from '../../session/SessionManager';
 import Api from '../../component/Fetch';
-import {PREORDER_WITH_PIN,ALL_USERS,PICKUP_PIN_BY_OFFICEID, VALIDATE_PDOID, UPDATE_PDOID_PAYMENT_STATUS, ASSIGN_SINGLE_ORDER} from '../../constants/Api';
+import {PREORDER_WITH_PIN,ALL_USERS,PICKUP_PIN_BY_OFFICEID, VALIDATE_PDOID, UPDATE_PDOID_PAYMENT_STATUS, ASSIGN_SINGLE_ORDER, CREATE_PAYMENT} from '../../constants/Api';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import SideMenuDrawer from '../../component/SideMenuDrawer';
 
@@ -78,6 +78,12 @@ export default class orderwithpin extends React.Component {
       delivery_type:'NORMAL',
       pincodes:[],
       flag:0,
+      payment_status:'PENDING',
+      disable_collected:false,
+      disable_quick_order:false,
+      disable_additional:false,
+      additional_edit:true,
+      additional_payment_id:'',
       camera: {
         type: RNCamera.Constants.Type.back,
 	flashMode: RNCamera.Constants.FlashMode.auto,
@@ -222,7 +228,7 @@ let body = {
     "officeStaffType": "DELIVERY_AGENT",
     "paymentStatus": "COMPLETED",
     "paymentType": "DELIVERY_CHARGE",
-    "preOrderAssignId": this.state.pdoid_assign_id
+    "preorderAssignId": this.state.pdoid_assign_id
   
 }
 
@@ -353,6 +359,58 @@ if(result.payload.deliveryType=='BULLET'){
     }));
   }
   
+ ///////////////////////////////////// ADDITIONAL payment  function ////////////////////////////////////////////////////////////////////////////////////
+  
+ pay_additional_charge() {
+
+  if(this.state.additional_charge==="") {
+    this.setState({hasError: true, errorTextAdditional: 'Please fill additional charge'});
+    return;
+  }
+
+  if(this.state.additional_charge==="" && this.state.bullet === true) {
+    this.setState({hasError: true, errorTextAdditional: 'must apply additional charge if delivery type is bullet !'});
+    return;
+  }
+  if(parseInt(this.state.additional_charge) <= 0 && this.state.bullet === true && this.state.delivery_type =='NORMAL') {
+    Toast.show({ text: 'Must be greater than zero', type: 'warning' });
+return;
+  }
+  
+  AsyncStorage.getItem(KEY).then((value => {
+    let data = JSON.parse(value);
+
+ let body = {
+    "amountCollected": this.state.additional_charge,
+    "officeId": data.officeId,
+    "officeStaffId": this.state.personId,
+    "officeStaffName": data.firstName + ' ' + data.lastName,
+    "officeStaffType": "DELIVERY_AGENT",
+    "orderId": this.state.predefinedpin,
+    "orderType": "AUTOMATIC_ORDER_ID",
+    "paymentId": 0,
+    "paymentStatus": "COMPLETED",
+    "paymentType": "ADDITIONAL_CHARGE"
+  }
+ 
+  Api.fetch_request(CREATE_PAYMENT, 'POST', '', JSON.stringify(body))
+    .then(result => {
+
+      if (result.error != true) {
+
+        console.log('Success:', JSON.stringify(result));
+        Toast.show({ text: result.message, type: 'success' });
+this.setState({payment_status:'COMPLETED',disable_collected:true,disable_additional:true,additional_edit:false,additional_payment_id:result.payload.paymentId,disable_quick_order:true})
+      }
+      else {
+        console.log('Failed');
+        Toast.show({ text: result.message, type: 'warning' });
+
+      }
+    })
+  }));
+
+}
 
    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   
@@ -418,6 +476,7 @@ return;
       "isPickupRequired": this.state.isPickupRequired,
       "officeStaffId": this.state.agent_id,
      "officeStaffType": "DELIVERY_AGENT",
+     "paymentStatus": this.state.payment_status,
       "pickupPincode": this.state.sender_pincode,
       "preDefinedOrderId": this.state.predefinedpin,
     }
@@ -525,7 +584,7 @@ Actions.dashboard();
   
          <View padding={30}>
 
-         <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:1}}>
+       <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:1}}>
            <CustomText text={'Collected'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
            <Switch
           trackColor={{false: 'gray', true: 'teal'}}
@@ -533,6 +592,7 @@ Actions.dashboard();
           ios_backgroundColor="gray"
           onValueChange={(value) =>{ this.setState({collected_toggle: value});if(value==true){this.setState({isAtAgent:true,isPickupRequired:false,agent_id:parseInt(this.state.personId)})}else{this.setState({isAtAgent:false,isPickupRequired:true,agent_id:0})}}}
           value={this.state.collected_toggle}
+          disabled={this.state.disable_collected}
         />
            </View>
 
@@ -544,6 +604,8 @@ Actions.dashboard();
           ios_backgroundColor="gray"
           onValueChange={(value) =>{ this.setState({toggle: value});if(value==false){this.setState({additional_charge_toggle:false,cod_toggle:false,bullet:false})}}}
           value={this.state.toggle}
+          disabled={this.state.disable_quick_order}
+
         />
            </View>
 
@@ -586,8 +648,8 @@ Actions.dashboard();
        <View style={{flex:3}}><CustomInput flex={1} value={'Rs .'+this.state.payment} backgroundColor={Colors.white} /></View>
        <View style={{flex:2,justifyContent:'center'}}><Icon style={{ color: this.state.del_color ,fontSize:26,paddingLeft:30}} name='md-cash' /></View>     
         </View>
-  {this.state.btn_pay === true && (<View style={{flex:2,marginLeft:5}}><CustomButton title={'Pay'} marginTop={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.pdoid_payment_status_update()} /></View>)}
-  {this.state.btn_pay === false && (<View style={{flex:2,marginLeft:5}}><CustomButton title={'Details'} marginTop={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.paymentdetails({order_id:this.state.predefinedpin})} /></View>)}
+  {this.state.btn_pay === true && (<View style={{flex:2,marginLeft:5}}><CustomButton title={'Pay'} marginTop={1} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.pdoid_payment_status_update()} /></View>)}
+  {this.state.btn_pay === false && (<View style={{flex:2,marginLeft:5}}><CustomButton title={'Details'} marginTop={1} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.paymentdetails({order_id:this.state.predefinedpin})} /></View>)}
 
 
 </View>
@@ -618,29 +680,50 @@ Actions.dashboard();
           trackColor={{false: 'gray', true: 'teal'}}
           thumbColor="white"
           ios_backgroundColor="gray"
-          onValueChange={(value) => {this.setState({bullet: value,additional_charge_toggle:value});}}
+          onValueChange={(value) => {this.setState({bullet: value,});if(value=== true || this.state.collected_toggle === true){this.setState({additional_charge_toggle:true})}}}
           value={this.state.bullet}
         />
            </View>)}
+
+           {/* {this.state.payment_status === 'PENDING' &&(<View> */}
 
           {this.state.bullet === true &&(<View>  
             <CustomText text={'Additional Charges may apply'} textType={Strings.subtext} color={Colors.black} />
           </View>)}
            <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:1}}>
            <CustomText text={'Additional Charge'} keyboardType={"number-pad"} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
+           
            <Switch
           trackColor={{false: 'gray', true: 'teal'}}
           thumbColor="white"
           ios_backgroundColor="gray"
           onValueChange={(value) => this.setState({additional_charge_toggle: value})}
           value={this.state.additional_charge_toggle}
+          disabled={this.state.disable_additional}
+
         />
            </View>
+           {this.state.collected_toggle === false && (<View>
           {this.state.additional_charge_toggle == true &&(<View>
             <CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({additional_charge: text , errorTextAdditional:''})} value={this.state.additional_charge} />
             {!!this.state.errorTextAdditional && (<Text style={{color: 'red'}}>{this.state.errorTextAdditional}</Text>)}
 
           </View>)} 
+          </View>)}
+
+          {this.state.collected_toggle === true && (<View>
+          {this.state.additional_charge_toggle == true &&(<View>
+          <View style={{flexDirection:'row',flex:4,justifyContent:'space-between'}}> 
+           <View style={{flex:3}}><CustomInput flex={1} keyboardType={"number-pad"} borderColor={Colors.borderColor} borderWidth={SHORT_BORDER_WIDTH} borderRadius={SHORT_BORDER_RADIUS} backgroundColor={Colors.white} onChangeText={(text) => this.setState({additional_charge: text , errorTextAdditional:''})} value={this.state.additional_charge} editable={this.state.additional_edit} /></View>
+           {this.state.payment_status === 'PENDING' && (<View style={{flex:1,marginLeft:5}}><CustomButton title={'Pay'} marginTop={1} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.pay_additional_charge()} /></View>)}
+           {this.state.payment_status === 'COMPLETED' && (<View style={{flex:2,marginLeft:5}}><CustomButton title={'Details'} marginTop={1} backgroundColor={Colors.darkSkyBlue} onPress={()=>Actions.paymentdetails({payment_id:this.state.additional_payment_id})} /></View>)}
+           </View>
+           {!!this.state.errorTextAdditional && (<Text style={{color: 'red'}}>{this.state.errorTextAdditional}</Text>)}
+
+           </View>)} 
+          </View>)}
+{/* </View>)} */}
+
            <View style={{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:1}}>
            <CustomText text={'COD'} keyboardType={"number-pad"} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
            <Switch

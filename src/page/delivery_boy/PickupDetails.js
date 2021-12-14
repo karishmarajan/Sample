@@ -64,6 +64,10 @@ export default class PickupDetails extends React.Component {
     add_charge_color:Colors.red,
     cod_charge_color:Colors.red,
     del_charge_color:Colors.red,
+
+    pending_additional:'',
+    pending_cod:'',
+  
   };
 
 
@@ -132,7 +136,7 @@ if(no == 12){
     if(result.error != true){
 
       console.log('Success:', JSON.stringify(result));
-      this.setState({pickup_details : result.payload, sender_payment: result.payload.payableBySender})
+      this.setState({pickup_details : result.payload, sender_payment: result.payload.payableBySender,pending_additional:result.payload.pendingAdditionalCharge, pending_cod:result.payload.pendingCod })
    ////////////////////////// checking delivery type /////////////////////////////////////////////////////////////////////////////////////
      
    if(result.payload.deliveryType === 'NORMAL'){
@@ -151,9 +155,25 @@ if(no == 12){
     {
       this.setState({order_type:'AUTOMATIC_ORDER_ID', order_id:result.payload.orderId})
     }
-this.fetch_additionalCharge();
-this.fetch_cod_charge();
+// this.fetch_additionalCharge();
+// this.fetch_cod_charge();
 this.fetch_deliveryCharge();
+
+if(result.payload.pendingAdditionalCharge >0){
+  this.setState({add_charge_color:Colors.red})
+}else{
+  this.setState({add_charge_color:Colors.green})
+
+}
+
+if(result.payload.pendingCod >0){
+  this.setState({cod_charge_color:Colors.red})
+}else{
+  this.setState({cod_charge_color:Colors.green})
+
+}
+
+
     }
     else{
       console.log('Failed');
@@ -379,7 +399,7 @@ fetch_additionalCharge() {
         console.log('Success:', JSON.stringify(result));
         this.setState({ add_charges: result.payload })
 
-let res=_.filter(this.state.add_charges,obj=>obj.paymentStatus=='PENDING');
+let res=_.filter(this.state.add_charges,obj=>obj.paymentStatus=='PENDING'|| obj.paymentStatus== null);
 this.setState({add_charges2:res}) 
 
 console.log(this.state.add_charges2)
@@ -395,7 +415,7 @@ else{
       else {
         console.log('Failed');
         this.setState({ charges: ''})
-        Toast.show({ text: result.message, type: 'warning' });
+        // Toast.show({ text: result.message, type: 'warning' });
       }
     })
 }
@@ -412,7 +432,7 @@ fetch_cod_charge() {
 
         console.log('Success:', JSON.stringify(result));
         this.setState({ cod_charges: result.payload })
-        let res=_.filter(this.state.cod_charges,obj=>obj.paymentStatus=='PENDING');
+        let res=_.filter(this.state.cod_charges,obj=>obj.paymentStatus=='PENDING'|| obj.paymentStatus== null);
         this.setState({cod_charges2:res}) 
         
         console.log(this.state.cod_charges2)
@@ -428,7 +448,7 @@ fetch_cod_charge() {
       else {
         console.log('Failed');
         this.setState({ charges: ''})
-        Toast.show({ text: result.message, type: 'warning' });
+        // Toast.show({ text: result.message, type: 'warning' });
       }
     })
 }
@@ -445,7 +465,7 @@ fetch_deliveryCharge() {
         console.log('Success:', JSON.stringify(result));
         this.setState({ del_charges: result.payload })
 
-let res=_.filter(this.state.del_charges,obj=>obj.paymentStatus=='PENDING');
+let res=_.filter(this.state.del_charges,obj=>obj.paymentStatus=='PENDING'|| obj.paymentStatus== null);
 this.setState({del_charges2:res}) 
 
 console.log(this.state.del_charges2)
@@ -461,7 +481,7 @@ else{
       else {
         console.log('Failed');
         this.setState({ charges: ''})
-        Toast.show({ text: result.message, type: 'warning' });
+        // Toast.show({ text: result.message, type: 'warning' });
       }
     })
 }
@@ -667,7 +687,8 @@ render(){
 
 <View style={{height:450}}>
 <Grid ><Col><CustomText text={'COD Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
-        <Col><View style={{flexDirection:'row',backgroundColor:Colors.textBackgroundColor}}>
+        <Col>
+        <View style={{flexDirection:'row',backgroundColor:Colors.textBackgroundColor}}>
         <View style={styles.inputview}><CustomText text={'Rs. '+this.state.pickup_details.finalCodCharge  } textType={Strings.subtext} color={Colors.black}/></View>
         <View style={{flex:1,justifyContent:'center',marginTop:5}}><Icon style={{ color: this.state.cod_charge_color,fontSize:22,justifyContent:'flex-end'}} name='md-cash' /></View>     
         </View>
