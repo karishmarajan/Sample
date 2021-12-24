@@ -344,7 +344,9 @@ cash_payment() {
  ////////////////////////////////////// Additional charge adding function ///////////////////////////////////////////////////////////////////////////////////
  
  add_additional_charge() {
-
+  AsyncStorage.getItem(KEY).then((value => {
+    let data = JSON.parse(value);
+ 
   if (this.state.additional_charge2 === "") {
       this.setState({ hasError: true, errorTextadditional_charge2: 'Please fill !' });
       return;
@@ -358,9 +360,10 @@ cash_payment() {
     let body = {
       
       "amountCollected": this.state.additional_charge2,
+      "createdOfficeStaffId": this.state.personId,
+      "createdOfficeStaffName": data.firstName +' '+data.lastName,
+      "createdOfficeStaffType": "DELIVERY_AGENT",
       "officeId": this.state.officeId,
-      "officeStaffId": this.state.personId,
-      "officeStaffType": "DELIVERY_AGENT",
       "orderId": this.state.order_id,
       "orderType":this.state.order_type,
       "paymentType": "ADDITIONAL_CHARGE"
@@ -382,7 +385,7 @@ cash_payment() {
           Toast.show({ text: result.message, type: 'warning' });
         }
       })
-  
+    }));
 }
 
 
@@ -694,11 +697,11 @@ render(){
         </View>
         </Col></Grid>
  <Grid ><Col></Col>
-   <Col><CustomButton title={'Details'} marginTop={5} marginBottom={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>{Actions.codcharges({order_id:this.state.order_id, order_type:this.state.order_type})}} /></Col></Grid>       
+   <Col><CustomButton title={'Details'} marginTop={5} marginBottom={5} backgroundColor={Colors.darkSkyBlue} onPress={()=>{Actions.codcharges({order_id:this.state.order_id, order_type:this.state.order_type, page:'PICKUP'})}} /></Col></Grid>       
    <Grid ><Col><CustomText text={'Additional Charge'} textType={Strings.subtext} color={Colors.black}/></Col>
         <Col>
         <View style={{flexDirection:'row',backgroundColor:Colors.textBackgroundColor}}>
-        <View style={styles.inputview}><CustomText text={'Rs. '+this.state.pickup_details.additionalCharges  } textType={Strings.subtext} color={Colors.black}/></View>
+        <View style={styles.inputview}><CustomText text={this.state.pickup_details.additionalCharges ? 'Rs. '+this.state.pickup_details.additionalCharges:'Rs. '+0 } textType={Strings.subtext} color={Colors.black}/></View>
         <View style={{flex:1,justifyContent:'center',marginTop:5}}><Icon style={{ color: this.state.add_charge_color,fontSize:22,justifyContent:'flex-end'}} name='md-cash' /></View>     
         </View>
         </Col></Grid>

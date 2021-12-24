@@ -39,6 +39,8 @@ export default class CodCharges extends React.Component {
       changed_cod_charge:'',
       edited_no:'',
       payment_id:'',
+      person_name:'',
+
    };
   }
 
@@ -46,7 +48,7 @@ export default class CodCharges extends React.Component {
    componentDidMount() {
     AsyncStorage.getItem(KEY).then((value => {
       let data = JSON.parse(value);
-      this.setState({personId:data.personId, officeId:data.officeId})
+      this.setState({personId:data.personId, officeId:data.officeId, person_name :data.firstName + ' '+data.lastName})
    
   }));
         this.fetch_cod_charge();
@@ -73,6 +75,7 @@ refresh_func(){
       "amountCollected": this.state.changed_cod_charge,
       "officeId": this.state.officeId,
       "officeStaffId": this.state.personId,
+      "officeStaffName": this.state.person_name,
       "officeStaffType": "DELIVERY_AGENT",
       "orderId": this.props.order_id,
       "orderType":this.props.order_type,
@@ -156,12 +159,22 @@ add_cod_charge() {
 
       let body = {
         
+        // "amountCollected": this.state.cod_charge,
+        // "officeId": this.state.officeId,
+        // "officeStaffId": this.state.personId,
+        // "officeStaffType": "DELIVERY_AGENT",
+        // "orderId": this.props.order_id,
+        // "orderType":this.props.order_type,
+        // "paymentType": "COD"
+
         "amountCollected": this.state.cod_charge,
+        "createdOfficeStaffId": this.state.personId,
+        "createdOfficeStaffName": this.state.person_name,
+        "createdOfficeStaffType": "DELIVERY_AGENT",
         "officeId": this.state.officeId,
-        "officeStaffId": this.state.personId,
-        "officeStaffType": "DELIVERY_AGENT",
         "orderId": this.props.order_id,
-        "orderType":this.props.order_type,
+        "orderType": this.props.order_type,
+        "paymentStatus": "PENDING",
         "paymentType": "COD"
      
       };
@@ -240,9 +253,11 @@ _body = (item) => {
 </View>)}
     { item.paymentStatus == 'COMPLETED' && ( <View style={styles.cell2}><CustomButton title={'DETAILS'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={1} text_color={Colors.white} onPress={()=>Actions.paymentdetails({payment_id:item.paymentId})} /></View>)}
     </View>)}
+
+    {this.props.page === 'PICKUP' && (<View>
     { item.paymentStatus == null && ( <View style={styles.cell2}><CustomButton title={'EDIT'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5}  text_color={Colors.white} onPress={()=>this.setState({modal_visible:true,edited_no:item.amountCollected, payment_id:item.paymentId})} /></View>)}
     { item.paymentStatus == 'PENDING' && ( <View style={styles.cell2}><CustomButton title={'EDIT'} backgroundColor={Colors.darkSkyBlue} fontSize={14} marginTop={5} marginLeft={5} marginRight={5} marginBottom={5}  text_color={Colors.white} onPress={()=>this.setState({modal_visible:true,edited_no:item.amountCollected, payment_id:item.paymentId})} /></View>)}
-
+</View>)}
 
     </View>
 
@@ -271,6 +286,9 @@ _body = (item) => {
 <Modal visible={this.state.modal_visible} supportedOrientations={['landscape']} transparent>
 <View style={{ justifyContent: 'center', flex: 1, backgroundColor: Colors.transparent, }}>
     <View style={{ backgroundColor: Colors.white, alignSelf: 'center', marginTop:SECTION_MARGIN_TOP }}>
+    <View><Button onPress={()=>this.setState({modal_visible:false})} transparent>
+        <Icon name="md-close" style={{color:Colors.black,marginTop:30}} />
+        </Button></View>
         <View style={{ flexDirection: 'row', alignSelf: 'flex-end' }}>  
         <View style={styles.modalview}>
           <CustomInput  onChangeText={(text)=>this.setState({changed_cod_charge:text})} flex={1} placeholder={`Rs. ${this.state.edited_no}`} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} keyboardType={'number-pad'}/>
@@ -288,6 +306,7 @@ _body = (item) => {
 
         <Navbar left={left} title="COD Charges" />
         <ScrollView contentContainerStyle={{flexGrow:1}} style={{ flexDirection: 'column', padding: MAIN_VIEW_PADDING, backgroundColor: Colors.textBackgroundColor }}>
+        {this.props.page === 'PICKUP' && (<View>
 <View style={{padding:MAIN_VIEW_PADDING,backgroundColor:Colors.white}}>
 <CustomText text={'COD'} textType={Strings.subtext} color={Colors.black} fontWeight={'bold'}/>
 <CustomInput flex={1} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} onChangeText={(text) =>{this.setState({cod_charge: text, errorTextcod_charge:''})}} value={this.state.cod_charge} />
@@ -295,7 +314,7 @@ _body = (item) => {
 
 <CustomButton title={'ADD'} backgroundColor={Colors.darkSkyBlue} onPress={()=>this.add_cod_charge()} />
 </View>
-    
+    </View>)}
           {/*//////////////////////// Horizontal Order Details Block //////////////////////////////////////////////// */}
 
           <View style={{marginTop:SECTION_MARGIN_TOP}}>

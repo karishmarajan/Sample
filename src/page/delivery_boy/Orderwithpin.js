@@ -18,7 +18,7 @@ import CustomSearchBox from '../../component/CustomSearchBox';
 import { RNCamera } from 'react-native-camera';
 import { KEY, KEY1 } from '../../session/SessionManager';
 import Api from '../../component/Fetch';
-import {PREORDER_WITH_PIN,ALL_USERS,PICKUP_PIN_BY_OFFICEID, VALIDATE_PDOID, UPDATE_PDOID_PAYMENT_STATUS, ASSIGN_SINGLE_ORDER, CREATE_PAYMENT} from '../../constants/Api';
+import {PREORDER_WITH_PIN,ALL_USERS,PICKUP_PIN_BY_OFFICEID, VALIDATE_PDOID, UPDATE_PDOID_PAYMENT_STATUS, ASSIGN_SINGLE_ORDER, CREATE_PAYMENT_WITHOUT_ORDER} from '../../constants/Api';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import SideMenuDrawer from '../../component/SideMenuDrawer';
 
@@ -58,7 +58,7 @@ export default class orderwithpin extends React.Component {
       errorTextAdditional:'',
       cod:'',
       errorTextcod:'',
-      collected_toggle:false,
+      collected_toggle:true,
       users:[],
       checked_customer:false,
       torch_enable:RNCamera.Constants.FlashMode.off,
@@ -71,8 +71,8 @@ export default class orderwithpin extends React.Component {
       pdoid_assign_id:'',
       payment:'',
       del_color:Colors.red,
-      isAtAgent:false,
-      isPickupRequired:true,
+      isAtAgent:true,
+      isPickupRequired:false,
       agent_id:0,
       office_id:'',
       delivery_type:'NORMAL',
@@ -84,6 +84,7 @@ export default class orderwithpin extends React.Component {
       disable_additional:false,
       additional_edit:true,
       additional_payment_id:'',
+      order_type:'AUTOMATIC_ORDER_ID',
       camera: {
         type: RNCamera.Constants.Type.back,
 	flashMode: RNCamera.Constants.FlashMode.auto,
@@ -96,7 +97,7 @@ export default class orderwithpin extends React.Component {
         AsyncStorage.getItem(KEY).then((value => {
           let data = JSON.parse(value);
 
-           this.setState({personId:data.personId, office_id:data.officeId})
+           this.setState({personId:data.personId, office_id:data.officeId,agent_id:data.personId})
 
          console.log('KKKKKKKKKKKKKK',data) 
          this.fetch_pincode_list(data.officeId);
@@ -323,7 +324,7 @@ if(result.payload.deliveryType=='BULLET'){
   this.setState({bullet:true, additional_charge:0, delivery_type:'BULLET'})
 }
 
-          this.setState({pdoid_assign_id:result.payload.preorderAssignId,payment:result.payload.rate})
+          this.setState({pdoid_assign_id:result.payload.preorderAssignId,payment:result.payload.rate,order_type:'PREDEFINED_ORDER_ID'})
           if(result.payload.assigneeUserType == 'DELIVERY_BOY' && result.payload.paymentStatus =='PENDING'){
             Toast.show({ text:'Assign customer first' , type: 'success' });
             this.setState({assign:true,customer:false,btn_assign:true,btn_pay:true})
@@ -387,13 +388,13 @@ return;
     "officeStaffName": data.firstName + ' ' + data.lastName,
     "officeStaffType": "DELIVERY_AGENT",
     "orderId": this.state.predefinedpin,
-    "orderType": "AUTOMATIC_ORDER_ID",
+    "orderType": this.state.order_type,
     "paymentId": 0,
     "paymentStatus": "COMPLETED",
     "paymentType": "ADDITIONAL_CHARGE"
   }
  
-  Api.fetch_request(CREATE_PAYMENT, 'POST', '', JSON.stringify(body))
+  Api.fetch_request(CREATE_PAYMENT_WITHOUT_ORDER, 'POST', '', JSON.stringify(body))
     .then(result => {
 
       if (result.error != true) {
@@ -489,9 +490,12 @@ return;
         Toast.show({ text: 'Order Created', type: 'success' });
         console.log('Success:', JSON.stringify(result));
         
-        this.setState({reciever_pincode:''})
-        this.setState({predefinedpin:'',cod:''})
-Actions.dashboard();
+        this.setState({reciever_pincode:'',sender_pincode:''})
+        this.setState({predefinedpin:'',cod:'',assign:false, customer:false,additional_charge:'',payment_status:'PENDING'})
+        this.setState({toggle:true,additional_charge_toggle:false,cod_toggle:false,bullet:false});
+        this.setState({disable_collected:false,disable_additional:false,additional_edit:true,additional_payment_id:'',disable_quick_order:false})
+
+        Actions.orderwithpin();
       }
       else {
         console.log(result.message,'Failed');

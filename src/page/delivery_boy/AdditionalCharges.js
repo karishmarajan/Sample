@@ -39,6 +39,7 @@ export default class AdditionalCharges extends React.Component {
       changed_additional_charge:'',
       edited_no:'',
       payment_id:'',
+      person_name:'',
    };
   }
 
@@ -46,7 +47,7 @@ export default class AdditionalCharges extends React.Component {
    componentDidMount() {
     AsyncStorage.getItem(KEY).then((value => {
       let data = JSON.parse(value);
-      this.setState({personId:data.personId, officeId:data.officeId})
+      this.setState({personId:data.personId, officeId:data.officeId, person_name :data.firstName + ' '+data.lastName})
    
   }));
         this.fetch_additionalCharge();
@@ -73,6 +74,7 @@ edit_additional_charge() {
       "amountCollected": this.state.changed_additional_charge,
       "officeId": this.state.officeId,
       "officeStaffId": this.state.personId,
+      "officeStaffName": this.state.person_name,
       "officeStaffType": "DELIVERY_AGENT",
       "orderId": this.props.order_id,
       "orderType":this.props.order_type,
@@ -154,12 +156,23 @@ add_additional_charge() {
 
       let body = {
         
+        // "amountCollected": this.state.additional_charge,
+        // "officeId": this.state.officeId,
+        // "officeStaffId": this.state.personId,
+        // "officeStaffType": "DELIVERY_AGENT",
+        // "orderId": this.props.order_id,
+        // "orderType":this.props.order_type,
+        // "paymentType": "ADDITIONAL_CHARGE"
+
+
         "amountCollected": this.state.additional_charge,
+        "createdOfficeStaffId": this.state.personId,
+        "createdOfficeStaffName": this.state.person_name,
+        "createdOfficeStaffType": "DELIVERY_AGENT",
         "officeId": this.state.officeId,
-        "officeStaffId": this.state.personId,
-        "officeStaffType": "DELIVERY_AGENT",
         "orderId": this.props.order_id,
-        "orderType":this.props.order_type,
+        "orderType": this.props.order_type,
+        "paymentStatus": "PENDING",
         "paymentType": "ADDITIONAL_CHARGE"
      
       };
@@ -266,7 +279,11 @@ _body = (item) => {
 
 <Modal visible={this.state.modal_visible} supportedOrientations={['landscape']} transparent>
 <View style={{ justifyContent: 'center', flex: 1, backgroundColor: Colors.transparent, }}>
+
     <View style={{ backgroundColor: Colors.white, alignSelf: 'center', marginTop:SECTION_MARGIN_TOP }}>
+    <View><Button onPress={()=>this.setState({modal_visible:false})} transparent>
+        <Icon name="md-close" style={{color:Colors.black,marginTop:30}} />
+        </Button></View>
         <View style={{ flexDirection: 'row', alignSelf: 'flex-end' }}>  
         <View style={styles.modalview}>
           <CustomInput  onChangeText={(text)=>this.setState({changed_additional_charge:text})} flex={1} placeholder={`Rs .${this.state.edited_no}`} borderColor={Colors.lightborderColor} borderWidth={BORDER_WIDTH} backgroundColor={Colors.white} borderRadius={SHORT_BLOCK_BORDER_RADIUS} keyboardType={'number-pad'}/>

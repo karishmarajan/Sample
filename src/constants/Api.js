@@ -1,6 +1,6 @@
 // export const BASE_URL= 'http://172.105.252.58:8080/';         //production
-export const BASE_URL= 'http://109.237.25.79:8080/';                     //qa
-// export const BASE_URL= 'http://109.74.198.118:8080/';                     //uat
+// export const BASE_URL= 'http://109.237.25.79:8080/';                     //qa
+export const BASE_URL= 'http://109.74.198.118:8080/';                     //uat
 export const SUB_URL='epex/delivery/';
 export const LOGIN= BASE_URL + SUB_URL + 'login';
 export const DELIVERY_COUNT= BASE_URL + SUB_URL + 'ordersToday/';
@@ -27,8 +27,8 @@ export const VEHICLE_DETAILS= BASE_URL + SUB_URL + 'vehicle/';
 export const VEHICLE_REQUEST= BASE_URL + SUB_URL + 'request/vehicleRequest';
 export const REQUEST_STATUS= BASE_URL + SUB_URL + 'request/';
 // export const BASE_URL_MASTER= 'http://45.79.124.220:6080/';              //production
-export const BASE_URL_MASTER= 'http://109.237.25.79:6080/';                   //qa
-// export const BASE_URL_MASTER= 'http://109.74.198.118:6080/';                   //uat
+// export const BASE_URL_MASTER= 'http://109.237.25.79:6080/';                   //qa
+export const BASE_URL_MASTER= 'http://109.74.198.118:6080/';                   //uat
 
 export const SUB_URL_MASTER='epex/master/';
 export const COUNTRY= BASE_URL_MASTER + SUB_URL_MASTER + 'country';
@@ -41,8 +41,8 @@ export const COST_CHECKLIST= BASE_URL_MASTER + SUB_URL_MASTER + 'cost-checklist'
 export const PICKUP_PIN_BY_OFFICEID= BASE_URL_MASTER + SUB_URL_MASTER + 'office/';
 
 // export const BASE_URL_USER= 'http://45.79.124.220:7080/';                   //production
-export const BASE_URL_USER= 'http://109.237.25.79:7080/';                      //qa
-// export const BASE_URL_USER= 'http://109.74.198.118:7080/';                      //uat
+// export const BASE_URL_USER= 'http://109.237.25.79:7080/';                      //qa
+export const BASE_URL_USER= 'http://109.74.198.118:7080/';                      //uat
 
 export const SUB_URL_USER='epex/user/';
 export const CUSTOMER_DETAILS= BASE_URL_USER + SUB_URL_USER + 'fetch/';
@@ -54,8 +54,8 @@ export const SELF_ASSIGN = BASE_URL + SUB_URL + 'deliveryOrder/selfassign';
 export const PACKAGE_CATEGORY= BASE_URL_MASTER + SUB_URL_MASTER + 'package-category/active';
 export const PACKAGE_SUB_CATEGORY= BASE_URL_MASTER + SUB_URL_MASTER + 'package-category/';
 // export const BASE_URL_ORDER= 'http://172.105.252.58:9080/';               //production
-export const BASE_URL_ORDER= 'http://109.237.25.79:9080/';                   //qa
-// export const BASE_URL_ORDER= 'http://109.74.198.118:9080/';                   //uat
+// export const BASE_URL_ORDER= 'http://109.237.25.79:9080/';                   //qa
+export const BASE_URL_ORDER= 'http://109.74.198.118:9080/';                   //uat
 
 export const SUB_URL_ORDER='epex/order/';
 export const SHIPMENT_BOX= BASE_URL_ORDER + SUB_URL_ORDER + 'shipment-box';
@@ -107,6 +107,7 @@ export const ADD_PAYMENT_BY_PAYMENTID= BASE_URL_ORDER + SUB_URL_ORDER + 'payment
 export const VIEW_PAYMENT_BY_PAYMENTID= BASE_URL_ORDER + SUB_URL_ORDER + 'paymentId/';
 export const EDIT_PAYMENT= BASE_URL_ORDER + SUB_URL_ORDER + 'payment';
 export const EDIT_PAYMENT_DETAILS= BASE_URL_ORDER + SUB_URL_ORDER + 'payment-report/payments/';
+export const CREATE_PAYMENT_WITHOUT_ORDER= BASE_URL_ORDER + SUB_URL_ORDER + 'payment-without-order';
 
 
 
