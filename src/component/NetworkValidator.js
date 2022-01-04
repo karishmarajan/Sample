@@ -6,11 +6,9 @@
 import React, { Component } from 'react';
 import { Alert, AsyncStorage, Modal, Image } from 'react-native';
 import { Container, Content, View, Header, Icon, Button, Left, Right, Body, Title, List, ListItem, Thumbnail, Grid, Col, Text } from 'native-base';
-import { Actions } from 'react-native-router-flux';
 import NetInfo from "@react-native-community/netinfo";
 // Our custom files and classes import
 
-import Navbar from '../component/Navbar';
 import Strings from '../constants/Strings';
 import Colors from '../constants/Colors';
 

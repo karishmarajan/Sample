@@ -1,7 +1,9 @@
 import React from 'react';
-import { StyleSheet, Modal, View, Text, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Modal, View, Text,} from 'react-native';
 import PropTypes from "prop-types";
 import Icon from 'react-native-vector-icons/MaterialIcons';
+
+
 import Colors from '../constants/Colors';
 
 export default class CustomAlert extends React.Component {

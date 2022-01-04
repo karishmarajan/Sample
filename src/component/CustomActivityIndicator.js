@@ -1,8 +1,6 @@
 import React from 'react';
-import { StyleSheet, Modal, View, Text, TouchableOpacity, Image } from 'react-native';
+import { View,} from 'react-native';
 import PropTypes from "prop-types";
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import Colors from '../constants/Colors';
 import {
     BallIndicator,
     BarIndicator,
@@ -14,6 +12,9 @@ import {
     UIActivityIndicator,
     WaveIndicator,
 } from 'react-native-indicators';
+
+import Colors from '../constants/Colors';
+
 export default class CustomActivityIndicator extends React.Component {
 
     //this.props.displayAlert

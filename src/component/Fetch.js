@@ -1,7 +1,5 @@
 import React from 'react';
-import CustomActivityIndicator from './CustomActivityIndicator';
 import RNFetchBlob from 'rn-fetch-blob';
-import session from '../session/SessionManager';
 
 class Fetch extends React.Component {
 

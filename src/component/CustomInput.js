@@ -1,7 +1,8 @@
 
 import React, { Component } from 'react';
-import { Header, Body, Title, Left, Right, Icon, Text,View,ScrollView } from 'native-base';
-import { TextInput,TouchableOpacity,TouchableHighlight  } from 'react-native';
+import { Icon,View, } from 'native-base';
+import { TextInput, } from 'react-native';
+
 // Our custom files and classes import
 import Colors from '../constants/Colors';
 

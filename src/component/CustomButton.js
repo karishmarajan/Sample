@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { Header, Body, Title, Left, Right, Icon, Button } from 'native-base';
+import { Icon, } from 'native-base';
 import { TouchableOpacity } from 'react-native';
 // Our custom files and classes import
 import {Text,View} from 'react-native';

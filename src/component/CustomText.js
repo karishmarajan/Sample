@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Header, Body, Title, Left, Right, Icon, Text } from 'native-base';
+import { Text } from 'native-base';
 
 // Our custom files and classes import
 import Colors from '../constants/Colors';
